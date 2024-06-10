@@ -1,0 +1,558 @@
+---
+metaDescription: Filebeat allows you to send logs to your ELK stacks. Configure Filebeat to send logs to Logstash or Elasticsearch. 
+stackTypes: logs
+sslPortType: beats-ssl
+---
+
+<SourceHeader
+  title="Filebeat Configuration"
+  subTitle="A Log Shipper Designed for Files"
+  color="#00bfb3"
+>
+  Filebeat is an open source shipping agent that lets you ship logs from local
+  files to one or more destinations, including Logstash.
+</SourceHeader>
+
+<Steps>
+### Install Filebeat
+
+<Tabs items={["Windows", "Linux", "macOS", "DEB", "RPM"]}>
+  <Tab>
+    To get started you will need to install filebeat. To do this you have two main options:
+  
+    * Choose the [filebeat](https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-8.12.2-windows-x86_64.zip) ZIP file (Windows ZIP x86_64) or
+    * Choose the [Microsoft Software Installer MSI](https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-8.12.2-windows-x86_64.msi) file (Windows MSI x86_64 (beta))
+
+    <Callout type="info">
+      To successfully install filebeat and set up the required Windows service you will need to have administrator access. 
+    </Callout>
+
+    *If you have chosen to download the zip file*: 
+    * Extract the contents of the zip file into C:\Program Files.
+    * Rename the extracted folder to filebeat
+    * Open a PowerShell prompt as an Administrator (right-click the PowerShell icon and select Run As Administrator).
+    * From the PowerShell prompt, run the following commands to install filebeat as a Windows service:
+
+    ```cmd copy
+    cd 'C:\Program Files\filebeat'
+    ```
+
+    ```cmd copy
+    .\install-service-filebeat.ps1
+    ```
+    If script execution is disabled on your system, you need to set the execution policy for the current session to allow the script to run. For example: 
+    
+    ```cmd copy
+    PowerShell.exe -ExecutionPolicy UnRestricted -File .\install-service-filebeat.ps1
+    ```
+    For more information about Powershell execution policies see <a href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_execution_policies?view=powershell-7.4" target="_blank">here</a>
+
+    *If you have chosen to download the filebeat.msi file*:
+    * double-click on it and the relevant files will be downloaded. 
+
+    At the end of the installation process you'll be given the option to open the folder where filebeat has been installed.
+    * Open a PowerShell prompt as an Administrator (right-click the PowerShell icon and select Run As Administrator).
+    * From the PowerShell prompt, change directory to the location where filebeat was installed and run the following command to install filebeat as a Windows service:
+    
+    ```cmd copy
+    .\install-service-filebeat.ps1
+    ```
+
+    If script execution is disabled on your system, you need to set the execution policy for the current session to allow the script to run. For example: 
+   
+    ```cmd copy
+    PowerShell.exe -ExecutionPolicy UnRestricted -File .\install-service-filebeat.ps1
+    ```
+    For more information about Powershell execution policies see <a href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_execution_policies?view=powershell-7.4" target="_blank">here</a>
+  </Tab>
+
+  <Tab>
+    To get started you will need to install filebeat. To do this you have two main options:
+
+    * Choose the AMD / Intel file (x86_64) or
+    * Choose the ARM file (arm64)
+                                    
+    You can tell if you have a Linux PC with an AMD / Intel CPU (kernel) architecture by opening a terminal and running the `uname -m` command. If it displays ___x86_64___ you have AMD / Intel architecture.
+
+    <Callout type="info">
+      To successfully install filebeat you will need to have root access. 
+    </Callout>
+ 
+    ___If you have an x86_64 system___ download and extract the contents of the file using the following commands:
+
+    ```cmd copy
+    curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-8.12.2-linux-x86_64.tar.gz
+    tar xzvf filebeat-8.12.2-linux-x86_64.tar.gz
+    ```
+
+    ___If you have an arm64 system___ download and extract the contents of the file using the following commands:
+    
+    ```cmd copy
+    curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-8.12.2-linux-arm64.tar.gz
+    tar xzvf filebeat-8.12.2-linux-arm64.tar.gz
+    ```
+  </Tab>
+  <Tab>
+    To get started you will need to install filebeat. To do this you have two main options:
+
+    * Choose the AMD / Intel file (x86_64) or
+    * Choose the ARM file (aarch64)
+            
+    You can tell if you have a Mac with an ARM CPU architecture by opening the Terminal application and running the ```arch``` command. If it displays ___arm64___ you have ARM architecture.
+            
+    <Callout type="info">
+      To successfully install filebeat you will need to have root access. 
+    </Callout>
+
+    ___If you have an x86_64 system___ download and extract the contents of the file using the following commands:
+    
+    ```cmd copy
+    curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-8.12.2-darwin-x86_64.tar.gz
+    tar xzvf filebeat-8.12.2-darwin-x86_64.tar.gz
+    ```
+
+    ___If you have an aarch64 system___ download and extract the contents of the file using the following commands:
+    
+    ```cmd copy
+    curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-8.12.2-darwin-aarch64.tar.gz
+    tar xzvf filebeat-8.12.2-darwin-aarch64.tar.gz
+    ```
+  </Tab>
+  <Tab>
+    To get started you will need to install filebeat. To do this you have two main options:
+
+    * Choose the AMD / Intel file (x86_64) or
+    * Choose the ARM file (aarch64)
+            
+    You can tell if you have a PC with an ARM CPU architecture by opening the Terminal 
+    application and running the `arch` command. If it displays ___arm64___ you have ARM architecture.
+    
+    <Callout type="info">
+      To successfully install filebeat you will need to have root access. 
+    </Callout>
+            
+    ___If you have an x86_64 system___ download and install filebeat using the following commands:
+    
+    ```cmd copy
+    curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-8.12.2-amd64.deb
+    sudo dpkg -i filebeat-8.12.2-amd64.deb
+    ```
+
+    ___If you have an aarch64 system___ download and install filebeat using the following commands:
+    
+    ```cmd copy
+    curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-8.12.2-arm64.deb
+    sudo dpkg -i filebeat-8.12.2-arm64.deb
+    ```
+  </Tab>
+  <Tab>
+    To get started you will need to install filebeat. To do this you have two main options:
+
+    * Choose the AMD / Intel file (x86_64) or
+    * Choose the ARM file (aarch64)
+            
+    You can tell if you have a PC with an ARM CPU architecture by opening the Terminal 
+    application and running the `arch` command. If it displays ___arm64___ you have ARM architecture.
+    
+    <Callout type="info">
+      To successfully install filebeat you will need to have root access. 
+    </Callout>
+            
+    ___If you have an x86_64 system___ download and install filebeat using the following commands:
+
+    ```cmd copy
+    curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-8.12.2-x86_64.rpm
+    sudo rpm -vi filebeat-8.12.2-x86_64.rpm    
+    ```
+
+    ___If you have an aarch64 system___ download and install filebeat using the following commands:
+    
+    ```cmd copy
+    curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-8.12.2-aarch64.rpm
+    sudo rpm -vi filebeat-8.12.2-aarch64.rpm
+    ```
+  </Tab>
+</Tabs>
+
+### Update your configuration file
+
+<Tabs items={["Windows", "Linux", "macOS", "DEB", "RPM"]}>
+  <Tab>
+    The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+
+    __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ field in the Logstash 
+    outputs section are correctly populated. If you are logged into your Logit.io account the ___'hosts'___ field should have been 
+    pre-populated with the correct values. The ___'paths'___ field will need to be set to the location of the logs you want to 
+    send to your Stack e.g. `- /Windows/DtcInstall.log` is a log file called DtcInstall.log located in C:/Windows.
+
+    Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ 
+    (this file can be found in the location where you installed Filebeat in the previous step. If it is missing create a 
+    new file with that name and populate it with the configuration details below).
+
+    ```yml copy
+    ###################### Logit.io Filebeat Configuration ########################
+    # ============================== Filebeat inputs ==============================
+    filebeat.inputs:
+    - type: filestream
+      enabled: true
+      paths:
+        # REQUIRED: Change the path to your logs:
+        - C:\Windows\System32\winevt\Logs\*
+      fields:
+        type: logfile
+
+    # ============================== Filebeat modules ==============================
+    filebeat.config.modules:
+      path: ${path.config}/modules.d/*.yml
+      reload.enabled: false
+      #reload.period: 10s
+
+    # ================================== Outputs ===================================
+    # ------------------------------ Logstash Output -------------------------------
+    output.logstash:
+        hosts: ["@logstash.host:@logstash.sslPort"]
+        loadbalance: true
+        ssl.enabled: true
+
+    # ================================= Processors =================================
+    processors:
+      - add_host_metadata:
+          when.not.contains.tags: forwarded
+      - add_cloud_metadata: ~
+      - add_docker_metadata: ~
+      - add_kubernetes_metadata: ~
+    ```
+  </Tab>
+  <Tab>
+    The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+
+    __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ field in the Logstash outputs section are correctly populated.
+    If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
+    The ___'paths'___ field will need to be set to the location of the logs you want to send to your Stack.
+    
+    Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
+    
+    ```yml copy
+    ###################### Logit.io Filebeat Configuration ########################
+    # ============================== Filebeat inputs ==============================
+    filebeat.inputs:
+    - type: filestream
+      enabled: true
+      id: my_unique_id
+      paths:
+        # REQUIRED CHANGE TO YOUR LOGS PATH
+        - /var/log/*.log
+      fields:
+        type: logfile
+        
+    # ============================== Filebeat modules ==============================
+    filebeat.config.modules:
+      path: ${path.config}/modules.d/*.yml
+      reload.enabled: false
+      #reload.period: 10s
+
+    # ================================== Outputs ===================================
+    # ------------------------------ Logstash Output -------------------------------
+    output.logstash:
+        hosts: ["@logstash.host:@logstash.sslPort"]
+        loadbalance: true
+        ssl.enabled: true
+
+    # ================================= Processors =================================
+    processors:
+      - add_host_metadata:
+          when.not.contains.tags: forwarded
+      - add_cloud_metadata: ~
+      - add_docker_metadata: ~
+      - add_kubernetes_metadata: ~
+    ```
+  </Tab>
+  <Tab>
+    The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+
+    __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ field in the Logstash outputs section are correctly populated.
+    If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
+    The ___'paths'___ field will need to be set to the location of the logs you want to send to your Stack.
+    
+    Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
+    
+    ```yml copy
+    ###################### Logit.io Filebeat Configuration ########################
+    # ============================== Filebeat inputs ==============================
+    filebeat.inputs:
+    - type: filestream
+      enabled: true
+      id: my_unique_id
+      paths:
+        # REQUIRED CHANGE TO YOUR LOGS PATH
+        - /var/log/*.log
+      fields:
+        type: logfile    
+
+    # ============================== Filebeat modules ==============================
+    filebeat.config.modules:
+      path: ${path.config}/modules.d/*.yml
+      reload.enabled: false
+      #reload.period: 10s
+
+    # ================================== Outputs ===================================
+    # ------------------------------ Logstash Output -------------------------------
+    output.logstash:
+        hosts: ["@logstash.host:logstash.sslPort"]
+        loadbalance: true
+        ssl.enabled: true
+
+    # ================================= Processors =================================
+    processors:
+      - add_host_metadata:
+          when.not.contains.tags: forwarded
+      - add_cloud_metadata: ~
+      - add_docker_metadata: ~
+      - add_kubernetes_metadata: ~
+    ```
+  </Tab>
+  <Tab>
+    The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+
+    __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ field in the Logstash outputs section are correctly populated.
+    If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
+    The ___'paths'___ field will need to be set to the location of the logs you want to send to your Stack.
+    
+    Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
+    
+    ```yml copy
+    ###################### Logit.io Filebeat Configuration ########################
+    # ============================== Filebeat inputs ==============================
+    filebeat.inputs:
+    - type: filestream
+      enabled: true
+      id: my_unique_id
+      paths:
+        # REQUIRED CHANGE TO YOUR LOGS PATH
+        - /var/log/*.log
+      fields:
+        type: logfile  
+
+    # ============================== Filebeat modules ==============================
+    filebeat.config.modules:
+      path: ${path.config}/modules.d/*.yml
+      reload.enabled: false
+      #reload.period: 10s
+
+    # ================================== Outputs ===================================
+    # ------------------------------ Logstash Output -------------------------------
+    output.logstash:
+        hosts: ["@logstash.host:logstash.sslPort"]
+        loadbalance: true
+        ssl.enabled: true
+
+    # ================================= Processors =================================
+    processors:
+      - add_host_metadata:
+          when.not.contains.tags: forwarded
+      - add_cloud_metadata: ~
+      - add_docker_metadata: ~
+      - add_kubernetes_metadata: ~
+    ```
+  </Tab>
+  <Tab>
+    The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+
+    __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ field in the Logstash outputs section are correctly populated.
+    If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
+    The ___'paths'___ field will need to be set to the location of the logs you want to send to your Stack.
+    
+    Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
+    
+    ```yml copy
+    ###################### Logit.io Filebeat Configuration ########################
+    # ============================== Filebeat inputs ==============================
+    filebeat.inputs:
+    - type: filestream
+      enabled: true
+      id: my_unique_id
+      paths:
+        # REQUIRED CHANGE TO YOUR LOGS PATH
+        - /var/log/*.log
+      fields:
+        type: logfile
+
+    # ============================== Filebeat modules ==============================
+    filebeat.config.modules:
+      path: ${path.config}/modules.d/*.yml
+      reload.enabled: false
+      #reload.period: 10s
+
+    # ================================== Outputs ===================================
+    # ------------------------------ Logstash Output -------------------------------
+    output.logstash:
+        hosts: ["@logstash.host:@logstash.sslPort"]
+        loadbalance: true
+        ssl.enabled: true
+
+    # ================================= Processors =================================
+    processors:
+      - add_host_metadata:
+          when.not.contains.tags: forwarded
+      - add_cloud_metadata: ~
+      - add_docker_metadata: ~
+      - add_kubernetes_metadata: ~
+    ```
+  </Tab>
+</Tabs>
+
+### Validate configuration
+
+<Tabs items={["Windows", "Linux", "macOS", "DEB", "RPM"]}>
+  <Tab>
+    ```yml copy
+    .\filebeat.exe -e -c filebeat.yml
+    ```
+
+    <Callout type="info">
+      If the yml file is invalid, filebeat will print an `error loading config file` error message with details on how to correct the problem. 
+      If you have issues starting filebeat see "How To Diagnose No Data In Stack" below to troubleshoot.
+    </Callout>
+  </Tab>
+
+  <Tab>
+    ```yml copy
+    sudo ./filebeat -e -c filebeat.yml --strict.perms=false
+    ```
+
+    You'll be running filebeat as root, so you need to __change ownership of the configuration file__ 
+    and any configurations enabled in the modules.d directory, or run filebeat with __--strict.perms=false__ as shown above. 
+    Read more about how to [change ownership](https://www.elastic.co/guide/en/beats/libbeat/master/config-file-permissions.html).
+
+    <Callout type="info">
+      If the yml file is invalid, filebeat will print an `error loading config file` error message with details on how to correct the problem.
+      If you have issues starting filebeat see "How To Diagnose No Data In Stack" below to troubleshoot.
+    </Callout>
+  </Tab>
+
+  <Tab>
+    ```yml copy
+    sudo ./filebeat -e -c filebeat.yml --strict.perms=false
+    ```
+
+    You'll be running filebeat as root, so you need to __change ownership of the configuration file__ and any configurations 
+    enabled in the modules.d directory, or run filebeat with __--strict.perms=false__ as shown above. 
+    Read more about how to [change ownership](https://www.elastic.co/guide/en/beats/libbeat/master/config-file-permissions.html).
+
+    <Callout type="info">
+      If the yml file is invalid, filebeat will print an `error loading config file` error message with details on how to correct the problem.
+      If you have issues starting filebeat see "How To Diagnose No Data In Stack" below to troubleshoot.
+    </Callout>
+  </Tab>
+
+  <Tab>
+    ```yml copy
+    sudo filebeat -e -c /etc/filebeat/filebeat.yml
+    ```
+
+    <Callout type="info">
+      If the yml file is invalid, filebeat will print an `error loading config file` error message with details on how to correct the problem.
+      If you have issues starting filebeat see "How To Diagnose No Data In Stack" below to troubleshoot.
+    </Callout>
+  </Tab>
+
+  <Tab>
+    ```yml copy
+    sudo filebeat -e -c /etc/filebeat/filebeat.yml
+    ```
+
+    <Callout type="info">
+      If the yml file is invalid, filebeat will print an `error loading config file` error message with details on how to correct the problem.
+      If you have issues starting filebeat see "How To Diagnose No Data In Stack" below to troubleshoot.
+    </Callout>
+  </Tab>
+</Tabs>
+
+### Start filebeat
+
+<Tabs items={["Windows", "Linux", "macOS", "DEB", "RPM"]}>
+  <Tab>
+    To start Filebeat, run in Powershell:
+
+    ```powershell copy
+    Start-Service filebeat
+    ```
+  </Tab>
+  <Tab>
+    To start Filebeat, run:
+
+    ```bash copy
+    sudo chown root filebeat.yml 
+    sudo chown root modules.d/{modulename}.yml 
+    sudo ./filebeat -e
+    ```
+
+    You'll be running filebeat as root, so you need to __change ownership of the configuration file__ and any 
+    configurations enabled in the modules.d directory, or run filebeat with __--strict.perms=false__ as shown above. 
+
+    Read more about how to [change ownership](https://www.elastic.co/guide/en/beats/libbeat/master/config-file-permissions.html).
+  </Tab>
+
+  <Tab>
+    To start Filebeat, run:
+
+    ```bash copy
+    sudo chown root filebeat.yml 
+    sudo chown root modules.d/{modulename}.yml 
+    sudo ./filebeat -e
+    ```
+
+    You'll be running filebeat as root, so you need to __change ownership of the configuration file__ and any 
+    configurations enabled in the modules.d directory, or run filebeat with __--strict.perms=false__ as shown above. 
+    
+    Read more about how to [change ownership](https://www.elastic.co/guide/en/beats/libbeat/master/config-file-permissions.html).
+  </Tab>
+
+  <Tab>
+    To start Filebeat, run:
+
+    ```bash copy
+    sudo service filebeat start
+    ```
+  </Tab>
+
+  <Tab>
+    To start Filebeat, run:
+
+    ```bash copy
+    sudo service filebeat start
+    ```
+  </Tab>
+</Tabs>
+
+### Check Logit.io for your logs
+<LaunchLogs utmMedium="logs" utmCampaign="filebeat" source="filebeat" />
+
+### How to diagnose no data in Stack
+If you don't see data appearing in your Stack after following the steps, visit the Help Centre guide for 
+[steps to diagnose no data appearing in your Stack](https://help.logit.io/en/articles/3008152-how-can-i-diagnose-no-data-appearing-in-elasticsearch-and-kibana) or 
+<IntercomButton text="Chat to support now" />.
+
+</Steps>
+
+### Filebeat Logging Overview
+Filebeat is the most popular way to send logs to ELK due to its reliability & minimal memory footprint. 
+It is the leading Beat out of the entire collection of open-source shipping tools, 
+including [Auditbeat](/sources/configure/auditbeat/), [Metricbeat](/sources/configure/metricbeat/) & [Heartbeat](/sources/configure/heartbeat/). 
+
+Filebeat's origins begin from combining key features from Logstash-Forwarder & Lumberjack & is written in Go. 
+Within the logging pipeline, Filebeat can generate, parse, tail & forward common logs to be indexed within Elasticsearch. 
+The harvester is often compared to Logstash but it is not a suitable replacement & instead should be used in tandem for most use cases.
+
+Earlier versions of Filebeat suffered from a very limited scope & only allowed the user to send events to 
+Logstash & Elasticsearch. More recent versions of the shipper have been updated to be compatible with 
+[Redis](/sources/configure/redis_app/) & [Kafka](/sources/configure/kafka/).  
+      
+A misconfigured Filebeat setup can lead to many complex logging concerns that this filebeat.yml wizard aims to solve. 
+Just a couple of examples of these include excessively large registry files & file handlers that error frequently 
+when encountering deleted or renamed log files. Tracking numerous pipelines using this shipper can become tedious 
+for self hosted Elastic Stacks so you may wish to consider our [Hosted ELK](/) service as a solution to this.
+      
+If you need any further assistance with migrating your log data to ELK we're here to help you get started. 
+Feel free to get in contact with our support team by sending us a message via 
+<IntercomButton text="live chat" /> & we'll be happy to assist.
