@@ -1,0 +1,61 @@
+---
+title: OpenTelemetry Swift (gRPC)
+pageTitle: OpenTelemetry Swift (gRPC) Configuration
+subTitle: Ship traces from Swift to OpenSearch with OpenTelemetry (via gRPC)
+logo: swift
+color: "#ff9900"
+stackTypes: apm
+description: Learn how to ship your Swift program traces to OpenSearch with our example configurations.
+protocol: grpc
+---
+
+Use OpenTelemetry to easily send Swift traces to your Logit.io Stack.
+
+<Steps>
+  ### Getting Started
+
+  You can get help Getting Started with OpenTelemetry for Swift by referring to the 
+  [official documentation](https://opentelemetry.io/docs/instrumentation/swift/getting-started/).
+  
+  To initialize the trace exporter use the snippet below as a starting point:
+
+  ```swift copy showLineNumbers /@opentelemetry.endpointAddress/ /"@opentelemetry.port:strip_quotes"/
+  import GRPC
+  import OpenTelemetryApi
+  import OpenTelemetrySdk
+  import OpenTelemetryProtocolExporter
+
+  // initialize the OtlpTraceExporter
+  let otlpConfiguration = OtlpConfiguration(timeout: OtlpConfiguration.DefaultTimeoutInterval)
+
+  let grpcChannel = ClientConnection
+      .usingPlatformAppropriateTLS(for: MultiThreadedEventLoopGroup(numberOfThreads:1))
+      .connect(host: "https://@opentelemetry.endpointAddress", port: "@opentelemetry.port:strip_quotes")
+
+  let traceExporter = OtlpTraceExporter(channel: grpcChannel,
+                                        config: otlpConfiguration)
+
+  // build & register the Tracer Provider using the built otlp trace exporter
+  OpenTelemetry.registerTracerProvider(tracerProvider: TracerProviderBuilder()
+                                                        .add(spanProcessor:SimpleSpanProcessor(spanExporter: traceExporter))
+                                                        .with(resource: Resource())
+                                                        .build())
+  ```
+
+  You can also configure various settings by specifying the appropriate Environment variables, for example:
+
+  ```env copy /@opentelemetry.endpointAddress/ /@opentelemetry.port/ /@opentelemetry.base64encodedAuthString/ /@opentelemetry.protocol/
+  OTEL_TRACES_EXPORTER = otlp
+  OTEL_EXPORTER_OTLP_ENDPOINT = https://@opentelemetry.endpointAddress:@opentelemetry.port
+  OTEL_EXPORTER_OTLP_TRACES_PROTOCOL = @opentelemetry.protocol
+  OTEL_EXPORTER_OTLP_TRACES_HEADERS = Authorization=Basic @opentelemetry.base64encodedAuthString
+  ```
+
+  ### Launch Logit.io to view your traces
+
+  <LaunchStack utmMedium="apm" utmCampaign="swift" source="apm_swift_grpc" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>

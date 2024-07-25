@@ -1,0 +1,27 @@
+---
+title: How Logit.io calculates daily index sizes and used volume statistics
+description: Learn about used volume statistics and how they relate to index sizes for the current day
+---
+
+# How Logit.io calculates daily index sizes and used volume statistics
+
+## Why is the index size sometimes less than that reported in Stack usage Statistics?
+
+Logs Sent is calculated from the maximum amount of disk utilised 
+by OpenSearch for a particular day, for the primary data store.
+
+It's important to be aware that when viewing the Elasticsearch index 
+status (using `/_cat/indices`) this page reports by default in [GiB](https://en.wikipedia.org/wiki/Gibibyte)
+and Logit reports usage in the more commonly used Gigabyte [GB](https://en.wikipedia.org/wiki/Gigabyte), 
+hence a difference when trying to compare the values.
+
+You can always query the elasticsearch index api and return the 
+`pri.store.size` in bytes `/_cat/indices?h=index,pri.store.size&bytes=b&v`, 
+which can then be converted into GB's.
+
+## Are the elastalert_status indexes included in the daily usage statistics?
+
+The elastalert_status indexes aren't included in the usage statistics and the 
+cut of time for index size calculation is UTC 00:00. Indexes that are currently 
+in use are normally slightly larger in size than older indexes, 
+this is due to older indexes being compressed.

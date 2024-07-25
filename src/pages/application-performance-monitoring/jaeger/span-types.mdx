@@ -1,0 +1,139 @@
+---
+title: Span Types
+description: Learn how to differentiate between different span types in Jaeger with our helpful guide
+---
+
+# How can I differentiate between different span types in Jaeger?
+
+## Custom Span Types in Jaeger: A Guide for APM Users
+
+Jaeger is a powerful tool for tracing and monitoring the performance of 
+your applications. One essential aspect of tracing is the ability to 
+categorize and differentiate spans based on their type. In this article, 
+we'll explore how you can define and use custom span types in Jaeger.
+
+## Understanding Span Types
+
+In Jaeger, "span types" refer to the different categories or classifications 
+of spans. Spans represent individual units of work or operations within a 
+distributed system and are essential for understanding the flow of requests 
+and the performance of your applications.
+
+While Jaeger doesn't have an explicit predefined set of span types like 
+some other tracing systems, it allows you to define and use span types 
+based on your application's specific needs.
+
+## Here are some common examples of span types that you might encounter in Jaeger:
+- **HTTP Request:** Spans related to incoming HTTP requests and their processing.
+- **Database Query:** Spans associated with database queries and their execution.
+- **RPC (Remote Procedure Call):** Spans related to remote procedure calls between different services or microservices.
+- **Cache Operation:** Spans that involve caching operations, such as cache reads or writes.
+- **Internal Processing:** Spans for internal processing or computation within a service.
+- **Messaging:** Spans related to messaging systems, such as message queue processing.
+- **External Service:** Spans for interactions with external services or APIs.
+- **Error or Exception:** Spans that capture error or exception handling within your application.
+- **Custom:** You can define custom span types to categorize spans based on your application's specific logic or requirements.
+
+The exact set of span types used in your Jaeger implementation may vary depending 
+on your application architecture and the level of granularity you need for tracing.
+
+## Adding Custom Span Types
+To differentiate between different span types in Jaeger, you'll need 
+to use instrumentation in your code to add relevant metadata, tags, or annotations to your spans.
+
+In *Python*, you use the set_tag method to add a custom tag named "span.type" 
+to each span, specifying its type, whether it's an "HTTP Request" or "Database Query."
+
+In *Go*, you initialize a Jaeger tracer, create spans for an "HTTP Request" 
+and "Database Query," and use the SetTag method to add the custom tag "span.type" to each span.
+
+By adding these custom tags to your spans, you can effectively differentiate 
+span types within Jaeger's UI in Logit.io. This feature makes it easier to 
+filter and analyze spans based on their types, helping with performance 
+analysis and troubleshooting in Jaeger.
+
+Below, we'll include examples in different programming languages 
+(Python and Go) to demonstrate how you can achieve this.
+
+## Python Example:
+
+In Python, you can use the OpenTelemetry library to create and customize spans. 
+Here's an example of how to differentiate span types using tags:
+
+```python copy showLineNumbers
+import opentracing
+
+# Create a span for an HTTP request
+
+with opentracing.start_span("HTTP Request") as http_span:
+
+    http_span.set_tag("span.type", "HTTP Request")
+
+    # Your code for handling the HTTP request here
+
+# Create a span for a database query
+
+with opentracing.start_span("Database Query") as db_span:
+
+    db_span.set_tag("span.type", "Database Query")
+
+    # Your code for executing the database query here
+```
+
+## Go Example:
+
+In Go, you can use the OpenTelemetry package to instrument your code and 
+differentiate span types. Here's an example:
+
+```golang copy showLineNumbers
+package main
+
+import (
+  "github.com/opentracing/opentracing-go"
+  "github.com/opentracing/opentracing-go/ext"
+  "github.com/opentracing/opentracing-go/log"
+  "jaeger-client-go/config"
+  "os"
+) 
+
+func main() {
+  // Initialize Jaeger tracer
+
+  cfg, _ := config.FromEnv()
+
+  tracer, closer, _ := cfg.NewTracer()
+
+  defer closer.Close()
+
+  opentracing.SetGlobalTracer(tracer)
+
+  // Create a span for an HTTP request
+
+  httpSpan := opentracing.StartSpan("HTTP Request")
+
+  defer httpSpan.Finish()
+
+  ext.SpanKindRPCClient.Set(httpSpan)
+
+  httpSpan.SetTag("span.type", "HTTP Request")
+
+  // Your code for handling the HTTP request here
+
+  // Create a span for a database query
+
+  dbSpan := opentracing.StartSpan("Database Query")
+
+  defer dbSpan.Finish()
+
+  ext.SpanKindRPCClient.Set(dbSpan)
+
+  dbSpan.SetTag("span.type", "Database Query")
+
+  // Your code for executing the database query here
+}
+```
+
+By adding these custom tags to your spans, you can later use Jaeger's 
+UI within your APM platform to filter and differentiate spans based on 
+their types. This makes it easier to analyze and troubleshoot 
+performance and tracing data in Jaeger.

@@ -1,0 +1,66 @@
+@import "../styles/imports";
+
+.nx-max-w-\[90rem\] {
+  max-width: 130rem;
+}
+.nx-max-w-6xl {
+  max-width: 60rem;
+}
+.nextra-breadcrumb {
+  margin-bottom: 2rem;
+}
+.nx-leading-none {
+  line-height: 1;
+}
+
+.nextra-content {
+  overflow: hidden;
+}
+
+.nx-text-primary-600 {
+  color: $text-link;
+
+  &:hover {
+    color: $text-link-hover;
+  }
+
+  &:visited {
+    color: $text-link-visited;
+  }
+}
+
+:is(html[class*="dark"]) {
+  .nx-text-primary-600 {
+    color: $text-link-dark-theme;
+
+    &:hover {
+      color: $text-link-dark-theme-hover;
+    }
+
+    &:visited {
+      color: $text-link-dark-theme-visited;
+    }
+  }
+}
+
+@media all and (min-width: 1400px) {
+  .nextra-toc,
+  .nextra-sidebar-container {
+    width: 100%;
+    max-width: 20rem;
+  }
+}
+
+:is(html[class*="dark"]) {
+  g[data-theme="fill"] path,
+  path[data-theme="fill"],
+  text[data-theme="fill"] {
+    fill: #fff;
+  }
+
+  g[data-theme="stroke"] path,
+  path[data-theme="stroke"],
+  text[data-theme="stroke"] {
+    stroke: #fff;
+  }
+}

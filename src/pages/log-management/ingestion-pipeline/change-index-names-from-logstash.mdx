@@ -1,0 +1,62 @@
+---
+title: Changing Index Names in Logstash
+description: Learn how to specify different index names in OpenSearch in this article from Logit.io
+---
+
+# How can I change the index names from logstash-\*
+
+Logit.io uses a predefined way to set the index names so by default all new Logit.io stacks that send data via Logstash have an index name of `logstash-*`.
+
+### Can I change the index name to something different?
+
+Absolutely, you can change the name of the index, or send your logs to multiple indexes by adding conditions to your Logstash filters.
+
+<Callout type="info">
+  To edit your Logstash filters for any stack, go to the `Logstash Pipelines` settings.
+</Callout>
+
+If your sending your data via an OpenSearch beat such as Filebeat your condition should be:
+
+```plaintext
+mutate
+{
+  replace => { "[@metadata][beat]" => “YOURINDEXNAME” }
+}
+```
+
+Alternatively, inside your condition you can specify the index name using `add_field`.
+
+```plaintext
+if[FIELD] == "CONDITION" {
+   mutate
+   {
+      add_field => { "[@metadata][beat]" => "YOURINDEXNAME" }
+   }
+}
+```
+
+Where field is a field name within your logs. So if you wanted to have your IIS logs in their own index you could add:
+
+```plaintext
+if[type] == "iis" {
+   mutate
+   {
+      add_field => { "[@metadata][beat]" => "iis" }
+   }
+}
+```
+
+### How can we re-index the data after an index name change?
+
+Depending on the volume the simplest way is to resend the data, you can also use the re-index OpenSearch API. If you no longer require the historic data, you can simply delete the index.
+
+### Are there any index name limitations with OpenSearch?
+
+There are several limitations to what you can name your index. The complete list of limitations are:
+
+- Lowercase only
+- Cannot include `, /, *, ?, “, <, >, |, (space character), ,, #`
+- Indices prior to 7.0 could contain a colon (:), but that's been deprecated and won't be supported in 7.0+
+- Cannot start with -, \_, +
+- Cannot be . or ..
+- Cannot be longer than 255 bytes (note it is bytes, so multi-byte characters will count towards the 255 limit faster)

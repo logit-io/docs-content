@@ -1,0 +1,52 @@
+---
+title: Learn how to reduce your log volumes
+description: Discover the steps you need to take to manage and reduce your log volumes in this help article from Logit.io.
+---
+
+# Learn how to reduce your log volumes
+
+Sometimes you may receive notifications that you are sending more 
+data than your plan allows. If this is unexpected you might want 
+to look a bit more closely at the data you're sending, to see if 
+there are additional data such as headers that are not required. 
+We don't want you sending more data than is necessary!
+
+<Callout type="info">
+  OpenSearch does perform compression on the indexes after a 
+  period of time, so this can result in the usage figures on the 
+  statistics page changing within a 24hr period.
+</Callout>
+
+### Break out your data
+
+If you have a single field that contains an entire JSON request, for 
+example, you can parse this data into separate fields that contain 
+just the values you require. Then you can discard the large request 
+field, reducing the total data sent.
+
+In the example below, we are matching a value in the message data 
+with a specific pattern. If we find a value that matches the pattern 
+we create a field called Duration with this value, all unmatched 
+message data will be discarded.
+
+```ruby copy
+filter {
+  grok {
+    match => {
+      "message" => "Duration: %{NUMBER:duration}"
+    }
+  }
+}
+```
+
+### Remove Headers
+
+Headers can often contain a large amount of data, they are added automatically 
+by Logstash when sending data to OpenSearch. If you don't require this, 
+you can remove them by adding the following to your Logstash filter before sending to OpenSearch.
+
+```ruby copy
+mutate {
+  remove_field => ["headers"]
+}
+```

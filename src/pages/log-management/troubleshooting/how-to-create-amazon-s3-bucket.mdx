@@ -1,0 +1,293 @@
+---
+title: How to create an Amazon S3 Bucket
+description: How to Onboard and Get Started Sending Data using Amazon S3 buckets to your Logs Stack
+---
+
+# How to create an Amazon S3 bucket and send data to Logit.io
+
+Logit.io provides extensive features and configurations to 
+ingest, monitor, and analyze data sent to an Amazon S3 bucket!
+
+Follow this quickstart guide to send data from an S3 bucket to Logit.io. 
+
+## Pre-requisites
+
+You'll need a Logit.io account. Sign up for a free trial [here](https://dashboard.logit.io/sign-up).
+
+## Step 1: Creating an S3 Bucket
+
+Go to the AWS Amazon S3 website using the following link: [https://aws.amazon.com/s3/](https://aws.amazon.com/s3/)
+
+From here click the "Get Started with Amazon S3" button.
+
+![Amazon S3](@/images/help/getting-started/amazon-s3.png)
+
+If you already have an AWS Account then sign in. Otherwise click the 
+"Create a new AWS account" button, create a new account and then follow the steps below.
+
+You will be taken to the S3 Get Started page as there are currently 
+no existing Buckets. Click on the "Create Bucket" button to go to the Create Bucket page.
+
+![Amazon S3 Create Bucket](@/images/help/getting-started/amazon-s3-create-bucket.png)
+
+In this example we will leave the everything on the page as the 
+default and simply add our new bucket name as shown below:
+
+![AWS Create Bucket](@/images/help/getting-started/aws-create-bucket.png)
+
+Copy the name you have given to the bucket as we will require this later 
+and then scroll down to the very bottom of the page and click the "Create bucket" button.
+
+![Create Bucket](@/images/help/getting-started/create-bucket.png)
+
+You will then be taken to the S3 Buckets page and will see the newly created bucket.
+
+![Newly Created Amazon S3 Bucket](@/images/help/getting-started/newly-created-bucket.png)
+
+## Step 2: Upload logs to the bucket
+
+<Callout type="info">
+  Copy and paste the bucket name and the region name to a text editor of your 
+  choice as they are needed to fill in further Amazon forms and the Logit.io Inputs form.
+</Callout>
+
+The region is highlighted in blue above. Click on the link 
+to the new bucket as shown highlighted in red.
+
+This takes you to the overview page for the Bucket, from here we can 
+also look at properties, permissions, metrics etc but in this example 
+we will just upload some logs, this is done by pressing either of the two "Upload" buttons.
+
+![Logit Test Bucket](@/images/help/getting-started/logit-test-bucket.png)
+
+This will take us to the file upload page, here we need to click "Add files". 
+If you have a log file that you wish to use then browse to the file and upload it.
+
+![Logit Add Files](@/images/help/getting-started/add-files.png)
+
+If you want to just get an example file with some logs for 
+now you can go to the following 
+URL: [https://www.ibm.com/docs/en/zos/2.4.0?topic=problems-example-log-file](https://www.ibm.com/docs/en/zos/2.4.0?topic=problems-example-log-file) and copy some example logs from there:
+
+![RSVP Agent Processing Log](@/images/help/getting-started/rsvp-agent-processing-log.png)
+
+Copy this and paste it into a text editor of your choice. Save 
+the file with any name that you want such as test.txt and then 
+click "Add files" as shown in the previous screenshot.
+
+Navigate to the file you have just created and select it. You 
+should now see that the file has been added.
+
+![Files and Folders](@/images/help/getting-started/files-and-folders.png)
+
+Scroll down to the very bottom of the page and click the 
+"Upload button" to upload the file into the Bucket.
+
+![Properties](@/images/help/getting-started/properties.png)
+
+You will see a summary of the file that you have just uploaded, 
+click the "Close" button to return to the bucket overview page.
+
+![Upload Status](@/images/help/getting-started/upload-status.png)
+
+## Step 3: Create Policy to allow logs to be sent to Logit.io
+
+You now have data to send to Logit.io. Still in AWS, in the search bar 
+at the top of the-right of the page next to Services, type in "IAM" 
+and then select this from the list as shown below:
+
+![IAM](@/images/help/getting-started/IAM.png)
+
+This takes you to the IAM Dashboard:
+
+![IAM Dashboard](@/images/help/getting-started/IAM-dashboard.png)
+
+On the left-hand side of the page there is a menu, from here click the "Policies" option.
+
+![Identity and Access Management](@/images/help/getting-started/identity-access-management.png)
+
+On the Policies page, click the "Create Policy" button found at the top-right.
+
+![Policies](@/images/help/getting-started/policies.png)
+
+On the Policies page, we need to press the "JSON" button.
+
+![Specify Permissions](@/images/help/getting-started/specifiy-permissions.png)
+
+Then we need to paste the text below into the Policy editor:
+
+```json copy showLineNumbers
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "Read",
+      "Effect": "Allow",
+      "Action": ["s3:GetObject"],
+      "Resource": ["arn:aws:s3:::your-bucket/*"]
+    },
+    {
+      "Sid": "List",
+      "Effect": "Allow",
+      "Action": ["s3:ListBucket"],
+      "Resource": ["arn:aws:s3:::your-bucket"]
+    }
+  ]
+}
+```
+
+<Callout type="info">
+  Don't forget to change "your-bucket", which appears twice in the text, 
+  to the name of your Bucket. In our example the bucket name is 
+  "logit-test-bucket" so we update the code as follows:
+</Callout>
+
+![Policy Editor](@/images/help/getting-started/policy-editor.png)
+
+Scroll down to the very bottom of the page and click the "Next" button.
+
+![Next](@/images/help/getting-started/add-new-statement.png)
+
+Enter a Policy name and a Description (optional)
+
+![Review and Create](@/images/help/getting-started/review-create.png)
+
+Scroll to the very bottom of the page and then click the "Create policy" button.
+
+![Create Policy](@/images/help/getting-started/create-policy.png)
+
+That's it for this step, we have now created a Policy that 
+will allow us to send data from our bucket to Logit.io.
+
+## Step 4: Create a User in AWS
+
+You will then be taken to a page listing all of your policies. 
+In the menu on the left-hand side of the screen click "Users" 
+which appears under Access Management.
+
+![Users](@/images/help/getting-started/users.png)
+
+At the top of the Users page, click the "Create User" button
+
+![Create User](@/images/help/getting-started/create-user.png)
+
+Enter a user name and then click the "Next" button.
+
+![Specify User Details](@/images/help/getting-started/specify-user-details.png)
+
+You will be taken to the Set Permissions page, here you need to select the "Attach policies directly" option.
+
+![Attach Policies Directly](@/images/help/getting-started/attach-policies-directly.png)
+
+When you have selected the option, scroll to the very bottom of the page and click the "Next" button.
+
+![Set Permissions Boundary](@/images/help/getting-started/set-permissions-boundary.png)
+
+The next page is the Review and Create page, scroll to the bottom and click 
+the "Create user" button. This will take you to the Users page where you 
+will see the new user that has just been created.
+
+## Step 5: Get Access Key and Secret Access Key
+
+Click on the new user to go to the user details page.
+
+![New User](@/images/help/getting-started/users(1).png)
+
+On the user details page click the "Create access key" link.
+
+![Create Access key](@/images/help/getting-started/s3.png)
+
+Here we need to select the "Third-party service" option shown below.
+
+![Third Party Service](@/images/help/getting-started/third-party-service.png)
+
+Scroll down to the very bottom of the page and click the confirmation checkbox and then click the "Next" button.
+
+![Confirmation Checkbox](@/images/help/getting-started/confirmation-checkbox.png)
+
+Enter a description and then click the "Create access key" option.
+
+![Create Access Key](@/images/help/getting-started/create-access-key.png)
+
+Here you can see your Access Key. You can click to show and hide the Secret 
+Access key. The Access Key and Secret Access Key are both required to send logs to Logit.io.
+
+You can either copy the Access Key and Secret Access Key from here and 
+save them somewhere or click to "Download .cvs file" which will save 
+both into a file for you to use later.
+
+![Retrieve Access Keys](@/images/help/getting-started/retrieve-access-keys.png)
+
+We now have everything set up to enable us to send the logs from the bucket to Logit.io.
+
+## Step 6: Creating an S3 Input in Logit.io
+
+Ensure that you are signed in to Logit.io, then read through 
+our [Amazon S3 data source integration guide](/integrations/log-management/aws/s3) to
+start sending data to Logit.io.
+
+<Callout type="info">
+  If signed in to your Logit.io account, you should be able to 
+  see your Stack details in the left panel of the Filebeat 
+  instructions (as shown below) including stack id and port details.
+</Callout>
+
+If you don't see your stack details, 
+[return to your dashboard](https://dashboard.logit.io/?utm_source=GettingStartedGuideFile&utm_medium=Dashboard) and 
+choose View All Sources, this will ensure the instructions are 
+pre-configured for the stack you're working with.
+
+![Amazon S3 Logstash Configuration](@/images/help/getting-started/amazon-s3-logstash-configuration.png)
+
+Scroll down to step 4 and click the "Configure AWS" button.
+
+![Configure AWS](@/images/help/getting-started/configure-aws.png)
+
+This will open the Logstash Amazon S3 Input Details page. We now need to 
+fill in the details that we have from creating the policy and user on the AWS website.
+
+<Callout type="info">
+  Earlier we copied the bucket name, region and the access key 
+  and secret access key and they need to be entered into the form as shown below.
+</Callout>
+
+Once this has been done click the "Test and configure input" button.
+
+![Test and Configure Input](@/images/help/getting-started/test-configure-input.png)
+
+You will be returned back to the Logstash Inputs page, in the top right-hand 
+corner of the page there is a "Launch Logs" button. Click this button to 
+view the contents of the log file that was uploaded to Amazon AWS earlier.
+
+## Step 7: Verify and Search your Data
+
+As OpenSearch Dashboards launches, which serves as the default log viewer, 
+you will be prompted the first time to "Select your tenant." 
+For most users, selecting the "Global" tenant is the recommended option.
+
+<Callout type="info">
+  You can always change the tenant later in your user settings inside of OpenSearch.
+</Callout>
+
+![Select Tenant](@/images/help/getting-started/select-tenant.png)
+
+### The Discover View
+
+After selecting your tenant, you are then redirected to the Discover View that 
+allows you to explore and search the data arriving in your stack. It provides 
+a user-friendly interface to quickly filter and find specific logs, metrics, 
+or other data types.
+
+![Discover View](@/images/help/getting-started/discover-view.png)
+
+## Step 8: Monitor and Troubleshoot
+
+You can view your data with predefined searches and dashboards that facilitate monitoring and troubleshooting.
+
+![Monitor and Troubleshoot](@/images/help/getting-started/monitor-troubleshoot.png)
+
+You can browse our pre-configured dashboards and choose which to install by choosing Install Dashboards from your Logs Stack.
+
+![Install Dashboards](@/images/help/getting-started/install-dashboards.png)
+
+Once you've sent your logs to Logit.io, you can gain an in-depth perspective on the health and performance of your distributed cloud services through using real-time monitoring, and custom dashboards. This allows your team to dive deep into logs for troubleshooting, while simultaneously offering a broad view of your infrastructure's status via custom dashboards.

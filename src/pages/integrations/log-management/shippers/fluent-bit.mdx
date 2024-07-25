@@ -1,0 +1,57 @@
+---
+title: Fluent Bit
+subTitle: Ship Fluent Bit events and metrics
+logo: fluentd
+color: "#2e62a4"
+description: Fluent Bit allows you to send logs to your ELK stacks. Configure Fluent Bit to send logs to Logstash. Get started using our sample fluent bit configuration.
+stackTypes: logs
+sslPortType: tcp-ssl
+portType: tcp
+---
+
+Fluent Bit is an open source data collector which can be used to 
+collect event logs from multiple sources. It filters, buffers and 
+transforms the data before forwarding to one or more destinations, 
+including [Logstash](/integrations/logs/shippers/logstash).
+
+<Steps>
+  ### Commandline Example
+
+  Example commandline configuration to send CPU metrics from Fluent Bit to logstash
+
+  <FluentBitCommandlineExample />
+
+  ### Example Output Config
+
+  If using a configuration file, then add the following to your Fluent Bit config
+
+  <FluentBitExampleOutputConfig />
+
+  ### Check Logit.io for your logs
+  <LaunchStack utmMedium="logs" utmCampaign="fluentbit" source="fluentbit" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+### Fluent Bit Logging Overview
+
+Fluent Bit often draws comparisons with Logstash as both log collectors share some similarities especially when it comes to 
+platform compatibility.
+
+Where these tools differ though can be seen clearly across their configuration difficulty & performance (Logstash is notably 
+easier to configure).
+
+Fluent Bit on the other hand is known for requiring minimal system resources for more lightweight method of forwarding your data.
+
+For this configuration guide, we've covered using both Logstash & Fluent Bit together for forwarding your data for further 
+log analysis and processing using ELK (Elasticsearch, Logstash & Kibana).
+
+The Logit.io platform is built to allow you to drive data-driven insights from your logs & brings together Fluent Bit & Logstash 
+for full observability of your logs in a single centralised platform. Our platform offers a complete solution for centralising 
+your log files from multiple applications and servers and provides a Fluent Bit log analyser as standard.
+
+If you need any more help with migrating your Fluent Bit to Logstash the Logit.io team are here to help. 
+Feel free to get in contact with our support team <IntercomButton text="via live chat" /> & we'll be happy to assist.

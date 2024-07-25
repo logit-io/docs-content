@@ -1,0 +1,81 @@
+---
+title: Configure Flatline Alerts for OpenSearch
+description: Find out more about how to create a flatline alert for your OpenSearch logs or metrics in this article from Logit.io.
+---
+
+# Configure Flatline Alerts for OpenSearch
+
+A Flatline alert matches when the total number of events is under a given 
+threshold for a specified time period. The threshold is the minimum number 
+of events required to prevent an alert from being triggered. If the time 
+period contains fewer than the threshold value, an alert will be triggered.
+
+**Flatline Type -** Match when there are less than X events in Y time
+
+For example, if you want to check the frequency of heartbeat messages 
+that drop **below 100** in **ten minutes**, the alert will be triggered 
+when this condition is met. Here is an example configuration:
+
+```yaml copy
+name: "Heartbeat Flatline Example Alert"
+type: flatline
+index: "*-*"
+threshold: 100
+timeframe:
+  minutes: 10
+filter:
+- query:
+    query_string:
+      query: "message: heartbeat*"
+use_count_query: true
+doc_type: _doc
+alert: 
+  - "email"
+email:
+  - "example@logit.io"
+```
+
+Using the example above you can ensure that you have a working flatline alert. 
+To have a working alert rule you will need the following:
+
+- The `name` of the alert 
+- The `type` set to `flatline` 
+- The `index` that you need to check against 
+- The `threshold`  you require 
+- The `timeframe`  you want to set and 
+- The `query` you are checking against.
+
+### Additional Options
+
+Additional options that you may want to include in your alert rule are explained below.
+
+`use_terms_query` is an additional option, which if you set to true then 
+ElastAlert will make an aggregation query against OpenSearch to get 
+counts of documents matching each unique value of the `query_key`
+
+The `query_key` which can be set similarly to the `query` looks like this:
+
+```yaml copy
+query_key: "message: heartbeat*"
+```
+
+This means that an alert will be triggered if any value of the `query_key` 
+has been seen at least once and then falls below the threshold.
+
+If your timeframe is 10 minutes and you look for events that happened in the 
+last 10 minutes, `timeframe_elapsed` will always default to False.
+
+For flatline rules, `first_event` gets populated with an empty "placeholder" 
+timestamp after the first query is made. So, it's guaranteed to get populated 
+after the first query.
+
+### Troubleshooting
+
+Make sure to proofread the rule you have written to ensure that it is what you 
+expect to see as most of the issues regarding alerts not working correctly are 
+related to the points above. Below are some examples of common issues:
+
+- Issues with YAML spacing/formatting
+- Incorrect syntax 
+- Required fields for rules that are missing
+- Two rules with the same name

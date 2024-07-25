@@ -1,0 +1,29 @@
+---
+title: Add Amazon S3 Input
+description: Learn how to configure an Amazon S3 Input on your Logstash Instance
+---
+
+# How to add an Amazon S3 Input to your Log Stack
+
+To set up the Amazon S3 input for your Logstash stack, follow these steps:
+
+1. Navigate to `Logstash Inputs` settings.
+2. Click on the "Add New Input" button in the Logstash configuration wizard.
+3. Select the "Amazon S3" option from the available input types.
+4. Complete the configuration details:
+   - **Access Key ID:** Enter the AWS Access Key ID.
+   - **Bucket Name:** Specify the name of the S3 bucket.
+   - **Region:** Choose the AWS Region (Default value is "us-east-1").
+   - **Secret Access Key:** Enter the AWS Secret Access Key.
+5. The following configuration details are optional, only add if required:
+   - **Prefix:** If specified, the prefix of filenames in the bucket must match (not a regexp).
+   - **Display Name:** Provide a name for the Amazon S3 input.
+   - **Display Description:** Add a description for better identification.
+   - **Tags:** Assign tags to your events (comma-separated).
+   - **Type:** Add a type field to all events handled by this input.
+   - **Add Field:** Include additional fields to the events. You can add multiple key-value pairs.
+5. Click the "Configure Input" button to save the Amazon S3 input configuration.
+6. Click "Cancel" to discard changes.
+
+This guide provides a step-by-step process for configuring an Amazon S3 input in Logstash. 
+Adjust the values based on your specific use case and preferences.

@@ -1,0 +1,81 @@
+---
+title: Using OpenTelemetry for Logs
+description: How to Onboard and Get Started Sending Data using OpenTelemetry to your Logs Stack
+---
+
+# Getting Started With OpenTelemetry for Logs
+
+Logit.io provides extensive features and configurations to ingest, 
+monitor, and analyze data, manage your infrastructure and so much more!
+
+Follow this quickstart guide to send log data using the OpenTelemetry collector. 
+
+## Pre-requisites
+
+You'll need a Logit.io account. Sign up for a free trial [here](https://dashboard.logit.io/sign-up?utm_source=GettingStartedGuideOpenTelemetryMetrics&utm_medium=SignUp).
+
+## Step 1: Get your data into Logit.io
+
+Your data analytics journey starts by sending your Logs, Metrics or 
+Traces to Logit.io. For this purpose, we will be using the OpenTelemetry Collector. 
+This choice enables you to quickly and securely ship your data. The OpenTelemetry 
+Collector offers a vendor-agnostic way to collect, process, and export telemetry 
+data, ensuring compatibility and flexibility across different monitoring tools and services.
+
+## Set up your data source
+
+**Logs OpenTelemetry Collector**
+
+1. Login to Logit.io
+
+2. Initiate the configuration process by clicking on _View Data Integrations_.
+
+![APM Stack](@/images/help/apm/overview/apm-stack.png)
+
+Navigate to "Integrations" > "OpenTelemetry" > "Logs OpenTelemetry Collector"
+
+![Logs OpenTelemetry Collector](@/images/help/getting-started/logs-opentelemetry-collector.png)
+
+3. After you have installed and configured the OpenTelemetry Collector return to your 
+dashboard [https://dashboard.logit.io](https://dashboard.logit.io)
+
+4. From your dashboard choose Launch Logs.
+
+## Step 2: Verify and Search your Data
+
+As OpenSearch Dashboards launches, which serves as the default log viewer, you 
+will be prompted the first time to "Select your tenant." For most users, 
+selecting the "Global" tenant is the recommended option.
+
+<Callout type="info">
+  You can always change the tenant later in your user settings inside of OpenSearch.
+</Callout>
+
+![Choosing Tenant](@/images/help/getting-started/select-tenant.png)
+
+**The Discover View**
+
+After selecting your tenant, you are then redirected to the Discover View 
+that allows you to explore and search the data arriving in your stack. It 
+provides a user-friendly interface to quickly filter and find specific logs, 
+metrics, or other data types.
+
+![OpenTelemetry Discover View](@/images/help/getting-started/discover-view.png)
+
+## Step 3: Monitor and Troubleshoot
+
+You can view your data with **predefined searches and dashboards** that 
+facilitate monitoring and troubleshooting.
+
+![OpenTelemetry Monitor and Troubleshoot](@/images/help/getting-started/monitor-troubleshoot.png)
+
+You can browse our pre-configured dashboards and choose which to install 
+by choosing `Install Dashboards` from your Logs stack.
+
+![OpenTelemetry Install Dashboards](@/images/help/getting-started/install-dashboards.png)
+
+Once you've sent your logs to Logit.io, you can gain an in-depth perspective 
+on the health and performance of your distributed cloud services through 
+using real-time monitoring, and custom dashboards. This allows your team to 
+dive deep into logs for troubleshooting, while simultaneously offering a 
+broad view of your infrastructure's status via custom dashboards and notifications.

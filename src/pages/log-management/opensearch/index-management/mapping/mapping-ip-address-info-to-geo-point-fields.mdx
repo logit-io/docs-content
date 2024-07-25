@@ -1,0 +1,46 @@
+---
+title: Mapping IP Address Info to geo_point Fields
+description: Map IP address data to geo_point fields in OpenSearch dashboards Example
+---
+
+# Mapping IP Address Info to geo_point Fields
+
+In OpenSearch, you can use Logstash to map IP address data to `geo_point` fields. 
+Just add the following to your [Logstash filters](/log-management/ingestion-pipeline/configuration/configure-logstash-filters).
+
+## Example Logstash Configuration
+
+```ruby copy
+if [ip] {
+    geoip {
+        source => "ip"
+        target => "[source][geo]"
+    }
+    
+    geoip {
+        source => "ip"
+        target => "[source][as]"
+        default_database_type => "ASN"
+        fields => [ "AUTONOMOUS_SYSTEM_NUMBER", "AUTONOMOUS_SYSTEM_ORGANIZATION"]
+    }
+}
+```
+
+## Configuration Details
+
+- Replace `[ip]` with the actual name of the field in your data that contains IP addresses.
+- The first `geoip` filter enriches the document with geographical information.
+- The second `geoip` filter enriches the document with Autonomous System (AS) information.
+
+Make sure to configure the source and target fields according to your 
+data structure. The `fields` parameter in the second `geoip` filter 
+specifies which AS-related fields to include in the output.
+
+### After Configuring Logstash
+
+Your documents will be enriched with geographical and AS information, 
+and you can index them into OpenSearch. Then, in OpenSearch Dashboards, 
+you can create visualizations and dashboards using the mapped `geo_point` fields.
+
+Remember to adjust the Logstash input and output configurations 
+based on your specific data sources and destination requirements.

@@ -1,0 +1,23 @@
+{
+  "index": {
+    "title": "Logit.io Documentation",
+    "theme": {
+      "layout": "full",
+      "sidebar": false,
+      "timestamp": false,
+      "pagination": false,
+      "breadcrumb": false,
+      "toc": false
+    }
+  },
+  "getting-started": "Getting Started",
+  "log-management": "Log Management",
+  "infrastructure-metrics": "Infrastructure Metrics",
+  "application-performance-monitoring": "Application Performance Monitoring",
+  "opentelemetry": "OpenTelemetry",
+  "integrations": "Integrations",
+  "account-administration": "Account Administration",
+  "under-review": {
+    "display": "hidden"
+  }
+}

@@ -1,0 +1,49 @@
+---
+title: Using Google Authenticator for Two Factor Authentication with your Logit.io account
+description: How to set up Google Authenticator for Two Factor Authentication (2FA) with Logit.io
+---
+
+# Using Google Authenticator for Two Factor Authentication with your Logit.io account
+
+Google Authenticator or similar apps can be found in the [Apple App Store](https://apps.apple.com/gb/app/google-authenticator/id388497605)
+and the [Google Play Store](https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=en_GB).
+
+First, you will need 
+to [enable two-factor authentication](/account-administration/account-access-users-teams/two-factor-authentication/enable-two-factor-authentication) for your Logit.io account.
+When enabling 2FA using Google Authenticator (or similar) you will be 
+presented with a barcode and a field to enter a passcode. 
+You need to scan the barcode to retrieve the passcode.
+
+![QR Code](@/images/help/account-access/qr-code.png)
+
+Open the Google Authenticator app on your device and press the red plus button.
+Select the "Scan a barcode" option. You may be asked if the Google Authenticator 
+can have permission to use the camera on your device, say yes to this.
+
+![Google Authentication](@/images/help/account-access/google-authenticator.png)
+
+Your device screen will show the camera view with a red box outline and crosshair, 
+aim the device so that the barcode presented is within this box.
+
+Once the barcode has been scanned, your Logit.io account will be added to Google 
+Authenticator with an associated six-digit code. Enter this code into the passcode 
+field and click to continue. You will now be returned to your Logit.io profile page.
+
+### Two-factor authentication complete
+
+If Two Factor Authentication has been set up successfully on return to your profile 
+page, the following message is displayed under security.
+
+![Disable Two Factor Authentication](@/images/help/account-access/disable-2fa.png)
+
+Each time you Sign in to Logit.io with Two Factor Authentication enabled you will be 
+presented with the screen below. You simply need to open the Google Authenticator app 
+and type in the code displayed for your Logit.io account. Continuing will take you 
+straight to your Logit.io profile page.
+
+![2-Step Authentication](@/images/help/account-access/2-step-authentication.png)
+
+<Callout type="info">
+  By ticking the checkbox to "remember this browser" you won't be prompted for 
+  Two Factor Authentication for a period of 30 days when using the same browser.
+</Callout>

@@ -1,0 +1,134 @@
+---
+title: Elastic Agent
+pageTitle: Elastic Agent Configuration
+subTitle: A unified approach for seamlessly incorporating monitoring of logs, metrics, and other data types
+logo: elasticsearch
+color: "#00bfb3"
+description: Elastic Agent allows you to send logs, metrics, and diverse data types to stacks. Configure Elastic Agent to send logs to Logstash or Elasticsearch.
+stackTypes: logs
+sslPortType: beats-ssl
+---
+
+Elastic Agent offers a unified approach for seamlessly incorporating monitoring of logs, 
+metrics, and diverse data types to one or more destinations, including Logstash.
+
+<Steps>
+  ### Install Elastic Agent
+
+  To get started first follow the steps below: 
+
+  * [Install Elastic Agent](https://www.elastic.co/guide/en/fleet/current/install-standalone-elastic-agent.html#install-standalone-elastic-agent)
+  * Root access
+  * Verify the required port "@logstash.sslPort" is open
+
+  _Older versions can be found here [Elastic Agent 7](https://www.elastic.co/guide/en/fleet/7.17/install-standalone-elastic-agent.html#install-standalone-elastic-agent)
+
+  ### Update Your Configuration File
+
+  The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+          
+  Copy the configuration file below and overwrite the contents of __elastic-agent.yml__.
+
+  For version `7.17+` and above, use the configuration below:
+
+  ```yml copy
+  ###################### Logit.io Elastic Agent Configuration ########################
+  # ============================== Elastic Agent inputs ==============================
+  inputs:
+      - type: system/metrics
+      id: unique-system-metrics-input
+      data_stream.namespace: default
+      use_output: default
+      streams:
+          - metricsets:
+          - cpu
+          data_stream.dataset: system.cpu
+          - metricsets:
+          - memory
+          data_stream.dataset: system.memory
+          - metricsets:
+          - network
+          data_stream.dataset: system.network
+          - metricsets:
+          - filesystem
+          data_stream.dataset: system.filesystem
+
+      #   Collecting log files
+      #   - type: filestream
+      #     id: your-input-id
+      #     streams:
+      #       # Must be unique
+      #       - id: your-filestream-stream-id
+      #         data_stream:
+      #           dataset: generic
+      #         paths:
+      #           - /var/log/*.log
+
+  # ================================== Outputs ===================================
+  # ------------------------------ Logstash Output -------------------------------
+  outputs:
+      default:
+      type: logstash
+      hosts: ["@logstash.host:@logstash.sslPort"]
+      loadbalance: true
+      ssl.enabled: true
+
+  # ================================== Logging Settings ===================================
+  # Send all logging output to stderr, default is false
+  agent.logging.to_stderr: true
+  ```
+
+  __Validate your YAML__
+
+  _It's a good idea to run the configuration file through a YAML validator to rule out indentation errors, 
+  clean up extra characters, and check if your YAML file is valid. [Yamllint.com](https://yamllint.com) is a great choice._
+
+  ### Elastic Agent Inputs (Optional)
+
+  1. **User and Process Auditing:**
+      - Regularly examine and assess the actions performed by users and processes on your systems.
+
+  2. **Operating System and Service Metrics:**
+      - Gather performance metrics from the operating systems and services running on your servers to track and optimize their functioning.
+
+  3. **Log Data Forwarding and Centralization:**
+      - Channel and consolidate log data from various sources to a central location for easier analysis and management.
+
+  4. **Service Monitoring:**
+      - Keep track of the status of your services to ensure they are functioning as intended.
+
+  5. **Network Traffic Monitoring:**
+      - Monitor the flow of network traffic between servers in your network to identify and address any irregularities or potential security threats.
+
+
+  <Callout type="info">
+    Read more about [Elastic Agent inputs](https://www.elastic.co/guide/en/fleet/current/elastic-agent-inputs-list.html) for the list of what's available
+  </Callout>
+
+  ### Validate Configuration
+  <ValidateBeat beatname="elastic-agent" />
+
+  ### Start Elastic Agent
+
+  [Start or Restart elastic-agent](https://www.elastic.co/guide/en/fleet/7.17/install-standalone-elastic-agent.html#install-standalone-elastic-agent) to apply the configuration changes.
+
+  ### Launch Logit.io to view your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="elasticagent" source="elasticagent" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+### Elastic Agent Logging Overview
+Elastic Agent is a versatile and reliable tool designed for efficient log and metric ingestion into OpenSearch and other destinations within the OpenSearch Stack. It represents a fusion of capabilities from various Elastic Stack components, offering a unified solution for data collection.
+
+With Elastic Agent, you can generate, parse, and forward logs and metrics seamlessly, ensuring their proper indexing within Elasticsearch. It excels at handling different data types and provides a streamlined approach to data ingestion.
+
+It's important to note that Elastic Agent complements Logstash, making them an effective combination for complex data pipelines. While initially compatible with Elasticsearch, Elastic Agent's capabilities have expanded to include integration with technologies like Redis and Kafka.
+
+Proper configuration of Elastic Agent is essential to avoid complex logging issues, such as excessively large registry files or errors related to deleted or renamed log files. A well-configured agent ensures smooth data collection and indexing.
+
+If you need any further assistance with migrating your log data to ELK we're here to help you get started. Feel free to get in contact with our support team by sending us a message via <IntercomButton text="live chat" /> & we'll be happy to assist.

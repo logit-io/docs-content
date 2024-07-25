@@ -1,0 +1,62 @@
+---
+title: Configuring Logstash Filters
+description: Learn how to edit Logstash filters to manage and transform data in Logstash in this article from Logit.io.
+---
+
+# How can I edit my Logstash Filters?
+
+Editing your Logstash filters on the Logit.io platform is extremely simple and gives you enhanced control over the data that you are logging.
+
+To edit your Logstash filters for any stack, go to the `Logstash Pipelines` settings.
+
+Logstash Filters are the middle stage of the Logstash processing pipeline. You can define *Inputs* for generating data, then the Logstash *filters* that can correctly parse and modify data before finally *Outputs* ship them to OpenSearch. Logstash Filters allow you to rename, remove, replace and modify fields in your data as well as many other actions.
+
+### Why would I need to edit my filters?
+Editing your Logstash filters allows you to modify the data in Logstash before 
+it is forwarded to OpenSearch. Without any filtering, all log details are stored 
+in the "message" value. This can make querying the logs difficult because there 
+can be too much information tied together in one field. Filters allow us to separate the data in logs and metrics, then organise it in a way that makes the logs more meaningful.
+
+Grok patterns are one such method for filtering data before it is sent to OpenSearch. 
+In the example below, we have an Audit Log record. This is how the information is retrieved and how it appears within the "message" value of OpenSearch with all of the audit information contained in one single message.
+
+```plaintext
+2019-04-10T17:00:30.000+00:00 INFO [Logit.io.Audit.Log]:df046237-8b37-4e5f-9312-2a808706bf8f Viewed Account Settings Audit Log
+```
+
+By applying the following Grok pattern to the Logstash filter we can break the information out into several values that are more intuitive and therefore improve our ability to query it.
+
+```ruby copy
+grok {
+  match => [ "message",  "%{TIMESTAMP_ISO8601:timestamp} %      {LOGLEVEL:log-level} \[%{DATA:application}\]:%{UUID:accountId} %{GREEDYDATA:message}"]
+}
+```
+
+The log information is now stored in Logstash with values as follows:
+
+```yml
+application: Logit.io.Audit.Log
+timestamp: 2019-04-10T17:00:30.000+00:00
+log-level: INFO
+accountId: df046237-8b37-4e5f-9312-2a808706bf8f
+message: Viewed·Account·Settings·Audit·Log
+```
+
+So now if you wanted all information for a particular account this can now be 
+easily done in OpenSearch Dashboards by simply filtering on the accountId field.
+
+<Callout type="info">
+  It is best to create fields for any information that you 
+  think you will need to query or filter on in OpenSearch Dashboards.
+</Callout>
+
+When you view Logstash filters you will see that Logit.io has included some of 
+the most popular filters for you straight out of the box to be used with the Filebeat 
+modules. Filters include Apache, Nginx, MySQL, IIS, Syslog and many more. You can 
+start sending logs and metrics using these methods and Logstash filters will parse 
+this data into meaningful fields which can then be viewed in OpenSearch Dashboards. 
+You can of course update the existing filters to better fit your requirements or 
+remove them and start from scratch.
+
+Remember, there are many different filters and it is possible to combine different 
+filters in order to parse data into the format that you require when it is stored in OpenSearch.

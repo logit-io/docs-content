@@ -1,0 +1,68 @@
+---
+title: Using OpenTelemetry for Metrics
+description: How to Onboard and Get Started Sending Data using OpenTelemetry to your Metrics Stack
+---
+
+# Getting Started With OpenTelemetry for Metrics
+
+Logit.io provides extensive features and configurations to ingest, 
+monitor, and analyze data, manage your infrastructure and so much more!
+
+Follow this quickstart guide to send metrics data using the OpenTelemetry collector.
+
+## Pre-requisites
+
+You'll need a Logit.io account. Sign up for a free 
+trial [here](https://dashboard.logit.io/sign-up?utm_source=GettingStartedGuideOpenTelemetryMetrics&utm_medium=SignUp).
+
+## Step 1: Get your data into Logit.io
+
+Your data analytics journey starts by sending your Logs, Metrics or Traces to 
+Logit.io. For this purpose, we will be using the OpenTelemetry Collector. This 
+choice enables you to quickly and securely ship your data. The OpenTelemetry 
+Collector offers a vendor-agnostic way to collect, process, and export telemetry 
+data, ensuring compatibility and flexibility across different monitoring tools and services.
+
+## Set up your data source
+
+**Metrics OpenTelemetry Collector**
+
+1. Login to Logit.io
+
+2. Initiate the configuration process by clicking on _View Data Integrations_.
+
+![APM Stack](@/images/help/apm/overview/apm-stack.png) 
+
+Navigate to "Integrations" > "OpenTelemetry" > "Metrics OpenTelemetry Collector"
+
+![Metrics OpenTelemetry Collector](@/images/help/getting-started/metrics-opentelemetry-collector.png)
+
+3. After you have installed and configured the OpenTelemetry Collector return to your dashboard [https://dashboard.logit.io](https://dashboard.logit.io)
+
+4. From your dashboard choose Launch Metrics.
+
+## Step 2: Verify and Search your Data
+
+As Grafana launches, which serves as the default metrics viewer, choose Explore from the left menu.
+
+**The Explore View**
+
+The Explore feature in Grafana lets you search and examine your stack's incoming data. It offers an intuitive platform for swiftly isolating and identifying particular metrics or various data forms.
+
+![Grafana Explore](@/images/help/getting-started/grafana-explore.png)
+
+Select the required Metrics from the list as shown below and choose Run query to visualize your metrics.
+
+![Grafana Run Query](@/images/help/getting-started/grafana-run-query.png)
+
+## Step 3: Monitor and Troubleshoot
+
+You can view your data with **predefined searches and dashboards** that facilitate monitoring and troubleshooting.
+
+![Monitor and Troubleshoot Grafana](@/images/help/getting-started/monitor-grafana.png)
+
+Once you've sent your metrics to Logit.io, you can gain an in-depth perspective 
+on the health and performance of your distributed cloud services through using 
+real-time monitoring, and custom dashboards. This allows your team to dive deep 
+into logs for troubleshooting, while simultaneously offering a broad view of 
+your infrastructure's status via custom dashboards and notifications.

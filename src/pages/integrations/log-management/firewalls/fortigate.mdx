@@ -1,0 +1,140 @@
+---
+title: Fortigate
+pageTitle: Fortigate Firewall
+subTitle: Ship ESET logs to Logstash
+logo: fortinet
+color: "#c02607"
+description: Configure Filebeat to ship Fortigate firewall logs to your Logit.io stacks. Configure Filebeat to send fortigate logs to Logstash or Elastic. Get started using our fortigate firewall example configuration.
+stackTypes: logs
+sslPortType: beats-ssl
+---
+
+Configure a Fortigate firewall to ship logs via Filebeat to your Logit.io stacks via Logstash.
+
+<Steps>
+  ### Install Filebeat
+
+  <InstallFilebeat />
+
+  ### Configure Fortigate Logging
+
+  __Configure the Fortigate firewall to log to a syslog server:__
+
+  You can configure the Fortigate firewall to log to a syslog server through the 
+  web interface or through the CLI. To configure through the web interface, 
+  go to "System" -> "Log & Report" -> "Syslog". 
+
+  From there, you can add a new syslog server and specify the IP address or 
+  hostname of the machine running Filebeat.
+
+  * Log format: syslog
+  * Send over: UDP
+  * IP Address: Your Filebeat server IP address
+  * Port: 514
+
+  __To configure through the CLI, run the following commands:__
+
+  ```cmd copy
+  config log syslogd setting
+  set status enable
+  set format default
+  set server <Filebeat_machine_IP_Address>
+  set port 514
+  end
+  ```
+
+  ### Configure Filebeat.yml
+
+  The configuration file below is pre-configured to send data to your Logit.io Stack.
+
+  Copy the configuration file below and overwrite the contents of the Filebeat configuration file typically located at `/etc/filebeat/filebeat.yml`
+
+  ```yml copy
+  # ============================== Filebeat inputs ===============================
+  filebeat.inputs:
+
+  - type: udp
+      max_message_size: 10MiB
+      host: "0.0.0.0:514"
+      enabled: true
+
+      fields:
+          type: fortigate
+      fields_under_root: true
+      encoding: utf-8
+      ignore_older: 12h
+
+  # ================================== Outputs ===================================
+  output.logstash:
+      hosts: ["@logstash.host:@logstash.sslPort"]
+      loadbalance: true
+      ssl.enabled: true
+  ```
+
+  If you're running __Filebeat 7__, add this code block to the end. Otherwise, you can leave it out.
+
+  ```yaml copy
+  # ... For Filebeat 7 only ...
+  filebeat.registry.path: /var/lib/filebeat
+  ```
+
+  If you're running __Filebeat 6__, add this code block to the end.
+
+  ```yaml copy
+  # ... For Filebeat 6 only ...
+  registry_file: /var/lib/filebeat/registry
+  ```
+
+  _It's a good idea to run the configuration file through a YAML validator to rule out indentation errors, clean up extra characters, and check if your YAML 
+  file is valid. [Yamllint.com](https://yamllint.com) is a great choice._
+
+
+  ### Validate configuration
+
+  <ValidateBeat beatname="filebeat" />
+  
+  ### Start filebeat
+
+  <StartFilebeat />
+  
+  ### Launch Logit.io to view your logs
+  <LaunchStack utmMedium="logs" utmCampaign="fortigate" source="fortigate" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+## Fortigate Overview
+
+FortiGate firewalls provide advanced network security features for enterprise environments, protecting against 
+cyber threats and unauthorized access. To effectively monitor and analyze network activity, it is essential to 
+have a reliable and efficient log management solution. Filebeat, a popular open-source shipping tool, is widely 
+used to send logs from FortiGate firewalls to various destinations, including Elasticsearch, Logstash, and Kibana, 
+due to its reliability and minimal memory footprint.
+
+Filebeat, which is written in Go, combines key features from Logstash-Forwarder and Lumberjack to generate, parse, 
+tail, and forward common logs within the logging pipeline to be indexed within Elasticsearch. Filebeat is the most 
+popular way to send logs to ELK, out of the entire collection of open-source shipping tools, including Auditbeat, 
+Metricbeat, and Heartbeat. Earlier versions of Filebeat only allowed users to send events to Logstash and Elasticsearch, 
+but recent updates to the shipper have made it compatible with [Redis](/sources/configure/redis_app/) & 
+[Kafka](/sources/configure/kafka/).
+
+Sending logs from FortiGate firewalls to Filebeat is a simple process that involves configuring the firewall to forward 
+logs to a syslog server. Once the logs are received by the syslog server, Filebeat can be used to collect and forward 
+log data to Elasticsearch or other destinations.
+
+Filebeat provides a filebeat.yml wizard that helps users avoid complex logging concerns, such as large registry files 
+and frequent errors encountered when handling deleted or renamed log files. Users can also consider our Hosted ELK 
+service to simplify tracking numerous pipelines using this shipper.
+
+In summary, Filebeat is an essential tool for efficiently managing log data from FortiGate firewalls. Its reliability, 
+minimal memory footprint, and compatibility with various destinations make it a popular choice for many organizations. 
+To ensure effective log management and analysis, users should consider configuring FortiGate firewalls to forward logs 
+to Filebeat and taking advantage of the shipper's advanced features.
+
+
+If you need any further assistance with migrating your log data to ELK we're here to help you get started. 
+Feel free to get in contact with our support team by sending us a message via <IntercomButton text="live chat" /> 
+& we'll be happy to assist.

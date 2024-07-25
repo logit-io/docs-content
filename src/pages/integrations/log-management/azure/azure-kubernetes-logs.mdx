@@ -1,0 +1,70 @@
+---
+title: Azure Kubernetes Logs
+subTitle: Collect and ship Azure Kubernetes container logs to Logstash and Elasticsearch
+logo: AKS
+color: "#834c9a"
+description: Follow our Azure Kubernetes Container tutorial to get started shipping logs from Azure Kubernetes Containers to Logstash for monitoring and analysis. 
+stackTypes: logs
+sslPortType: beats-ssl
+---
+
+Filebeat is a lightweight shipper that helps you monitor Azure Kubernetes 
+Service by collecting logs from the containers running on the host system. 
+Configure Filebeat using the pre-defined examples below to collect and 
+ship Azure Kubernetes logs to Logstash or Elasticsearch.
+
+<Steps>
+  ### Download Filebeat Manifest File
+
+  Download the filebeat kubernetes deployment manifest using the link below:
+
+  [Click to download filebeat-kubernetes.yaml](https://cdn.logit.io/filebeat-kubernetes.yaml)
+
+  To do this on your Azure Cluster you can use the following command in the Azure Cloud Shell terminal. 
+
+  ```cmd copy
+  wget https://cdn.logit.io/filebeat-kubernetes.yaml
+  ``` 
+
+  ### Insert stack details
+
+  <InsertStackDetails>
+
+  Now you have the manifest you're going to want to add your Stack details. Open the file in a text editor.
+
+  Locate the environment variables controlling the logging destination and enter your Stacks Logstash input information. 
+
+  You need to change the environment variables around lines 54.
+  </InsertStackDetails>
+
+  ### Deploy Filebeat pod
+
+  Now your Filebeat deployment manifest is updated with your Stack details, you can deploy it using the following command in Azure Cloud Shell:
+          
+  ```cmd copy
+  kubectl apply -f filebeat-kubernetes.yaml
+  ```
+
+  ### Confirm deployment succesful
+
+  Confirm that your pod has successfully been deployed using one or all of the following commands in Azure Cloud Shell:
+
+  ```cmd copy
+  kubectl get po -A
+
+  kubectl --namespace=kube-system get ds/filebeat
+
+  kubectl --namespace=kube-system get pods
+  ```
+
+  You should see a pod for each Kubernetes node with a name similar to filebeat-abcde listed.
+
+  ### Check Logit.io for your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="azurekuberneteslogs" source="azure_kubernetes" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>

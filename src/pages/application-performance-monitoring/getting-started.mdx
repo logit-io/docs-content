@@ -1,0 +1,154 @@
+---
+title: Get Started Sending Traces
+description: Discover the steps you need to take to get started sending traces to Logit.io.
+---
+
+# Get Started Sending Traces
+
+Embarking on the path of Application Performance Monitoring (APM) and tracing your 
+application's behaviour is a critical aspect of maintaining a high-performance system. 
+Through the seamless integration of Jaeger, Logit.io, and OpenTelemetry, Logit.io 
+demystifies the complexities of APM and tracing, empowering you to glean invaluable 
+insights into your application's performance.
+
+Join us on this journey to simplify APM monitoring and make informed, data-driven 
+decisions. This guide illustrates that with Logit.io, the process 
+is more straightforward than you might think.
+
+### Where to Begin...
+In this guide, we'll walk you through the process of utilizing OpenTelemetry to 
+transmit APM traces to Jaeger via Logit.io. You'll become proficient at 
+customizing data transmission, comprehend how APM traces are stored, and use 
+Jaeger to explore and interpret your application's invaluable performance data.
+
+<Callout type="info">
+  While Jaeger is a potent tool for APM, it might not cover all scenarios. Logit.io offers 
+  various shippers in our Data Source Integrations. If Jaeger doesn't precisely align 
+  with your needs, explore other options for a tailored solution.
+</Callout>
+
+### Why Use OpenTelemetry with Jaeger?
+OpenTelemetry, a powerful observability framework, serves as the ideal conduit for 
+capturing and transmitting application performance metrics to Jaeger. The synergy 
+of OpenTelemetry with Jaeger and Logit.io centralizes your APM, providing a unified 
+platform to gain deeper insights into your application's behaviour and performance.
+
+### Configuring OpenTelemetry for APM Traces
+Once your initial Logit.io stack is set up, navigate to your dashboard and 
+initiate the configuration process by clicking on _View Data Integrations_.
+
+![APM Stack](@/images/help/apm/overview/apm-stack.png)
+
+We are going to use the OpenTelemetry .NET Core (HTTPS) in our example so 
+navigate to `Integrations > Application Performance Monitoring > Language & Libraries` 
+and then select _OpenTelemetry .NET Core (HTTPS)_
+
+![OpenTelemetry Source](@/images/help/apm/opentelemetry-source.png)
+
+<Callout type="info">
+  If you prefer an alternative data source, feel free to make your 
+  selection at this stage. Choosing a different data source prompts the 
+  display of source wizard instructions tailored to your chosen data source.
+</Callout>
+
+![OpenTelemetry Configuration](@/images/help/apm/opentelemetry-config.png)
+
+Now, let's proceed to configure OpenTelemetry for seamless APM trace transmission 
+to Jaeger. Follow these steps to ensure a smooth integration for 
+comprehensive application performance monitoring.
+
+### Install and Configure
+
+In Step 1, kick off the process by creating a new 'ASP.NET Core Empty' application. 
+To seamlessly integrate OpenTelemetry packages into your project, employ either 
+the NuGet Package Manager or the command line. It's crucial to verify the package 
+versions for potential updates since the .NET Core/5+ OpenTelemetry APIs are 
+continuously evolving. Copy the entire contents from step 1 as 
+shown below using the Copy button.
+
+```xml copy
+<ItemGroup>
+  <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.6.0" />
+  <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.6.0" />
+  <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.6.0" />
+  <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.5.1-beta.1" />
+  <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.5.1-beta.1" />
+</ItemGroup>
+```
+
+Moving on to Step 2, incorporate OpenTelemetry settings into your `appsettings.json` 
+file. Configure essential parameters such as the service name, OTLP endpoint URL, 
+communication protocol, and port, as demonstrated. Copy the entire contents 
+from step 2 as shown below and add this to your appsettings.json file.
+
+```json copy
+"OpenTelemetry": {
+  "ServiceName": "Open Telemetry Tracing - Test App",
+  "OTLP_ENDPOINT_URL": "https://<your-opentelemetry-endpoint-address>",
+  "Protocol": "<your-opentelemetry-protocol>",
+  "Port": "<your-opentelemetry-endpoint-port>"
+}
+```
+
+<Callout type="info">
+  In this step, the output code snippet is conveniently pre-configured with 
+  your Logit.io stack ID's OTLP endpoint URL. It should be similar to the 
+  example provided above. If, for any reason, it's not pre-configured, you 
+  can locate your specific OTLP endpoint URL by navigating 
+  to `Dashboard > APM/Tracing > Manage Stack > Open Telemetry Inputs`.
+</Callout>
+
+### Integrate the code
+Now, in Step 3, integrate OpenTelemetry into your Program.cs file using 
+the provided code snippet. This code is adapted from the Microsoft 
+article and offers additional insights on using OpenTelemetry with .NET.
+
+### Confirm data is in Jaeger
+After following the instructions, it's time to validate that your APM traces 
+are accessible in Jaeger. To achieve this, navigate to Step 5 of the 
+integration guide and select "Launch Dashboard." 
+Alternatively, from your main dashboard, choose "Launch Metrics."
+
+![Launch Buttons](@/images/help/apm/launch-buttons.png)
+
+Once Jaeger is launched, you should be able to visualize the APM traces that 
+have been ingested via the ingestion pipeline. Take advantage of Jaeger's 
+capabilities to filter data by time, fields, and content, allowing for a 
+thorough exploration of your application's performance metrics. 
+This exploration is key to gaining comprehensive insights into your APM landscape.
+
+![Jaeger Traces](@/images/help/apm/overview/jaeger-ui.png)
+
+In case no data appears in your Logit.io stack, outlined in Step 5, refer to 
+the Help Centre guide or promptly contact our support team for assistance. 
+Diagnostic steps will be provided to identify and resolve potential issues.
+
+Lastly, gain insights into the .NET Core platform's open-source nature and 
+its versatility for cross-platform development, as discussed in Step 6. 
+Acknowledge the challenges associated with tracing and logging in .NET Core, 
+and highlight the streamlined log visualization offered by Logit.io's 
+hosted OpenSearch. Additionally, offer assistance for those looking to 
+migrate their .NET Core traces to OpenSearch through the 
+Help Centre or live chat support.
+
+### Troubleshooting?
+Encountering issues with APM/Tracing data visibility in Jaeger? Here are 
+some troubleshooting steps to help you identify and resolve potential issues:
+
+**Configuration Validation:**
+
+- **Syntax Errors:** Thoroughly review your OpenTelemetry configuration settings for syntax errors or typos. Even a minor mistake can hinder the collection and transmission of tracing data.
+
+**Jaeger Configuration:**
+
+- **Jaeger Endpoint Settings:** Double-check the configuration of your Jaeger output settings. Ensure that the OTLP endpoint URL is accurately specified, matching the one provided in your Logit.io dashboard.
+
+**Network and Firewall Considerations:**
+
+- **Firewall Rules:** Verify that your firewall settings permit outbound connections from the host running your OpenTelemetry application. Inspect for any firewall restrictions that might obstruct the transmission of tracing data.
+
+**OTLP Endpoint URL:**
+
+- **Endpoint URL Validity:** Confirm that the specified OTLP endpoint URL in your OpenTelemetry configuration aligns with the details provided in your Logit.io dashboard. A mismatch can hinder the successful delivery of tracing data.
+
+These troubleshooting steps should assist in identifying and addressing any issues preventing the proper visualization of APM/Tracing data in Jaeger.

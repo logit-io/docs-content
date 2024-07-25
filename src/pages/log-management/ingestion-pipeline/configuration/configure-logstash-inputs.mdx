@@ -1,0 +1,122 @@
+---
+title: Configuring Logstash Inputs
+description: Unlocking Seamless Data Integration - Logstash Input Configuration Guide with Amazon S3, Azure Event Hub, Google and More
+---
+
+# How to Configure Logstash Inputs for Seamless Data Integration
+
+## Why would I need to add inputs to my stack?
+
+When working with Logstash, adding inputs to your stack is essential 
+for seamlessly collecting data from various sources. Whether you're 
+dealing with syslog messages, cloud storage, or message queues, Logstash 
+inputs serve as the gateways for ingesting diverse data into your Logstash 
+pipeline. Each input type caters to specific use cases, allowing you to 
+tailor your configuration to match your data source and preferences.
+
+## Introduction
+
+Welcome to the Logit.io Logstash configuration page! Here, you'll find 
+information on how to configure Logstash inputs to effortlessly send 
+data to your Stack. If you have any questions or need further assistance, 
+our Logit.io support team is ready to help.
+
+## Add New Input
+
+### Overview
+
+Easily configure additional data sources, including Amazon, 
+Azure and Google by following these simple steps.
+
+1. Navigate to `Logstash Inputs` settings.
+2. Click on the "Add New Input" button in the Logstash configuration wizard.
+
+![Logstash Inputs](@/images/help/log-management/ingestion-pipelines/logstash-inputs.png)
+
+## Adding a New Input
+
+When you click the "Add New Input" button, you'll be prompted to choose 
+from various input types. Each input type serves a specific purpose 
+and can be configured based on your requirements.
+
+### Default Input Types:
+
+1. **Syslog-SSL:**
+   - **Description:** Read syslog messages as events over the network.
+   - **Usage:** Ideal for collecting syslog messages securely.
+2. **Beats-SSL:**
+   - **Description:** Enables Logstash to receive events from the Beats framework.
+   - **Usage:** Useful for receiving events from Beats securely.
+3. **TCP-SSL**:
+   - **Description:** Reads events over a TCP socket with SSL.
+   - **Usage:** Suitable for securely reading events over a TCP connection.
+
+### Additional Input Types:
+
+1. **HTTP-SSL:**
+   - **Description:** Receive single or multiline events over HTTP(s).
+2. **Syslog (TCP and UDP Protocol):**
+   - **Description:** Read syslog messages as events over the network using TCP or UDP.
+3. **Beats, TCP, UDP, Gelf:**
+   - **Description:** Additional options for flexibility in handling different event sources.
+4. **Amazon S3:**
+   - **Description:** Send data from an Amazon S3 bucket.
+5. **Azure Event Hub:**
+   - **Description:** Send data from an Azure Event Hub.
+6. **Google Pub Sub:**
+   - **Description:** Consume events from a Google Cloud PubSub service.
+7. **Google Cloud Storage:**
+   - **Description:** Extract events from files in a Google Cloud Storage bucket.
+8. **SQS (Simple Queue Service):**
+   - **Description:** Pulls events from an Amazon Web Services Simple Queue Service queue.
+
+![Inputs](@/images/help/log-management/ingestion-pipelines/inputs.png)
+
+Choose the input type that aligns with your data source and configuration preferences.
+
+If you need assistance or have specific requirements, feel free to reach out to our support team.
+
+## Updating or Removing an Input
+
+Clicking on "View Details" allows you to inspect and modify the configuration 
+settings for the selected Logstash input. Clicking on "Remove" will permanently 
+delete the selected Logstash input. _Please note that this action cannot be undone._
+
+## Understanding Logstash Endpoints
+
+To copy the Logstash endpoint, click the "Copy Endpoint" button. The endpoint 
+is a critical element for sending data to your Logstash instance. Ensure to 
+combine the copied endpoint with the appropriate input port based on your 
+selected input type.
+
+### Example:
+
+- If you're using the TCP-SSL input type. Therefore, the Logstash endpoint 
+for TCP-SSL would be `your-logstash-endpoint:your-tcp-ssl-port:`.
+
+### Note:
+
+- Verify the specific input port required for your chosen input type in the 
+Logit.io documentation or configuration settings.
+
+Understanding the correct combination of the Logstash endpoint and input 
+port is crucial for establishing a secure and functional connection 
+between Logstash and your data source.
+
+## Set Minimum TLS Version
+
+### Why Set Minimum TLS Version?
+
+Setting the minimum TLS version is crucial for enhancing the security of your 
+Logstash inputs. By configuring the appropriate TLS version, you ensure 
+that communication between Logstash and your data sources is secure and 
+meets the latest security standards.
+
+1. Choose the desired TLS version from the dropdown menu.
+2. Click the "Update Version" button to save your changes.
+
+### Need Assistance?
+
+Now you're all set to configure your Logstash inputs seamlessly. If you 
+encounter any issues or have additional questions, don't hesitate to reach out 
+to our support team <IntercomButton text="via live chat" /> for expert guidance.

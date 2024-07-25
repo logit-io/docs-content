@@ -1,0 +1,103 @@
+---
+title: System Metrics for CentOS
+subTitle: Collect and ship CentOS operating system and service metrics to Logstash and Elasticsearch
+logo: centos
+color: "#001a52"
+description: Sending System Metrics from CentOS to Your Hosted ELK Logstash Instance - Configuring Metricbeat for Transmission to Logstash or Elasticsearch.
+stackTypes: metrics
+sslPortType: beats-ssl
+---
+
+Metricbeat is a lightweight shipper that helps you monitor your servers 
+by collecting metrics from the operating system and from services running 
+on the CentOS server. Configure Metricbeat using the pre-defined examples 
+below to collect and ship CentOS operating system, service metrics and 
+statistics to Logstash or Elasticsearch.
+
+<Steps>
+  ### Install Metricbeat
+
+  <InstallBeat beatname="metricbeat" />
+
+  ### Copy Configuration File
+
+  <MetricbeatOutput />
+
+  ### Enable module
+
+  There are several built in metricbeat modules you can use. To enable the system module, run the following:
+
+  ```bash copy
+  metricbeat modules list
+  metricbeat modules enable system
+  ```
+
+  ### Configure module
+
+  Each module has its own configuration file where different metricsets can be enabled / disabled. 
+  Locate the configuration file for the system module.
+
+  `/etc/metricbeat/modules.d/system.yml`
+
+  By default the following metrics are enabled. To enable or disable a metric simply comment or uncomment the line out.
+
+  ```yaml copy
+  - module: system
+    period: 10s
+    metricsets:
+      - cpu
+      - load
+      - memory
+      - network
+      - process
+      - process_summary
+      - socket_summary
+      #- core
+      #- diskio
+      #- socket
+  ```
+
+  ### Start Metricbeat
+
+  [Start or restart Metricbeat](https://www.elastic.co/guide/en/beats/metricbeat/master/metricbeat-starting.html) 
+  to apply the configuration changes.
+
+  ### Check Logit.io for your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="centos_metricbeat" source="metrics_system_centos" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+  ### System module dashboard
+
+  The System module comes with predefined Kibana dashboards. To view your dashboards for any of your Logit.io stacks, launch Logs and choose Dashboards.
+
+  ![Kibana dashboard preview](@/images/integrations/metricbeats/metricbeat_system_module.png)
+
+</Steps>
+
+### CentOS Overview
+
+CentOS (short for Community Enterprise Operating System) is a popular and respected open-source Linux distribution known for its stability, reliability,
+ and robust performance. 
+
+It serves as a free and community-supported alternative to its commercial counterpart, [Red Hat Enterprise Linux](/sources/configure/redhat/). 
+CentOS is widely utilized in enterprise environments, data centres, and web hosting services due to its strong focus on delivering 
+a secure and consistent platform for various computing needs. 
+
+One of CentOS's key strengths is its long-term support (LTS) approach, which ensures that security patches and updates are provided for an extended period. 
+This stability makes it an ideal choice for mission-critical applications and server infrastructure. 
+
+Additionally, CentOS benefits from a vast and active community of developers and users, which contributes to its continuous improvement and adaptability 
+to evolving technologies. 
+
+When it comes to collecting and shipping metrics from a CentOS-based environment, numerous tools and methodologies can be employed. This includes 
+monitoring system performance, network activity, application behaviour, and more. 
+
+By efficiently gathering and transmitting this data, organizations can gain valuable insights into the health and performance of their CentOS systems, 
+enabling them to make informed decisions, troubleshoot issues, and optimize their infrastructure.
+
+If you need any further assistance with migrating your data to Logit.io we're here to help you get started. Feel free to get in contact with our 
+support team by sending us a message via <IntercomButton text="live chat" /> & we'll be happy to assist.

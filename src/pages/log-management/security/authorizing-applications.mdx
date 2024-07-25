@@ -1,0 +1,95 @@
+---
+title: Authorizing Applications
+description: Learn how to secure and restrict which applications can ship logs to Logstash
+---
+
+# How to ensure that only authorised applications can send logs to Logstash
+
+Sending data to Logstash is quick and simple to set up. 
+If you have not already done so, please check out 
+our [Filebeat data source integration guide](/integrations/log-management/shippers/filebeat) before 
+learning how to properly use the API key.
+
+Adding security measures to safe-guard Logstash is highly recommended. 
+There are a number of ways to add an authentication step to your request 
+pipeline so that only authorised sources may ship logs to Logstash.
+Adding security measures to safe-guard Logstash is highly recommended. 
+There are a number of ways to add an authentication step to your request 
+pipeline so that only authorised sources may ship logs to Logstash.
+
+### 1. Add an API Key to every message
+
+Sending the API key with each message is the most common and preferred way of authorising requests. 
+This API key can be anything you like (such as a GUID or a special string value of your choice). 
+Then you can use a Logstash filter to check if this key is included. If it is not included, 
+you can drop the message as part of the filtering process. This method gives you far greater 
+control over both ends of the authentication process.
+
+Sending the API key with each message is the most common and preferred way of authorising requests. 
+This API key can be anything you like (such as a GUID or a special string value of your choice). 
+Then you can use a Logstash filter to check if this key is included. If it is not included, 
+you can drop the message as part of the filtering process. This method gives you far greater 
+control over both ends of the authentication process.
+
+For example, you can use Filebeat to send a log message that includes the API key:
+
+```yml copy
+
+```yml copy
+filebeat.prospectors:
+  type: log
+  enabled: true
+  paths:
+    /var/log/nginx/access.log
+  fields:
+    type: nginx-access
+    logstashApiKey: <your-api-key>
+    fields_under_root: true
+    encoding: utf-8
+    exclude_files: [".gz"]
+  type: log
+  enabled: true
+  paths:
+    /var/log/nginx/access.log
+  fields:
+    type: nginx-access
+    logstashApiKey: <your-api-key>
+    fields_under_root: true
+    encoding: utf-8
+    exclude_files: [".gz"]
+```
+
+
+And use a Logstash filter to drop all messages that do not match the expected API key value:
+
+```ruby copy
+
+```ruby copy
+if [logstashApiKey] != "<your-api-key>" 
+{ 
+  drop {} 
+}
+```
+
+
+### 2. Firewall Configuration / IP White-listing
+
+The Logit.io platform provides [Logstash Firewall Groups](/log-management/ingestion-pipeline/configuration/configure-logstash-firewall) that 
+allow you to manage and restrict which IP addresses can send data to your 
+stacks and which ports those restrictions apply to. Setting Firewall Groups 
+improves stack security by blocking all unauthorised traffic to ports you've specified.
+
+The Logit.io platform provides [Logstash Firewall Groups](/log-management/ingestion-pipeline/configuration/configure-logstash-firewall) that 
+allow you to manage and restrict which IP addresses can send data to your 
+stacks and which ports those restrictions apply to. Setting Firewall Groups 
+improves stack security by blocking all unauthorised traffic to ports you've specified.
+
+![Logstash Firewall Settings](@/images/help/log-management/security/logstash-firewall-setting.png)
+
+### 3. Mutual TLS
+
+Currently, this is a support request feature that can be set up 
+by contacting our support team, [here](https://logit.io/about-us/contact-us/).
+
+Currently, this is a support request feature that can be set up 
+by contacting our support team, [here](https://logit.io/about-us/contact-us/).

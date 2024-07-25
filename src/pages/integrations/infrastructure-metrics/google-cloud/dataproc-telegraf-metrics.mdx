@@ -1,0 +1,63 @@
+---
+title: Google Dataproc Metrics via Telegraf
+subTitle: Ship your Google Dataproc Metrics via Telegraf to your Logit.io Stack
+logo: GoogleDataproc
+color: "#3c76d7"
+description: Configure Telegraf to ship Google Dataproc metrics to your Logit.io stacks. Configure Telegraf to send Google Dataproc metrics to Logstash or Elastic. Get started using our Telegraf Google Dataproc metrics example configuration.
+stackTypes: metrics
+---
+
+Configure Telegraf to ship Google Dataproc metrics to your Logit.io stacks via Logstash.
+
+<Steps>
+  ### Set Credentials in GCP
+
+  <SetGCPCredentials intro="Google Dataproc is a powerful suite of services within Google Cloud that enables efficient and scalable data processing using Apache Hadoop and Apache Spark. It provides a managed and fully integrated environment for running big data workloads, allowing organizations to process large volumes of data quickly and cost-effectively."/>
+  
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  <TelegrafStackDriverInput metric_type="dataproc.googleapis.com"/>
+
+  ### Configure the output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+ <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack stackType="metrics" source="Google_Dataproc_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-GoogleDataproc-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>
+
+## Telegraf Google Dataproc Platform metrics Overview
+
+To ensure effective monitoring and analysis of Google Dataproc clusters across distributed systems, 
+implementing a robust metrics management solution is crucial. Telegraf, an open-source server agent, 
+is widely recognized for its capability to collect and report metrics from various sources, including 
+Dataproc clusters, job execution statistics, resource utilization, and other relevant metrics.
+
+Telegraf offers a comprehensive range of input plugins that allow users to gather a wide variety of 
+metrics, providing valuable insights into the performance and efficiency of Google Dataproc. For 
+storing and analyzing these metrics, organizations can leverage Prometheus, an open-source monitoring 
+and alerting toolkit known for its flexible query language and robust data visualization capabilities.
+
+The process of transmitting Google Dataproc metrics from Telegraf to Prometheus involves configuring 
+Telegraf to present metrics in Prometheus's format and instructing Prometheus to scrape these metrics 
+from the Telegraf server.
+
+Once the metrics are successfully integrated into Prometheus, organizations can perform comprehensive 
+analysis and visualization using Grafana. Grafana, a leading open-source platform for monitoring and 
+observability, seamlessly integrates with Prometheus, allowing users to create dynamic and interactive 
+dashboards to gain deeper insights into Dataproc performance, job execution trends, and potential optimization opportunities.
+
+If you need any further assistance with shipping your log data to Logit.io we're here to help you get started. 
+Feel free to get in contact with our support team by sending us a message via <IntercomButton text="live chat" /> & we'll be happy to assist.

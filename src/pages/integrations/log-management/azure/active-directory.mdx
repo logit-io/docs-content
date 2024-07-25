@@ -1,0 +1,65 @@
+---
+title: Active Directory
+subTitle: Ship Active Directory logs to Logstash
+logo: windows
+color: "#2e62a4"
+description: Send your Active Directory Windows Server logs to logit.io via logstash using the instructions below and begin searching your data. 
+stackTypes: logs
+sslPortType: beats-ssl
+---
+
+<Steps>
+  ### Install Winlogbeat
+
+ <InstallWindowsBeat
+    beatname = "winlogbeat"
+    version = "8.12.2"
+  />
+
+  ### Update your configuration file
+
+  <WinlogBeatConfigFile />
+
+  ### Validate Configuration
+
+  <ValidateWinlogBeat beatname="winlogbeat" />
+
+  ### Start winlogbeat
+
+  From the PowerShell prompt, (in the directory where winlogbeat was installed) run the following command:
+
+  ```cmd copy
+  Start-Service winlogbeat
+  ```
+
+  ### Check Logit.io for your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="winlogbeat" source="activedirectory" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+### Winlogbeat Installation Instructions Overview
+
+Active Directory is a Microsoft technology that provides a centralized database for storing information about users, 
+computers, and other resources on a network. It is widely used in enterprise environments to manage user accounts, 
+permissions, and access to resources.
+
+To effectively monitor and analyze security events in an Active Directory environment, it is essential to have a reliable 
+and efficient log management solution. One way to achieve this is by using winlogbeat, an open-source log shipper that can 
+be installed on a Windows server to collect and ship event logs to Logstash.
+
+Winlogbeat is designed to work with the Elastic Stack, which includes Elasticsearch, Logstash, and OpenSearch. By sending 
+event logs from Active Directory to Logstash, organizations can centralize their log data and analyze it in real-time for 
+threat detection and response.
+
+In summary, using winlogbeat to ship logs from a Windows server to Logstash can provide organizations with a reliable and 
+efficient way to monitor and analyze security events in their Active Directory environment. By centralizing log data and 
+analyzing it in real-time, organizations can detect and respond to security threats quickly and effectively.
+      
+If you need any further assistance with migrating your Active Directory logs to Logit.io we're here to help you 
+get started. Feel free to reach out by contacting our support team by visiting our dedicated Help Centre or via 
+<IntercomButton text="live chat" /> & we'll be happy to assist.

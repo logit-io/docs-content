@@ -1,0 +1,39 @@
+---
+title: I'm getting access denied errors when logging in with Azure AD
+description: Discover the steps you need to take to resolve Azure AD access errors in this help article from Logit.io.
+---
+
+# I'm getting access denied errors when logging in with Azure AD
+
+If you experience 'access denied' errors when logging in to Logit.io via your Azure AD credentials, there could be a number of reasons why this error message is displayed. However, it is likely that this needs to be resolved by the Administrator of the Azure account you are the user of. Advice on how to resolve two common errors are outlined below.
+
+### Instructions for the Account Administrator
+
+### Error 1- Generic Access denied
+
+The user will see the 'Need admin approval' message and also receive an 'Access denied' message when trying to return to the application without granting consent.
+
+![Admin Approval](@/images/help/account-access/admin-approval.png)
+
+To resolve this problem, the Azure AD administrator needs to update the User settings, they can do this by clicking on 'Enterprise Applications' in the left-hand side Manage menu, and then clicking on 'User settings.'
+
+Under the Enterprise applications section, the 'Users can consent to apps accessing company data on their behalf' option needs to be set to Yes.
+
+![Enterprise Applications](@/images/help/account-access/enterprise-applications.png)
+
+Once this has been saved the users should then be able to log into the Logit.io application using their Azure AD credentials without any errors.
+
+### ​Error 2 -The user is not assigned to a role for the application
+
+The user will see the following 'Access denied' error message.
+
+![Access Denied](@/images/help/account-access/access-denied.png)
+
+To resolve this problem, the Azure AD Administrator needs to update the User assignment settings, they can do this by clicking on the 'Enterprise Applications' section on the left-hand side Manage menu, and then clicking on the Logit.io application. The current settings can be seen by clicking on 'Properties'
+The 'User assignment required?' option needs to be set to Yes.
+
+![User Assignment Required](@/images/help/account-access/user-assignment-required.png)
+
+Then on the left-hand Manage menu click on 'Users and groups' and then 'Add User.' By selecting the relevant user and clicking on 'Assign' the user should appear in the users and group list.
+
+Once the user account has been added they should be able to log into the Logit.io application with their Azure AD credentials without error.

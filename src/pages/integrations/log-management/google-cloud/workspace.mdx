@@ -1,0 +1,189 @@
+---
+title: Google Cloud Workspace Configuration
+subTitle: Ship Google Cloud Workspace Logs to Logstash
+logo: googlecloud
+color: "#e63429"
+description: GCP Workspace allows you to send logs to your ELK stacks. Configure GCP Workspace to send logs to Logstash or Elasticsearch. 
+stackTypes: logs
+sslPortType: beats-ssl
+---
+
+Filebeat is an open source shipping agent that lets you ship logs 
+from local files to one or more destinations, including Logstash.
+
+<Steps>
+  ### GCP Workspace
+
+  Google Workspace encompasses a suite of cloud-based computing tools, productivity applications, and collaborative solutions developed and offered by Google. Sending logs from Google Workspace to Logit.io can be achieved through the utilization of Filebeat and the Google Reports API.
+
+  1. **Set Up a Service Account:**
+    - Follow the [official Google Workspace tutorial](https://support.google.com/workspacemigrate/answer/10839762?sjid=10874551070185788155-EU#zippy=%2Cstep-use-google-cloud-to-turn-on-apis) for IAM-based service account setup.
+
+  2. **Grant Admin SDK API Access:**
+    - Enable access to the following APIs and services:
+      - [Admin SDK](http://admin.google.com/)
+      - People API or Contacts API.
+      - Google Workspace Migrate API
+      - Gmail API
+      - Google Calendar API
+      - Google Drive API
+      - Groups Migration API
+      - Groups Settings API
+      - Google Sheets API
+      - Tasks API
+
+  3. **Delegate Domain-Wide Authority to Your Service Account:**
+    - Open your [Google Workspace Admin console](http://admin.google.com/).
+    - Navigate to Main menu > Security > API controls.
+    - In the Domain-wide delegation pane, select Manage Domain Wide Delegation.
+    - If the option is not visible, switch to a super-admin Google Workspace account.
+    - Access Manage Domain Wide Delegation and click Add new.
+      - Fill in the details:
+        - Client ID: Found in the service account's details under Unique ID and in the client_id field of the auto-downloaded credentials file.
+        - OAuth Scopes: Enter the admin's API.
+      - Click Authorize to confirm your changes.
+  
+  ### Install Filebeat
+
+  <InstallFilebeat />
+  
+  ### Update Your Configuration File
+
+  The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+        
+  Copy the configuration file below and overwrite the contents of __filebeat.yml__.
+  
+  For version `7.16+` and above, use the configuration below:
+
+  ```yml copy
+  fields:
+    type: google_workspace
+
+  # ============================== Filebeat modules ==============================
+  filebeat.modules:
+  - module: google_workspace
+  saml:
+    enabled: true
+    var.jwt_file: "./credentials_file.json"
+    var.delegated_account: "user@example.com"
+  user_accounts:
+    enabled: true
+    var.jwt_file: "./credentials_file.json"
+    var.delegated_account: "user@example.com"
+  login:
+    enabled: true
+    var.jwt_file: "./credentials_file.json"
+    var.delegated_account: "user@example.com"
+  admin:
+    enabled: true
+    var.jwt_file: "./credentials_file.json"
+    var.delegated_account: "user@example.com"
+  drive:
+    enabled: true
+    var.jwt_file: "./credentials_file.json"
+    var.delegated_account: "user@example.com"
+  groups:
+    enabled: true
+    var.jwt_file: "./credentials_file.json"
+    var.delegated_account: "user@example.com"
+
+  # ================================== Outputs ===================================
+  # ------------------------------ Logstash Output -------------------------------
+  output.logstash:
+      hosts: ["@logstash.host:@logstash.sslPort"]
+      loadbalance: true
+      ssl.enabled: true
+
+  # ================================= Processors =================================
+  processors:
+    - add_host_metadata:
+        when.not.contains.tags: forwarded
+    - add_cloud_metadata: ~
+    - add_docker_metadata: ~
+    - add_kubernetes_metadata: ~
+  ```
+  
+  If you're running `Filebeat 7` add this code block to the end. Otherwise, you can leave it out.
+
+  ```yml copy
+  # ... For Filebeat 7 only ...
+
+  - if:
+      has_fields: ['gsuite']
+    then:
+    - rename:
+        fields:
+        - from: "source"
+          to: "gsuite_source"
+  - rename:
+      fields:
+      - from: "agent"
+        to: "filebeat_agent"
+      ignore_missing: true
+  - rename:
+      fields:
+      - from: "log.file.path"
+        to: "source"
+      ignore_missing: true
+  - add_id: ~
+
+  filebeat.registry.path: /var/lib/filebeat
+  ```
+
+  __Validate your YAML__
+
+  _It's a good idea to run the configuration file through a YAML validator to rule out indentation errors, 
+  clean up extra characters, and check if your YAML file is valid. [Yamllint.com](https://yamllint.com) is a great choice._
+
+  ### Validate configuration
+
+  <ValidateBeat beatname="filebeat" />
+
+  ### Start filebeat
+
+  <StartFilebeat />
+
+  ### Check Logit.io for your logs
+  <LaunchStack utmMedium="logs" utmCampaign="filebeat" source="Google_Cloud_Workspace" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>
+
+## GCP Workspace Logging Overview
+
+Google Workspace offers an array of APIs that seamlessly integrate with essential features, enhancing collaboration and productivity. Here's a focused overview:
+
+- **People API:**
+  - Empowers seamless access and management of contact information within Google Workspace.
+
+- **Contacts API:**
+  - Ensures a unified and up-to-date directory across the organization by facilitating the retrieval and updating of contact details.
+
+- **Google Workspace Migrate API:**
+  - Streamlines the migration of data for a smooth transition to Google Workspace, ensuring a secure and efficient process.
+
+- **Gmail API:**
+  - Provides programmatic access to Gmail features, allowing integration of Gmail functionalities into applications.
+
+- **Google Calendar API:**
+  - Enables seamless integration and management of calendar events, offering a comprehensive solution for schedule management.
+
+- **Google Drive API:**
+  - Empowers applications to access and manipulate files stored in Google Drive, facilitating seamless collaboration and file management.
+
+- **Groups Migration API:**
+  - Simplifies the migration of groups and memberships within Google Groups, ensuring a smooth transition.
+
+- **Groups Settings API:**
+  - Allows for the programmable management of group settings, providing control over group configurations.
+
+- **Google Sheets API:**
+  - Facilitates the integration and manipulation of Google Sheets data, enabling the automation of spreadsheet-related tasks.
+
+- **Tasks API:**
+  - Allows developers to integrate task management features into applications, enabling efficient task management.
+
+If you need any further assistance with migrating your log data to ELK we're here to help you get started. Feel free to get in contact with our 
+support team by sending us a message via <IntercomButton text="live chat"/> & we'll be happy to assist.

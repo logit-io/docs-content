@@ -1,0 +1,55 @@
+---
+title: Oracle Kubernetes Engine
+subTitle: Ship Oracle Kubernetes Engine container logs to your hosted Logstash instance at Logit.io
+logo: oracle
+color: "#f80000"
+description: How to send Oracle Kubernetes Engine container logs to your Hosted ELK Logstash instance. Configure Filebeat to send data to Logstash. 
+stackTypes: logs
+sslPortType: beats-ssl
+---
+
+Filebeat is a lightweight shipper that enables you to send your OKE logs to Logstash and Elasticsearch. Configure Filebeat using the pre-defined 
+examples below to start sending and analysing your OKE logs.
+
+<Steps>
+  ### Download Manifest
+
+  Download the filebeat Oracle Kubernetes Engine deploy manifest using the link below:
+
+  [Click to download filebeat-kubernetes-oke.yaml](http://cdn.logit.io/filebeat-kubernetes-oke.yaml)
+
+  ### Insert stack details
+
+  <InsertStackDetails>
+      Open the manifest and around line 57 you should see the environment variables controlling the logging destination. You need to update them to point 
+      to your stack.
+  </InsertStackDetails>
+
+  ### Deploy Pod
+
+  Now your deployment manifest is updated, you can deploy it using.
+
+  ```cmd copy
+  kubectl apply -f filebeat-kubernetes-oke.yaml
+  ```
+
+  ### Confirm Completed Deployment
+
+  ```cmd copy
+  kubectl --namespace=kube-system get ds/filebeat
+
+  kubectl --namespace=kube-system get pods
+  ```
+
+  You should see a pod for each kubernetes node with a name similar to filebeat-abcde listed.
+  The pods should work though from Pending to Running within a couple of minutes as the containers are downloaded and started.
+
+  ### Check Logit.io for your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="oraclekubernetesengine" source="oracle_kubernetes_engine" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>

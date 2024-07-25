@@ -1,0 +1,101 @@
+---
+title: JSON
+subTitle: How to upload JSON logs or JSON log file to Logstash
+logo: json
+color: "#e99d00"
+description: Learn how to ship JSON logs to your Hosted Logstash instance using our example configurations. Simplify sending logs with Logit.io's source configurations.
+stackTypes: logs
+---
+
+Send JSON logs to Logit.io via Logstash.
+
+<Steps>
+  ### Send a single JSON log using curl
+
+  ```cmd copy
+  curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: default" https://@logitApiEndpoint/v2 -d '{"test":"This is a test", "Country":"United Kingdom", "Weather":"Sunny" }'
+  ```
+
+  Your ApiKey can be found by doing the following:
+
+  From the stack dashboard page, click the settings button. Now from the left hand menu choose Stack API Keys.
+
+  Executing the command above, ensuring that the ApiKey value has the value of the stack where the data is to 
+  be logged, will send the string through to Logstash. This can now be viewed by opening Kibana. 
+
+  If the receiving stack has been set up to parse JSON, the data will have been logged as three new values. 
+  If the stack has not been set up to parse JSON the message 
+  field will contain a string corresponding with the data that has been sent.
+
+  Section 3 of this document has an example of how to update a filter to parse JSON data.
+
+  ### Send JSON log files using curl
+
+  It is also possible to test sending a JSON file to Logstash for logging. This example will show how to do this. 
+
+  Let's have a look at the contents of our sample.json file.
+
+  ```json copy
+  {
+    "name": "Jason",
+    "city": "Manchester",
+    "display": "Hello there from JSON file",
+    "value": 5
+  }
+  ```
+
+  The following command should now be entered into the command prompt, this will send the file to Logstash:
+
+  ```cmd copy
+  curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: json" https://@logitApiEndpoint/v2 -d @sample.json
+  ```
+
+  As mentioned previously the ApiKey value can be found by doing the following:
+
+  From the stack dashboard page, click the settings button. Now from the left hand menu choose Stack API Keys.
+
+  You should be able to see the new log record in Kibana. As also mentioned earlier, if the receiving stack has been set up to parse JSON, the data will have been logged a
+  s four new values. If the stack has not been set up to parse JSON the message field will contain a string corresponding with the data that has been sent.
+
+  The next section shows an example of how to update a filter to parse JSON data.
+
+  ### Logstash filter example for JSON
+
+  <LogstashFilterExampleJson />
+
+  ### Check Logit.io for your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="json" source="json" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+### JSON Logging Overview
+
+JSON (also known as JavaScript Object Notation) is a lightweight syntax used for exchanging data. 
+You may have previously encountered the JSON format if you have ever used 
+[Serilog](/integrations/logs/languages-and-libraries/serilog) for migrating log data from 
+Microsoft's [.Net](/integrations/logs/languages-and-libraries/dotnet) or 
+[.Net Core](/integrations/logs/languages-and-libraries/dotnetcore) frameworks.
+
+JSON has almost near-universal support as the vast majority of programming languages can support its Unicode encoding.
+
+JSON has become the preferred format for standardising structured log messages & 
+has taken over from the previously used XML format as the later syntax provides an often more 
+legible and compact format that can be queried as a database.
+
+An exception to this can be found when using the default logging framework 
+for [Apache](/integrations/logs/applications/apache) & [NGINX](/integrations/logs/applications/nginx) 
+as their logs are even more compact than JSON, but are still less suited to flexible parsing.
+
+Our log file viewer supports JSON logs & provides centralised log management built for easy 
+analysis, troubleshooting & testing within your production environment. Logit.io eliminates 
+the need to spend hours searching & tailing across distributed servers for separate JSON logs.
+
+If you need any more help with migrating your JSON logs to Logstash the Logit.io team 
+are here to help. Feel free to get in contact with our support team by 
+sending us a message via <IntercomButton text="live chat" /> & we'll be happy to help you start analysing your data.
+

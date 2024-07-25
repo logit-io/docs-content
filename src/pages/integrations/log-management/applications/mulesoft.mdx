@@ -1,0 +1,104 @@
+---
+title: Mulesoft
+subTitle: Ship Mule application logging entries to Logstash and Elasticsearch using Socket Appender
+logo: mulesoft
+color: "#00a1df"
+description: In our quick installation guide for centralising MuleSoft log data, we'll take you through the steps needed to use AnypointStudio and configure log4j using Socket Appender to ship Mule application logging entries to Logstash or Elasticsearch.
+stackTypes: logs
+sslPortType: tcp-ssl
+---
+
+Use AnypointStudio and configure log4j using Socket Appender to ship Mule application logging entries to Logstash or Elasticsearch.
+
+<Steps>
+### Locate your log4j2.xml file
+
+In Anypoint Studio you can configure your log4j2.xml file under the location src/main/resources.
+
+### Configuring log4j2.xml
+
+You will need to add the Socket appender to the log4j2.xml file. Under the RollingFile tag, inside the Appenders tag add the following snippet swapping the variables for the:
+```cmd copy
+<Socket name="socket" host="@logstash.host" port="@logstash.sslPort" protocol="ssl">
+<PatternLayout pattern="{&quot;log_timestamp&quot;:&quot;%d&quot; ,&quot;log_thread&quot;:&quot;[%t]&quot; , &quot;log_level&quot;:&quot;%-5p&quot; , %m}%n" /> 
+</Socket>
+```
+
+Then inside the tag `AsyncRoot level="Info"` you will need to add:
+```cmd copy
+<AppenderRef ref="socket" />
+```
+
+After adding these two snippets to your file your log4j2.xml file it should look like the example below:
+```cmd copy
+<?xml version="1.0" encoding="utf-8"?>
+<Configuration>
+    <Appenders>
+        <RollingFile name="file" fileName="${sys:mule.home}${sys:file.separator}logs${sys:file.separator}test.log" 
+                filePattern="${sys:mule.home}${sys:file.separator}logs${sys:file.separator}test-%i.log">
+            <PatternLayout pattern="%d [%t] %-5p %c - %m%n" />
+            <SizeBasedTriggeringPolicy size="10 MB" />
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+        
+        <Socket name="socket" host="{{logstash.host}}" port="{{logstash.sslPort}}" protocol="ssl">
+        <PatternLayout pattern="{&quot;log_timestamp&quot;:&quot;%d&quot; ,&quot;log_thread&quot;:&quot;[%t]&quot; , &quot;log_level&quot;:&quot;%-5p&quot; , %m}%n" /> 
+        </Socket>
+        
+    </Appenders>
+    <Loggers>
+        <!-- CXF is used heavily by Mule for web services -->
+        <AsyncLogger name="org.apache.cxf" level="WARN"/>
+        
+        <!-- Apache Commons tend to make a lot of noise which can clutter the log-->
+        <AsyncLogger name="org.apache" level="WARN"/>
+        
+        <!-- Reduce startup noise -->
+        <AsyncLogger name="org.springframework.beans.factory" level="WARN"/>
+        
+        <!-- Mule classes -->
+        <AsyncLogger name="org.mule" level="INFO"/>
+        <AsyncLogger name="com.mulesoft" level="INFO"/>
+        
+        <!-- Reduce DM verbosity -->
+        <AsyncLogger name="org.jetel" level="WARN"/>
+        <AsyncLogger name="Tracking" level="WARN"/>
+        
+        <AsyncRoot level="INFO">
+            <AppenderRef ref="file" />
+            <AppenderRef ref="socket" />
+        </AsyncRoot>
+    </Loggers>
+</Configuration>
+```
+
+### Check Logit.io for your logs
+<LaunchStack utmMedium="logs" utmCampaign="mulesoft" source="mulesoft" />
+
+### How to diagnose no data in Stack
+
+<DiagnoseNoData />
+
+</Steps>
+
+### Mulesoft Logging Overview
+
+MuleSoft is the creator of a widely used IPaaS (integration-platform-as-a-service) that assists businesses with 
+connecting data, devices and apps across [cloud](https://logit.io/solutions/monitoring/cloud-monitoring) platforms 
+and on-premise services. This solution helps create a unified single-pane in the observability of key processes 
+and applications across the enterprise.
+                    
+Mule's technology has allowed them to become a market leader among other integration tech suppliers in this space. 
+Their popularity continues to grow among IT teams prioritising digital transformation & modernisation within their 
+organisation.
+
+Their AnyPoint Platform generates both runtime & [application logs](https://logit.io/platform/logging/logging-as-a-service/application-logging/) 
+to help users troubleshoot activity from the MuleSoft server. These can be shipped to the Elastic Stack & visualised in Kibana 
+to help administrators monitor errors, create dashboards & visualisations, as well as alert on irregularities in application 
+activity.  
+
+Log data generated from running Mule servers can be centralised and managed using Logit.io as both platforms are 
+built to work hand in hand to help your business become scalable & ready for growth.  
+
+If you need any further assistance with migrating your Mule log data to Logstash we're here to help you get started. 
+Feel free to reach out by contacting our support team by visiting our dedicated Help Centre or via <IntercomButton text="live chat"/> & we'll be happy to assist.

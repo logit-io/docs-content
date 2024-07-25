@@ -1,0 +1,141 @@
+---
+title: Overview
+description: Learn about Log Management Ingestion Pipelines on the Logit.io platform
+---
+
+# Log Management: Ingestion Pipeline Overview
+
+## What are Ingestion Pipelines?
+
+Ingestion pipelines are a series of processes and operations used to collect, 
+process, and prepare data for storage or analysis in a data repository or data 
+warehouse. Ingestion pipelines are a crucial part of data management and analytics 
+workflows, especially in large-scale and complex data environments.
+
+![Ingestion Pipeline Overview](@/images/help/log-management/ingestion-pipelines/ingestion-pipeline-overview.png)
+
+## Working with Log Management Ingestion Pipelines
+
+An ingest pipeline allows you to change and structure your data before indexing. 
+For example, you could use a pipeline to remove a field, extract a value from 
+some text or enhance parts of your data.
+
+Ingestion pipelines can be found in three separate places under the initial 'Overview' 
+dashboard depending on your account subscription. This help article will only focus 
+on ingestion pipelines in relation to log management.
+
+## Log Management Ingestion Pipeline
+
+Firstly, ingestion pipelines can be found under the 'Log Management' section. 
+This will show ingestion pipelines in relation to your Log Management.
+
+The ingestion pipeline allows you to optimise your data processing by employing 
+Logstash inputs and filters, enabling you to modify and enhance your log data. 
+Also, you can view the health of all the service nodes. By clicking the ellipses 
+at the top right you can 'configure inputs', view 'firewall rules' and use the 'filter editor'.
+
+## Configure Inputs
+
+If you wish to work with your Logstash inputs then select 'configure inputs' from 
+the ellipses at the top right. Here you can locate, copy, and set up the 
+Logstash endpoint information to ship data to your Stack via Logstash. 
+
+## Firewall Rules
+
+To view and configure your Logstash firewall rules, select 'firewall rules' from 
+the ellipses at the top right. From here, you have the capability to set up Firewall 
+Groups to protect your Logstash endpoints. This is important because configuring 
+Firewall Groups improves Stack security by restricting the IP addresses that can 
+send data to specific ports on your Stacks.
+
+## Filter Editor
+
+To work with your Logstash filter choose 'filter editor' from the ellipses at the 
+top right. From this point, you can modify, test, and update the Logstash pipelines 
+associated with this Stack, or initiate a restart of your Logstash instance for this stack.
+
+## Logstash Input Nodes
+
+Logstash Input Nodes refer to components or configurations that define how 
+Logstash collects data from various sources. Logstash is a data collection 
+and processing tool that allows you to ingest data from different input sources, 
+perform transformations on that data, and then send it to an output destination. 
+Here you can view each separate instance, its health, and memory details. To work 
+with your Logstash Inputs choose Configure Inputs from the dropdown. 
+
+## Kafka Nodes
+
+Kafka nodes, also known as Kafka brokers, are part of an Apache Kafka cluster and 
+are responsible for receiving, storing, and serving data in Kafka topics. Kafka 
+nodes ensure fault tolerance and scalability for data streaming. 
+Here you can monitor each individual instance and the health of it.
+
+### How do I use the Logit.io ingest pipelines?
+Logit.io ingest pipelines already come pre-configured in your stack. So it's as simple as using Filebeat to ship your data.
+
+You need to enable the module for the data you are trying to send, details of how to do this can be found in your chosen source integration. 
+
+Configure the output of Filebeat to your hosted Logstash instance and you're good to go.
+
+Once your data arrives in OpenSearch you will be able to view the pre-configured dashboards associated with your data. Once you have sent data, your dashboards can be found in OpenSearch Dashboards. 
+
+To view your dashboards launch your OpenSearch Dashboards instance and navigate to Dashboards in the left-hand menu.
+
+![Kibana Dashboards](@/images/help/log-management/ingestion-pipelines/kibana-dashboards.png)
+
+For example, if you had the system module enabled and were sending logs with Filebeat you would see dashboards similar to the below.
+
+![Filebeat Dashboard](@/images/help/log-management/ingestion-pipelines/filebeat-dashboard.png)
+
+### How to stop a pipeline from being run?
+To stop an ingest pipeline from being run/used, you can simply comment out the name of the pipeline in the Logstash Pipeline Editor section.
+
+To do this navigate to `Logstash Pipelines` settings.
+
+![Logstash Pipeline](@/images/help/log-management/ingestion-pipelines/logstash-pipeline.png)
+
+Now you need to find the name of the ingest pipeline you want to remove or disable and comment it out using #.
+
+For example, if you didn't want to use the haproxy-log ingest pipeline you would do:
+
+```ruby
+else if /apache-error/ in [@metadata][pipeline] {
+      mutate {
+        add_field => { "[@metadata][logit_pipeline]" => "apache-error" }
+      }    
+    }
+#    else if /haproxy-log/ in [@metadata][pipeline] {
+#      mutate {
+#        add_field => { "[@metadata][logit_pipeline]" => "haproxy-log" }
+#      }    
+#    }
+    else if /nginx-access/ in [@metadata][pipeline] {
+      mutate {
+        add_field => { "[@metadata][logit_pipeline]" => "nginx-access" }
+      }    
+    }
+```
+
+![Ingest Pipeline](@/images/help/log-management/ingestion-pipelines/ingest-pipeline.png)
+
+Alternatively, you can also delete the Ingest Pipeline you don't wish to use from Elasticsearch.
+
+To do this launch your OpenSearch Dashboards instance and navigate to Dev Tools in the left-hand menu.
+
+![Kibana Instance](@/images/help/log-management/ingestion-pipelines/kibana-instance.png)
+
+From here you can run a GET request to see which pipelines you have installed.
+
+```cmd copy
+GET _ingest/pipeline/
+```
+
+![Name Pipeline](@/images/help/log-management/ingestion-pipelines/name-pipeline.png)
+
+Now you need to choose the name of the pipeline you wish to delete and run a DELETE request.
+
+```cmd copy
+DELETE _ingest/pipeline/haproxy-log
+```
+
+![Delete Pipeline](@/images/help/log-management/ingestion-pipelines/delete-pipeline.png)

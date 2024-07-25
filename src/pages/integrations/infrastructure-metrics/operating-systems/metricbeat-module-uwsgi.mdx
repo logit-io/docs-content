@@ -1,0 +1,104 @@
+---
+title: uWSGI Metrics
+subTitle: Collect and ship uWSGI server metrics to Logstash and Elasticsearch
+logo: uwsgi
+color: "#93b20f"
+description: How to send uWSGI metrics to your Hosted ELK Logstash instance. Configure Metricbeat to send uWSGI server metrics to Logstash or Elasticsearch.
+stackTypes: metrics
+sslPortType: beats-ssl
+---
+
+Metricbeat is a lightweight shipper that helps you monitor your uWSGI 
+servers by collecting metrics from the uWSGI server. Configure Metricbeat 
+using the pre-defined examples below to collect and ship uWSGI 
+service metrics and statistics to Logstash or Elasticsearch.
+
+<Steps>
+  ### Install Metricbeat
+
+  <InstallBeat beatname="metricbeat" />
+
+  ### Copy Configuration File
+
+  <MetricbeatOutput />
+
+  ### Enable module
+
+  <EnableMetricbeatModule module="uWSGI" />
+
+  ### Configure Module
+
+  Each module has its own configuration file where different metricsets can be enabled/disabled. 
+  Locate the configuration file for the uWSGI module.
+        
+  <Tabs items={["DEB/RPM", "macOS/Windows"]}>
+    <Tab>
+      ```cmd copy
+      /etc/metricbeat/modules.d/uwsgi.yml
+      ```
+    </Tab>
+    <Tab>
+      ```cmd copy
+      ~/<EXTRACTED_ARCHIVE>/modules.d/uwsgi.yml
+      ```
+    </Tab>
+  </Tabs>
+
+  By default the following metricsets are disabled. To enable or disable a 
+  metric simply comment or uncomment the line out.
+
+  ```yml copy showLineNumbers
+  - module: uwsgi
+    # metricsets:
+      # - status
+    period: 10s
+    hosts: ["tcp://127.0.0.1:9191"]
+  ```
+
+  ### Start Metricbeat
+
+  [Start or restart Metricbeat](https://www.elastic.co/guide/en/beats/metricbeat/master/metricbeat-starting.html) 
+  to apply the configuration changes.
+
+  ### Check Logit.io for your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="uwsgi_metricbeat" source="metrics_uwsgi" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+  ### Compatibility
+
+  The uWSGI metricsets were tested with uWSGI 2.0.15 and are expected to work with all version >= 1.4.9
+
+  ### uWSGI Module Dashboard
+
+  The uWSGI module comes with predefined Kibana dashboards. To view your dashboards for 
+  any of your Logit.io stacks, launch Logs and choose Dashboards.
+
+  ![Predefined Kibana dashboard](@/images/integrations/metricbeats/metricbeat_uwsgi_module.png)
+
+</Steps>
+
+### uWSGI Metricbeat Module Overview
+
+This module has quickly become a go-to solution for developers and system administrators 
+who manage uWSGI-powered applications, thanks to its straightforward configuration 
+and seamless integration with the [ELK Stack](https://logit.io/blog/post/elk-stack-guide/). 
+This integration allows for the real-time monitoring and analysis of uWSGI metrics, 
+offering a depth of insight that surpasses many traditional monitoring tools.
+
+Compared to other monitoring approaches that might rely on custom or less adaptable 
+data formats, the Metricbeat Module for uWSGI is designed for ease of use, 
+comprehensive analysis, and proactive troubleshooting within your operational environment.
+
+Our platform supports the Metricbeat Module for uWSGI, providing centralized management 
+for metrics that enables effortless analysis, troubleshooting, and monitoring of 
+your uWSGI applications. This support eradicates the cumbersome process of manually 
+collecting and analyzing metrics across distributed systems.
+
+Should you need assistance with configuring the Metricbeat Module for uWSGI or have any 
+inquiries about how to effectively monitor your uWSGI applications, the Logit.io team 
+is ready to assist. Feel free to visit our Help Centre or reach out to our support 
+team <IntercomButton text="via live chat" /> and we'll be happy to assist.

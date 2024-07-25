@@ -1,0 +1,83 @@
+---
+title: Redis Metrics via Telegraf
+subTitle: Ship your Redis Metrics via Telegraf to your Logit.io Stack
+logo: redis
+color: "#4d4d4d"
+description: Configure Telegraf to ship Redis metrics to your Logit.io stacks. Configure Telegraf to send Redis metrics to Logstash or Elastic. Get started using our Telegraf Redis metrics example configuration.
+stackTypes: metrics
+sslPortType: beats-ssl
+---
+
+Configure Telegraf to ship Redis metrics to your Logit.io stacks via Logstash.
+
+<Steps>
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+
+  ```yaml copy
+  -- Read Redis's basic status information
+  [[inputs.redis]]
+  -- specify servers via a url matching:
+  -- [protocol://][:password]@address[:port]
+  --  e.g. tcp://localhost:6379 or tcp://:password@192.168.99.100
+  -- If no servers are specified, then localhost is used as the host.
+  -- If no port is specified, 6379 is used
+    servers = [<protocol>://][:<password>]@<address>[:<port>]
+  ```
+
+  Replacing the values for protocol, password, address and port as needed.
+
+  <Callout type="info">
+    Read more about how to configure data scraping and configuration options for [Redis](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/redis/README.md)
+  </Callout>
+
+  ### Configure the output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack source="Redis_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-HAproxy-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+### Telegraf Redis metrics Overview
+
+Redis is a high-performance, in-memory data structure store serving as a key-value database, cache, and message broker. 
+Monitoring and analyzing Redis metrics are crucial for optimal performance and reliability in distributed systems. 
+To achieve this, organizations require a reliable and efficient metrics management solution. Telegraf, an open-source 
+metrics collection agent, excels in gathering Redis metrics from various sources, including Redis instances, operating systems, and applications.
+
+With a wide range of input plugins, Telegraf empowers organizations to collect diverse Redis metrics, 
+such as memory usage, CPU utilization, throughput, and latency. These metrics provide valuable insights 
+into Redis performance, enabling organizations to optimize deployments and ensure efficient data storage and retrieval.
+
+Prometheus, a powerful open-source monitoring and alerting tool, is the recommended choice for storing and 
+querying Redis metrics. With its flexible querying language and graphical visualization capabilities, 
+Prometheus helps organizations gain actionable insights from Redis metrics. By configuring Telegraf to output 
+Redis metrics in Prometheus format and setting up Prometheus to scrape metrics from the Telegraf server, seamless integration is achieved.
+
+This process involves configuring Telegraf to collect Redis metrics, formatting them in Prometheus format, 
+and setting up Prometheus to scrape metrics from the Telegraf server. Leveraging Prometheus's advanced 
+querying and visualization features, organizations gain deep insights into Redis performance, 
+identify bottlenecks, and troubleshoot issues effectively.
+
+By leveraging Telegraf and Prometheus, organizations establish a reliable and efficient metrics 
+management solution for Redis deployments. This empowers them to monitor Redis performance, optimize 
+resource allocation, identify bottlenecks, and make data-driven decisions to ensure optimal system health and performance.
+
+If you need any further assistance with shipping your log data to Logit.io we're here to help you get started. 
+Feel free to get in contact with our support team by sending us a message via <IntercomButton text="live chat" /> 
+& we'll be happy to assist.

@@ -1,0 +1,68 @@
+---
+title: Syslog-NG
+subTitle: Ship logs using syslog-ng to Logit.io via Logstash
+logo: syslogng
+color: "#008bb6"
+description: Follow our configuration guide for Syslog-ng-ng logs to get started centralising your data using the ELK Stack.
+stackTypes: logs
+sslPortType: syslog-ssl
+portType: syslog
+---
+
+Learn how configure syslog-ng to securely ship logs over SSL to your 
+Stack via Logstash. This is a good choice when you need to ship logs from 
+appliances or devices where you cannot run one of the [beats shippers](/sources/search?f=shippers).
+
+<Steps>
+  ### Syslog-ng Configuration
+
+  Add the following additional config into `/etc/syslog-ng/conf.d/logit.conf`
+
+  ```cmd copy
+  destination d_logit {
+      network("{{logstash.host}}-ls.logit.io" port({{logstash.sslPort}})
+          transport("tls")
+          tls( ca_dir("/etc/ssl/certs/"))
+      );
+  };
+
+  log { source(s_src); destination(d_logit); };
+  ```
+
+  ### Restart
+
+  Restart the Syslog-ng service:
+
+  ```bash copy
+  sudo systemctl restart syslog-ng
+  ```
+
+  ### Check Logit.io for your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="syslog" source="syslog_ng" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+### Syslog-ng Logging Overview
+
+Syslog-ng is a robust message logging system that is widely used across various operating systems and network devices. It plays a crucial role in sending log 
+data to a centralized logging server. IT teams find it invaluable for tasks such as auditing, diagnostics, and enhancing operational efficiency, as it 
+records event data using a highly flexible and customizable approach.
+
+Unlike some other logging systems, Syslog-ng offers a higher degree of standardization and control, making it easier to manage and understand log data efficiently. 
+This standardization proves particularly advantageous in diverse environments where different devices and systems interact, ensuring that log data remains 
+coherent and structured for analysis.
+
+Our Syslog-ng log analyzer provides a powerful solution for the rapid analysis of large volumes of Syslog-ng log data. This tool allows you to swiftly identify 
+the root causes of performance issues and helps prevent instances of downtime across your infrastructure. Whether you're dealing with gigabytes or even terabytes 
+of log data, our analyzer is designed to handle it effectively.
+
+If you require assistance with migrating your log data to Syslog-ng or optimizing your log management processes, our dedicated support team is here to assist 
+you. You can reach out through our Help Center, <IntercomButton text="via live chat" />, or other contact options. We're committed to 
+helping you make the most of Syslog-ng for your logging and monitoring needs.
+
+

@@ -1,0 +1,100 @@
+---
+title: How To Send Email Alerts & Notifications from Logit.io
+description: Discover the steps you need to take to setup and configure email alerts from your Logit.io ELK stacks in this helpful article.
+---
+
+# How to send email alerts & notifications from Logit
+
+It only takes a few minutes to add Alerting to any of your Logit ELK stacks. 
+Once enabled, you'll be able to edit and set up alerting rules for all 
+your stacks and to as many different email addresses as you need!
+
+## Provision Alerting for your Stack
+
+To enable alerting for a stack, navigate to `Alerting & Notifications` 
+settings and then click _Enable Alerting_.
+
+## Create your Alerting Rule
+
+Use the code block below to quickly get started with your email alert.
+
+```yaml copy
+name: Production App Errors
+
+type: any
+
+# (Required)
+# Index to search, wildcard supported
+
+index: logstash-*
+
+## Receive an alert for every single match
+
+realert:
+  minutes: 0
+
+# (Required)
+# A list of elasticsearch filters used for find events
+# These filters are joined with AND and nested in a filtered query
+
+filter:
+- query:
+    query_string:
+      query: "type: error"
+
+# (Required)
+# The alert used when a match is found
+alert:
+- "email"
+
+# (required, email specific)
+# a list of email addresses to send alerts to
+
+email:
+
+- "me@logit.io"
+```
+
+## How to use the code
+
+1. Paste the code into the alert replacing any existing rule.
+2. Then just edit the code to match the filter query you need, in this case we are looking for matches on "type:error".
+3. Replace me@logit.io with the required email address.
+4. Choose test to run the rule against your data over the last 2 hrs.
+5. Once happy, choose update to apply and save the rule.
+
+## Configure alerts to send emails to more than one email address
+
+Now that you have your new alert rule set up you may want to 
+alert more than one email at a time. To do this you will need 
+to edit the code which contains your rule.
+
+### Edit your code
+
+At the bottom of the code, there is the option for email followed 
+by the 'me@logit.io" email address. To add another simply add a 
+separate line followed by the email address. For example - 
+
+```yaml copy
+# (required, email specific)
+# a list of email addresses to send alerts to
+
+email:
+
+- "me@logit.io"
+- "you@logit.io"
+- "them@logit.io"
+```
+
+### Test your alert
+
+Once you have added the required emails you need to test the rule 
+works. So choose either test option.
+
+![Test Alert](@/images/help/log-management/alerting/test-alert.png)
+
+Once the test passes hit the update rule button, this will save and enable 
+the alert rule for your stack. You can see from the console output more 
+details about how your alert rule will behave once applied.
+
+![Alert Rules](@/images/help/log-management/alerting/alert-rules.png)

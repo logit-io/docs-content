@@ -1,0 +1,51 @@
+---
+title: Querying With SQL Workbench
+description: Find out how you can query OpenSearch Dashboards using familiar SQL syntax in this informative help article from Logit.io.
+---
+
+# Querying OpenSearch Dashboards using the SQL Workbench
+
+## OpenSearch Dashboards SQL Workbench Introduction
+
+OpenSearch Dashboards SQL Workbench gives you the ability to query 
+data from OpenSearch much easier when compared to standard DSL, test 
+your findings before saving and quickly convert familiar SQL 
+syntax into its REST equivalent where required.
+
+If you are already familiar with making OpenSearch queries using 
+SQL then the SQL Workbench will be a welcome addition to your 
+OpenSearch Stack workflow.
+
+<Callout type="info">
+  OpenSearch Dashboards security roles requires a Logit.io Stack 
+  running Opendistro 1.13 onwards.
+</Callout>
+
+![Query Workbench](@/images/help/log-management/storage/query-workbench.png)
+
+To get started, launch OpenSearch Dashboards from your dashboard 
+and choose Query Workbench from the left menu.
+
+## Exporting query data 
+In the event that you are more comfortable with seeing your query as a 
+tabbed format or wish to export this as a CSV, JDBC or JSON file this 
+is also possible thanks to this convenient interface.
+
+![Export Query Data](@/images/help/log-management/storage/export-query-data.png)
+
+## Building queries using Typeahead
+
+By starting to type a term you see typeahead suggestions to assist 
+with building your query. The typeahead is based on your data model 
+and so makes building queries much simpler.
+
+![Typeahead Query](@/images/help/log-management/storage/typeahead-query.png)
+
+## Converting SQL into OpenSearch JSON
+By taking advantage of the Explain functionality you can easily convert 
+your SQL queries into OpenSearch JSON queries which would normally take 
+considerable time and effort. To translate a SQL statement into valid 
+OpenSearch JSON from the Query Builder, add your valid SQL query and 
+then choose Explain.
+
+![Converting SQL into OpenSearch JSON](@/images/help/log-management/storage/converting-sql-into-opensearch-json.png)

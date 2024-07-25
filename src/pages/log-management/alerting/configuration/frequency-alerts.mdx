@@ -1,0 +1,44 @@
+---
+title: Configure Frequency Alerts for OpenSearch
+description: Create a frequency alert for logs/metrics. When log count exceeds a certain number of events within a time interval, trigger an alert
+---
+
+# Configure Frequency Alerts for OpenSearch
+
+A Frequency alert matches when there are at least a certain 
+number of events `num_events` in a given `timeframe`.
+
+This would allow you to receive alerts in scenarios such as if 
+there are **100 or more events** `num_events` matching the specified 
+filter `query` and the events all happen within a **3-hour window** 
+`timeframe` you would receive an alert to your configured channel. 
+
+Here is an example below:
+
+```yaml copy
+name: "Frequency alert example"
+type: frequency
+index: "*-*"
+timeframe:
+  hours: 3
+num_events: 100
+filter:
+- query:
+   query_string:
+      query: "router.status: [500 TO 599]"
+realert:
+  minutes: 10
+exponential_realert:
+  hours: 8
+alert:
+- "email"
+email:
+- "example@logit.io"
+```
+
+## Additional Options
+
+In addition, you can also provide a `realert` to ignore repeating 
+alerts for the defined period of time. You can also provide an 
+`exponential_realert` value and this will exponentially increase 
+the value `realert` while alerts continue to fire.

@@ -1,0 +1,247 @@
+---
+title: Logstash Logging
+pageTitle: Logstash Logging Configuration
+subTitle: Ship logs to your hosted Logstash instance at Logit
+logo: logstash
+color: "#f3b800"
+description: Filebeat allows you to send logs to your ELK stacks. Configure Filebeat to send Logstash logs to Elasticsearch.
+stackTypes: logs
+sslPortType: beats-ssl
+---
+
+Filebeat is an open source shipping agent that lets you ship logs from local files to one or more destinations, including Logstash.
+
+<Steps>
+  ### Install Filebeat
+
+  <InstallFilebeat />
+
+  ### Enable the Logstash module
+
+  <Tabs items={["Windows", "Linux", "macOS", "DEB", "RPM"]}>
+    <Tab>
+      There are several built in filebeat modules you can use. You will need to enable the logstash module:
+
+      ```ps1 copy
+      .\filebeat.exe modules list
+      .\filebeat.exe modules enable logstash
+      ```
+
+      In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
+      
+      ___Filesets are disabled by default___.
+
+      Copy the snippet below and replace the contents of the logstash.yml module file:
+
+      ```yaml copy
+      # Module: logstash
+      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-logstash.html
+
+      - module: logstash
+        # logs
+        log:
+          enabled: true
+
+          # Set custom paths for the log files. If left empty,
+          # Filebeat will choose the paths depending on your OS.
+          #var.paths:
+
+        # Slow logs
+        slowlog:
+          enabled: true
+          # Set custom paths for the log files. If left empty,
+          # Filebeat will choose the paths depending on your OS.
+          #var.paths:
+      ```
+    </Tab>
+    <Tab>
+      There are several built in filebeat modules you can use. You will need to enable the logstash module:
+
+      ```ps1 copy
+      sudo filebeat modules list
+      sudo filebeat modules enable logstash
+      ```
+
+      In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
+      
+      ___Filesets are disabled by default___.
+
+      Copy the snippet below and replace the contents of the logstash.yml module file:
+
+      ```yaml copy
+      # Module: logstash
+      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-logstash.html
+
+      - module: logstash
+        # logs
+        log:
+          enabled: true
+
+          # Set custom paths for the log files. If left empty,
+          # Filebeat will choose the paths depending on your OS.
+          #var.paths:
+
+        # Slow logs
+        slowlog:
+          enabled: true
+          # Set custom paths for the log files. If left empty,
+          # Filebeat will choose the paths depending on your OS.
+          #var.paths:
+      ```
+    </Tab>
+    <Tab>
+      There are several built in filebeat modules you can use. You will need to enable the logstash module:
+
+      ```ps1 copy
+      ./filebeat modules list
+      ./filebeat modules enable logstash
+      ```
+
+      In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
+      
+      ___Filesets are disabled by default___.
+
+      Copy the snippet below and replace the contents of the logstash.yml module file:
+
+      ```yaml copy
+      # Module: logstash
+      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-logstash.html
+
+      - module: logstash
+        # logs
+        log:
+          enabled: true
+
+          # Set custom paths for the log files. If left empty,
+          # Filebeat will choose the paths depending on your OS.
+          #var.paths:
+
+        # Slow logs
+        slowlog:
+          enabled: true
+          # Set custom paths for the log files. If left empty,
+          # Filebeat will choose the paths depending on your OS.
+          #var.paths:
+      ```
+    </Tab>
+    <Tab>
+      There are several built in filebeat modules you can use. You will need to enable the logstash module:
+
+      ```ps1 copy
+      sudo filebeat modules list
+      sudo filebeat modules enable logstash
+      ```
+
+      In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
+      
+      ___Filesets are disabled by default___.
+
+      Copy the snippet below and replace the contents of the logstash.yml module file:
+
+      ```yaml copy
+      # Module: logstash
+      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-logstash.html
+
+      - module: logstash
+        # logs
+        log:
+          enabled: true
+
+          # Set custom paths for the log files. If left empty,
+          # Filebeat will choose the paths depending on your OS.
+          #var.paths:
+
+        # Slow logs
+        slowlog:
+          enabled: true
+          # Set custom paths for the log files. If left empty,
+          # Filebeat will choose the paths depending on your OS.
+          #var.paths:
+      ```
+    </Tab>
+    <Tab>
+      There are several built in filebeat modules you can use. You will need to enable the logstash module:
+
+      ```ps1 copy
+      sudo filebeat modules list
+      sudo filebeat modules enable logstash
+      ```
+
+      In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
+      
+      ___Filesets are disabled by default___.
+      
+      Copy the snippet below and replace the contents of the logstash.yml module file:
+
+      ```yaml copy
+      # Module: logstash
+      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-logstash.html
+
+      - module: logstash
+        # logs
+        log:
+          enabled: true
+
+          # Set custom paths for the log files. If left empty,
+          # Filebeat will choose the paths depending on your OS.
+          #var.paths:
+
+        # Slow logs
+        slowlog:
+          enabled: true
+          # Set custom paths for the log files. If left empty,
+          # Filebeat will choose the paths depending on your OS.
+          #var.paths:
+      ```
+    </Tab>
+  </Tabs>
+
+  ### Update Your Configuration File
+
+  <UpdateFilebeatConfigFile />
+
+  ### Validate Configuration
+
+  <ValidateBeat beatname="filebeat" />
+
+  ### Start filebeat
+  
+  <StartFilebeat />
+
+  ### Check Logit.io for your logs
+  <LaunchStack utmMedium="logs" utmCampaign="logstashlogging" source="logstash_logs" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+### Logstash Overview
+
+__What Is Logstash?__
+  
+Logstash is an open-source light-weight processing pipeline created by Elastic. 
+It is the most popular data pipeline used for Elasticsearch 
+as their close integration allows for powerful log processing capabilities.     
+
+__What is Logstash Used For?__
+
+Logstash makes up an essential part of the ELK Stack as it provides the easiest solution for collecting, parsing, and storing logs for 
+analysis & monitoring.      
+
+Logstash's wide range of over 200 open-source plugins help you easily index your data across multiple log types including error, event & web 
+server files from hundreds of popular integrations. The tool offers an array of input, output, & filter plugins for enriching, and transforming 
+data from a variety of sources including [Golang](/integrations/logs/languages-and-libraries/golang), 
+[Google Cloud](/integrations/logs/google-cloud/operations), & [Azure](/integrations/logs/azure/azure).
+
+__What Are The Advantages Of Using Logstash?__
+
+Some of the advantages of using this pipeline include high availability & flexibility, due to the wide adoption of ELK & the large community 
+supporting their regularly maintained plugins. Some of the most popular plugins include Logtrailing (for tailing live events), Beats 
+(including [Metricbeat](/integrations/logs/shippers/metricbeat) & [Heartbeat](/integrations/logs/shippers/heartbeat)), & 
+[TCP](/integrations/logs/protocols/tcp).
+
+Logstash also benefits from having a straightforward configuration format that reduces the complexity of getting started with ELK. Data 
+ingestion using Logstash is enriched prior to being indexed by Elasticsearch, making it readily available for filtering, analysis & reporting 
+in Kibana once data is migrated to your ELK Stack

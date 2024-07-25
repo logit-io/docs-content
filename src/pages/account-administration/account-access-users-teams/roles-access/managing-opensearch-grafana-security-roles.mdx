@@ -1,0 +1,76 @@
+---
+title: Managing OpenSearch & Grafana Security Roles
+description: Learn how to manage and secure read-only, dashboard-only and index-level permissions using OpenSearch Security on your Logit.io Stacks
+---
+
+# Managing OpenSearch & Grafana Security Roles
+
+### OpenSearch Roles Introduction
+
+OpenSearch Security Roles gives you more granular control of user access to your Stacks. Roles allow you to specify cluster permissions, index permissions, document and field-level security. By mapping users to roles, users gain access based on those permissions.
+
+<Callout type="info">
+  OpenSearch security roles requires a Logit.io Stack running Opendistro 1.13 onwards.
+</Callout>
+
+![Team Settings](@/images/help/account-access/team-settings.png)
+
+By default all Logit.io Teams come with the roles shown below for common scenarios, to modify the roles for a team choose Account Settings > Team Settings from your dashboard. You can add a new team or edit an existing team to modify the roles.
+
+![OpenSearch Stack Roles](@/images/help/account-access/opensearch-stack-roles.png)
+
+When you add or update a team the roles are automatically synchronised to OpenSearch Security for you, removing the need for the manual mapping of users to roles in OpenSearch. You can read more details below about what permissions each predefined role grants to members of that team.
+
+### Stack Administrator
+
+OpenSearch Role name: stack_admin
+
+This role is assigned by default to all Logit.io Account Owners and allows them to manage all aspects of OpenSearch Security including users, roles, mappings and index level security in OpenSearch.
+
+### Stack Editor
+
+OpenSearch Role name: stack_user
+
+Users assigned to this role can manage all aspects of existing stacks.
+
+### OpenSearch User
+
+OpenSearch Role name: stack_user
+
+Users assigned to this role have access to all aspects of the OpenSearch UI. Users with this role can make changes to visualisations, dashboards, and other OpenSearch objects.
+
+### OpenSearch User Read Only
+
+OpenSearch Role name: stack_user_ro
+
+Users assigned this role have Read-Only access to all aspects of the OpenSearch UI.
+
+Users with this role cannot make any changes to visualisations, dashboards, and other OpenSearch objects.
+
+<Callout type="info">
+  In order to add someone to the stack_user_ro role you would need to remove them from the `stack_user` role.
+</Callout>
+
+[Learn how to give a user Read Only OpenSearch access](/account-administration/account-access-users-teams/roles-access/opensearch-read-only-dashboard-only-access)
+
+### OpenSearch User Dashboard Only
+
+OpenSearch Role name: stack_dashboard_only
+
+Users assigned to this role can view all Dashboards as Read Only. Users with this role cannot make any changes to visualisations, dashboards, and other OpenSearch objects.
+
+[Learn how to give a user Dashboard Only OpenSearch access](/account-administration/account-access-users-teams/roles-access/opensearch-read-only-dashboard-only-access)
+
+### Grafana User Role
+
+Grafana users can access data using Grafana and create/edit/delete searches, visualisations and dashboards.
+
+![Grafana User Role](@/images/help/account-access/grafana-user-role.png)
+
+### OpenSearch Custom Role
+
+Users assigned to this role can view the OpenSearch instance but permissions are based on any custom roles defined in the Security Roles section of OpenSearch. Use this role if you want to give the members access to specific custom roles that you have defined directly in OpenSearch e.g. granting them specific index level permissions.
+
+[Learn how to use the OpenSearch Custom Role to manage granular access to your Stack](/account-administration/account-access-users-teams/roles-access/opensearch-custom-role)
+
+![OpenSearch Custom Role](@/images/help/account-access/opensearch-custom-roles.png)

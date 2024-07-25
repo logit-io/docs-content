@@ -1,0 +1,101 @@
+---
+title: Configuring RAM Usage Alerts
+description: Setup and configure RAM usage alerts to send notifications from Logit.io
+---
+
+# How to configure RAM usage alerts with Logit.io?
+
+RAM usage alerts are a critical component of proactive system management. 
+They provide insights into system performance, resource allocation, security, 
+and cost control, enabling organizations to optimize their IT infrastructure, 
+enhance user experiences, and ensure the reliability and security of their systems.
+
+In the steps below, we'll walk you through the process of setting up a RAM 
+usage alert rule in Grafana. This rule will monitor the RAM usage of your 
+servers and notify you when it exceeds a certain threshold, which could 
+indicate inadequate memory allocation. While this is a specific example, 
+the process for setting up other alert rules in Grafana will follow a similar pattern.
+
+## Pre-requisites
+
+Configure Contact Points
+
+![Contact Points](@/images/help/infrastructure-metrics/contact-points.png)
+
+![Create Contact Point](@/images/help/infrastructure-metrics/create-contact-point.png)
+
+![Contanct Point Type](@/images/help/infrastructure-metrics/contact-point-type.png)
+
+## New Alert Rule
+
+Grafana has an entire section dedicated to alerts. In the main dashboard, 
+find and select the Alerts section. Here, you'll see an option for 'New Alert Rule.' 
+When you select this, you'll be taken to a new screen where you can set up your alert. 
+This is where you'll specify what conditions must be met for the alert to be triggered.
+
+## Select a Metric
+
+A metric in this context is a measurement that your system is tracking. 
+You might track many metrics, such as RAM usage, CPU usage, network traffic, 
+etc. Here, you're selecting 'ram_usage' which represents how much RAM is being 
+used. This metric can help you understand if your system is running low on memory.
+
+![Select a Metric](@/images/help/infrastructure-metrics/choose-metric.png)
+
+In this step, you're also choosing which instances of your metric to apply the 
+alert rule to. For example, if you're monitoring several servers, 'host' could 
+be a label that indicates which server the RAM data is coming from. You can 
+also set the comparison to '=~', which means you'll be able to use regex 
+(regular expressions) to match multiple hosts based on patterns. If you have 
+multiple servers sending RAM data, you can either select one specific server 
+or use a regex to select multiple servers that match a pattern.
+
+## Change the Function
+
+This step is about choosing how the metric value is calculated. By default, 
+Grafana uses the 'last()' function, which means it only looks at the most 
+recent data point. By changing it to 'avg()', you're telling Grafana to 
+calculate the average value over a certain period of time. This can help 
+prevent alerts from being triggered by brief spikes in RAM usage.
+
+![Change the Function](@/images/help/infrastructure-metrics/change-the-function.png)
+
+We can choose the limit that triggers the alert. If you set "IS ABOVE" to 90, 
+then the alert will be triggered when the average RAM usage goes above 90%. 
+This means you'll be notified if your RAM is utilized more than 90% of the 
+time, which could indicate inadequate memory.
+
+## Alert Evaluation
+
+This step determines how often Grafana checks whether the alert conditions 
+are met. By default, Grafana checks every minute. But you can change this 
+to check less frequently, say every 5 minutes if you don't need real-time alerting.
+
+## Additional Labels
+
+Here, you're adding more conditions to your alert rule. You're adding the labels 
+'ram' and 'ram-total', which could correspond to other metrics related to RAM usage. 
+By adding these conditions, you're saying the alert should also 
+consider these metrics, not just the RAM usage.
+
+## Name and Group the Alert
+
+It's important to keep your alerts organized, especially if you have a 
+lot of them. By giving the alert a name and categorizing it under a 
+specific folder and group, you can easily find and manage it later.
+
+## Set Notifications
+
+This step is about deciding how you'll be notified when the alert is triggered. 
+You can label the alert as 'severity=warning', which tells you and your team 
+that this is a warning level alert. You also need to set up a notification 
+channel, such as email or Slack, through which you will receive the alert notifications.
+
+## Save the Alert Rule
+
+After you've set up the alert rule to your satisfaction, the final step is 
+to save it. Once saved, Grafana will start monitoring the specified metric 
+and trigger the alert if the conditions you set are met.
+
+If you have any questions or issues creating alerts, then reach out to a 
+member of the Logit.io team via live chat, and we'll be happy to help.

@@ -1,0 +1,128 @@
+---
+title: Traces OpenTelemetry Collector
+subTitle: OpenTelemetry (OTEL) Collector for Traces
+logo: opentelemetry
+color: "#2e62a4"
+description: The OpenTelemetry Collector allows you to send logs, metrics and traces to your ELK stacks. Configure OTEL Collector to send logs, metrics and traces to Logstash and Elasticsearch.      
+stackTypes: apm
+sslPortType: beats-ssl
+---
+
+The OpenTelemetry Collector allows you to send traces to your Logit.io stacks.
+
+<Steps>
+  ### About the OpenTelemetry Collector
+
+  The OpenTelemetry Collector enables you to quickly and securely ship your data according to your specific configuration requirements and facilitates 
+  the forwarding of traces directly to Logit.io's observability platform.
+
+  Setting up and operating the OpenTelemetry Collector offers multiple benefits, such as:
+
+  **Simplified setup:** With Logit.io's pre-configured OTEL stack config, you can streamline your data transmission setup.
+
+  **Comprehensive data collection:** This tool gathers logs, metrics, and tracing information, offering an all-encompassing platform for data observability 
+  to enhance monitoring and optimization efforts.
+
+  ### Learn how to instrument your application
+
+  Understand how to instrument your application with OpenTelemetry with this official guide 
+  [Getting Started for Developers](https://opentelemetry.io/docs/getting-started/dev/) or continue and use the Demo App in the next step.
+
+  ### Install the OpenTelemetry Demo App (Optional)
+
+  The Demo App generates logs, traces and metrics for a sample application in cases where you don't want to instrument your application at this stage.
+
+  Install [Docker](https://www.docker.com/products/docker-desktop/) if you don't already have it.
+
+  Clone the Demo repository
+
+  ```cmd copy
+  git clone https://github.com/open-telemetry/opentelemetry-demo.git
+  ```
+  Change to the Demo folder
+
+  ```cmd copy
+  cd opentelemetry-demo/
+  ```
+
+  ### OpenTelemetry Collector Configuration
+
+  The config below will be pre-configured if you have launched this source integration from your stack dashboard.
+        
+  If not, make sure to replace the following placeholders with the correct details: `<your-opentelemetry-username>`, `<your-opentelemetry-password>`, `<your-opentelemetry-endpoint-address>` and `<your-opentelemetry-endpoint-port>`.
+
+  Copy the configuration file below (making the above changes if necessary) and overwrite the contents of otelcol-config.yml (this file can be found in the otelcollector folder where you installed the OpenTelemetry Collector demo application e.g. opentelemetry-demo/src/otelcollector/otelcol-config.yml).
+
+    ```yaml copy
+    extensions:
+      basicauth/apm:
+        client_auth:
+          username: '@opentelemetry.username:strip_quotes'
+          password: '@opentelemetry.password:strip_quotes'
+
+    receivers:
+      otlp:
+        protocols:
+          http:
+            cors:
+              allowed_origins:
+                - "http://*"
+                - "https://*"
+            endpoint: 0.0.0.0:4318
+          grpc:
+            endpoint: 0.0.0.0:4317
+
+    exporters:
+      otlp:
+        auth:
+          authenticator: basicauth/apm
+          # use the grpc port
+        endpoint: '@opentelemetry.endpointAddress:strip_quotes':'@opentelemetry.port:strip_quotes'
+      logging:
+        verbosity: detailed
+
+    service:
+      extensions: [basicauth/apm]
+      pipelines:
+        traces:
+          receivers: [otlp]
+          exporters: [otlp]
+    ```
+
+  ### Run the OpenTelemetry Demo App (Optional)
+
+  If you are using the Demo app, you can start it by running the following command in a Terminal (make sure you run it in the opentelemetry-demo folder):
+  ```
+  docker compose up --force-recreate --remove-orphans --detach
+  ```
+  You can now view the Demo App: [http://localhost:8080/](http://localhost:8080/) and Logs, Metrics and Traces are being sent to your stacks.
+
+  ### Check Logit.io for your Logs, Metrics and Traces
+
+  <LaunchStack utmMedium="otel" utmCampaign="traces_otel_collector" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+### OpenTelemetry Collector Overview
+
+The OpenTelemetry Collector, renowned for its efficiency and streamlined memory footprint, is becoming the preferred choice for funneling logs, metrics, 
+and tracing data into observability platforms. As a pivotal component of the comprehensive suite of open-source telemetry tools, it builds upon the 
+foundational features of predecessors, crafted in the efficient Go programming language. The Collector excels in ingesting, processing, tailing, and exporting 
+telemetry data, positioning itself as a versatile and essential tool in the telemetry data pipeline.
+
+Originating from the integration of best practices and core functionalities from earlier telemetry tools, the OpenTelemetry Collector is engineered to offer 
+flexibility and robustness in handling telemetry data. Unlike its early versions, which were limited in scope and destination options for telemetry data, 
+recent iterations have expanded its capabilities, enabling seamless integration with a variety of data processing and storage systems, including but not limited 
+to Redis and Kafka.
+
+Despite the Collector's adaptability and comprehensive feature set, an improperly configured OpenTelemetry setup can lead to intricate issues in telemetry data 
+management. These complications might manifest as unwieldy registry files or errors in file handling when logs are deleted or renamed, posing significant challenges 
+in maintaining a clean and efficient logging environment. Additionally, the task of monitoring and managing multiple telemetry pipelines can be daunting for those 
+operating their own telemetry infrastructure, prompting some to explore managed observability solutions as an effective way to alleviate these burdens.
+      
+If you need any further assistance with migrating your log, metrics and tracing data to Logit.io we're here to help you get started. Feel free to get in contact 
+with our support team by sending us a message via <IntercomButton text="live chat" /> & we'll be happy to assist.

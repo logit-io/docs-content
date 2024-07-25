@@ -1,0 +1,78 @@
+---
+title: Python
+pageTitle: Logstash Python Configuration Example
+subTitle: Ship logs from Python applications to Logstash
+logo: python
+color: "#0e64a9"
+stackTypes: logs
+description: Learn how to send Python logs to your Logstash instance using our configuration examples - Ship over 100 log data types easily with Logit.io
+sslPortType: beats-ssl
+portType: beats
+---
+
+This guide has been setup and tested using Python `3.6-3.11` (64-bit) environments. 
+Code samples included can be used inside a basic Python script, or web framework such as Django or Flask. 
+To send logs to Logstash through Python you will need the python-logstash-async (version `2.5.0`) Python plugin.
+
+<Steps>
+  ### Installing
+
+  Execute the following command using pip:
+        
+  ```cmd copy
+  pip install python-logstash-async
+  ```
+    
+  <Callout type="info">
+    If you receive errors suggesting pip is an unknown command, 
+    navigate to its installed location with your chosen terminal program and try again (or add pip to your 
+    environmental variables if using Windows).
+  </Callout>
+
+  ### Sending Logs
+
+  <SendLogsViaPython />
+
+  ### Check Logit.io for your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="python" source="python" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+## Python Centralise Logging Overview
+
+Python's logging module is used by most third-party libraries and allows you to integrate your log messages with application-specific logs.
+
+The five standard levels of logs aggregated by the Python module include; `CRITICAL`, `ERROR`, `WARNING`, `INFO`, `DEBUG`.
+
+- Critical logs let you know that the application is shutting down and can't recover without a reboot.
+- Error logs capture unexpected bugs that can be handled without a reboot, for example, a 503 or 404 error.
+- Warnings can show that resources are running low or that suspicious web requests have been identified. 
+  Warning logs can be monitored to protect the [security](https://logit.io/solutions/monitoring/security-monitoring/) of your applications.
+- Info is log data that is sent to your ELK Stack that has captured information on your application's behaviour metrics.
+
+The creation of a single Python script can produce thousands of logs which 
+only increase once migrated to a production environment. Each logging level 
+adds complexity to being able to efficiently report on the development process, 
+as well as increasing the risk of breaking points across the module. 
+
+Using the Logit.io platform allows you to centralise all five types of Python 
+logs for the streamlining of monitoring, troubleshooting and debugging in the 
+cloud. Our onboarding has your ELK Stacks ready for analysis of Python logging 
+events in minutes by using our highly available hosted Logstash pipeline for 
+collecting log files.
+
+Using Logit.io you can view all of the five log types for easy analysis with 
+our out of the box Kibana dashboards. Set alerts on errors, warnings and 
+mission-critical Python issues from one centralised dashboard. Logit.io 
+integrates with Opsgenie, Slack, Webhooks and PagerDuty to send 
+notification messages to your Dev teams. 
+
+If you need any further assistance with migrating your Python 
+[application logs](https://logit.io/platform/logging/logging-as-a-service/application-logging/) 
+to Logstash we're here to help you get started. Just get in contact with our 
+support team by visiting our dedicated Help Centre or <IntercomButton text="via live chat" /> and we'll be happy to assist.

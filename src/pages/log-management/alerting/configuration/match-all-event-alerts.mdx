@@ -1,0 +1,27 @@
+---
+title: Configure Alerts for OpenSearch to Match All/Any Events For a Specific Query
+description: How to create an any match alert for your OpenSearch logs or metrics
+---
+
+# Configure Alerts for OpenSearch to match all/any events for a specific query
+
+An 'Any Alert' as its name suggests will match **any** events that match the query `filter`.
+
+Use the `type` **any** to match all limits the results you use a query 
+filter as shown in the example below. You can simply cut and paste this 
+example into your new Logit.io alert and then modify the elastic query 
+to match the required events. Next, update the email address and test and run the alert.
+
+```yaml copy
+name: "Any match alert example"
+type: any
+index: "*-*"
+filter:
+- query:
+   query_string:
+      query: "agent.hostname:azure AND status: [500 TO 599]"      
+alert:
+- "email"
+email:
+- "example@logit.io"
+```

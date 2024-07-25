@@ -1,0 +1,163 @@
+---
+title: Overview
+description: Discover how to get started with the setup and configuration of Infrastructure Metrics alerts with Logit.io in our helpful guide
+---
+
+# Infrastructure Metrics Alerts Overview
+
+## Alerting and Notifications for Infrastructure Metrics
+
+Setting up effective alerts is a vital component of any monitoring and 
+observability strategy. In this guide, we'll walk you through the 
+high-level steps to configure alerts in Grafana, an open-source platform 
+for visualization and monitoring. With Grafana's robust alerting capabilities, 
+you can proactively detect and respond to critical incidents. 
+
+We'll also provide examples of configuring alert channels for email and 
+Slack, enabling you to notify your team quickly and efficiently.
+
+## Why Configure Alerts in Grafana?
+
+Alerts in Grafana play a crucial role in keeping your systems and applications 
+healthy. By defining alert conditions, you can automatically monitor metrics 
+and trigger notifications when specific thresholds are crossed. This proactive 
+approach ensures that you're aware of potential issues before they escalate.
+
+With Logit.io, your team can get notified and receive alerts with our built-in 
+integrations that complement your existing workflow. Choose from many 
+notification options, including Email and Slack. 
+
+You can also receive webhooks into your applications to automatically restart 
+a service or raise a PagerDuty alert to notify your team.
+
+## What type of scenarios can we alert on?
+
+The most common alert types used in Grafana typically depend on the specific 
+monitoring and alerting needs of an organization or system. However, some 
+alert types are more frequently used due to their applicability to various 
+scenarios. Here are some of the most common alert types in Grafana:
+
+- **Threshold Alerts:** These are among the most common alerts. They trigger when a metric value crosses a predefined threshold, such as CPU usage exceeding a certain percentage or response time exceeding a specified limit.
+- **Relative Threshold Alerts:** Alerts based on changes in metric values relative to a specified baseline. For example, alert when the error rate increases by a certain percentage compared to the previous day.
+- **Deviation Alerts:** These are used to detect anomalies or unexpected trends in data. Alerts can be configured to trigger when there are significant deviations from the expected patterns.
+- **Duration Alerts:** Alerts based on the duration of a specific condition. For instance, send an alert when a server remains unresponsive for a certain period.
+- **Query Alerts:** Custom query alerts allow for complex alert logic based on the results of data queries. They are versatile and can be tailored to specific use cases.
+- **Single-Stat Alerts:** Alerts based on the value of a single metric, are often used for monitoring critical key performance indicators (KPIs).
+- **Composite Alerts:** Combining multiple alert conditions into a single alert is useful for complex scenarios where multiple conditions must be met for an alert to trigger.
+- **State Changes Alerts:** Alert when there is a change in the state of a system or metric, such as transitioning from an operational state to a critical state.
+- **Silence Alerts:** Temporarily muting or silencing alerts is common to prevent alerts during maintenance windows or known periods of instability.
+- **Recovery Alerts:** These alerts notify users when a previously triggered alert condition returns to normal, indicating that an issue has been resolved.
+
+Organizations often use a combination of these alert types to 
+comprehensively monitor their systems and applications while 
+minimizing false positives and optimizing their incident response processes.
+
+## Alerting Overview 
+
+To get started with alerting for Infrastructure Metrics choose 
+Launch Metrics from your dashboard, this opens the Grafana 
+dashboard, choose Alerting from the left menu.
+
+![Alerting Overview](@/images/help/infrastructure-metrics/alerting-overview.png)
+
+You can then see the Grafana Alerting screen as shown below.
+
+![Grafana Alerting](@/images/help/infrastructure-metrics/grafana-alerting.png)
+
+## Configuring Alert Contact Points
+
+Alert contact points are the communication channels through which Grafana sends 
+notifications when an alert is triggered. Grafana provides many options for alert 
+contact points including but not limited to Email, Slack, 
+Webhooks, PagerDuty, Opsgenie and more.
+
+Here are steps to set up alert contact points for email and Slack:
+
+## Email Alerts
+
+In Grafana, navigate to the "Alerting" section and select "Contact Points." 
+Click on "New contact point" and choose "Email" as the contact point type.
+
+Specify the email addresses of the recipients who should receive alert notifications. 
+Grafana can send alerts to multiple email addresses.
+
+Add a name for the contact point and choose save.
+
+![Alerting](@/images/help/infrastructure-metrics/alerting.png)
+
+## Slack Alerts
+
+Create an incoming webhook integration in your Slack workspace. This webhook 
+URL is used to send alert notifications to Slack channels.
+
+Grafana Configuration: In Grafana, create a new Contact point and 
+select "Slack" as the contact point type.
+
+**Webhook URL:** Paste the Slack incoming webhook URL into the appropriate field in Grafana.
+
+![Slack Alerts](@/images/help/infrastructure-metrics/slack-alerts.png)
+
+## Notification Policies
+
+In Grafana, notification policies serve as the backbone of alert routing, 
+ensuring that critical information reaches the right individuals or teams 
+at the right time. The default behaviour in Grafana is that all alerts are 
+directed to a default contact point. However, this can be customized and 
+refined by employing matches in specific routing areas.
+
+**Default Contact Point:**
+
+By default, Grafana designates a primary contact point to receive all alerts. 
+This is often a general channel or team responsible for initial alert handling.
+
+In Grafana, the notification label, also known as a "label" or "label selector," 
+is a key part of alert rules. It is used to determine which notifications 
+are sent when an alert is triggered. 
+
+**Example:**
+
+Suppose you have an alert label "team" with values "Database Team," "Network Team," 
+and "Application Team." You can create notification policies that match alerts 
+based on this label's value and route them accordingly. For instance, alerts 
+with "team:Database Team" label go to the database team's contact point.
+
+![Alerting Example](@/images/help/infrastructure-metrics/alerting-example.png)
+
+Here we have configured a Notification Policy that matches the label severity=warning, 
+we will later see how Alert Rules can be configured to trigger this notification policy 
+and send an alert to our Demo Stack Webhook as shown in the image above.
+
+## Defining Alert Conditions
+
+Now that you've set up alert contact points, it's time to define the alert conditions. 
+You can configure alerts based on various criteria.
+
+Create a new alert rule or edit an existing one on the Alert Rules tab.
+
+In the alert rule configuration, specify the conditions that should trigger the alert. 
+This typically involves defining a metric or data query.
+
+Within the alert conditions, include label-matching criteria that correspond to the 
+alerts you want to trigger. Labels provide context to the alerts.
+
+Activate the alert rule to start monitoring for the specified conditions. Alerts will 
+be triggered when the conditions and label-matching criteria are met.
+
+![Disk Usage Alert](@/images/help/infrastructure-metrics/disk-usage-alert.png)
+
+The example above is alerting when the Disk use average is above 80%.
+
+![Notifications](@/images/help/infrastructure-metrics/notifications.png)
+
+And adding a label when it gets a hit severity=warning. This will 
+match and fire our notification policy that we configured earlier. 
+
+## Conclusion
+
+By configuring alerts in Grafana, you empower your monitoring system to 
+proactively detect and respond to issues. Whether it's high CPU usage, 
+a sudden drop in website traffic, or any other critical metric, 
+Grafana's alerting capabilities ensure you're always in the know. 
+
+With alert channels set up for email and Slack, your team can stay 
+informed and act swiftly to maintain system reliability and performance.

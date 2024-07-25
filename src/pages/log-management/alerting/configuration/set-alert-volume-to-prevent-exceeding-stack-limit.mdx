@@ -1,0 +1,85 @@
+---
+title: Set an Alert for a Log Volume To Stop You From Exceeding Your Stack Limit
+description: Set up an alert for a log volume to stop you from exceeding your stack limit
+---
+
+# How to set an alert for a log volume to stop you from exceeding your stack limit
+
+Monitoring log volume is a critical aspect of maintaining the health and 
+performance of your infrastructure. Excessive log messages can lead to 
+stack limit exceedances, In Logit.io you can easily set up log volume alerts 
+to proactively prevent stack limit exceedances and ensure the efficient 
+operation of your system, in addition to the automated emails that will 
+inform you from the platform.
+
+In this guide, we will walk you through the steps to create log volume 
+alerts in Logit.io, specifically designed to notify you when the log 
+volume exceeds predefined thresholds. These alerts serve as a safeguard 
+against unexpected log surges, helping you to take timely actions and 
+maintain the stability of your system.
+
+## Setting an Alert for Log Volume to better manage Stack Limits
+
+If you are experiencing issues with log volume and want to set up an 
+alert to prevent exceeding your stack limit, Logit.io provides a 
+flexible and customizable solution using Elastalert. Follow the 
+steps below to create an alert that notifies you when the log volume 
+approaches or exceeds a specified threshold.
+
+### 1. Create an Elastalert Rule
+
+Elastalert rules define the conditions that trigger alerts based on 
+your log data. In this example, we'll use a YAML configuration 
+to set up a frequency-based alert for log volume.
+
+```yaml copy
+name: ingress-amount-logs
+index: logstash-*
+type: frequency
+num_events: 5000000
+timeframe:
+  hours: 1
+use_count_query: true
+doc_type: syslog
+alert:
+  - "Slack"
+slack_webhook_url:
+  - "<Your-slack-webhook-url>"
+realert:
+  minutes: 5
+```
+
+**YAML Explanation:**
+- **name:** Unique name for the alert rule.
+- **index:** Index pattern to match against your logs (e.g., "logstash-*").
+- **type:** Type of alert; in this case, "frequency" for log volume.
+- **num_events:** Threshold for the number of events before triggering the alert (adjust as needed).
+- **timeframe:** Duration to consider for the alert (e.g., 1 hour).
+- **use_count_query:** Set to true to count the number of log events.
+- **doc_type:** Document type to filter on (e.g., "syslog").
+- **alert:** Type of alert action; here, it sends a notification to Slack.
+- **slack_webhook_url:** URL of your Slack webhook for receiving alerts.
+- **realert:** Time interval before re-alerting if the condition persists.
+
+### 2. Apply the Rule
+
+After creating the rule, apply it to your alert instance. This ensures that 
+the alerting system will monitor log volume based on the specified conditions.
+
+### 3. Testing and Adjusting
+
+You can test the alert rule to ensure it functions as expected. Adjust the 
+parameters, such as the num_events threshold, to fine-tune the alerting criteria.
+
+### 4. Monitor Alerts
+
+Once applied, monitor the alerts to stay informed about your log volume. 
+Alerts will be triggered when the log volume approaches or exceeds the 
+defined threshold, preventing you from exceeding your stack limit.
+
+## Conclusion
+
+Monitoring log message volume is crucial for preventing stack limit 
+exceedances and responding to issues in a timely manner. The "ingress-amount-logs" 
+alert, with its flexible configuration and Slack integration, helps you keep 
+a close eye on log volumes and ensures you receive alerts as soon as potential issues arise.

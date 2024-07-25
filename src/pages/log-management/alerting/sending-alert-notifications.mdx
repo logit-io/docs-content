@@ -1,0 +1,166 @@
+---
+title: Options for Sending Alerts from Your Logs Stack for Different Scenarios
+description: Setup and configure log alerting for more advanced scenarios including FAQs
+---
+
+# Options for sending alerts from your logs stack for different scenarios
+
+## Introduction
+
+This guide is designed to assist users who are setting up alert rules 
+for their Log Management stacks on Logit.io and provides step-by-step 
+instructions for different scenarios, in addition to some 
+FAQs that you might find useful.
+
+## 1. Receiving an alert when a specific field changes value in a certain time window
+
+### Problem:
+
+You want to receive alerts when the "MyFieldName" field in the 
+JSON payload is set to true in a certain time period.
+
+### Solution:
+
+Use the **Spike Rule** to achieve this. This rule type allows you to 
+trigger alerts based on specific conditions in the JSON payload. In 
+our case, it's perfect for detecting when "MyFieldName" is set to true.
+
+**Step-by-Step:**
+1. Navigate to the `Alert & Notifications` settings.
+2. Click the _Enable Alerting_ button (if alerting is not already enabled).
+3. Click on _Create Rule_ to start a new rule configuration.
+4. Select the **Spike Rule** type from the available options.
+5. Configure the rule query to "MyFieldName:MyFieldValue"
+6. Set the **hours, spike_height and spike_type** based on your monitoring needs.
+7. Choose the desired alert action, such as sending an email or Slack notification.
+8. Save the rule to activate it.
+
+**Example template:**
+
+```yaml copy
+name: "Spike example alert"
+type: spike
+index: "*-*"
+timeframe:
+hours: 7
+spike_height: 1
+spike_type: "up"
+- query:
+query_string:
+query: "MyFieldName:MyFieldValue"
+alert:
+- "email"
+email:
+- "example@logit.io"
+```
+
+## 2. Customizing Rules for Different Applications or Computers
+
+### Problem:
+
+You have multiple applications or computers and want distinct alerts 
+for errors from each. The same rule will work for any errors that are 
+reported, irrespective of the machine they came from. The information 
+in the alert will tell you the details about which machine is alerting.
+
+### Solution:
+
+Leverage the flexibility of Logit.io's alerting engine. Create rules 
+based on various fields in your JSON payload to differentiate and 
+categorize alerts based on unique criteria. It may be worth configuring 
+separate alerts for different machines by restricting the query value 
+to only alerts based on the required field and machine name.
+
+Follow these detailed steps to create rules tailored to each application or computer:
+
+**Step-by-Step:**
+1. In the **Alert & Notifications** section, click on "Create Rule."
+2. Under the rule configuration, use the **query** filter in ElastAlert to specify the field conditions for each application or computer.
+3. Customize the alert action based on your requirements, considering different notification channels or formats.
+4. Save the rule to activate it.
+
+**Example template:**
+
+```yaml copy
+name: "Any match alert example"
+type: any
+index: "*-*"
+filter:
+- query:
+  query_string:
+     query: "agent.machinename:myserver AND status: MyFieldName:MyFieldValue"
+    
+alert:
+- "slack"
+slack_webhook_url:
+- “[YOUR SLACK HOOK]”
+```
+
+## 3. Detecting Web Request Interruptions
+
+### Problem:
+
+You want to receive alerts if the web request stops coming in, indicating a potential interruption.
+
+### Solution:
+
+Implement rules using the **Flatline Alert Type** in ElastAlert. This 
+rule type is suitable for scenarios where you want to be alerted if you 
+receive a very small number of logs, indicating a potential 
+interruption in the data flow.
+
+**Step-by-Step:**
+1. Create a new rule with the **Flatline Alert Type**.
+2. Configure the rule to trigger when the number of logs falls below a specified threshold within a set timeframe.
+3. Set up the alert action, such as sending an email or Slack notification.
+4. Save the rule to activate it.
+
+Example template:
+
+```yaml copy
+name: "Heartbeat flatline Example Alert"
+type: flatline
+index: "*-*"
+threshold: 100
+timeframe:
+  minutes: 10
+filter:
+- query:
+    query_string:
+      query: "message: heartbeat*"
+use_count_query: true
+doc_type: _doc
+alert:
+  - "email"
+email:
+  - "example@logit.io"
+```
+
+## 4. Fine-Tuning Rule Execution Frequency
+
+### Problem:
+
+You prefer immediate alerts upon error detection without much historical tracking.
+
+### Solution:
+
+By default, Logit.io's rules are executed every 1 minute which for 
+most use cases is suitable. Adjust the **time frame and execution frequency** 
+in your rules based on your preference for alerts.
+
+If you need the alerts to run more frequently than every 1 
+minute reach out to us via the normal support channels.
+
+### Frequently Asked Questions (FAQ)
+
+**Q: How often are the rules executed?**
+
+A: By default, rules in Logit.io are executed every 1 minute. You 
+can adjust the execution frequency for each rule based on your specific requirements.
+
+**Q: Can I receive alerts only upon immediate error detection?**
+
+A: Yes, you can fine-tune the execution frequency and time frame in 
+your rules to receive immediate alerts upon error detection without 
+much historical tracking. Follow these detailed steps, and you'll 
+be able to configure Log alert rules tailored to your specific needs in Logit.io

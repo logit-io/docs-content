@@ -1,0 +1,41 @@
+---
+title: OpenTelemetry Elixir (HTTP/S)
+pageTitle: OpenTelemetry Elixir (HTTP/S) Configuration
+subTitle: Ship traces from Elixir to OpenSearch with OpenTelemetry (via HTTP/S)
+logo: elixir
+color: "#800080"
+stackTypes: apm
+description: Learn how to ship your Elixir program traces to OpenSearch with our example configurations.
+protocol: https
+protocolName: http_protobuf
+---
+
+Use OpenTelemetry to easily send Elixir traces to your Logit.io Stack.
+
+<Steps>
+  ### Getting Started
+
+  You can get help Getting Started with OpenTelemetry for Elixir by referring 
+  to the [official documentation](https://opentelemetry.io/docs/instrumentation/erlang/getting-started/). 
+  You need to configure the OTLP exporter to ensure the trace data reaches your Logit.io Stack.
+  
+  OTLP HTTP/S Exporter settings:
+
+  ```elixir copy showLineNumbers /"@opentelemetry.protocol:strip_quotes"/ /@opentelemetry.endpointAddress/ /@opentelemetry.port/ /@opentelemetry.base64encodedAuthString/
+  config :opentelemetry_exporter,
+  otlp_protocol: :"@opentelemetry.protocol:strip_quotes",
+  otlp_endpoint: "https://@opentelemetry.endpointAddress:@opentelemetry.port",
+  otlp_headers: [{"authorization", "Basic @opentelemetry.base64encodedAuthString" }]
+  ```
+
+  For more information about exporter configuration with Elixir please see the 
+  [documentation](https://opentelemetry.io/docs/instrumentation/erlang/exporters/).
+
+  ### Launch Logit.io to view your traces
+
+  <LaunchStack utmMedium="apm" utmCampaign="elixir" source="apm_elixir_http" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>

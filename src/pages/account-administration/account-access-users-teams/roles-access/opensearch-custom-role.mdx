@@ -1,0 +1,50 @@
+---
+title: Using the OpenSearch Custom Role to manage granular access to your Stack
+description: Learn how to use OpenSearch Security to manage granular access to your Stack
+---
+
+# Using the OpenSearch Custom Role to manage granular access to your Stack
+
+### Using the OpenSearch Custom Role
+
+Adding a user to a team that has 
+the [OpenSearch Custom Role selected](/account-administration/account-access-users-teams/roles-access/specific-index-access-opensearch), 
+gives you the flexibility to decide very granular permissions directly using the OpenSearch Security roles.
+
+<Callout type="info">
+  You can manage Kibana Custom Roles directly from the Logit.io Teams Dashboard 
+  and only need to manage roles using OpenSearch Security Roles directly 
+  if you have a specific granular use case.
+</Callout>
+
+### Managing Security Roles directly in OpenSearch
+
+Launch OpenSearch Dashboards and from the left menu choose Security > Roles and choose the required Role for example stack_user_ro. Choose the Mapped Users tab and Manage Mapping.
+
+Paste the Logit.io User Id into the Users input box. You can find the Logit.io User Id by choosing profile in the left menu of the platform dashboard.
+
+![Map User](@/images/help/account-access/map-user.png)
+
+Choose Map to add the user to the Kibana Role. You can add multiple users at the same time using this method.
+
+### Viewing which Roles a User currently has assigned
+
+In OpenSearch from the left menu choose Security > Roles. Choose from the Internal Users dropdown the required users Logit.io Id.
+
+The Roles that the selected user(s) are mapped to are then displayed in the list.
+
+![Roles](@/images/help/account-access/roles.png)
+
+### Adding a new OpenSearch Role
+
+If you need to create a new role to save time you can duplicate an existing role, for example, the stack_user role and choose Actions > Duplicate. This allows you to then edit the duplicated role and just modify index and tenant permissions where needed.
+
+<Callout type="info">
+  In most cases, any new roles will need to have read access to the following 
+  indexes to allow the OpenSearch Discover view to work as expected: `.kibana` `.kibana-6` `.kibana\_\*`
+</Callout>
+
+### Removing a User from a specific OpenSearch Role
+
+To remove a user's Logit.io Id from OpenSearch Security choose the required Role and select the Mapped Users tab. Select the user that you need to remove and choose Delete Mapping. 
+The User no longer has permission to access the selected Role.

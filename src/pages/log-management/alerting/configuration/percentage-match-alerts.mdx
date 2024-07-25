@@ -1,0 +1,45 @@
+---
+title: Configure Percentage Match Alerts for OpenSearch
+description: How to create a percentage match alert for your OpenSearch logs or metrics
+---
+
+# Configure Percentage Match Alerts for OpenSearch
+
+## A Percentage Match alert
+
+A Percentage Match alert matches when the percentage of documents within a 
+`match_bucket_filter` within a calculation window (by default `buffer_time`) 
+is higher or lower than a relative percentage value `max_percentage`.
+
+This would allow you to receive alerts in scenarios such as if there is a 
+**20% increase** `max_percentage` in the number of **500 errors** 
+`match_bucket_filter` within a **15 minutes timeframe** `buffer_time` 
+you would receive an alert to your configured channel. 
+
+Here is an example below:
+
+```yaml copy
+name: "Percentage match example"
+type: percentage_match
+index: "*-*"
+filter:
+- query:
+  query_string:
+    query: "agent.hostname:azure"      
+match_bucket_filter:
+- query_string:
+  query: "router.status: [500 TO 599]"    
+doc_type: _doc
+max_percentage: 20
+buffer_time:  
+  minutes: 3
+alert:
+- "email"
+email:
+- "example@logit.io"
+```
+
+## Additional Options
+
+In addition, you can also provide a `filter` query to limit the 
+initial results that the `match_bucket_filter` will be applied to. 

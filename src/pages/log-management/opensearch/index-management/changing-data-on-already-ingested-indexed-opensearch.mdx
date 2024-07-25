@@ -1,0 +1,59 @@
+---
+title: Changing Field Datatypes
+description: I've sent some data to OpenSearch but need to change the datatype of a field
+---
+
+# How do I change the datatype of a field for data already sent/indexed in OpenSearch?
+
+Unfortunately, it isn't possible to make changes to existing fields in an 
+index that has already been sent to OpenSearch but don't worry. 
+There are still options available to you.
+
+### Updating your mapping
+
+It is possible to update your mappings for any fields that are in the wrong format, 
+this will correct the datatype future ingestion. At Logit, we use daily and hourly indexes, 
+this means that each index incorporates the current date as part of the index name as 
+default and that each day a new index is created for storing that day's data and metrics. 
+
+When the new index is created any changes that you have made to the mapping will now be used. 
+This article contains a section 
+explaining [how to change your index mapping.](/log-management/opensearch/index-management/aggregatable-text-fields)
+
+### Updating your Logstash Filters
+
+You can update your Logstash filters to ensure that data and metrics 
+sent to Logstash will be stored as the type that you require.
+
+<Callout type="info">
+  To edit your Logstash filters for any stack, go to the `Logstash Pipelines` settings.
+</Callout>
+
+Below is an example where we have a field called "count" which 
+should be an integer but we have incorrectly been storing the 
+data sent to it as a string. What we can do is make a copy of 
+these fields, in this case we have made a copy called "count_int".
+
+```ruby copy
+filter 
+{
+  mutate 
+  {
+    copy => { "count" => "count_int" }
+    convert => { "count_int" => "integer" }
+  }
+}
+```
+
+Then we converted the new "count_int" field to have a type of integer. 
+From now on the data will be sent to both fields (because the second is a 
+copy of the first and this includes its properties) and will be stored as 
+a string in the first field and an integer in the second.
+
+### Re-indexing the data
+
+If having the data and metrics already stored in OpenSearch in the correct 
+format is a necessity (and this really is a decision that you should make 
+based on your retention time) the other option available to you is to 
+create a new index. The simplest way is to resend the data to your new 
+index or you can use the re-index OpenSearch API.

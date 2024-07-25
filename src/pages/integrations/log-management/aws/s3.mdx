@@ -1,0 +1,141 @@
+---
+title: Amazon S3
+pageTitle: Amazon S3 Logstash Configuration
+subTitle: Pull logs from a S3 Bucket to Logstash
+logo: s3
+color: "#e9463c"
+stackTypes: logs
+description: Send your Amazon S3 application/access/error logs to logit.io via logstash using the instructions below and begin searching your data
+---
+
+<Steps>
+  ### Create S3 Policy
+
+  In the top left corner of your aws console you will notice a services drop down arrow. 
+  Open it and from that menu choose IAM.
+          
+  ![List of IAM policies](@/images/integrations/s3/s3-003.png)
+
+  Now in the left hand menu you want to select policies. Once you have reached the policies 
+  page you want to hit the Create Policy that appears towards the top of the page. 
+
+  On the create policy screen choose the json tab and enter the following:
+
+  ```json copy showLineNumbers
+  {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "Read",
+        "Effect": "Allow",
+        "Action": ["s3:GetObject"],
+        "Resource": ["arn:aws:s3:::your-bucket/*"]
+      },
+      {
+        "Sid": "List",
+        "Effect": "Allow",
+        "Action": ["s3:ListBucket"],
+        "Resource": ["arn:aws:s3:::your-bucket"]
+      }
+    ]
+  }
+  ```
+
+  ![Create policy editor in JSON](@/images/integrations/s3/s3-004.png)
+
+  At the bottom of the page select Next.
+
+  ![Create policy editor next button](@/images/integrations/s3/s3-011.png)
+
+  On the next page you need to give your policy a name.
+
+  ![Create new policy form fields](@/images/integrations/s3/s3-005.png)
+
+  Finally scroll to the bottom of the page and now hit create policy.
+
+  ![Create new policy form create policy button](@/images/integrations/s3/s3-012.png)
+
+  ### Create User
+  You are going to need to create a new user. While on the IAM page, in the left hand menu choose users.
+          
+  Now at the top of the page select Create User.
+
+  ![Add User from Users page](@/images/integrations/s3/s3-001.png)
+
+  Enter a username and continue onto the next page of creation.
+
+  ![Fill in set user details form](@/images/integrations/s3/s3-002.png)
+
+  In the next section you want to attach an exisiting policy. Highlight attach exisiting policies.
+
+  ![Highlight existing policies box](@/images/integrations/s3/s3-006.png)
+
+  Search the policy list below for your newly created policy.
+
+  ![Find and select policy](@/images/integrations/s3/s3-013.png)
+
+  Continue onwards to the User Review step, you can choose to set any Tags here but 
+  they aren't necessary. Check all settings are correct and select create user.
+
+  This will take you to the Users page where you will see the new user that has 
+  just been created. Click on the new user to go to the user details page.
+
+  ![Select new user](@/images/integrations/s3/s3-014.png)
+
+  On the user details page click the Create access key link.
+
+  ![Select create access key](@/images/integrations/s3/s3-015.png)
+
+  Here we need to select the "Third-party service" option shown below.
+
+  ![Select third party service](@/images/integrations/s3/s3-016.png)
+
+  Scroll down to the very bottom of the page and click the confirmation 
+  checkbox and then click the "Next" button.
+
+  ![Confirm recommendation](@/images/integrations/s3/s3-017.png)
+
+  Enter a description and then click the Create access key option.
+
+  ![Enter description](@/images/integrations/s3/s3-018.png)
+
+  On the next screen you will be given your Access Key ID and Secret Access Key. 
+  You will need to make a note of these or alternatively download the .csv file provided.
+
+  ![Success message with your Access Key ID](@/images/integrations/s3/s3-008.png)
+
+  ### Confirm S3 Bucket
+
+  Ensure your logs are being sent to an S3 bucket. The following Getting Started guide 
+  will help you achieve this if you are not doing so already:
+          
+  [Getting started creating an Amazon S3 bucket and sending data to Logit.io](/log-management/troubleshooting/how-to-create-amazon-s3-bucket).
+
+  ### Configure Logstash for Amazon S3
+
+  <AddS3Input type="aws_s3" utmMedium="logs" utmCampaign="awss3" />
+
+  ### Check Logit.io for your logs
+
+  <LaunchStack source="s3" utmMedium="aws" utmCampaign="s3" />
+
+</Steps>
+
+## S3 Logging Overview
+
+Sending data from Amazon S3 to Logit.io is a crucial aspect of efficient log 
+management and analysis for businesses utilizing AWS infrastructure. 
+
+By efficiently integrating these two services, organizations can gain valuable 
+insights from their log data and enhance their operational efficiency. 
+
+Logit.io offers an intuitive solution that allows users to ship, analyze, and visualize 
+logs from Amazon S3, ensuring that vital information is readily available for troubleshooting 
+and monitoring. Via Logit.io, you can also take advantage of our 
+[Amazon ELB Application (Elastic Load Balancer)](/integrations/logs/aws/elb-application) to ingest 
+further data into our centralised platform. In addition, you can link your 
+[CloudWatch metrics](/integrations/metrics/aws/cloudwatch) to Logit.io for comprehensive log data analysis 
+and real-time monitoring. By leveraging these services in tandem, you can enhance your 
+operational intelligence and proactively address issues within your AWS infrastructure.
+
+Logit.io's [AWS logging](https://logit.io/solutions/aws-logging/) is known for its end-to-end integration of these components.

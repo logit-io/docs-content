@@ -1,0 +1,112 @@
+---
+title: Docker
+subTitle: Collect and ship Docker container application logs to Logstash and Elasticsearch
+logo: docker
+color: "#008bb6"
+description: How to send Docker container application logs to your Hosted ELK Logstash instance. Configure Filebeat to send Docker container logs to your Logit.io Stack.
+stackTypes: logs
+sslPortType: beats-ssl
+---
+
+Filebeat is a lightweight shipper that enables you to send your 
+Docker container application logs to your Logit.io Stack. 
+Configure [Filebeat](/sources/configure/filebeat) using the pre-defined 
+examples below to start sending and analysing your Docker application logs.
+
+<Steps>
+  ### Install Filebeat
+
+  <InstallFilebeat />
+
+  ### Configure Filebeat
+
+  <FilebeatContainer>
+    ```yaml copy
+    # ============================== Filebeat inputs ===============================
+    filebeat.inputs:
+
+    - type: container
+
+      enabled: true
+
+      paths:
+      - 'var/lib/docker/containers/*/*.log'
+
+    # ================================== Outputs ===================================
+    output.logstash:
+        hosts: ["@logstash.host:@logstash.sslPort"]
+        loadbalance: true
+        ssl.enabled: true
+    ```
+  </FilebeatContainer>
+
+  ### Validate configuration
+
+  <ValidateBeat beatname="filebeat" />
+
+  ### Start filebeat
+  
+  <StartFilebeat />
+
+  ### Launch Logit.io to view your logs
+  <LaunchStack utmMedium="logs" utmCampaign="docker" source="docker" />
+
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+### Docker Logging Overview
+Docker is a platform as a service (PaaS) tool created for building & deploying applications 
+by using containers. Developers use these isolated containers to package an application 
+with all of its required dependencies for streamlined deployment. 
+Docker was first created in 2013 and offers both a free open source solution and paid offering. 
+The platform has been instrumental in the development of cloud-native applications.
+
+Thanks to Docker's widespread adoption, the trend towards using microservices and containerization 
+has become a must for developers launching applications in the cloud.
+
+Despite this, effective log analysis using Docker's container logs can easily spiral and run 
+into many complications when trying to keep up with the scaling required for your growing infrastructure. 
+Due to their isolated & distributed nature, centralising Docker log messages is often overly 
+problematic when log data is required for further analysis.
+
+The Logit.io platform provides a single source of truth for container monitoring and log management. 
+We enable your teams to have complete observability across containers, enabling your 
+Developers & IT leaders with the ability to investigate and fix issues faster.
+
+[Read more about container monitoring](https://logit.io/solutions/monitoring/container-monitoring/)
+
+If you need any more help with migrating your Docker log data to Filebeat our 
+ngineers are here to help. Feel free to get in contact with our support team by 
+sending us a message via <IntercomButton text="live chat" /> & we'll be happy to assist.
+
+### Docker Logging FAQ
+
+#### How can a custom Filebeat configuration be embedded in a Docker image?
+
+You can embed a custom Filebeat configuration in a Docker image by 
+creating a custom Dockerfile. First, you need to start with the base Filebeat image. 
+Then, copy your custom Filebeat configuration file (e.g., filebeat.yml) to the 
+appropriate directory inside the Docker image. When you build the Docker image using this Dockerfile, 
+the custom Filebeat configuration will be included within the image. This allows you to 
+package Filebeat with your specific configuration settings directly into a Docker image.
+
+#### How can Filebeat be configured via volume mount on Docker?
+
+Filebeat can be configured on Docker by utilizing volume mounts. One approach is to 
+provide the filebeat.docker.yml file via a volume mount. When running Docker with Filebeat, 
+the volume mount is specified by including specific paths to map files and directories 
+between the host machine and the Docker container.
+
+By using the `--volume` flag in the `docker run` command, various volumes can be mounted. 
+In the case of Filebeat configuration, you may want to mount the filebeat.docker.yml file 
+to the appropriate path within the Filebeat container so that it can read the configuration. 
+Additionally, it is common to mount directories such as `/var/lib/docker/containers` and 
+`/var/run/docker.sock` to access Docker-related data.
+
+Each specified volume mount should include the source path on the host machine followed 
+by a colon and the destination path within the container. Permissions for mounts can also 
+be set, such as read-only access using `:ro` or read-write access with `:rw`.

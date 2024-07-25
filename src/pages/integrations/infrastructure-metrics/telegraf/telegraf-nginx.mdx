@@ -1,0 +1,108 @@
+---
+title: Nginx Metrics via Telegraf
+subTitle: Ship your Nginx Metrics via Telegraf to your Logit.io Stack
+logo: nginx
+color: "#4d4d4d"
+description: Configure Telegraf to ship Nginx metrics to your Logit.io stacks. Configure Telegraf to send Nginx metrics to Logstash or Elastic. Get started using our Telegraf Nginx metrics example configuration.
+stackTypes: metrics
+sslPortType: beats-ssl
+---
+
+Configure Telegraf to ship Nginx metrics to your Logit.io stacks via Logstash.
+
+<Steps>
+  ### Configure Nginx
+
+  Update the NGINX configuration file (nginx.conf) to enable the `stub_status` module:
+    
+  ```nginx copy
+  server {
+    listen 127.0.0.1:80;
+    server_name 127.0.0.1;
+    location /nginx_status {
+      stub_status on;
+      allow <Your localhost address>;
+      deny all;
+    }
+  }     
+  ```
+
+  Replace &#60;Your localhost address&#62; with your localhost address and restart Nginx.
+
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+
+  ```yaml copy
+  # Read Nginx's basic status information (ngx_http_stub_status_module)
+  [[inputs.nginx]]
+  ## An array of Nginx stub_status URI to gather stats.
+  urls = ["http://localhost/server_status"]
+
+  ## Optional TLS Config
+  # tls_ca = "/etc/telegraf/ca.pem"
+  # tls_cert = "/etc/telegraf/cert.pem"
+  # tls_key = "/etc/telegraf/key.pem"
+  ## Use TLS but skip chain & host verification
+  # insecure_skip_verify = false
+
+  ## HTTP response timeout (default: 5s)
+  response_timeout = "5s"
+
+  [[inputs.disk]]
+  [[inputs.net]]
+  [[inputs.mem]]
+  [[inputs.system]]
+  [[inputs.cpu]]
+
+  percpu = false
+  totalcpu = true
+  collect_cpu_time = true
+  report_active = true
+  ```
+
+  ### Configure the output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack source="Nginx_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-Nginx-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+### Telegraf Nginx metrics Overview
+
+To effectively monitor and analyze Nginx metrics in a distributed environment, organizations need a reliable 
+and efficient metrics management solution. Telegraf is an open-source metrics collection agent that can gather 
+Nginx metrics from various sources, including operating Nginx, databases, and other applications.
+
+With a wide range of input plugins, Telegraf allows users to collect metrics from different sources, such as 
+CPU usage, memory usage, network activity, and more. To store and query the collected metrics, organizations 
+can use Prometheus, an open-source monitoring and alerting tool that supports a flexible querying language 
+and graphical visualization of data.
+
+By configuring Telegraf to output metrics in the Prometheus format and using Prometheus to scrape the metrics 
+from the Telegraf server, organizations can ship Nginx metrics from Telegraf to Prometheus. This process 
+involves setting up Telegraf to collect Nginx metrics, outputting them in the Prometheus format, configuring 
+Prometheus to scrape the metrics from the Telegraf server, and visualizing the data using Prometheus' 
+flexible querying and graphical visualization capabilities.
+
+Using Telegraf to ship Nginx metrics to Prometheus is a reliable and efficient metrics management solution 
+for distributed environments. It allows organizations to gain insights into Nginx performance, optimize 
+their distributed Nginx, and troubleshoot any issues that arise.
+
+If you need any further assistance with shipping your log data to Logit.io we're here to help you get started. 
+Feel free to get in contact with our support team by sending us a message via <IntercomButton text="live chat" /> 
+& we'll be happy to assist.

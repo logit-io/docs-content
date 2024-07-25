@@ -1,0 +1,121 @@
+---
+title: Solaris
+pageTitle: Solaris Logging Setup
+subTitle: Ship system log files from Solaris to Logstash
+logo: oraclesolaris
+color: "#c74634"
+description: Follow our installation guide for Oracle Solaris logs to get started centralising your data using the Elastic Stack.
+stackTypes: logs
+sslPortType: syslog-ssl
+---
+
+Configure syslog to ship logs from Solaris Systems to Logstash.
+
+<Steps>  
+  ### Download SSL Certificate
+
+  Download root.logit.io.crt file and place in /etc/certs/syslog/keys/ca.d or another directory
+
+  [https://cdn.logit.io/root.logit.io.crt](https://cdn.logit.io/root.logit.io.crt)
+
+  ```bash copy
+  sudo mkdir -p /etc/certs/syslog/keys/ca.d
+  sudo curl -o /etc/certs/syslog/keys/ca.d/root.logit.io.crt https://cdn.logit.io/root.logit.io.crt
+  ```
+
+  rsyslog trusts these root CA keys to validate the key presented by logit.io, preventing man-in-the-middle attacks.
+
+  ### Locate rsyslog config
+
+  `/etc/rsyslog.conf`
+
+  <RsyslogConfig />
+
+  Notes
+    - If possible run the latest minor versions of rsyslog v7 or v8. There are many TLS bugs in past versions.
+    - Ensure you have @@ not a single @ infront of the host. This is so TCP is used.
+
+  ### Check which Solaris syslog is enabled
+
+  Solaris has a system default syslog that we may need to disable. To check which system log is running use the below command.
+
+  ```cmd copy
+  svcs system-log
+  STATE          STIME    FMRI
+  disabled       11:16:28 svc:/system/system-log:rsyslog
+  online         11:16:48 svc:/system/system-log:default
+  ```
+
+  Disable system-log:default
+
+  ```cmd copy
+  svcadm disable svc:/system/system-log:default
+  ```
+  Enable rsyslog
+
+  ```cmd copy
+  svcadm enable svc:/system/system-log:rsyslog
+  ```
+  The above commands can also be used to restart rsyslog if changes are made to the config file.
+
+  ### Troubleshooting
+
+  If you receive either of the following errors
+          
+  ```cmd copy
+  could not load module '/usr/lib/rsyslog/lmnsd_gtls.so',
+  rsyslog error -2078 [try http://www.rsyslog.com/e/2068 ]
+  ```
+
+  Or
+
+  ```cmd copy
+  could not load module '/usr/lib/rsyslog/lmnsd_gtls.so', 
+  dlopen: /usr/lib/rsyslog/lmnsd_gtls.so: cannot open shared object file: No such file or directory
+  [try http://www.rsyslog.com/e/2066 ]
+  ```
+
+  First, make sure that module actually exists by running ls against the path in the error, such as
+
+  ```cmd copy
+  ls -la /usr/lib/rsyslog/lmnsd_gtls.so
+  ```
+
+  Ensure that the user which runs ```rsyslog``` has permissions to read logit.io's public key (in the instructions above, ```/etc/certs/syslog/keys/ca.d/root.logit.io.crt```). 
+  On many distributions, rsyslog starts as root and then drops to a user. In that case, run ```chmod 644 /etc/certs/syslog/keys/ca.d/root.logit.io.crt``` to let all users 
+  read the key file.
+
+  Finally, this may appear if you are using ```$ModLoad lmnsd_gtls``` to explicitly load the TLS module, and that configuration option occurs before the 
+  ```$DefaultNetstreamDriverCAFile``` has been defined. Explicitly loading the module is rarely required and the configuration above does not use it. 
+  We recommend removing that ```$ModLoad lmnsd_gtls``` option and relying on autoloading. If your ```lmnsd_gtls``` needs to be explicitly loaded, like because it is in a 
+  non-default location, move the ```$DefaultNetstreamDriverCAFile``` config line above the ```$ModLoad``` line.
+
+  ### Check Logit.io for your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="solaris" source="solaris" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+### Solaris Logs Overview
+
+Solaris is a Unix based OS. It is primarily used by Enterprise level businesses as it is highly 
+[scalable](https://logit.io/platform/features/hosted-elk/elk-autoscaling) & supports the majority of commercially available commodity hardware 
+(including HP & Dell).
+
+Their Enterprise server extension includes support for clustering and is aimed towards observing business-critical environments. The OS is also 
+known for its high system availability making it an ideal choice for businesses wishing to avoid outages and downtime.
+
+Solaris logs hold a wealth of information on logon data (including failed attempts, FTP & Secure Shell activity data), user account changes, 
+external device disk auditing & executions of Sudo commands. These can all be reported on once your data has been sent to Logstash, allowing 
+your engineers visibility of critical threats to your operations.
+
+Our Solaris log analysis platform can be used to review audit data in order to detect unauthorised activity & review patterns in access histories 
+of users on your server. Our platform also allows you to set up [alerts](https://logit.io/platform/features/hosted-elk/elk-alerting) to gain 
+real-time insights on system events affecting the security of your devices.
+
+If you need any further assistance with migrating your Oracle Solaris data to Logstash we're here to help you get started. Feel free to reach out by 
+contacting our support team by visiting our dedicated Help Centre or via <IntercomButton text="live chat" /> & we'll be happy to assist.

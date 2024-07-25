@@ -1,0 +1,113 @@
+---
+title: Overview
+description: Learn how to view and manage your APM stack in Logit.io
+---
+
+# Application Performance Monitoring Overview
+
+## What is Application Performance Monitoring (APM)?
+
+APM provides insights into the performance of business-critical applications. 
+Often these insights consist of metrics that capture CPU usage, response time, 
+memory usage, network latency, rest call performance, slow classes, etc.
+
+An effective APM platform will ensure that engineers can build intuitive reporting 
+dashboards that reflect not only network performance and timeouts but also displays 
+slow application launches affecting client-side satisfaction on top of offering defined 
+crucial flows in order to track performance changes over time.
+
+By conducting regular analysis of performance metrics you can also subsequently 
+improve your application's user experience by pinpointing UI unresponsiveness.
+
+## The APM Stack Architecture
+
+A stack refers to the combination of software components, technologies, 
+and services that make up your application's technology stack or architecture.
+Logit.io provides you with an APM stack pre-configured with various nodes for 
+high-performance and resilient ingestion, storage and visualization.
+
+![APM Stack Overview](@/images/help/apm/overview/apm-stack.png)
+
+### Ingestion Pipeline Layer
+
+The ingestion pipeline is responsible for collecting data from various 
+sources and sending it to a central location for processing and storage. 
+The ingestion pipeline typically includes components like data collectors, 
+agents, and connectors that can pull data from sources such as applications, 
+servers, databases, logs, and external services.
+
+#### Jaeger Collector
+
+The Jaeger collector service within the Logit.io APM stack receives the 
+traces from external Jaeger agents and forwards them to the ingestion pipeline 
+to later be persisted by the storage database.
+
+#### Kafka
+
+Logit.io provides your APM stack with multiple Kafka nodes 
+for high-performance and reliable ingestion. The Jaeger collector is pre-configured 
+to pass the received traces to Kafka for processing.
+
+#### Jaeger Ingester
+
+The Jaeger ingester service reads the processed traces from Kafka and 
+writes them to the storage database for persistence.
+
+### Storage Layer
+
+APM uses OpenSearch as a persistent storage database for storing the received spans 
+in a structured format, making it available for analysis using the Jaeger visualizer.
+
+### Visualization Layer
+
+Logit.io provides the Jaeger visualizer as part of the APM stack for 
+visualizing your distributed traces.
+
+![Jaeger UI Preview](@/images/help/apm/overview/jaeger-ui.png)
+
+## Working with your APM stack
+
+### Launching APM
+
+You can launch the Jaeger visualizer to view your APM stack's data by pressing the `Launch APM` 
+button found at the top of your Logit.io stack settings page:
+
+![Launch APM button](@/images/help/apm/overview/launch-apm.jpg)
+
+If you have more than one Logit.io stack then you can also find this button directly on your dashboard: 
+
+![Launch APM button](@/images/help/apm/overview/launch-apm-dashboard.jpg)
+
+## Stack Plan
+
+Below the `Application Performance Monitoring` header on the side navigation, 
+found within your stack settings, you will find the `Overview` APM page. 
+This will detail your stack plan, including how many spans per month your 
+plan allows, the retention time period for stored data, and the versions of 
+individual software components included with your APM stack.
+
+![APM Plan Details](@/images/help/apm/overview/apm-plan-details.png)
+
+## View Statistics
+
+Under the `Application Performance Monitoring` header on the side navigation, 
+or from the stack settings overview page, you will find a link to the APM `Statistics` page.
+
+The APM statistics page provides various statistics relating to your APM usage, including 
+the total volume and span count collected today, historic usage, overusage based on your 
+stack's current plan, and a more detailed usage table.
+
+![APM Statistics](@/images/help/apm/overview/apm-statistics.png)
+
+## Managing your APM Services
+
+To the far right of the APM section, you will find the 'manage stack' button. 
+Clicking this link will take you to your stack details, from here you can view 
+your stack version information as well as other capabilities. 
+
+Within this section, you can rebuild or delete your stack, if necessary. You 
+can also, manage the data storage region for your Logit.io stacks, read more 
+about this [here](/account-administration/subscriptions-management-usage/accounts/data-storage-regions). 
+As well as this, you can view your stack ID and your spans per month according to your current plan.
+
+![APM Stack Details](@/images/help/apm/apm-stack-details.png)

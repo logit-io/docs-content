@@ -1,0 +1,37 @@
+---
+title: How to give a user OpenSearch Read Only or Dashboard Only access to a Stack
+description: Learn how to grant Read Only or Dashboard Only User access to OpenSearch
+---
+
+# How to give a user OpenSearch Read Only or Dashboard Only access to a Stack
+
+To grant OpenSearch User Read Only or OpenSearch User Dashboard Only access to a 
+Stack you first need to create a team and configure the required role. Based on 
+your permissions you can view your teams via `Account Settings > Teams`. 
+From here you can view existing teams and add new teams to your account.
+
+![Team Settings](@/images/help/account-access/team-settings.png)
+
+### Adding a Read-Only or Dashboard-Only Team
+
+All Logit.io accounts have a number of predefined teams that you can use to manage 
+common scenarios, in this case, we want to add a new team, so choose 'Create a new team'. 
+Give the team a suitable name e.g. OpenSearch Read Only or Dashboard Only team.
+
+Under the Stack Only Permission Roles section choose Manage Roles for the required 
+Stack and check either OpenSearch User Read Only or OpenSearch User Dashboard 
+Only depending on your requirements. At the bottom of the screen choose the Team 
+members that need to be added to the team and choose Apply Changes once happy.
+
+**Tip!:** It's worth noting that if you configure a team to have multiple roles the 
+team will always be granted the role with the least permissions in OpenSearch security roles.
+
+![Stack Only Permissions](@/images/help/account-access/stack-only-permissions.png)
+
+![OpenSearch Stack Roles](@/images/help/account-access/opensearch-stack-roles.png)
+
+When you choose to add or update a team, the users in the team are automatically 
+synchronised and mapped to the relevant OpenSearch Security Roles. You can view the 
+OpenSearch security Roles by launching OpenSearch dashboards and choosing `Security > Roles`.
+
+![Roles](@/images/help/account-access/roles(1).png)

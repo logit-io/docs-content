@@ -1,0 +1,35 @@
+---
+title: Viewing and managing teams and user permissions
+description: Learn how to manage teams, add new teams, assign user permissions as well as modify and delete team settings
+---
+
+# Viewing and managing teams and user permissions
+
+Based on your account-level permissions you can view your teams via Account Settings > Team Settings. From here you can view existing teams and add new teams to your account. Using teams allows you to group related account users together and grant different roles for those users on the assigned Stacks.
+
+This is especially helpful when users within an organisation might need access to a Stack associated with a specific department, e.g development, cybersecurity or operations.
+
+![Team Settings](@/images/help/account-access/team-settings.png)
+
+### Adding a new team
+
+All Logit.io accounts have a number of predefined teams that you can use to manage common scenarios such as Administration or Billing. To add a new team choose 'Create Team' from the Team Settings screen.
+
+![Admin Settings](@/images/help/account-access/admin-settings.png)
+
+<Callout type="info">
+  If using an Opendistro version 1.13 or greater of Logit.io ELK you can use Custom Roles 
+  to [manage granular access and index level permissions](/account-administration/account-access-users-teams/roles-access/managing-opensearch-grafana-security-roles).
+</Callout>
+
+Enter a short, memorable name for your team, select the required roles for each Stack that this team will be able to access. You can create multiple teams each with different permission levels for the Stacks you've specified giving you both flexibility and control.
+
+### Specify Levels Of Access for a team member
+
+Once you have configured your team as required, under the section Team Members and Access Permissions, you can select the users that will be part of this team. A user can be either a 'Member' of the team or a 'Team Leader.' Members can access all of the Stacks assigned to this team based on the assigned roles, whereas Team Leader is a special role that allows the user to manage, add and remove members from a team but not view Stacks or access OpenSearch.
+
+![Team Members](@/images/help/account-access/team-members.png)
+
+### Modifying and Deleting teams
+
+By choosing an existing team you are able to update the team name and modify the roles, stacks and team members associated with that team. If the team is no longer required, choose 'Delete' at the bottom of the screen to permanently remove it. This feature should be used with caution as removing a team cannot be undone!

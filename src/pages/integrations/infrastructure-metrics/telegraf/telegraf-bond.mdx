@@ -1,0 +1,70 @@
+---
+title: Bond Metrics via Telegraf
+subTitle: Ship your Bond Metrics via Telegraf to your Logit.io Stack
+color: "#4d4d4d"
+description: Set up Telegraf for Sending Bond Metrics to Your Logit.io Stacks. Configure Telegraf to Transmit Bond Metrics to Logstash or Elasticsearch with Our Telegraf Example Configuration.
+stackTypes: metrics
+sslPortType: beats-ssl
+---
+
+Configure Telegraf to ship Bond metrics to your Logit.io stacks via Logstash.
+
+<Steps>
+
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+
+  ```yaml copy
+  # Collect bond interface status, slaves statuses and failures count
+  [[inputs.bond]]
+    ## Sets 'proc' directory path
+    ## If not specified, then default is /proc
+    host_proc = "/proc"
+
+    ## Sets 'sys' directory path
+    ## If not specified, then default is /sys
+    # host_sys = "/sys"
+
+    ## By default, telegraf gather stats for all bond interfaces
+    ## Setting interfaces will restrict the stats to the specified
+    ## bond interfaces.
+    bond_interfaces = ["bond0", "bond1"]
+
+    ## Tries to collect additional bond details from /sys/class/net/{bond}
+    ## currently only useful for LACP (mode 4) bonds
+    # collect_sys_details = false
+  ```
+
+  <Callout type="info">
+    Read more about how to configure data scraping and configuration options for [Bond](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/bond)
+  </Callout>
+
+  ### Configure The Output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack source="Bond_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-Bond-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+### Telegraf Beanstalkd Overview
+
+Our example guide will help you to establish the configuration within Telegraf to seamlessly transport Bond metrics directly to your dedicated 
+Logit.io stacks using the Logstash pipeline.
+
+If you need any further assistance with shipping your log data to Logit.io we're here to help you get started. Feel free to get in contact with 
+our support team by sending us a message via <IntercomButton text="live chat" /> & we'll be happy to assist.

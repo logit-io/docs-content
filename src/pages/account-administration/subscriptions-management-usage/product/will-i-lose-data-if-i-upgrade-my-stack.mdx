@@ -1,0 +1,25 @@
+---
+title: If we update a stack to the latest version, will we lose any data?
+description: Find out more on if you update a stack to the latest version, will you lose any data in our helpful guide.
+---
+
+# If we update a stack to the latest version, will we lose any data?
+
+There are two possible approaches to upgrading a stack to the latest version:
+
+## Option 1
+
+The first, simplest option is to create a new stack in the latest available 
+version and then set up your data feeds to use the new stack before deleting the old stack.
+
+## Option 2
+
+The second option is to request an in-place upgrade to the latest version 
+where the existing stack ID is retained and the data is migrated by Logit 
+into the upgraded stack.
+
+With the first option, because it is a brand new stack, there is no need to 
+migrate data and therefore no risk of data loss. With the second option, 
+there is a very low risk of data loss (we haven't had any cases of data loss 
+to date) but we can't 100% guarantee data will be restored back 
+into your Elasticsearch/OpenSearch cluster.

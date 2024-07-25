@@ -1,0 +1,98 @@
+---
+title: Index Patterns
+description: What are index patterns and how can I use them to query Elasticsearch with OpenSearch Dashboards on the Logit.io platform?
+---
+
+# Using index patterns to search your logs and metrics with OpenSearch
+
+All logs and metrics that you send to Logit.io belong to an index pattern. 
+To search your data with OpenSearch you have to select which OpenSearch index 
+or indices that you want to explore. You do this in OpenSearch by 
+configuring index patterns.
+
+An index pattern is a string with optional wildcards. It can therefore 
+match the name of a single index or include wildcards (*) to match multiple indices.
+
+All new Logit.io stacks come pre-configured with a number of useful 
+index patterns to help you get started. To view your index patterns:
+
+1. Select *Dashboard Management* from the left navigation
+2. Choose *Index Patterns*
+
+![Kibana Index Patterns](@/images/help/log-management/storage/kibana-index-patterns.png)
+
+All new Logit.io ELK stacks provide you with default indexes, including:
+- -Default
+- filebeat-*
+- logstash-*
+- auditbeat-*
+- metricbeat-*
+- heartbeat-*
+- packetbeat-*
+
+The `filebeat-*` index pattern enables you to search all fields for any 
+logs sent to Logit.io using the [Filebeat shipper](/integrations/log-management/shippers/filebeat), 
+this is an example of an index pattern matching on a single index.
+
+<Callout type="info">
+  When you access OpenSearch for the very first time the default index 
+  pattern is set to search log data from all indices being sent to 
+  Elasticsearch (a multiple indices match), the pattern is `*-*`.
+</Callout>
+
+## Setting up a new index pattern
+
+The *Create Index Pattern* button is found above the list of existing index patterns as shown below:
+
+![Kibana Setup New Pattern](@/images/help/log-management/storage/kibana-setup-new-pattern.png)
+
+Select this and OpenSearch will display the list of indices for which logs are available. 
+You will see that the *Next Step* button is disabled and will only become available when 
+the specified index name that you have entered matches any indices.
+
+When you are setting up a new index pattern if your index contains one or more 
+timestamp fields you will be asked to select one. This is the field that will 
+be used to filter your data by time. If you do not wish to filter your search 
+by timestamp you can select the *I don't want to use the Time Filter option*.
+
+![Kibana Configure Index Pattern](@/images/help/log-management/storage/kibana-configure-index-pattern.png)
+
+<Callout type="info">
+  You can give fields a timestamp during mapping by using Index Templates, 
+  [read more about Index Templates and Mappings](/log-management/opensearch/searching/disabling-field-searches).
+</Callout>
+
+## Setting a default Index Pattern
+
+If you want the new index pattern to be designated as your default pattern to 
+load whenever you select the "Discover" tab then click the favourite star button 
+after the index has finished being created. This is located on the top right-hand side of the screen.
+
+![Kibana Default Index Pattern](@/images/help/log-management/storage/kibana-default-index-pattern.png)
+
+Refreshing index patterns
+If you add any further index mapping, OpenSearch automatically scans the indices 
+that match each pattern to display a list of the new fields. It does not, however, 
+automatically pick them up. You can refresh the index pattern to pick up any newly-added fields by:
+
+1. Selecting *Dashboard Management* from the left navigation
+2. Choose *Index Patterns*
+
+selecting the index pattern and then clicking the "refresh" icon on the top 
+right-hand side of the screen (highlighted below).
+
+![Kibana Refresh Index Patterns](@/images/help/log-management/storage/kibana-refresh-index-patterns.png)
+
+When refreshing you will be prompted to reset the popularity counters for each field. 
+OpenSearch keeps track of the fields that you've used the most often and the place 
+where this data is stored is called a popularity counter. The data is used to sort 
+fields within lists, by refreshing the index pattern this data and ability to sort will be reset.
+
+## Deleting index patterns
+
+To delete an index pattern, select the index from the Index Patterns page and 
+then click the "delete" icon on the top right-hand side of the screen (next to 
+the default and refresh icons previously mentioned). You can recreate an index 
+pattern again at any time in the future but you will also lose all visualisations, 
+saved searches, and other saved objects that reference the pattern as well as 
+all data in any popularity counters, so be careful!

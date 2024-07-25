@@ -1,0 +1,145 @@
+---
+title: macOS
+pageTitle: Mac System Log Files
+subTitle: Ship system log files from macOS to Logstash
+logo: macos
+color: "#3c76d7"
+description: Use Filebeat to send macOS logs to your ELK stacks. Configure Filebeat to send macOS system logs to Logstash or Elasticsearch.
+stackTypes: logs
+sslPortType: beats-ssl
+---
+
+Configure Filebeat to ship logs from macOS Systems to Logstash and Elasticsearch.
+
+<Steps>
+  ### Install Filebeat
+
+  <InstallFilebeat />
+
+  ### Enable The System Module
+
+  There are several built in filebeat modules you can use. You will need to enable the system module.
+
+  Change directory to the location where filebeat was extracted and run the following commands:
+
+  ```bash copy
+  ./filebeat modules list
+  ./filebeat modules enable filebeat
+  ```
+  Navigate to the `modules.d` folder, copy the snippet below and replace the contents of the system.yml module file:
+
+  ```yaml copy
+  # Module: system
+  # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-system.html
+
+  - module: system
+    # Syslog
+    syslog:
+      enabled: true
+
+      # Set custom paths for the log files. If left empty,
+      # Filebeat will choose the paths depending on your OS.
+      #var.paths:
+
+    # Authorization logs
+    auth:
+      enabled: true
+
+      # Set custom paths for the log files. If left empty,
+      # Filebeat will choose the paths depending on your OS.
+      #var.paths:
+  ```
+
+  ### Update your configuration file
+
+  The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+      
+  Copy the configuration file below (making the above changes as necessary) and overwrite the 
+  contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
+
+  <Callout type="info">
+    Filebeat modules offer the quickest way to begin working with standard log formats. If you opt to configure Filebeat manually rather 
+    than utilizing modules, you'll do so by listing inputs in the filebeat.inputs section of filebeat.yml. These inputs detail how Filebeat 
+    discovers and handles input data.  
+  </Callout>
+
+  ```yml copy
+  ###################### Logit.io Filebeat Configuration ########################
+  # ============================== Filebeat inputs ==============================
+  filebeat.inputs:
+  - type: filestream
+    enabled: true
+    id: my_unique_id
+    paths:
+      # REQUIRED CHANGE TO YOUR LOGS PATH
+      - /var/log/*.log
+    fields:
+      type: logfile    
+
+  # ============================== Filebeat modules ==============================
+  filebeat.config.modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+    #reload.period: 10s
+
+  # ================================== Outputs ===================================
+  # ------------------------------ Logstash Output -------------------------------
+  output.logstash:
+      hosts: ["@logstash.host:logstash.sslPort"]
+      loadbalance: true
+      ssl.enabled: true
+
+  # ================================= Processors =================================
+  processors:
+    - add_host_metadata:
+        when.not.contains.tags: forwarded
+    - add_cloud_metadata: ~
+    - add_docker_metadata: ~
+    - add_kubernetes_metadata: ~
+  ```
+
+  ### Validate Configuration
+
+  ```bash copy
+  sudo ./filebeat -e -c filebeat.yml --strict.perms=false
+  ```
+
+  <Callout type="info">
+    If the yml file is invalid, filebeat will print an `error loading config file` error message with details on how to correct the problem. If you have issues 
+    starting filebeat see "How To Diagnose No Data In Stack" below to troubleshoot. 
+  </Callout>
+
+  ### Start filebeat
+
+  To start Filebeat, run:
+
+  ```bash copy
+  sudo chown root filebeat.yml
+  ```
+
+
+  ```bash copy
+  sudo chown root modules.d/system.yml
+  sudo chown root module/system/syslog/manifest.yml
+  sudo chown root module/system/auth/manifest.yml
+  sudo ./filebeat -e
+  ```
+
+  You'll be running filebeat as root, so you need to __change ownership of the configuration file__ and any 
+  configurations enabled in the modules.d directory, or run filebeat with __--strict.perms=false__ as shown above. 
+
+  Read more about how to [change ownership](https://www.elastic.co/guide/en/beats/libbeat/master/config-file-permissions.html).
+
+  ### Check Logit.io for your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="macos" source="macos" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+  ### (Optional) Update Logstash Pipelines
+
+  <LogstashPipeline />
+
+</Steps>

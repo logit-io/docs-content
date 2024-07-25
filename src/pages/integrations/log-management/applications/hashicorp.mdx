@@ -1,0 +1,112 @@
+---
+title: Hashicorp Vault
+subTitle: Ship HashiCorp Vault logs to Logstash
+logo: hashicorpvault
+color: "#FFD815"
+description: Send your HashiCorp Vault logs to logit.io via logstash using the instructions below and begin searching your data
+stackTypes: logs
+sslPortType: beats-ssl
+---
+
+Send your HashiCorp Vault logs to logit.io via logstash using the 
+instructions below and begin searching your data.
+
+<Steps>
+  ### Configure Hashicorp Vault to output logs
+
+  Configure Hashicorp Vault to enable raw log output to the default location. 
+
+  Once the change has been made, start or restart Hashicorp Vault for the change to take effect.
+
+  See [File Audit Device](https://www.vaultproject.io/docs/audit/file) from 
+  HashiCorp for more information on logging and enabling audit devices.
+
+  ### Install Filebeat
+
+  <InstallFilebeat />
+
+  ### Update Your Configuration File
+
+  The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+          
+  Copy the configuration file below and overwrite the contents of __filebeat.yml__.
+
+  For version `7.16+` and above, use the configuration below:
+
+  ```cmd copy
+  ###################### Logit.io Filebeat Configuration ########################
+  # ============================== Filebeat inputs ==============================
+  filebeat.inputs:
+  - type: filestream
+      enabled: true
+      id: my_unique_id
+      paths:
+      # Update the path to your logs if required:
+      - /var/log/vault_audit.log
+      fields:
+      type: hashicorp
+  # ============================== Filebeat modules ==============================
+  filebeat.config.modules:
+      path: ${path.config}/modules.d/*.yml
+      reload.enabled: false
+      #reload.period: 10s
+
+  # ================================== Outputs ===================================
+  # ------------------------------ Logstash Output -------------------------------
+  output.logstash:
+      hosts: ["@logstash.host:@logstash.sslPort"]
+      loadbalance: true
+      ssl.enabled: true
+
+  # ================================= Processors =================================
+  processors:
+      - add_host_metadata:
+          when.not.contains.tags: forwarded
+      - add_cloud_metadata: ~
+      - add_docker_metadata: ~
+      - add_kubernetes_metadata: ~
+  ```
+
+  For versions `7.15.x` and below
+
+  ```cmd copy
+  # ============================== Filebeat inputs ==============================
+  filebeat.inputs:
+  - type: log
+  ```   
+
+  If you're running `Filebeat 7` add this code block to the end. Otherwise, you can leave it out.
+
+  ```cmd copy
+  # ... For Filebeat 7 only ...
+  filebeat.registry.path: /var/lib/filebeat
+  ```
+
+  If you're running `Filebeat 6` add this code block to the end. Otherwise, you can leave it out.
+
+  ```cmd copy
+  # ... For Filebeat 6 only ...
+  registry_file: /var/lib/filebeat/registry
+  ```
+
+  __Validate your YAML__
+
+  _It's a good idea to run the configuration file through a YAML validator to rule out indentation errors, 
+  clean up extra characters, and check if your YAML file is valid. [Yamllint.com](https://yamllint.com) is a great choice._
+
+  ### Start filebeat
+  
+  <StartFilebeat />
+
+  ### Launch Logit.io to view your logs
+  <LaunchStack utmMedium="logs" utmCampaign="hashicorp" source="hashicorp" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>
+
+### Hashicorp Overview
+Acquire a thorough grasp of the procedure involved in transporting HashiCorp Vault logs to Logstash 
+by adhering to the detailed instructions and utilizing the illustrative examples we've provided. 
+These invaluable resources will ensure a smooth and effective data shipping procedure.

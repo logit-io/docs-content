@@ -1,0 +1,40 @@
+---
+title: Configure Spike Alerts for OpenSearch
+description: Find out more about how to create a spike alert for your OpenSearch logs or metrics in this article from Logit.io.
+---
+
+# Configure Spike Alerts for OpenSearch
+
+A Spike alert matches when the volume of events during a given time 
+period is larger or smaller based on `spike_height` than during the 
+previous time period `timeframe`.
+
+This would allow you to receive alerts in scenarios such as if there 
+is **3 times spike up based on a ratio value** `spike_height` in the 
+number of events matching the `filter` query, when compared to the 
+previous time window for events `timeframe`. 
+
+Here is an example below:
+
+```yaml copy
+name: "Spike example alert"
+type: spike
+index: "*-*"
+timeframe:
+  hours: 2
+spike_height: 3
+spike_type: "up"
+- query:
+   query_string:
+      query: "router.status: [500 TO 599]"
+alert:
+- "email"
+email:
+- "example@logit.io"
+```
+
+## Additional Options
+
+In addition, you can also provide a `threshold_cur` value that 
+allows you to configure the minimum number of events that must 
+exist in the current window for an alert to be fired.

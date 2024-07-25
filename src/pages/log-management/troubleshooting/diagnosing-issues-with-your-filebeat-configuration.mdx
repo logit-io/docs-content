@@ -1,0 +1,73 @@
+---
+title: Diagnosing Issues with Your Filebeat Configuration
+description: Discover how to diagnose issues or problems within your Filebeat configuration in our helpful guide.
+---
+
+# Diagnosing issues with your Filebeat configuration
+
+## 1. Check you have correctly set up the inputs
+
+First, you are going to check that you have set the inputs for Filebeat to collect data from. Inputs are essentially the location you will be choosing to process logs and metrics from. The easiest way to do this is by enabling the modules that come installed with Filebeat.
+
+### Enabling Modules
+
+Modules are the easiest way to get Filebeat to harvest data as they come preconfigured for the most common log formats. You can check the list of modules available to you by running the Filebeat modules list command. You will also notice the response tells us which modules are enabled or disabled.
+
+```bash
+filebeat modules list
+```
+![Filebeat Issues](@/images/help/log-management/troubleshooting/filebeat-issues.png)
+
+In the above screenshot, you can see that there are no enabled Filebeat modules. This means that Filebeat does not know what data it is looking for unless we specify this manually. An example of how to enable a module to process Apache logs is to run the following command.
+```bash
+filebeat modules enable apache2
+```
+![Enabling Filebeat Modules](@/images/help/log-management/troubleshooting/enable-filebeat-modules.png)
+
+Enabling modules isn't required but it is one of the easiest ways of getting Filebeat to look in the correct place for data.
+
+### Configuring Filebeat Manually
+
+This means that you are not using a module and are instead specifying inputs in the filebeat.inputs section of the configuration file. You can configure paths manually for Container, Docker, Logs, Netflow, Redis, Stdin, Syslog, TCP and UDP.
+
+When specifying paths manually you need to set the input configuration to enabled: true in the Filebeat configuration file.
+
+![Log Input](@/images/help/log-management/troubleshooting/log-input.png)
+
+## 2. Check your output contains your Logstash host and port
+
+While it may seem simple it can often be overlooked, have you set up the output in the Filebeat configuration file correctly?
+
+You can find the details for your ELK stack Logstash endpoint address & Beats SSL port by navigating to `Logstash Inputs` settings.
+
+![Logstash Inputs](@/images/help/log-management/troubleshooting/logstash-inputs.png)
+
+You need to make sure you have commented out the Elasticsearch output and uncommented the Logstash output section. This tells Filebeat we are outputting to Logstash (So that we can better add structure, filter and parse our data).
+
+To comment out simply add the # symbol at the start of the line. To uncomment it's the opposite so remove the # symbol.
+
+A snippet of a correctly set-up output configuration can be seen in the screenshot below.
+
+![Log Outputs](@/images/help/log-management/troubleshooting/log-outputs.png)
+
+It's also important to get the correct port for your outputs. In the screenshot above you can see that port 15029 has been used which means that the data was being sent from Filebeat with SSL enabled.
+
+## 3. Are you using a configuration file in an alternative location?
+
+It is to be noted that you don't have to use the default configuration file that comes with Filebeat. Let's say you are making changes and save the new filebeat.yml configuration file in another place so as not to override the original configuration. To tell Filebeat the location of this file you need to use the -c command line flag followed by the location of the configuration file.
+
+An example of how to do this:
+```bash
+filebeat -c <path_to_config_file>
+```
+## 4. Enable Logging
+
+Manual checks are time-consuming, and you'll likely want a quick way to spot some of these issues. The good news is you can enable additional logging to the daemon by running Filebeat with the -e command line flag. This will redirect the output that is normally sent to Syslog to standard error. You will be able to diagnose whether Filebeat is able to harvest the files properly or if it can connect to your Logstash or Elasticsearch node. For example, see the command below.
+```bash
+filebeat -e
+```
+
+![Filebeat-e](@/images/help/log-management/troubleshooting/filebeat-e.png)
+
+### Still having trouble?
+If you are still having trouble you can contact the Logit.io support team [here.](https://logit.io/about-us/contact-us/)

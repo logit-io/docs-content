@@ -1,0 +1,270 @@
+---
+title: Kafka MQ
+subTitle: Collect and ship topics from Kafka message queue to Logstash and Elasticsearch
+logo: kafka
+color: "#723244"
+description: Use Filebeat to send Kafka MQ topics to your hosted ELK stacks. Configure Filebeat to send Kafka MQ topics to Logstash or Elasticsearch.    
+stackTypes: logs
+sslPortType: beats-ssl
+---
+
+Filebeat is a lightweight shipper that enables you to send your Apache Kafka message queue logs to Logstash and Elasticsearch. Configure 
+Filebeat using the pre-defined examples below to start sending and analysing your Apache Kafka message queue logs.
+
+<Steps>
+  ### Install Filebeat
+
+  <InstallFilebeat />
+
+  ### Update Your Configuration File
+
+  <Tabs items={["Windows", "Linux", "macOS", "DEB", "RPM"]}>
+    <Tab>
+      The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+
+      __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ field in the Logstash outputs section are correctly populated.
+      If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
+      The ___'paths'___ field will need to be set to the location of the logs you want to send to your Stack.
+      
+      Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where 
+      you installed Filebeat in the previous step. If it is missing create a new file with that name and populate it with the configuration details below).
+
+      ```yaml copy
+      ###################### Logit.io Filebeat Configuration ########################
+      # ============================== Filebeat inputs ==============================
+      filebeat.inputs:
+      - type: kafka
+        hosts:
+          - name-of-your-broker:your-broker-port
+        # - localhost:9092        (Example)
+        topics: ["name-of-your-topic", "name-of-another-topic"]
+        group_id: "filebeat"
+      
+      # ============================== Filebeat modules ==============================
+      filebeat.config.modules:
+          path: ${path.config}/modules.d/*.yml
+          reload.enabled: false
+          #reload.period: 10s
+
+      # ================================== Outputs ===================================
+      # ------------------------------ Logstash Output -------------------------------
+      output.logstash:
+          hosts: ["@logstash.host:@logstash.sslPort"]
+          loadbalance: true
+          ssl.enabled: true
+
+      # ================================= Processors =================================
+      processors:
+          - add_host_metadata:
+              when.not.contains.tags: forwarded
+          - add_cloud_metadata: ~
+          - add_docker_metadata: ~
+          - add_kubernetes_metadata: ~
+      ```
+    </Tab>
+    <Tab>
+      The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+
+      __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ field in the Logstash outputs section are correctly populated.
+      If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
+      The ___'paths'___ field will need to be set to the location of the logs you want to send to your Stack.
+      
+      Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where 
+      you installed Filebeat in the previous step).
+
+      ```yaml copy
+      ###################### Logit.io Filebeat Configuration ########################
+      # ============================== Filebeat inputs ==============================
+      filebeat.inputs:
+      - type: kafka
+        hosts:
+          - name-of-your-broker:your-broker-port
+        # - localhost:9092        (Example)
+        topics: ["name-of-your-topic", "name-of-another-topic"]
+        group_id: "filebeat"
+      
+      # ============================== Filebeat modules ==============================
+      filebeat.config.modules:
+          path: ${path.config}/modules.d/*.yml
+          reload.enabled: false
+          #reload.period: 10s
+
+      # ================================== Outputs ===================================
+      # ------------------------------ Logstash Output -------------------------------
+      output.logstash:
+          hosts: ["@logstash.host:@logstash.sslPort"]
+          loadbalance: true
+          ssl.enabled: true
+
+      # ================================= Processors =================================
+      processors:
+          - add_host_metadata:
+              when.not.contains.tags: forwarded
+          - add_cloud_metadata: ~
+          - add_docker_metadata: ~
+          - add_kubernetes_metadata: ~
+      ```
+    </Tab>
+    <Tab>
+      The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+
+      __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ field in the Logstash outputs section are correctly populated.
+      If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
+      The ___'paths'___ field will need to be set to the location of the logs you want to send to your Stack.
+      
+      Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where 
+      you installed Filebeat in the previous step).
+
+      ```yaml copy
+      ###################### Logit.io Filebeat Configuration ########################
+      # ============================== Filebeat inputs ==============================
+      filebeat.inputs:
+      - type: kafka
+        hosts:
+          - name-of-your-broker:your-broker-port
+        # - localhost:9092        (Example)
+        topics: ["name-of-your-topic", "name-of-another-topic"]
+        group_id: "filebeat"
+
+      # ============================== Filebeat modules ==============================
+      filebeat.config.modules:
+          path: ${path.config}/modules.d/*.yml
+          reload.enabled: false
+          #reload.period: 10s
+
+      # ================================== Outputs ===================================
+      # ------------------------------ Logstash Output -------------------------------
+      output.logstash:
+          hosts: ["@logstash.host:@logstash.sslPort"]
+          loadbalance: true
+          ssl.enabled: true
+
+      # ================================= Processors =================================
+      processors:
+          - add_host_metadata:
+              when.not.contains.tags: forwarded
+          - add_cloud_metadata: ~
+          - add_docker_metadata: ~
+          - add_kubernetes_metadata: ~
+      ```
+    </Tab>
+    <Tab>
+      The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+
+      __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ field in the Logstash outputs section are correctly populated.
+      If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
+      The ___'paths'___ field will need to be set to the location of the logs you want to send to your Stack.
+      
+      Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where 
+      you installed Filebeat in the previous step).
+
+      ```yaml copy
+      ###################### Logit.io Filebeat Configuration ########################
+      # ============================== Filebeat inputs ==============================
+      filebeat.inputs:
+      - type: kafka
+        hosts:
+          - name-of-your-broker:your-broker-port
+        # - localhost:9092        (Example)
+        topics: ["name-of-your-topic", "name-of-another-topic"]
+        group_id: "filebeat"
+
+      # ============================== Filebeat modules ==============================
+      filebeat.config.modules:
+          path: ${path.config}/modules.d/*.yml
+          reload.enabled: false
+          #reload.period: 10s
+
+      # ================================== Outputs ===================================
+      # ------------------------------ Logstash Output -------------------------------
+      output.logstash:
+          hosts: ["@logstash.host:@logstash.sslPort"]
+          loadbalance: true
+          ssl.enabled: true
+
+      # ================================= Processors =================================
+      processors:
+          - add_host_metadata:
+              when.not.contains.tags: forwarded
+          - add_cloud_metadata: ~
+          - add_docker_metadata: ~
+          - add_kubernetes_metadata: ~
+      ```
+    </Tab>
+    <Tab>
+      The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+
+      __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ field in the Logstash outputs section are correctly populated.
+      If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
+      The ___'paths'___ field will need to be set to the location of the logs you want to send to your Stack.
+      
+      Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where 
+      you installed Filebeat in the previous step).
+
+      ```yaml copy
+      ###################### Logit.io Filebeat Configuration ########################
+      # ============================== Filebeat inputs ==============================
+      filebeat.inputs:
+      - type: kafka
+        hosts:
+          - name-of-your-broker:your-broker-port
+        # - localhost:9092        (Example)
+        topics: ["name-of-your-topic", "name-of-another-topic"]
+        group_id: "filebeat"
+
+      # ============================== Filebeat modules ==============================
+      filebeat.config.modules:
+          path: ${path.config}/modules.d/*.yml
+          reload.enabled: false
+          #reload.period: 10s
+
+      # ================================== Outputs ===================================
+      # ------------------------------ Logstash Output -------------------------------
+      output.logstash:
+          hosts: ["@logstash.host:@logstash.sslPort"]
+          loadbalance: true
+          ssl.enabled: true
+
+      # ================================= Processors =================================
+      processors:
+          - add_host_metadata:
+              when.not.contains.tags: forwarded
+          - add_cloud_metadata: ~
+          - add_docker_metadata: ~
+          - add_kubernetes_metadata: ~
+      ```
+    </Tab>
+  </Tabs>
+
+  ### Validate Configuration
+
+  <ValidateBeat beatname="filebeat" />
+
+  ### Start filebeat
+
+  <StartFilebeat />
+
+  ### Check Logit.io for your logs
+  <LaunchStack stackType="logs" utmMedium="logs" utmCampaign="kafka" source="kafka" />
+
+</Steps>
+
+### Apache Kafka Logging Overview
+
+Apache Kafka is a distributed streaming platform written in Scala & Java, that is primarily used for generating low latency real-time data streaming pipelines 
+for apps & data lake engines. 
+
+Kafka offers users the ability to publish & subscribe to record streams, decouple data & sort the aggregated data in chronological order for improved real-time 
+processing. The platform is suited to processing many trillions of cross systems events per day making the tool ideal as a big data solution.
+
+Kafka is one of the leading Apache projects and is used by enterprise level businesses globally; including Uber, LinkedIn, Netflix & Twitter. Much of this 
+infrastructure also uses Logstash, which works side by side with the platform as Kafka acts as a buffer between the two for improved resilience.
+
+The combined power of Elasticsearch, Logstash & Kibana form the Elastic Stack which can be used for efficient [log analysis](https://logit.io/solutions/analysis/log-analysis) 
+as platform & Kafka broker logs contain vital information on the performance & overall health of your systems. 
+
+Our [hosted Elastic Stack](https://logit.io/platform/features/hosted-elk) solution can help monitor & visualise Kafka logs and alert you on performance issues & broker 
+degradation in real time. Logit.io's built in Kibana can easily generate dashboards for capturing various Kafka log messages along with their severity counts.
+
+If you need any assistance with analysing your Kafka logs (no matter if their server, utils or state-change logs) we're here to help. Feel free to get in touch 
+by contacting the Logit.io help team via <IntercomButton text="live chat" />  & we'll be happy to help you start analysing your log data.

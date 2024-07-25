@@ -1,0 +1,11 @@
+import styles from "./app.scss"
+import "react-tooltip/dist/react-tooltip.css";
+import ApplicationWrapper from "@/components/layout/application-wrapper";
+
+export default function MyApp({ Component, pageProps }) {
+  return (
+    <ApplicationWrapper>
+      <Component {...pageProps} />  
+    </ApplicationWrapper>
+  );
+}

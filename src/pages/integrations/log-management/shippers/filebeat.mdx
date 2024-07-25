@@ -1,0 +1,284 @@
+---
+title: Filebeat
+pageTitle: Filebeat Configuration
+subTitle: A Log Shipper Designed for Files
+logo: filebeat
+color: "#00bfb3"
+description: Filebeat allows you to send logs to your ELK stacks. Configure Filebeat to send logs to Logstash or Elasticsearch. 
+stackTypes: logs
+sslPortType: beats-ssl
+---
+
+Filebeat is an open source shipping agent that lets you ship 
+logs from local files to one or more destinations, including Logstash.
+
+<Steps>
+  ### Install Filebeat
+
+  <InstallFilebeat />
+
+  ### Update your configuration file
+
+  <Tabs items={["Windows", "Linux", "macOS", "DEB", "RPM"]}>
+    <Tab>
+      The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+
+      __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ field in the Logstash 
+      outputs section are correctly populated. If you are logged into your Logit.io account the ___'hosts'___ field should have been 
+      pre-populated with the correct values. The ___'paths'___ field will need to be set to the location of the logs you want to 
+      send to your Stack e.g. `- /Windows/DtcInstall.log` is a log file called DtcInstall.log located in C:/Windows.
+
+      Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ 
+      (this file can be found in the location where you installed Filebeat in the previous step. If it is missing create a 
+      new file with that name and populate it with the configuration details below).
+
+      ```yml copy /@logstash.host/ /@logstash.sslPort/
+      ###################### Logit.io Filebeat Configuration ########################
+      # ============================== Filebeat inputs ==============================
+      filebeat.inputs:
+      - type: filestream
+        enabled: true
+        paths:
+          # REQUIRED: Change the path to your logs:
+          - C:\Windows\System32\winevt\Logs\*
+        fields:
+          type: logfile
+
+      # ============================== Filebeat modules ==============================
+      filebeat.config.modules:
+        path: ${path.config}/modules.d/*.yml
+        reload.enabled: false
+        #reload.period: 10s
+
+      # ================================== Outputs ===================================
+      # ------------------------------ Logstash Output -------------------------------
+      output.logstash:
+          hosts: ["@logstash.host:@logstash.sslPort"]
+          loadbalance: true
+          ssl.enabled: true
+
+      # ================================= Processors =================================
+      processors:
+        - add_host_metadata:
+            when.not.contains.tags: forwarded
+        - add_cloud_metadata: ~
+        - add_docker_metadata: ~
+        - add_kubernetes_metadata: ~
+      ```
+    </Tab>
+    <Tab>
+      The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+
+      __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ field in the Logstash outputs section are correctly populated.
+      If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
+      The ___'paths'___ field will need to be set to the location of the logs you want to send to your Stack.
+      
+      Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
+      
+      ```yml copy
+      ###################### Logit.io Filebeat Configuration ########################
+      # ============================== Filebeat inputs ==============================
+      filebeat.inputs:
+      - type: filestream
+        enabled: true
+        id: my_unique_id
+        paths:
+          # REQUIRED CHANGE TO YOUR LOGS PATH
+          - /var/log/*.log
+        fields:
+          type: logfile
+          
+      # ============================== Filebeat modules ==============================
+      filebeat.config.modules:
+        path: ${path.config}/modules.d/*.yml
+        reload.enabled: false
+        #reload.period: 10s
+
+      # ================================== Outputs ===================================
+      # ------------------------------ Logstash Output -------------------------------
+      output.logstash:
+          hosts: ["@logstash.host:@logstash.sslPort"]
+          loadbalance: true
+          ssl.enabled: true
+
+      # ================================= Processors =================================
+      processors:
+        - add_host_metadata:
+            when.not.contains.tags: forwarded
+        - add_cloud_metadata: ~
+        - add_docker_metadata: ~
+        - add_kubernetes_metadata: ~
+      ```
+    </Tab>
+    <Tab>
+      The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+
+      __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ field in the Logstash outputs section are correctly populated.
+      If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
+      The ___'paths'___ field will need to be set to the location of the logs you want to send to your Stack.
+      
+      Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
+    
+      ```yml copy
+      ###################### Logit.io Filebeat Configuration ########################
+      # ============================== Filebeat inputs ==============================
+      filebeat.inputs:
+      - type: filestream
+        enabled: true
+        id: my_unique_id
+        paths:
+          # REQUIRED CHANGE TO YOUR LOGS PATH
+          - /var/log/*.log
+        fields:
+          type: logfile    
+
+      # ============================== Filebeat modules ==============================
+      filebeat.config.modules:
+        path: ${path.config}/modules.d/*.yml
+        reload.enabled: false
+        #reload.period: 10s
+
+      # ================================== Outputs ===================================
+      # ------------------------------ Logstash Output -------------------------------
+      output.logstash:
+          hosts: ["@logstash.host:logstash.sslPort"]
+          loadbalance: true
+          ssl.enabled: true
+
+      # ================================= Processors =================================
+      processors:
+        - add_host_metadata:
+            when.not.contains.tags: forwarded
+        - add_cloud_metadata: ~
+        - add_docker_metadata: ~
+        - add_kubernetes_metadata: ~
+      ```
+    </Tab>
+    <Tab>
+      The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+
+      __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ field in the Logstash outputs section are correctly populated.
+      If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
+      The ___'paths'___ field will need to be set to the location of the logs you want to send to your Stack.
+      
+      Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
+    
+      ```yml copy
+      ###################### Logit.io Filebeat Configuration ########################
+      # ============================== Filebeat inputs ==============================
+      filebeat.inputs:
+      - type: filestream
+        enabled: true
+        id: my_unique_id
+        paths:
+          # REQUIRED CHANGE TO YOUR LOGS PATH
+          - /var/log/*.log
+        fields:
+          type: logfile  
+
+      # ============================== Filebeat modules ==============================
+      filebeat.config.modules:
+        path: ${path.config}/modules.d/*.yml
+        reload.enabled: false
+        #reload.period: 10s
+
+      # ================================== Outputs ===================================
+      # ------------------------------ Logstash Output -------------------------------
+      output.logstash:
+          hosts: ["@logstash.host:logstash.sslPort"]
+          loadbalance: true
+          ssl.enabled: true
+
+      # ================================= Processors =================================
+      processors:
+        - add_host_metadata:
+            when.not.contains.tags: forwarded
+        - add_cloud_metadata: ~
+        - add_docker_metadata: ~
+        - add_kubernetes_metadata: ~
+      ```
+    </Tab>
+    <Tab>
+      The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+
+      __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ field in the Logstash outputs section are correctly populated.
+      If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
+      The ___'paths'___ field will need to be set to the location of the logs you want to send to your Stack.
+      
+      Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
+    
+      ```yml copy
+      ###################### Logit.io Filebeat Configuration ########################
+      # ============================== Filebeat inputs ==============================
+      filebeat.inputs:
+      - type: filestream
+        enabled: true
+        id: my_unique_id
+        paths:
+          # REQUIRED CHANGE TO YOUR LOGS PATH
+          - /var/log/*.log
+        fields:
+          type: logfile
+
+      # ============================== Filebeat modules ==============================
+      filebeat.config.modules:
+        path: ${path.config}/modules.d/*.yml
+        reload.enabled: false
+        #reload.period: 10s
+
+      # ================================== Outputs ===================================
+      # ------------------------------ Logstash Output -------------------------------
+      output.logstash:
+          hosts: ["@logstash.host:@logstash.sslPort"]
+          loadbalance: true
+          ssl.enabled: true
+
+      # ================================= Processors =================================
+      processors:
+        - add_host_metadata:
+            when.not.contains.tags: forwarded
+        - add_cloud_metadata: ~
+        - add_docker_metadata: ~
+        - add_kubernetes_metadata: ~
+      ```
+    </Tab>
+  </Tabs>
+
+  ### Validate configuration
+
+  <ValidateBeat beatname="filebeat" />
+
+  ### Start filebeat
+
+  <StartFilebeat />
+
+  ### Check Logit.io for your logs
+  <LaunchStack utmMedium="logs" utmCampaign="filebeat" source="filebeat" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+### Filebeat Logging Overview
+Filebeat is the most popular way to send logs to ELK due to its reliability & minimal memory footprint. 
+It is the leading Beat out of the entire collection of open-source shipping tools, 
+including [Auditbeat](/sources/configure/auditbeat/), [Metricbeat](/sources/configure/metricbeat/) & [Heartbeat](/sources/configure/heartbeat/). 
+
+Filebeat's origins begin from combining key features from Logstash-Forwarder & Lumberjack & is written in Go. 
+Within the logging pipeline, Filebeat can generate, parse, tail & forward common logs to be indexed within Elasticsearch. 
+The harvester is often compared to Logstash but it is not a suitable replacement & instead should be used in tandem for most use cases.
+
+Earlier versions of Filebeat suffered from a very limited scope & only allowed the user to send events to 
+Logstash & Elasticsearch. More recent versions of the shipper have been updated to be compatible with 
+[Redis](/sources/configure/redis_app/) & [Kafka](/sources/configure/kafka/).  
+      
+A misconfigured Filebeat setup can lead to many complex logging concerns that this filebeat.yml wizard aims to solve. 
+Just a couple of examples of these include excessively large registry files & file handlers that error frequently 
+when encountering deleted or renamed log files. Tracking numerous pipelines using this shipper can become tedious 
+for self hosted Elastic Stacks so you may wish to consider our [Hosted ELK](/) service as a solution to this.
+      
+If you need any further assistance with migrating your log data to ELK we're here to help you get started. 
+Feel free to get in contact with our support team by sending us a message via 
+<IntercomButton text="live chat" /> & we'll be happy to assist.

@@ -1,0 +1,81 @@
+---
+title: Wazuh
+subTitle: Ship your Wazuh logs using Filebeat to your Logit.io Stack
+logo: wazuhlogo
+color: "#e63429"
+description: Configure Filebeat to ship Wazuh logs to your Logit.io stacks. Configure Filebeat to send Wazuh logs to Logstash or Elastic. Get started using our Wazuh example configuration.
+stackTypes: logs
+sslPortType: beats-ssl
+---
+
+Configure Wazuh to ship logs via Filebeat to your Logit.io stacks via Logstash.
+
+<Steps>
+  ### Install Filebeat
+
+  <InstallFilebeat />
+
+  ### Configure Wazuh for JSON logging
+
+  Ensure that the in your Wazuh configuration file __/var/ossec/etc/ossec.conf__ that the `<log_format>` is set to __json__:
+
+  ```xml copy
+  <logging>
+    <log_format>json</log_format>
+  </logging>
+  ```
+  
+  Restart Wazuh using `sudo systemctl restart wazuh-manager`.
+
+  ### Configure Filebeat.yml
+
+  <FilebeatFilestream type="wazuh" path="/var/ossec/logs/alerts/alerts.json" />
+
+  ### Validate configuration
+
+  <ValidateBeat beatname="filebeat" />
+
+  ### Start Filebeat
+
+  <StartFilebeat />
+
+  ### Launch Logit.io to view your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="wazuh" source="wazuh" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+  
+</Steps>
+
+## Wazuh Overview
+
+Wazuh is a free, open-source security monitoring solution that provides 
+comprehensive threat detection, integrity monitoring, and compliance 
+management capabilities. It is designed to help organizations detect 
+and respond to security incidents in real-time and maintain 
+compliance with various industry regulations and standards.
+
+To effectively monitor and analyze security events, it is essential to 
+have a reliable and efficient log management solution. Wazuh leverages 
+the Elastic Stack, which includes Elasticsearch, Logstash, and OpenSearch, 
+to provide a centralized platform for collecting, processing, 
+and visualizing security-related data.
+
+To send data from Wazuh to Logstash, organizations can use Filebeat, an 
+open-source log shipper. Filebeat can be configured to monitor the Wazuh 
+logs directory and send any new logs to Logstash, where they can be 
+processed and analyzed for real-time threat detection and response.
+
+In summary, using Wazuh as a security monitoring solution provides 
+organizations with a reliable and efficient way to detect and respond to 
+security incidents in real-time and maintain compliance with industry 
+regulations and standards. By leveraging the Elastic Stack and various 
+agents and modules, organizations can collect and analyze data from 
+various sources and gain valuable insights into their security posture.
+
+If you need any further assistance with migrating your log data to ELK 
+we're here to help you get started. Feel free to get in contact with 
+our support team by sending us a 
+message <IntercomButton text="via live chat" /> and we'll be happy to assist.

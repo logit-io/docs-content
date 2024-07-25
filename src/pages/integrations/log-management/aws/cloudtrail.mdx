@@ -1,0 +1,61 @@
+---
+title: CloudTrail
+subTitle: Ship logs from CloudTrail to Logstash
+logo: cloudtrail
+color: "#689e2f"
+stackTypes: logs
+description: Learn how to send CloudTrail logs to your ELK Logstash instance with our configuration guide. Simplify sending logs with Logit.io's source configurations.
+---
+
+<Steps>
+  ### Confirm S3 Bucket
+
+  Ensure your logs are being sent to an S3 bucket. The following guide from 
+  Amazon will help you achieve this if you are not doing this already:
+        
+  [Cloudtrail to S3](http://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-create-and-update-a-trail.htm).
+
+  ### Ensure Adequate Bucket Permissions
+
+  The following permissions applied to the AWS IAM Policy being used:
+        
+  - `s3:ListBucket` to check if the S3 bucket exists and list objects in it.
+  - `s3:GetObject` to check object metadata and download objects from S3 buckets.
+  
+  Below is how your permissions should appear:
+
+  ```json copy showLineNumbers
+  {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "SidID",
+        "Effect": "Allow",
+        "Action": ["s3:GetObject", "s3:ListBucket"],
+        "Resource": ["arn:aws:s3:::your-bucket/*"]
+      }
+    ]
+  }
+  ```
+
+  ### Configure Logstash for Amazon Cloudtrail
+
+  <AddS3Input type="aws_cloudtrail" utmMedium="logs" utmCampaign="awscloudtrail" />
+
+  ### Check Logit.io for your logs
+
+  <LaunchStack source="cloudtrail" utmMedium="aws" utmCampaign="cloudtrail" />
+</Steps>
+
+## Cloudtrail Logging Overview
+
+Sending data to Logit.io from CloudTrail is an efficient process that ensures your AWS infrastructure 
+remains secure and your logs are easily accessible for analysis. By configuring CloudTrail to forward 
+logs to Logit.io, you can gain deeper insights into your AWS environment, troubleshoot issues, and 
+proactively detect and respond to security incidents. 
+
+This approach complements the use of [AWS Elastic Kubernetes Service (EKS)](/integrations/metrics/aws/aws-eks-metrics) 
+for container orchestration, as well as the efficient utilization of 
+[AWS Lambda](/integrations/logs/aws/aws-cloudwatch-lambda) for comprehensive log management. 
+
+As part of Logit.io's service for [AWS logging](https://logit.io/solutions/aws-logging/), these integrations all work together in tandem.

@@ -1,0 +1,54 @@
+---
+title: Azure Activity Logs
+subTitle: Pull Activity logs from Azure to Logstash
+logo: azure
+color: "#0089d6"
+description: Use Logit.io's Azure Activity Log example configuration to easily forward and send your logs to Logstash and Elasticsearch.
+stackTypes: logs
+---
+
+In Microsoft Azure the Activity Log is a platform that provides insights into 
+subscription level events, including auditable details of when a resource is modified 
+or when a container is started. By configuring the required activity logs to forward 
+to Event Hub we can then pull them into the Logit.io ELK Stack via Logstash.
+
+<Steps>
+  ### Ensure Azure Event Hub
+
+  Before you begin you will need to ensure you have an available 
+  Azure Event Hub in the [Azure Portal](https://portal.azure.com/).
+
+  You should create a diagnostic setting to send 
+  the [Activity logs](https://docs.microsoft.com/en-us/azure/azure-monitor/platform/activity-log) to this Event Hub.
+
+  ![View your Azure event hub](@/images/integrations/azure-container-activity-logs/container_activity_logs_step_event_hub.png)
+
+  Once you have configured your Event Hub we now need to confirm messages are arriving.
+
+  ### Confirm Messages in Event Hub
+
+  In your Azure Portal browse to your Event Hub, from the dashboard you should be able to see messages arriving.
+
+  <Callout type="info">
+    Ensure there is recent activity on the graph and the incoming requests isn't zero.
+  </Callout>
+
+  ![Graphs showing that messages are arriving](@/images/integrations/azure-container-activity-logs/container_activity_logs_step4.png)
+
+  ### Configure Permissions
+
+  <AzureConfiguration />
+
+  ### Configure Logstash For Azure Event Hub
+
+  <AzureInput stackType="logs" utmMedium="logs" utmCampaign="azureactivitylogs" type="azure" />
+
+  ### Check Logit.io for your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="azureactivitylogs" source="azureactivitylogs" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>

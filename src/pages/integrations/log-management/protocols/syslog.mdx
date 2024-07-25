@@ -1,0 +1,135 @@
+---
+title: Syslog
+subTitle: Ship logs using syslog to Logstash
+logo: syslog
+color: "#598200"
+description: Follow our configuration guide for Syslog logs to get started centralising your data using the ELK Stack.
+stackTypes: logs
+sslPortType: syslog-ssl
+portType: syslog
+---
+
+Send HTTP/S logs to your Logit.io Stack via Logstash.Learn how configure 
+Syslog to securely ship logs over SSL to your Stack via Logstash. This is 
+a good choice when you need to ship logs from appliances or devices 
+where you cannot run one of the [beats shippers](/sources/search?f=shippers).
+
+<Steps>
+  ### Download the Logit.io SSL Certificate
+
+  Download root.logit.io.crt file and place in /etc/rsyslog.d/keys/ca.d/ or another directory
+          
+  [https://cdn.logit.io/root.logit.io.crt](https://cdn.logit.io/root.logit.io.crt)
+
+  ```bash copy
+  sudo mkdir -p /etc/rsyslog.d/keys/ca.d
+  sudo curl -o /etc/rsyslog.d/keys/ca.d/root.logit.io.crt https://cdn.logit.io/root.logit.io.crt
+  ```
+
+  <Callout type="info">
+    rsyslog trusts these root CA keys to validate the key presented by Logit.io, preventing man-in-the-middle attacks.
+  </Callout>
+
+  ### RSyslog
+
+  <RsyslogConfig />
+
+  <Callout type="info">
+    * On many distros, also install the rsyslog-gnutls package (including CentOS, Fedora, Debian, and Ubuntu)
+    * If possible run the latest minor versions of rsyslog v7 or v8. There are many TLS bugs in past versions.
+    * Ensure you have @@ not a single @ infront of the host. This is so TCP is used.
+  </Callout>
+
+  ### Restart rsyslog so it detects the TLS-over-TCP destination:
+
+  ```bash copy
+  sudo /etc/init.d/rsyslog restart
+  ```
+
+  ### Troubleshooting
+
+  If you see either
+
+  ```cmd copy
+  could not load module '/usr/lib/rsyslog/lmnsd_gtls.so',
+  rsyslog error -2078 [try http://www.rsyslog.com/e/2068 ]
+  ```
+
+  Or
+
+  ``` cmd copy
+  could not load module '/usr/lib/rsyslog/lmnsd_gtls.so', 
+  dlopen: /usr/lib/rsyslog/lmnsd_gtls.so: cannot open shared object file: No such file or directory
+  [try http://www.rsyslog.com/e/2066 ]
+  ```
+
+  <Callout type="info">
+    First, make sure that module actually exists by running ls against the path in the error, such as:
+  </Callout>
+
+  ```bash copy
+  ls -la /usr/lib/rsyslog/lmnsd_gtls.so
+  ```
+
+  If it doesn't exist, install the related package (often called rsyslog-gnutls) or if you compiled rsyslog from source, compile the module.
+
+  ```bash copy
+  sudo apt-get install rsyslog-gnutls
+  ```
+
+  <Callout type="info">
+    Second, ensure that the user which runs _rsyslog_ has permissions to read Logit.io's public key. 
+    On many distributions, _rsyslog_ starts as root and then drops to a user. In that case, in order to let all users read the key file, run the following command
+  </Callout>
+
+  ```bash copy
+  chmod 644 /etc/rsyslog.d/keys/ca.d/root.logit.io.crt
+  ```
+
+  <Callout type="info">
+    Finally confirm how you are loading the TLS Module:
+  </Callout>
+
+  If you are using ```$ModLoad lmnsd_gtls``` to explicitly load the TLS module, and that configuration option occurs before the ```$DefaultNetstreamDriverCAFile``` has been 
+  defined. Explicitly loading the module is rarely required and the configuration above does not use it. 
+
+  We recommend removing that ```$ModLoad lmnsd_gtls``` option and relying on autoloading. If your ```lmnsd_gtls``` needs to be explicitly loaded, like because it is in a 
+  non-default location, move the ```$DefaultNetstreamDriverCAFile``` config line above the ```$ModLoad``` line.
+
+  ### Check Logit.io for your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="syslog" source="syslog" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+  ### Syslog dashboard
+
+  The Syslog module comes with predefined Kibana dashboards. To view your dashboards for any of your Logit.io stacks, launch Logs and choose Dashboards.
+
+  ![Predefined kibana dashboard screenshot](@/images/integrations/filebeat/syslog.png)
+
+  ![Predefined kibana dashboard screenshot](@/images/integrations/filebeat/syslog2.png)
+
+  ![Predefined kibana dashboard screenshot](@/images/integrations/filebeat/syslog3.png)
+
+  ![Predefined kibana dashboard screenshot](@/images/integrations/filebeat/syslog4.png)
+    
+</Steps>
+
+### Syslog Logging Overview
+
+Syslog is a format of message logs commonly used across many operating systems & network devices to send data to a logging server. Event data 
+recorded by the system logging protocol can then be accessed by IT teams for the purposes of [auditing](https://logit.io/solutions/compliance-and-auditing), 
+diagnostics & improving operational efficiency.
+
+Because Syslog is so often used across a variety of devices and systems, there is little standardization. This means that log data gathered by 
+events being triggered may be hard to manage and understand quickly enough for swift implementation, especially in fast-growing businesses 
+generating data faster than they can [scale](https://logit.io/platform/features/hosted-elk/elk-autoscaling) for.
+
+Our Syslog log analyser allows you to conduct analysis of hundreds of GBs of Syslog log data fast, allowing you to identify the root cause of 
+performance issues and prevent instances of downtime across your [infrastructure](https://logit.io/solutions/monitoring/infrastructure-monitoring).
+
+If you need any further assistance with migrating your Syslogs logs to Logstash, we're here to help you get started. Feel free to reach out 
+by contacting our support team by visiting our dedicated Help Centre or via <IntercomButton text="via live chat" /> & we'll be happy to assist.

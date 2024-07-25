@@ -1,0 +1,40 @@
+---
+title: McAfee EPO
+pageTitle: McAfee Epolicy Orchestrator
+subTitle: Ship McAfee EPO Logs to Logstash
+logo: McAfee
+color: "#c01818"
+description: Send your McAfee EPO Logs to logit.io via logstash using the instructions below and begin searching your data
+stackTypes: logs
+sslPortType: syslog-ssl
+---
+
+Send your McAfee EPO Logs to logit.io via logstash using the instructions below and begin searching your data.
+
+<Steps>
+### Set up syslog server output
+
+Locate the registered servers page (under configuration) in McAfee Epolicy Orchestrator.
+
+![Registered servers page](@/images/integrations/mcafee/syslog-server01.png)
+
+Now change the server type to syslog server and enter a suitable name for the connection, now hit next.
+
+![Change server to syslog server](@/images/integrations/mcafee/syslog-server02.png)
+Press next and you'll be presented with an option for the syslog server and syslog port.
+
+Enter your Logstash endpoint address @logstash.host and syslog-ssl port number @logstash.sslPort
+
+![Enter logstash endpoint](@/images/integrations/mcafee/syslog-server03.png)
+
+Once you have entered the details you can test the connection using the button on screen.
+
+![Connect to server](@/images/integrations/mcafee/syslog-server04.png)
+
+### Launch Logit.io to view your logs
+<LaunchStack utmMedium="logs" utmCampaign="mcafeeepo" source="McAfee_Epolicy_Orchestrator" />
+
+### How to diagnose no data in Stack
+
+<DiagnoseNoData />
+</Steps>

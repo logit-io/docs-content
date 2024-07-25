@@ -1,0 +1,67 @@
+---
+title: Apache
+pageTitle: Apache Logstash Configuration
+subTitle: Ship Apache access and error logs to Logstash
+color: "#cc2235"
+description: Learn how to use Filebeat to send Apache application, access or error logs to your ELK stacks. Configure Filebeat to send Apache logs to Logstash or Elasticsearch. 
+stackTypes: logs
+sslPortType: beats-ssl
+---
+
+Use Filebeat to ship access and error logs from Apache to your Logit.io Stack.
+
+<Steps>
+  ### Install Filebeat
+
+  <InstallFilebeat />
+
+  ### Update Your Configuration File
+
+  <UpdateFilebeatConfigFile />
+
+  ### Validate Configuration
+  
+  <ValidateBeat beatname="filebeat" />
+
+  ### Start filebeat
+
+  <StartFilebeat />
+
+  ### Module Configuration (Advanced)
+
+  Additional module configuration can be done using the per module config files located in the modules.d folder, most commonly this would be to read logs from a non-default location
+          
+  __deb/rpm__ `/etc/filebeat/modules.d/apache.yml`  
+  __mac/win__ `<EXTRACTED_ARCHIVE>/modules.d/apache.yml`
+
+  ```yml copy
+  - module: apache
+      # Access logs
+      access:
+      enabled: true
+
+      # Set custom paths for the log files. If left empty,
+      # Filebeat will choose the paths depending on your OS.
+      # var.paths: ["/custom/path/to/logs"]
+
+      # Error logs
+      error:
+      enabled: true
+
+      # Set custom paths for the log files. If left empty,
+      # Filebeat will choose the paths depending on your OS.
+      # var.paths: ["/custom/path/to/logs"]
+  ```
+  ### Check Logit.io for your logs
+  <LaunchStack utmMedium="logs" utmCampaign="apache" source="apache" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+  ### Apache Dashboard
+
+  The Apache module comes with predefined Kibana dashboards. To view your dashboards for any of your Logit.io stacks, launch Logs and choose Dashboards.
+  ![Predefined kibana dashboard screenshot](@/images/integrations/filebeat/apache.png)
+          
+</Steps>

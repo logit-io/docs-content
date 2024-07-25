@@ -1,0 +1,96 @@
+---
+title: Reindexing
+description: Learn how to reindex in OpenSearch
+---
+
+# How to reindex in OpenSearch?
+
+Reindexing in OpenSearch is a useful feature that allows you to create 
+a new version of your index with different configurations or consolidate 
+data from multiple indices. This guide provides step-by-step instructions 
+on how to reindex your data within the Logit.io-managed OpenSearch service.
+
+## Prerequisites
+
+- Active [Logit.io account](https://dashboard.logit.io/sign-up?_gl=1*mo54p6*_gcl_au*MTY3NDU1MDg4OS4xNzE4NzI0MTQz*_ga*NzE2MTk2MzcxLjE3MTAyNDM2MTA.*_ga_W546BZYLYM*MTcxOTM5MjM4My4xMzQuMS4xNzE5Mzk4NzI3LjU5LjAuMA..) with OpenSearch service enabled.
+- Familiarity with Logit.io's OpenSearch Dashboards.
+- Basic understanding of JSON and OpenSearch DSL (Domain Specific Language).
+
+## Step 1: Access the OpenSearch Dashboard
+Log in to your Logit.io account.
+
+Navigate to the OpenSearch Dashboards by clicking _Launch Logs_.
+
+Select the environment that contains your indices, if applicable.
+
+## Step 2: Open Dev Tools
+The Dev Tools option in Logit.io's OpenSearch Dashboards 
+allows you to directly execute OpenSearch API commands.
+
+Find and click on "Dev Tools" in the left-hand navigation menu.
+
+Prepare to enter your reindex command in the console.
+
+## Step 3: Plan Your Reindex Operation
+Before executing the reindex command, decide on the following:
+
+**Source index:** The index (or indices) you're reindexing from.
+
+**Destination index:** The new index you're creating. If it doesn't 
+exist, OpenSearch will automatically create it during the reindexing process.
+
+**Reindex script (optional):** Any transformations you wish to apply to your documents during reindexing.
+
+## Step 4: Execute the Reindex Command
+
+In the Dev Tools console, use the reindex API to start the process. 
+Below is a basic template for reindexing:
+
+```json copy
+POST /_reindex
+{
+  "source": {
+    "index": "source_index_name"
+  },
+  "dest": {
+    "index": "destination_index_name"
+  }
+}
+```
+Replace source_index_name with the name of your current index 
+and destination_index_name with the name of your new index.
+
+<Callout type="info">
+  If you need to apply transformations or conditions, 
+  refer to the OpenSearch documentation for the script field in the reindex API.
+</Callout>
+
+## Step 5: Monitor the Reindex Operation
+Reindexing can take time depending on the size of your indices and 
+the complexity of any scripts you're using. You can monitor progress 
+through the OpenSearch Dashboards.
+
+## Step 6: Verify the Reindex
+After the reindex operation completes, verify that the documents 
+are correctly copied to your destination index:
+
+```cmd copy
+GET /destination_index_name/_count
+```
+
+This command returns the count of documents in the destination index. 
+Ensure this matches your expectations based on the source index.
+
+## Troubleshooting
+
+**Failed reindexing:** Check the OpenSearch logs for errors. 
+Common issues include scripting errors or resource limitations.
+
+**Performance issues:** Large reindex operations can impact cluster 
+performance. Consider performing reindexing during off-peak hours.
+
+By following these steps, you can efficiently reindex your data 
+within the Logit.io platform, ensuring your indices are configured for optimal performance and relevance.
+
+For more complex reindexing needs or troubleshooting feel free 
+to reach out to the Logit.io support team for personalized assistance.

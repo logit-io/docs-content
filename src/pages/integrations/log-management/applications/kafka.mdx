@@ -1,0 +1,219 @@
+---
+title: Kafka
+subTitle: Collect and ship Kafka application logs to Logstash and Elasticsearch
+logo: kafka
+color: "#723244"
+description: Filebeat is a lightweight shipper that enables you to send your Apache Kafka application logs to Logstash and Elasticsearch. Configure Filebeat using the pre-defined examples below to start sending and analysing your Apache Kafka application logs.
+stackTypes: logs
+sslPortType: beats-ssl
+---
+
+Filebeat is a lightweight shipper that enables you to send your Apache Kafka 
+application logs to Logstash and Elasticsearch. Configure Filebeat using the 
+pre-defined examples below to start sending and analysing your Apache Kafka application logs.
+
+<Steps>
+  ### Install Filebeat
+
+  <InstallFilebeat />
+
+  ### Enable the Kafka module
+
+  <Tabs items={["Windows", "Linux", "macOS", "DEB", "RPM"]}>
+    <Tab>
+      There are several built in filebeat modules you can use. You will need to enable the kafka module:
+
+      ```cmd copy
+      .\filebeat.exe modules list
+      .\filebeat.exe modules enable kafka
+      ```
+      In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
+      
+      ___Filesets are disabled by default___.
+
+      Copy the snippet below and replace the contents of the kafka.yml module file:
+
+      ```cmd copy
+      # Module: kafka
+      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-kafka.html
+
+      - module: kafka
+      # All logs
+      log:
+          enabled: true
+
+          # Set custom paths for Kafka. If left empty,
+          # Filebeat will look under /opt.
+          #var.kafka_home:
+
+          # Set custom paths for the log files. If left empty,
+          # Filebeat will choose the paths depending on your OS.
+          #var.paths:
+      ```
+    </Tab>
+    <Tab>
+      There are several built in filebeat modules you can use. You will need to enable the kafka module:
+
+      ```cmd copy
+      sudo filebeat modules list
+      sudo filebeat modules enable kafka
+      ```
+      In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
+      
+      ___Filesets are disabled by default___.
+
+      Copy the snippet below and replace the contents of the kafka.yml module file:
+
+      ```cmd copy
+      # Module: kafka
+      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-kafka.html
+
+      - module: kafka
+      # All logs
+      log:
+          enabled: true
+
+          # Set custom paths for Kafka. If left empty,
+          # Filebeat will look under /opt.
+          #var.kafka_home:
+
+          # Set custom paths for the log files. If left empty,
+          # Filebeat will choose the paths depending on your OS.
+          #var.paths:
+      ```
+    </Tab>
+    <Tab>
+      There are several built in filebeat modules you can use. You will need to enable the kafka module:
+
+      ```cmd copy
+      ./filebeat modules list
+      ./filebeat modules enable kafka
+      ```
+      In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
+      
+      ___Filesets are disabled by default___.
+
+      Copy the snippet below and replace the contents of the kafka.yml module file:
+
+      ```cmd copy
+      # Module: kafka
+      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-kafka.html
+
+      - module: kafka
+      # All logs
+      log:
+          enabled: true
+
+          # Set custom paths for Kafka. If left empty,
+          # Filebeat will look under /opt.
+          #var.kafka_home:
+
+          # Set custom paths for the log files. If left empty,
+          # Filebeat will choose the paths depending on your OS.
+          #var.paths:
+      ```
+    </Tab>
+    <Tab>
+      There are several built in filebeat modules you can use. You will need to enable the kafka module:
+
+      ```cmd copy
+      sudo filebeat modules list
+      sudo filebeat modules enable kafka
+      ```
+      In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
+      
+      ___Filesets are disabled by default___.
+
+      Copy the snippet below and replace the contents of the kafka.yml module file:
+
+      ```cmd copy
+      # Module: kafka
+      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-kafka.html
+
+      - module: kafka
+      # All logs
+      log:
+          enabled: true
+
+          # Set custom paths for Kafka. If left empty,
+          # Filebeat will look under /opt.
+          #var.kafka_home:
+
+          # Set custom paths for the log files. If left empty,
+          # Filebeat will choose the paths depending on your OS.
+          #var.paths:
+      ```
+    </Tab>
+    <Tab>
+      There are several built in filebeat modules you can use. You will need to enable the kafka module:
+
+      ```cmd copy
+      sudo filebeat modules list
+      sudo filebeat modules enable kafka
+      ```
+      In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
+      
+      ___Filesets are disabled by default___.
+      
+      Copy the snippet below and replace the contents of the kafka.yml module file:
+
+      ```cmd copy
+      # Module: kafka
+      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-kafka.html
+
+      - module: kafka
+      # All logs
+      log:
+          enabled: true
+
+          # Set custom paths for Kafka. If left empty,
+          # Filebeat will look under /opt.
+          #var.kafka_home:
+
+          # Set custom paths for the log files. If left empty,
+          # Filebeat will choose the paths depending on your OS.
+          #var.paths:
+      ```
+    </Tab>
+  </Tabs>
+
+  ### Update Your Configuration File
+
+  <UpdateFilebeatConfigFile />
+
+  ### Validate Configuration
+
+  <ValidateBeat beatname="filebeat" />
+
+  ### Start filebeat
+
+  <StartFilebeat />
+
+  ### Launch Logit.io to view your logs
+  <LaunchStack utmMedium="logs" utmCampaign="kafka" source="kafka" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+### Kafka Dashboard
+
+The Kafka module comes with predefined Kibana dashboards. To view your dashboards for any of your Logit.io stacks, launch Logs and choose Dashboards.
+        
+![Predefined kibana dashboard screenshot](@/images/integrations/filebeat/kafka.png)
+
+### Apache Kafka Logging Overview
+
+Apache Kafka is a distributed streaming platform written in Scala & Java, that is primarily used for generating low latency real-time data streaming pipelines for apps & data lake engines. 
+
+Kafka offers users the ability to publish & subscribe to record streams, decouple data & sort the aggregated data in chronological order for improved real-time processing. The platform is suited to processing many trillions of cross systems events per day making the tool ideal as a big data solution.
+
+Kafka is one of the leading Apache projects and is used by enterprise level businesses globally; including Uber, LinkedIn, Netflix & Twitter. Much of this infrastructure also uses Logstash, which works side by side with the platform as Kafka acts as a buffer between the two for improved resilience.
+
+The combined power of Elasticsearch, Logstash & Kibana form the Elastic Stack which can be used for efficient [log analysis](https://logit.io/solutions/analysis/log-analysis) as platform & Kafka broker logs contain vital information on the performance & overall health of your systems. 
+
+Our [hosted Elastic Stack](https://logit.io/platform/features/hosted-elk) solution can help monitor & visualise Kafka logs and alert you on performance issues & broker degradation in real time. Logit.io's built in Kibana can easily generate dashboards for capturing various Kafka log messages along with their severity counts.
+
+If you need any assistance with analysing your Kafka logs (no matter if their server, utils or state-change logs) we're here to help. Feel free to get in touch by contacting the Logit.io help team via chat & we'll be happy to help you start analysing your log data.

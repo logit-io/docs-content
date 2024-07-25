@@ -1,0 +1,97 @@
+---
+title: Disabling Field Searches
+description: Find out more about how to use mappings to define a field as non-searchable in OpenSearch in this article from Logit.io
+---
+
+# Disabling the searching of a field in OpenSearch using Index Templates
+
+You may have noticed that OpenSearch automatically tries to index all 
+of the fields given to it. However, sometimes you will find that 
+you want to just store a field without indexing it.
+
+### A short description of mapping
+
+In OpenSearch, defining settings and mappings that determine how fields 
+should be analysed is done using Index Templates. These templates are 
+automatically applied as new indices are created.
+
+Using mapping we can define how a document, including the fields it contains, are stored and indexed.
+
+### Mapping definitions
+
+- Which string fields should be treated as full-text fields.
+- Which fields contain numbers, dates, or geolocations.
+- Whether the values of all fields in the document should be indexed into the catch-all `_all` field.
+- The format of date values.
+- Custom rules to control the mapping for dynamically added fields.
+
+### A simple example of mapping being specified when creating an index
+
+Here we are creating an index called `my_index` with a mapping type called `doc`. 
+For each field we have specified a `type`.
+
+```json copy
+PUT my_index 
+{
+  "mappings": {
+    "doc": { 
+      "properties": { 
+        "title":    { "type": "text"  }, 
+        "name":     { "type": "text"  }, 
+        "age":      { "type": "integer" }
+      }
+    }
+  }
+}
+```
+
+We can see that title will be a text field, name will also be a text 
+field and age will be an integer field. As well as being able to 
+specify the type of the field there are other properties that 
+we can map, one of these is called enabled.
+
+### Excluding fields using mapping
+
+In the above example we may want to index the name and age of the 
+person but never have a need to query the title. When set to false, 
+the enabled setting causes OpenSearch to skip the parsing of the 
+contents of a field entirely. In order to do this with our example, 
+we would update the title property as follows.
+
+### An example of using the enabled property type.
+
+```json copy
+PUT my_index 
+{
+  "mappings": {
+    "doc": { 
+      "properties": { 
+        "title":    { "enabled": false  }, 
+        "name":     { "type": "text"  }, 
+        "age":      { "type": "integer" }
+      }
+    }
+  }
+}
+```
+
+In the above example, the title field is now disabled. Data can still be 
+sent to the title field, the JSON can still be retrieved from the `_source field`, 
+but it is not searchable or stored in any other way.
+
+The template can be sent to OpenSearch using the following curl command:
+
+```cmd copy
+curl -X PUT -H 'Content-Type: application/json' -d '{"mappings": {"doc":{"properties":{"title":{"enabled": false}, "name":{"type": "text"}, "age":{ "type": "integer" }}}}}' https://your-username:your-password@your-endpoint-address/my_index
+```
+
+Your username, password and endpoint address can be found on your Logit.io 
+Dashboard, just choose settings for the required Stack. Select the 
+OpenSearch Settings menu and your endpoint is listed in the OpenSearch Access section.
+
+![Elasticsearch Access](@/images/help/log-management/ingestion-pipelines/elasticsearch-access.png)
+
+<Callout type="info">
+  Index templates are only applied at Index creation time. This means 
+  that changes made to a template later will have no impact on the existing Index.
+</Callout>

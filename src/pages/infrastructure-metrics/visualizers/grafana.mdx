@@ -1,0 +1,101 @@
+---
+title: Using Grafana for Infrastructure Metrics Visualization
+description: Learn how to use Grafana to view your metrics in Logit.io
+---
+
+# Getting Started - How to view your Infrastructure Metrics with Grafana
+
+Before viewing your infrastructure metrics in Grafana, you may want to 
+configure a [data source](/integrations) if you haven't already.
+
+From your Logit.io dashboard choose the Launch Metrics button in the top right of 
+the screen, or choose Launch under the Infrastructure Metrics heading for your stack.
+
+![Infrastructure Metrics](@/images/help/infrastructure-metrics/infrastructure-metrics(1).png)
+
+This will launch the Grafana viewer for your stack shown below.
+
+![Grafana](@/images/help/infrastructure-metrics/grafana.png)
+
+First, we will take a look at the Ad-hoc Explore feature in Grafana allows 
+you to interactively query and visualize your metrics data without the need 
+to create a formal dashboard. It's a powerful tool for exploring your data, 
+debugging issues and conducting ad-hoc analysis. Here's how to use it:
+
+## Accessing Ad-hoc Explore
+
+Log in to your Grafana instance.
+
+In the left sidebar, click on "Explore."
+
+![Grafana Explore](@/images/help/infrastructure-metrics/explore.png)
+
+## Select a Data Source
+
+At the top of the Explore page, select the data source you want to query from 
+the drop-down menu. You should have previously configured data sources in Grafana.
+
+## Choosing a Time Range
+
+Set the time range for your query by selecting a predefined range or 
+specifying a custom time range. You can adjust the time range using 
+the calendar and clock icons in the top-right corner.
+
+## Query Builder
+
+The Query Builder section allows you to construct your query.
+
+Start by selecting a metric or measurement from the drop-down list. 
+Depending on your data source, you may see different metrics and 
+measurement options. In the example, we have chosen to 
+select the `cpu_usage_idle` metric.
+
+![Grafana Query Builder](@/images/help/infrastructure-metrics/query-builder.png)
+
+You can then add tags or labels to filter the data further. Tags help you 
+narrow down your query to specific instances, services, or dimensions.
+
+Once you have selected the metrics and labels required, 
+choose `Run Query` in the top right corner.
+
+## Visualization Options
+
+Choose the visualization type for your query results. Grafana supports 
+various visualization options, including line graphs, bar charts, tables, and more.
+
+![Grafana Visualizations](@/images/help/infrastructure-metrics/grafana-visualizations.png)
+
+You can customize visualization settings, such as colours, legends, 
+and axes, to better understand your data.
+
+## Query Manipulation
+
+Grafana allows you to manipulate your query further by adding 
+additional conditions, aggregations, or transformations. You 
+can do this directly within the query builder.
+
+## Save and Share
+
+If you want to save the query for later use or share it with 
+colleagues, you can do so by clicking the "Add to dashboard" 
+button. This allows you to save the query as a dashboard panel 
+or as part of an existing dashboard. You can then choose the 
+share icon to see a range of options and ways to collaborate on the data.
+
+![Share Dashboard](@/images/help/infrastructure-metrics/share-dashboard.png)
+
+## Annotations
+
+You can add annotations to your query results to highlight specific 
+events or conditions in your data. Annotations can be helpful 
+for correlating data with external events or incidents.
+
+## Inspecting Data
+
+You can hover over data points on charts to see specific values and 
+timestamps. This is useful for examining data in more detail.
+
+Overall, the Ad-hoc Explore feature in Grafana provides a flexible 
+and interactive way to query and visualize your metrics data on the 
+fly, making it a valuable tool for troubleshooting, monitoring, and 
+gaining insights into your infrastructure metrics.

@@ -1,0 +1,55 @@
+---
+title: Configuring Logstash Firewall
+description: Learn how to manage hosted Logstash firewall configurations to restrict which IP addresses can send data to your Logstash endpoints
+---
+
+# Managing Stack Logstash Firewall Configurations
+
+## Logstash Firewalls Introduction
+
+Logstash Firewall Groups allow you to manage and restrict which IP addresses can 
+send data to your stacks and which ports those restrictions apply to. Setting 
+Firewall Groups improves stack security by blocking all unauthorised traffic 
+to ports you've specified.
+
+![Logstash Firewall Settings](@/images/help/log-management/ingestion-pipelines/logstash-firewall-settings.png)
+
+To view the existing Firewall Groups for a stack go to `Logstash Firewall` settings. 
+You can add a new Firewall Group or edit an existing group to modify the 
+configuration by selecting an existing one from the list.
+
+You can also access the Logstash Firewall Groups for a stack by navigating to 
+`Logstash Inputs` settings from where you can view rules specific to each input and 
+port as shown below. Click View Rules to access the Firewall Groups for that input.
+
+![Logstash Inputs](<@/images/help/log-management/ingestion-pipelines/logstash-inputs(1).png>)
+
+## Adding a new Firewall Group
+
+To add a new Firewall Group for a stack go to `Logstash Firewall` setting and 
+click _Add New Firewall Group_. Provide a name for the group and a brief description, 
+then enter the IP address(es) that you want to allow to send data via your Logstash 
+instance. Then if required choose from the list of ports that this should apply to, and select _Apply Changes._
+
+<Callout type="info">
+  Any changes to Logstash Firewall Groups will be live on your instance within 10 seconds of applying
+</Callout>
+
+![Create Firewall Group](@/images/help/log-management/ingestion-pipelines/create-firewall-group.png)
+
+## Modifying an existing Firewall Group
+
+To modify an existing Firewall Group for a stack go to `Logstash Firewall`settings 
+and click _Firewall Group_ for any that you need to modify or delete. From here you 
+can rename the group, change the description, add/delete IP addresses from the group 
+and modify the associated ports. Once you are happy with the changes select _Apply Changes._
+
+To delete a specific IP address select it from the list and click _Delete rule_. If 
+you have multiple rules you can use the _Select all_ and _Unselect all_ options to make this easier for you.
+
+## Deleting a Firewall Group
+
+To delete a Firewall Group completely including all the associated IP addresses and 
+ports go to `Logstash Firewall` settings and click _Firewall Group_, then from the 
+bottom of the screen choose the _Delete_ option. You will be asked to confirm the 
+deletion as this action cannot be undone.

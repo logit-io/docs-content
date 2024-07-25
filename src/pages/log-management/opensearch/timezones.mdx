@@ -1,0 +1,37 @@
+---
+title: Timezones
+description: Learn how to configure the timezone from the default OpenSearch UTC for timestamps
+---
+
+# How do timezones work in OpenSearch?
+
+OpenSearch uses the timezone of your browser by default, 
+it is however possible to change this if you require.
+
+### How do I change the timezone?
+
+To change the timezone navigate to the following:
+
+_OpenSearch > Management > Advanced Settings_
+
+![OpenSearch Advanced Settings](@/images/help/log-management/storage/opensearch-advanced-settings.png)
+
+You will see lots of settings here that control the behaviour of _OpenSearch_, 
+one of which is the timezone. The setting you are looking for is as follows:
+
+_dateFormat:tz_
+
+You can see that _'Browser'_ is the timezone currently selected. Click 
+the _'Edit'_ button for this item and you will be presented with a dropdown list.
+
+![Timezone](@/images/help/log-management/storage/timezone.png)
+
+Pick the timezone that you require from the list and press the save button. If you 
+now click _'Discover'_ on the left-hand menu to return to your results you will 
+see that data is now displayed using the new timezone that you selected.
+
+<Callout type="info">
+  Both OpenSearch and Logstash use the UTC timezone for timestamps. 
+  Although this can be changed it is recommended to keep the standard 
+  and leave adjustments to OpenSearch or any other presentation layers you may use.
+</Callout>

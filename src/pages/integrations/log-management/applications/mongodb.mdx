@@ -1,0 +1,182 @@
+---
+title: MongoDB
+subTitle: Ship MongoDB logs to Logstash
+logo: mongodb
+color: "#00684a"
+description: Discover the process of transmitting MongoDB logs to your Logstash instance through our illustrative configuration examples.
+stackTypes: logs
+sslPortType: beats-ssl
+---
+
+Discover the process of transmitting MongoDB logs to your Logstash instance through our illustrative configuration examples.
+
+<Steps>
+  ### Install Filebeat
+
+  <InstallFilebeat />
+
+  ### Enable the MongoDB module
+
+  <Tabs items={["Windows", "Linux", "macOS", "DEB", "RPM"]}>
+    <Tab>
+      There are several built in filebeat modules you can use. You will need to enable the mongodb module:
+      ```
+      .\filebeat.exe modules list
+      .\filebeat.exe modules enable mongodb
+      ```
+      In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
+      
+      ___Filesets are disabled by default___.
+
+      Copy the snippet below and replace the contents of the mongodb.yml module file:
+
+      ```
+      # Module: mongodb
+      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-mongodb.html
+
+      - module: mongodb
+      # All logs
+      log:
+          enabled: true
+
+          # Set custom paths for the log files. If left empty,
+          # Filebeat will choose the paths depending on your OS.
+          #var.paths:
+      ```
+    </Tab>
+    <Tab>
+      There are several built in filebeat modules you can use. You will need to enable the mongodb module:
+      ```
+      sudo filebeat modules list
+      sudo filebeat modules enable mongodb
+      ```
+      In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
+      
+      ___Filesets are disabled by default___.
+
+      Copy the snippet below and replace the contents of the mongodb.yml module file:
+
+      ```
+      # Module: mongodb
+      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-mongodb.html
+
+      - module: mongodb
+      # All logs
+      log:
+          enabled: true
+
+          # Set custom paths for the log files. If left empty,
+          # Filebeat will choose the paths depending on your OS.
+          #var.paths:
+      ```
+    </Tab>
+    <Tab>
+      There are several built in filebeat modules you can use. You will need to enable the mongodb module:
+      ```
+      ./filebeat modules list
+      ./filebeat modules enable mongodb
+      ```
+      In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
+      
+      ___Filesets are disabled by default___.
+
+      Copy the snippet below and replace the contents of the mongodb.yml module file:
+
+      ```
+      # Module: mongodb
+      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-mongodb.html
+
+      - module: mongodb
+      # All logs
+      log:
+          enabled: true
+
+          # Set custom paths for the log files. If left empty,
+          # Filebeat will choose the paths depending on your OS.
+          #var.paths:
+      ```
+    </Tab>
+    <Tab>
+      There are several built in filebeat modules you can use. You will need to enable the mongodb module:
+      ```
+      sudo filebeat modules list
+      sudo filebeat modules enable mongodb
+      ```
+      In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
+      
+      ___Filesets are disabled by default___.
+
+      Copy the snippet below and replace the contents of the mongodb.yml module file:
+
+      ```
+      # Module: mongodb
+      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-mongodb.html
+
+      - module: mongodb
+      # All logs
+      log:
+          enabled: true
+
+          # Set custom paths for the log files. If left empty,
+          # Filebeat will choose the paths depending on your OS.
+          #var.paths:
+      ```
+    </Tab>
+    <Tab>
+      There are several built in filebeat modules you can use. You will need to enable the mongodb module:
+      ```
+      sudo filebeat modules list
+      sudo filebeat modules enable mongodb
+      ```
+      In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
+      
+      ___Filesets are disabled by default___.
+      
+      Copy the snippet below and replace the contents of the mongodb.yml module file:
+
+      ```
+      # Module: mongodb
+      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-mongodb.html
+
+      - module: mongodb
+      # All logs
+      log:
+          enabled: true
+
+          # Set custom paths for the log files. If left empty,
+          # Filebeat will choose the paths depending on your OS.
+          #var.paths:
+      ```
+    </Tab>
+  </Tabs>
+
+  ### Update Your Configuration File
+
+  <UpdateFilebeatConfigFile />
+
+  ### Validate configuration
+
+  <ValidateBeat beatname="filebeat" />
+  
+  ### Start filebeat
+
+  <StartFilebeat />
+
+  ### Check Logit.io for your logs
+  <LaunchStack utmMedium="logs" utmCampaign="mongodb" source="mongodb" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>
+
+### MongoDB dashboard
+
+The MongoDB module comes with predefined Kibana dashboards. To view your dashboards for any of your Logit.io stacks, launch Logs and choose Dashboards.
+        
+![Predefined kibana dashboard screenshot](@/images/integrations/filebeat/mongodb.png)
+
+### MongoDB Overview
+
+Comprehensively understand how to efficiently transport MongoDB data to Logstash by following these detailed steps and utilizing the illustrative examples 
+we've provided. This resource will guide you through the process, ensuring a smooth and effective data shipping procedure.

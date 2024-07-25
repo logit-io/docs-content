@@ -1,0 +1,78 @@
+---
+title: Configuring Disk Usage Alerts
+description: Discover how to configure a disk usage alert to Slack from Grafana in our help guide.
+---
+
+# How to configure a disk usage alert to Slack from Grafana
+
+Disk usage alerts are crucial in various contexts and have several important use cases which we will cover below.
+
+**Preventing System Failures:** Many systems will malfunction or become incredibly slow if the disk is full. For instance, database systems can crash if they run out of space to write.
+
+**Capacity Planning:** Regular disk usage alerts can help administrators identify trends in storage use. By examining these trends, administrators can plan for future storage needs.
+
+**Optimizing Performance:** High disk utilization can degrade the performance of some systems. An alert can be an early warning sign that performance issues may arise soon.
+
+**Maintaining Service Levels:** In service-level agreements (SLAs) where uptime and performance are critical, ensuring that disks do not fill up is essential. An alert can be the first step in preventing an SLA breach.
+
+**Backup and Recovery:** A full disk might fail to backup, or the restoration of a backup might fail if there's not enough space. Alerts help ensure that backups are taken consistently, and restoration tests are successful.
+
+**Audit and Compliance:** In some regulated industries, there are requirements to store data for a certain period. If disks are full, new data might overwrite old data, leading to compliance issues.
+
+**Cost Management:** In cloud environments, where you pay for the storage you use, an alert can help you manage costs. If a disk is nearing capacity, you might decide to archive older, less-accessed data to cheaper storage tiers.
+
+**Data Cleanup:** Disk usage alerts can serve as a trigger for users or administrators to clean up and delete unnecessary files, old backups, or temporary data.
+
+**Security:** An unusual spike in disk usage could be an indication of a security incident, such as data being exfiltrated, a malware payload being delivered, or logs being filled with error messages due to an ongoing attack.
+
+**Application Health:** Some applications create temporary files or caches. If these grow unchecked, they could consume all available disk space and cause the application to malfunction. Monitoring and alerting can help catch these scenarios.
+
+In essence, disk usage alerts act as a first line of defence against potential disruptions, performance issues, and failures caused by insufficient storage space. They allow for proactive management of storage resources, ensuring the smooth operation of systems and applications.
+
+## How to create a disk usage Slack alert in Grafana
+In the steps below, we'll walk you through the process of setting up an alert rule in Grafana. This rule will monitor the disk usage of your servers and notify you when it exceeds a certain threshold, which could indicate overutilization. While this is a specific example, the process for setting up other alert rules in Grafana will follow a similar pattern.
+
+### Pre-requisites
+Configure Contact Points
+
+![Contact Points](@/images/help/infrastructure-metrics/contact-points.png)
+
+![Create Contact Point](@/images/help/infrastructure-metrics/create-contact-point.png)
+
+![Contanct Point Type](@/images/help/infrastructure-metrics/contact-point-type.png)
+
+Configure Notification Policies
+
+![Notification Policies](@/images/help/infrastructure-metrics/notification-policies.png)
+
+### New Alert Rule
+Grafana has an entire section dedicated to alerts. In the main dashboard, find and select the Alerts section. Here, you'll see an option for 'New Alert Rule.' When you select this, you'll be taken to a new screen where you can set up your alert. This is where you'll specify what conditions must be met for the alert to be triggered.
+
+### Select a Metric
+A metric in this context is a measurement that your system is tracking. You might track many metrics, such as disk usage, CPU usage, memory usage, network traffic, etc. Here, you're selecting 'disk_usage' which represents how much disk space is currently in use. This metric can help you understand if your system is running low on disk space.
+
+In this step, you're also choosing which instances of your metric to apply the alert rule to. For example, if you're monitoring several servers, 'host' could be a label that indicates which server the disk usage data is coming from. You can also set the comparison to '=~', which means you'll be able to use regex (regular expressions) to match multiple hosts based on patterns. If you have multiple servers sending disk usage data, you can either select one specific server or use a regex to select multiple servers that match a pattern. For example, 'server[0-9].*' would select all servers with names that start with 'server' followed by any number.
+
+![Select Metric](@/images/help/infrastructure-metrics/metric.png)
+
+This step is about choosing how the metric value is calculated. By default, Grafana uses the 'last()' function, which means it only looks at the most recent data point. By changing it to 'avg()', you're telling Grafana to calculate the average value over a certain period of time. This can help prevent alerts from being triggered by brief spikes in disk usage.
+
+### Set the Threshold
+We can choose the limit that triggers the alert. If you set "IS ABOVE" to a specific threshold, then the alert will be triggered when the average disk usage goes above that threshold. This means you'll be notified if your disk space usage exceeds the set threshold, indicating the need for action.
+
+### Alert Evaluation
+This step determines how often Grafana checks whether the alert conditions are met. By default, Grafana checks every minute. But you can change this to check less frequently, say every 5 minutes if you don't need real-time alerting.
+
+### Additional Labels
+Here, you're adding more conditions to your alert rule. You're adding labels relevant to disk usage, which could correspond to other metrics related to storage. By adding these conditions, you're saying the alert should also consider these metrics, not just the disk space usage.
+
+### Name and Group the Alert
+It's important to keep your alerts organized, especially if you have a lot of them. By giving the alert a name and categorizing it under a specific folder and group, you can easily find and manage it later.
+
+### Set Notifications
+This step is about deciding how you'll be notified when the alert is triggered. You can label the alert with an appropriate severity level, which tells you and your team the importance of the alert. You also need to set up a notification channel, such as email or Slack, through which you will receive the alert notifications.
+
+### Save the Alert Rule
+After you've set up the alert rule to your satisfaction, the final step is to save it. Once saved, Grafana will start monitoring the specified metric and trigger the alert if the conditions you set are met.
+
+If you have any questions or issues creating alerts, then reach out to a member of the Logit.io team via live chat, and we'll be happy to help.

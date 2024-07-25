@@ -1,0 +1,76 @@
+---
+title: Argo CD Metrics via Telegraf
+subTitle: Ship your Argo CD Metrics via Telegraf to your Logit.io Stack
+color: "#4d4d4d"
+description: Configure Telegraf to ship Argo CD metrics to your Logit.io stacks. Configure Telegraf to send Argo CD metrics to Logstash or Elastic. Get started using our Telegraf Argo CD metrics example configuration.
+stackTypes: metrics
+sslPortType: beats-ssl
+---
+
+Configure Telegraf to ship Argo CD metrics to your Logit.io stacks via Logstash.
+
+<Steps>
+
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Expose Argo CD Metrics
+
+  Follow the instructions here to expose the [Argo CD Metrics](https://argo-cd.readthedocs.io/en/stable/operator-manual/metrics/) in the Prometheus format.
+
+  ### Configure the Telegraf input plugin
+
+  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+
+  ```yaml copy
+  # Read metrics from one or many prometheus clients
+  [[inputs.prometheus]]
+    ## An array of urls to scrape metrics from.
+    urls = ["http://localhost:9100/metrics"]
+  ```
+
+  <Callout type="info">
+    Read more about how to configure data scraping and configuration options for [Argo CD](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/prometheus)
+  </Callout>
+
+  ### Configure The Output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack source="Argo_CD_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-JTIOpenConfig-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+### Telegraf Argo CD Overview
+
+In order to effectively monitor and analyze JTI OpenConfig metrics across a distributed environment, it's essential to have a robust and 
+efficient metrics management solution. Telegraf, an open-source server agent for collecting and reporting metrics, fits this requirement well. 
+It can gather JTI OpenConfig metrics from numerous sources such as operational routers and switches, databases, and other relevant applications.
+
+Telegraf features a wide range of input plugins, enabling users to collect metrics from various sources such as CPU usage, memory utilization, 
+network traffic, and more, all critical to understanding JTI OpenConfig performance. To store and scrutinize these collected metrics, 
+organizations can utilize Prometheus, an open-source monitoring and alerting toolkit known for its flexible querying language and powerful data 
+visualization capabilities.
+
+To relay JTI OpenConfig metrics from Telegraf to Prometheus, organizations need to configure Telegraf to output metrics in the Prometheus format, 
+and then set up Prometheus to scrape these metrics from the Telegraf server. This process includes setting up Telegraf to gather JTI OpenConfig 
+metrics, outputting them in the Prometheus format, configuring Prometheus to retrieve these metrics from the Telegraf server, and then visually 
+interpreting the data using Prometheus's dynamic querying and graphical visualization tools.
+
+Once the metrics are successfully integrated into Prometheus, further analysis and visualization can be carried out using Grafana. Grafana, a 
+leading open-source platform recognized for its monitoring and observability capabilities, is fully compatible with Prometheus. It allows users 
+to create dynamic, interactive dashboards for an in-depth look at the metrics data, providing a comprehensive understanding of performance 
+trends and potential issues in the JTI OpenConfig system.
+
+If you need any further assistance with shipping your log data to Logit.io we're here to help you get started. Feel free to get in contact with 
+our support team by sending us a message via <IntercomButton text="live chat" /> & we'll be happy to assist.

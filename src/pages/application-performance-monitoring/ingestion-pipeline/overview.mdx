@@ -1,0 +1,65 @@
+---
+title: Overview
+description: Learn about APM ingestion pipelines in Logit.io
+---
+
+# APM Ingestion Pipeline Overview
+
+### What are Ingestion Pipelines?
+
+In the context of _Application Performance Monitoring_ (APM), an ingestion 
+pipeline refers to the process of collecting, processing and storing 
+performance data and metrics from your applications and systems for 
+monitoring and analysis purposes. Jaeger's ingestion pipeline is a critical 
+component of distributed tracing systems, enabling the collection, 
+processing, and storage of trace data from instrumented applications.
+
+![APM Stack](@/images/help/apm/overview/apm-stack.png)
+
+### Working with the APM Ingestion Pipeline
+
+Ingestion pipelines can be found in three separate places under the initial 
+'Overview' dashboard depending on your account subscription. This help article 
+will only focus on ingestion pipelines in relation to Application Performance Monitoring (APM).
+
+### APM Ingestion Pipeline
+
+Ingestion pipelines can be found as the first box from the left under the 
+Application Performance Monitoring (APM) section. This will show details 
+about the ingestion pipeline in relation to your APM stack.
+
+![APM Ingestion Pipeline](@/images/help/apm/ingestion-pipeline.png)
+
+The ingestion pipeline allows you to monitor the operational status of 
+every service node within your data processing pipeline and tailor their 
+input configurations as needed. Also, you can view the health of all the 
+service nodes. By clicking the ellipses at the top right of the ingestion 
+pipeline box you can select 'Configure Inputs.'
+
+### Configure Inputs
+
+You can locate and duplicate the endpoint information for OpenTelemetry 
+on this page to configure and ship data to your Stack.
+
+### Collector Nodes
+
+Collector nodes within a data collection system are responsible for gathering 
+and aggregating data from various sources. These nodes play a crucial role in 
+collecting data for further processing or analysis. Here you can view the 
+separate instances, their health, and version information.
+
+### Kafka Nodes
+
+Kafka nodes, also known as Kafka brokers, are part of an Apache Kafka cluster 
+and are responsible for receiving, storing, and serving data in Kafka topics. 
+Kafka nodes ensure fault tolerance and scalability for data streaming. 
+Here you can monitor each individual instance and its health.
+
+### Ingester Nodes
+
+Ingester nodes refer to components within a data ingestion or collection system 
+that are responsible for receiving, processing, and storing data from various sources. 
+These nodes play a fundamental role in the initial stages of data handling, 
+especially in distributed systems designed for data streaming, log management, 
+or real-time analytics. Here you can view each separate instance, its health, 
+and version information.

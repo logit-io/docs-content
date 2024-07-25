@@ -1,0 +1,123 @@
+---
+title: Journalbeat
+pageTitle: Journalbeat Configuration
+subTitle: A lightweight shipping agent designed for systemd journals
+logo: journalbeat
+color: "#00bfb3"
+description: Journalbeat allows you to send log data from systemd journals stored on Linux operating systems to your ELK stacks.  
+stackTypes: logs
+sslPortType: beats-ssl
+---
+
+Journalbeat is a lightweight, open source shipping agent that lets you ship log data from systemd journals stored on Linux operating systems to one or more destinations, including Logstash.
+
+Please note that this beat is currently in an **experimental** phase and may be changed or removed in the future. This guide uses version 7.9.3 of Journalbeat and has been tested using Ubuntu.
+
+<Steps>
+  ### Install Journalbeat
+
+  Journalbeat is intended for Linux operating systems. Therefore, no versions of journalbeat exists for Windows or MacOS.
+
+  The following curl commands will get version 7.9.3 of journalbeat but you can get the latest version using more 
+  specialised package managers specific to the OS being used, or by downloading the package manually.
+
+  <Tabs items={["DEB", "RPM"]}>
+  <Tab>
+    ```ps1 copy
+    curl -L -O https://artifacts.elastic.co/downloads/beats/journalbeat/journalbeat-7.9.3-amd64.deb
+    sudo dpkg -i journalbeat-7.9.3-amd64.deb
+    ```
+  </Tab>
+  <Tab>
+    ```ps1 copy
+    curl -L -O https://artifacts.elastic.co/downloads/beats/journalbeat/journalbeat-7.9.3-x86_64.rpm
+    sudo rpm -vi journalbeat-7.9.3-x86_64.rpm
+    ```
+  </Tab>
+</Tabs>
+
+### Configure Journalbeat
+
+Locate and open the journalbeat configuration file:
+        
+```ps1 copy
+/etc/journalbeat/journalbeat.yml
+````
+
+The following example will send all local journal log data to Logstash. By specifying an empty array as the paths value, the default `/var/log/` 
+path value will be used to point to the directory containing all locally persisted journals. This is a sensible default but you can specify 
+other paths to files or directories for journalbeat to crawl if required.
+
+```yaml copy
+journalbeat.inputs:
+  # Paths that should be crawled and fetched (can be files or directories).
+  # When setting a directory, all journals under it are merged.
+  # When empty starts to read from local journal.
+  paths: []
+```
+
+<Callout type="info">
+    A full example configuration file called journalbeat.reference.yml shows all possible configuration options.
+</Callout>
+
+### Configure Output
+
+  <Output>
+    We'll be shipping to Logstash so that we have the option to run filters before the data is indexed.  
+    Comment out the elasticsearch output block.
+
+    ```yaml copy
+    ## Comment out elasticsearch output
+    #output.elasticsearch:
+    #  hosts: ["localhost:9200"]
+    ```
+  </Output>
+
+### Validate Configuration
+
+<Tabs items={["DEB/RPM"]}>
+  <Tab>
+    ```ps1 copy
+    sudo journalbeat -e -c /etc/journalbeat/journalbeat.yml
+    ```
+  </Tab>
+</Tabs>
+
+### Start Journalbeat
+
+Ok, time to start ingesting data!
+
+<Tabs items={["DEB/RPM"]}>
+  <Tab>
+    ```ps1 copy
+    sudo systemctl enable journalbeat
+    sudo systemctl start journalbeat
+    ```
+  </Tab>
+</Tabs>
+
+### Check Logit.io for your logs
+<LaunchStack utmMedium="logs" utmCampaign="journalbeat" source="journalbeat" />
+
+### How to diagnose no data in Stack
+
+<DiagnoseNoData />
+
+</Steps>
+
+### Journalbeat Overview
+
+Journalbeat is a recent addition to Elastic's Beats family that collects log entries from Systemd Journals. Journalbeat is based on the libbeat 
+framework. Journalbeat is forecast to be repurposed from being a Beat and will instead become a module for 
+[Filebeat](/integrations/logs/shippers/filebeat) in the near future.
+
+Journalbeat monitors the journal locations that are specified and also collects logs for forwarding with Logstash and further processing in 
+Elasticsearch. It is rated as being easier to use than more commonly known Beats (such as Filebeat), but is noted as an experimental Beat by Elastic 
+so is subject to change.
+
+Journalbeat can be used to ship logs from [Kubernetes](/integrations/logs/containerisation/kubernetes) but some users may not see their data being 
+reflected in Elasticsearch and may prefer to use Filebeat or [Fluentd](/integrations/logs/shippers/fluentd) for a seamless and wider community 
+supported logging experience.
+
+If you require any more assistance in using Journalbeat or any other Elastic Beats for shipping your log events we're here to help. Feel free to reach 
+out by contacting our support team by visiting our dedicated Help Centre or via <IntercomButton text="live chat" /> & we'll be happy to assist.

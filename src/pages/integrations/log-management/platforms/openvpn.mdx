@@ -1,0 +1,74 @@
+---
+title: OpenVPN
+subTitle: Ship your OpenVPN logs using Filebeat to your Logit.io Stack
+logo: openvpn
+color: "#ea610a"
+description: Configure Filebeat to ship OpenVPN logs to your Logit.io stacks. Configure Filebeat to send OpenVPN logs to Logstash or Elastic. Get started using our OpenVPN example configuration.
+stackTypes: logs
+sslPortType: beats-ssl
+---
+
+Configure OpenVPN to ship logs via Filebeat to your Logit.io stacks via Logstash.
+
+<Steps>
+  ### Configure OpenVPN Logging
+
+  OpenVPN is a system that enables secure connections either between two points or between sites in a virtual private network.
+
+  You can consult the [OpenVPN documentation](https://openvpn.net/vpn-server-resources/) for more details.
+
+  <Callout type="info">
+    Please note that these instructions are intended for Linux and MacOS systems only.
+  </Callout>
+
+  ### Install Filebeat
+
+  <InstallFilebeat />
+
+  ### Configure Filebeat.yml
+
+  <FilebeatFilestream type="openvpn" path="/var/log/openvpnas.log\n  - /var/log/openvpnas.log.*" />
+
+  ### Validate Configuration
+
+  <ValidateBeat beatname="filebeat" />
+
+  ### Start Filebeat
+
+  <StartFilebeat />
+
+  ### Launch Logit.io to view your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="OpenVPN" source="OpenVPN" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+## OpenVPN Overview
+
+OpenVPN is a well-known open-source VPN solution that offers secure and encrypted 
+connectivity for remote sites and users. To effectively monitor and analyze OpenVPN 
+activity, it is crucial to have a dependable and efficient log management solution.
+
+OpenVPN generates logs that record important information about system activity, 
+connection attempts, and client behavior. To efficiently manage these logs, 
+organizations can utilize Filebeat, which is an open-source log shipper, to 
+send OpenVPN logs to various destinations such as Elasticsearch, Logstash, or OpenSearch.
+
+Filebeat is widely used because of its compatibility and ease of use for sending 
+logs from OpenVPN to different destinations. To ship OpenVPN logs to Filebeat, 
+organizations can configure OpenVPN to write logs to a specific location, and 
+then Filebeat can collect and forward the log data to other destinations like OpenSearch.
+
+Having a robust log management solution in place enables organizations to gain 
+valuable insights into OpenVPN activity and take proactive steps to ensure 
+optimal system performance and security. By utilizing tools like the Elastic 
+Stack and Filebeat, organizations can analyze data from various sources and 
+have a better understanding of VPN connectivity and user behavior.
+
+If you need any further assistance with shipping your log data to Logit.io 
+we're here to help you get started. Feel free to get in contact with our support team 
+by sending us a message <IntercomButton text="via live chat" /> and we'll be happy to assist.

@@ -1,0 +1,69 @@
+---
+title: Check Connection from Infrastructure to Logit.io Stack
+description: Learn how to check the connectivity from your infrastructure to your Logit.io stack and diagnose connectivity issues
+---
+
+# Check Connectivity from Infrastructure to your Logit.io Stack
+
+If you suspect there might be a proxy-related problem with your Logit.io 
+stack connectivity, you can use a simple command to verify and diagnose 
+the issue. This guide will walk you through the steps to check your Logit.io 
+stack's connectivity by sending a simple message over TCP to Logit.io's 
+servers using the openssl command. This check will help you determine if a 
+proxy is causing any disruptions in your Logit.io stack's connection.
+
+## Prerequisites
+
+Before you proceed with the proxy check, make sure you have the following prerequisites:
+
+- A terminal or command-line interface.
+- The openssl utility installed on your system.
+- Steps to Check for Proxy Connectivity Issues
+
+Open your terminal or command-line interface. You can find this application 
+on your computer, typically named "Terminal" (macOS and Linux) or "Command Prompt" (Windows).
+
+<Callout type="info">
+  You can find your endpoint and port details by navigating to stack settings > Logstash inputs.
+</Callout>
+
+In the terminal, enter the following command to check connectivity 
+to your Logit.io stack using the openssl command:
+
+```cmd copy
+openssl s_client -connect <Your Logstash Endpoint>-ls.logit.io:<your-stack-TCP-SSL-port>
+```
+
+On Windows machines, in Powershell run:
+
+```cmd copy
+Test-NetConnection -Port <your-stack-TCP-SSL-port> -ComputerName <Your Logstash Endpoint>-ls.logit.io -InformationLevel Detailed
+```
+
+This command will establish a TCP connection to Logit.io's server using the provided address and port.
+
+## Review the output
+
+If the connection is successful, you will see information indicating 
+that the connection was established without errors. This indicates 
+that there are no proxy issues affecting your Logit.io stack's connectivity.
+
+If the connection fails or you receive error messages, it suggests 
+a problem with the connection. In this case, there may be a proxy-related 
+issue that is preventing a successful connection. You should investigate 
+further and potentially adjust your proxy settings to allow Logit.io connections.
+
+## Troubleshooting Proxy-Related Issues
+
+If the connection test fails, consider the following steps 
+to troubleshoot and resolve proxy-related issues:
+
+**Check Proxy Settings:** Ensure that your system's proxy settings are correctly configured. Check for any misconfigurations or discrepancies.
+
+**Firewall Rules:** Verify that your firewall rules or security policies are not blocking the outgoing connection to Logit.io. Adjust your firewall rules if necessary.
+
+**Proxy Authentication:** If your proxy server requires authentication, make sure you have provided the correct credentials in your proxy configuration.
+
+**Network Configuration:** Check if your network has any specific requirements or restrictions that may be affecting the connection to external services like Logit.io.
+
+**Contact Support:** If you are unable to resolve the issue after checking the above steps, it's advisable to contact our support for further assistance and we can help diagnose and resolve more complex connectivity issues.

@@ -1,0 +1,52 @@
+---
+title: OpenSearch API Access
+description: Discover the steps you need to take to access your Logit.io stack via the OpenSearch API in this helpful article from Logit.io.
+---
+
+# How to access my stack via the OpenSearch API?
+
+Although we recommend using OpenSearch Dashboards to view the data in your stacks, 
+you can access your stacks using the OpenSearch API with your OpenSearch 
+access details. Logit.io offers two methods of accessing your OpenSearch API, 
+basic authentication mode and API key authentication mode.
+
+### How to find your OpenSearch access details
+
+1. Login to your Logit.io account.
+2. Select Settings for the stack you wish to access.
+3. Choose OpenSearch Settings from the menu.
+4. Your OpenSearch access details are displayed.
+
+### Using API key authentication mode to access OpenSearch API
+
+This is the default method of accessing your OpenSearch API. The access
+details provide you with the information required to access your stack:
+
+![Elasticsearch Access](@/images/help/log-management/storage/elasticsearch-access.png)
+
+You can create your web request in the following format:
+
+```cmd copy
+[ELASTICSEARCHENDPOINT]/_search?apikey=[YOURAPIKEY]&pretty=true&q=[QUERY] 
+```
+
+*Example CURL command:*
+
+```cmd copy
+curl -i -X GET "https://e6db21bb-daa8-4f06-990f-46e54fc119f3-es.logit.io/_search?apikey=e5d65acc-972a-44c1-ad42-688dfca27a04ae&pretty=true&q=[QUERY]"
+```
+
+### Using basic authentication mode to access OpenSearch API
+
+The OpenSearch access details provide you with the information required to access your stack:
+
+![Basic Authentication Mode](@/images/help/log-management/storage/basic-authentication-mode.png)
+
+You will need to encode your username and password to base64encoding. 
+A REST client can generate this for you using your credentials.
+
+*Example CURL command:*
+
+```cmd copy
+curl -i -X GET -H "Authorization:Basic [BASE64ENCODEDCREDENTIALS]" "https:///e6db21bb-daa8-4f06-990f-46e54fc119f3-es.logit.io/_search?q=[QUERY]"
+```

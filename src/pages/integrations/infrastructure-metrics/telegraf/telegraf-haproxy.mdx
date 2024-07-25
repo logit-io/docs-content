@@ -1,0 +1,98 @@
+---
+title: HAproxy Metrics via Telegraf
+subTitle: Ship your HAproxy Metrics via Telegraf to your Logit.io Stack
+logo: haproxy
+color: "#4d4d4d"
+description: Configure Telegraf to ship HAproxy metrics to your Logit.io stacks. Configure Telegraf to send HAproxy metrics to Logstash or Elastic. Get started using our Telegraf HAproxy metrics example configuration.
+stackTypes: metrics
+sslPortType: beats-ssl
+---
+
+Configure Telegraf to ship HAproxy metrics to your Logit.io stacks via Logstash.
+
+<Steps>
+
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+
+  ```yaml copy
+  # Read metrics of HAProxy, via stats socket or http endpoints
+  [[inputs.haproxy]]
+    ## List of stats endpoints. Metrics can be collected from both http and socket
+    ## endpoints. Examples of valid endpoints:
+    ##   - http://myhaproxy.com:1936/haproxy?stats
+    ##   - https://myhaproxy.com:8000/stats
+    ##   - socket:/run/haproxy/admin.sock
+    ##   - /run/haproxy/*.sock
+    ##   - tcp://127.0.0.1:1936
+    ##
+    ## Server addresses not starting with 'http://', 'https://', 'tcp://' will be
+    ## treated as possible sockets. When specifying local socket, glob patterns are
+    ## supported.
+    servers = ["http://myhaproxy.com:1936/haproxy?stats"]
+
+    ## By default, some of the fields are renamed from what haproxy calls them.
+    ## Setting this option to true results in the plugin keeping the original
+    ## field names.
+    # keep_field_names = false
+
+    ## Optional TLS Config
+    # tls_ca = "/etc/telegraf/ca.pem"
+    # tls_cert = "/etc/telegraf/cert.pem"
+    # tls_key = "/etc/telegraf/key.pem"
+    ## Use TLS but skip chain & host verification
+    # insecure_skip_verify = false
+  ```
+
+  <Callout type="info">
+    Read more about how to configure data scraping and configuration options for [HAproxy](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/haproxy/README.md)
+  </Callout>
+
+  ### Configure The Output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack source="HAproxy_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-HAproxy-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+### Telegraf HAproxy metrics Overview
+
+HAProxy is a powerful load balancing and reverse proxy solution that plays a critical role in distributed systems. To effectively monitor and 
+analyze HAProxy metrics in a distributed environment, organizations require a reliable and efficient metrics management solution. Telegraf, an 
+open-source metrics collection agent, is the ideal tool for gathering HAProxy metrics from multiple sources, including HAProxy instances, 
+operating systems, databases, and applications.
+
+With a wide range of input plugins, Telegraf empowers organizations to collect diverse HAProxy metrics, including connection counts, request 
+rates, response times, error rates, and more. These metrics provide valuable insights into the performance and health of HAProxy instances, 
+enabling organizations to optimize their load balancing infrastructure.
+
+For storing and querying the collected HAProxy metrics, Prometheus, a robust open-source monitoring and alerting tool, is the preferred choice. 
+Prometheus supports a flexible querying language and graphical visualization capabilities, enabling organizations to gain actionable insights. 
+By configuring Telegraf to output HAProxy metrics in the Prometheus format and setting up Prometheus to scrape the metrics from the Telegraf 
+server, seamless integration is achieved.
+
+This process involves configuring Telegraf to collect HAProxy metrics, formatting them in the Prometheus format, and setting up Prometheus to 
+scrape the metrics from the Telegraf server. Leveraging Prometheus's advanced querying and visualization features, organizations can gain deep 
+insights into load balancing performance, identify bottlenecks, and troubleshoot issues effectively.
+
+By leveraging Telegraf to ship HAProxy metrics to Prometheus, organizations establish a reliable and efficient metrics management solution for 
+their distributed environments. This empowers them to monitor HAProxy performance, optimize their load balancing infrastructure, and make 
+data-driven decisions to ensure optimal system health and performance.
+
+If you need any further assistance with shipping your log data to Logit.io we're here to help you get started. Feel free to get in contact with 
+our support team by sending us a message via <IntercomButton text="live chat" /> & we'll be happy to assist.

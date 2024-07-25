@@ -1,0 +1,24 @@
+---
+title: Export Search Results
+description: Learn how to export your OpenSearch Dashboards dashboards, visualisations, and search results as either JSON or CSV file formats.
+---
+
+# How can I export data from an OpenSearch Dashboards search on Logit?
+
+### Exporting to JSON
+OpenSearch Dashboards provides the capability to export saved objects created by the user using the Management menu. You can export **saved dashboards, search results, visualisations and more** inside the Saved Objects submenu. You can filter by the type of export using the Types dropdown menu on the right of the search box.
+
+This page allows you to selectively export one or more objects contained inside a single "export.json" file. This can be used to backup data and then imported at any time using the import button in the top right of the page next to the refresh button, as shown below:
+
+![Kibana Saved Objects](@/images/help/log-management/storage/kibana-saved-objects.png)
+
+If you save a visualisation from the Visualisations menu, it will show in the list of saved objects. Then you will be able to export it by checking the check box next to its name and pressing the Export button.
+
+### Exporting Visualisations to CSV
+To export a visualisation to a Raw or Formatted CSV file, you must first open up a visualisation from the Visualisations menu and press the Inspect button at the top of the page. You cannot export a visualisation if there is no data within the visualisation, and as such the inspect button will be disabled.
+
+A right-side inspection window will show where you will be able to select the type of CSV to download. See the screenshot below:
+
+![Export Visualizations to CSV](@/images/help/log-management/storage/kibana-logs.png)
+
+Both the raw and formatted options will export a CSV file and include headers using the CSV data format, however, the latter option will format data rows in a more human-readable format, similar to the data shown in the results panel. The raw version will show more specific values for numbers and the date/time values will use timestamps rather than easy-to-read labels (i.e. October 1st 2021).

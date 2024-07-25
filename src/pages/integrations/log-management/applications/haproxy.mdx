@@ -1,0 +1,279 @@
+---
+title: HAProxy
+subTitle: Ship logs from HAProxy to Logstash
+logo: haproxy
+color: "#009edb"
+description: Use Filebeat to send HAProxy application, access or error logs to your ELK stacks. Configure Filebeat to send HAProxy logs to logstash or Elasticsearch. 
+stackTypes: logs
+sslPortType: beats-ssl
+---
+
+Configure Filebeat to ship logs from HAProxy to Logstash and Elasticsearch.
+
+<Steps>
+  ### Install Filebeat
+
+  <InstallFilebeat />
+
+  ### Setup HAProxy Configuration
+
+  __DEB__ *(Debian/Ubuntu)*
+          
+  HAProxy generates logs in syslog format, on debian and ubuntu the haproxy package contains the required syslog configuration to generate a haproxy.log file which we will then monitor using filebeat.
+  Confirm the existence of /etc/rsyslog.d/49-haproxy.conf and /var/log/haproxy.log
+  If you've recently installed haproxy you may need to restart rsyslog to get additional haproxy config file loaded.
+
+  __RPM__ *(Centos/RHEL)*
+
+  The RPM haproxy default configuration sends it's logs to a syslog daemon listening on localhost via UDP. We need to configure rsyslog to listen on localhost and write a haproxy.log file which we will then monitor using filebeat. Run the following lines of command and then restart rsyslog.
+
+  ```cmd copy
+  echo '#Rsyslog configuration to listen on localhost for HAProxy log messages 
+  #and write them to /var/log/haproxy.log
+  $ModLoad imudp
+  $UDPServerRun 514
+  $UDPServerAddress 127.0.0.1
+  local2.*    /var/log/haproxy.log' | sudo tee /etc/rsyslog.d/haproxy.conf
+
+  sudo systemctl restart rsyslog
+  ```
+
+  ### Enable the Haproxy module
+
+  <Tabs items={["Linux", "macOS", "DEB", "RPM"]}>
+    <Tab>
+      sudo filebeat modules list
+      sudo filebeat modules enable haproxy
+
+      ```cmd copy
+      In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
+      
+      ___Filesets are disabled by default___.
+
+      Copy the snippet below and replace the contents of the haproxy.yml module file:
+
+      ```cmd copy
+      # Module: haproxy
+      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-haproxy.html
+
+      - module: haproxy
+      # All logs
+      log:
+          enabled: true
+
+          # Set which input to use between syslog (default) or file.
+          #var.input:
+
+          # Set custom paths for the log files. If left empty,
+          # Filebeat will choose the paths depending on your OS.
+          #var.paths:
+      ```
+      Additional module configuration can be done using the per module config files located in the modules.d folder, for haproxy we want to configure the haproxy module to read from file, uncomment and edit the `var.input` line to say
+
+      ```cmd copy
+      var.input: file
+      ```
+    </Tab>
+    <Tab>
+      There are several built in filebeat modules you can use. You will need to enable the haproxy module:
+
+      ```cmd copy
+      ./filebeat modules list
+      ./filebeat modules enable haproxy
+      ```
+      In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
+      
+      ___Filesets are disabled by default___.
+
+      Copy the snippet below and replace the contents of the haproxy.yml module file:
+
+      ```cmd copy
+      # Module: haproxy
+      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-haproxy.html
+
+      - module: haproxy
+      # All logs
+      log:
+          enabled: true
+
+          # Set which input to use between syslog (default) or file.
+          #var.input:
+
+          # Set custom paths for the log files. If left empty,
+          # Filebeat will choose the paths depending on your OS.
+          #var.paths:
+      ```
+      Additional module configuration can be done using the per module config files located in the modules.d folder, for haproxy we want to configure the haproxy module to read from file, uncomment and edit the `var.input` line to say
+
+      ```cmd copy
+      var.input: file
+      ```
+    </Tab>
+    <Tab>
+      There are several built in filebeat modules you can use. You will need to enable the haproxy module:
+
+      ```cmd copy
+      sudo filebeat modules list
+      sudo filebeat modules enable haproxy
+      ```
+      In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
+      
+      ___Filesets are disabled by default___.
+
+      Copy the snippet below and replace the contents of the haproxy.yml module file:
+
+      ```cmd copy
+      # Module: haproxy
+      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-haproxy.html
+
+      - module: haproxy
+      # All logs
+      log:
+          enabled: true
+
+          # Set which input to use between syslog (default) or file.
+          #var.input:
+
+          # Set custom paths for the log files. If left empty,
+          # Filebeat will choose the paths depending on your OS.
+          #var.paths:
+      ```
+      Additional module configuration can be done using the per module config files located in the modules.d folder, for haproxy we want to configure the haproxy module to read from file, uncomment and edit the `var.input` line to say
+
+      ```cmd copy
+      var.input: file
+      ```
+    </Tab>
+    <Tab>
+      There are several built in filebeat modules you can use. You will need to enable the haproxy module:
+
+      ```cmd copy
+      sudo filebeat modules list
+      sudo filebeat modules enable haproxy
+      ```
+      In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
+      
+      ___Filesets are disabled by default___.
+      
+      Copy the snippet below and replace the contents of the haproxy.yml module file:
+
+      ```cmd copy
+      # Module: haproxy
+      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-haproxy.html
+
+      - module: haproxy
+      # All logs
+      log:
+          enabled: true
+
+          # Set which input to use between syslog (default) or file.
+          #var.input:
+
+          # Set custom paths for the log files. If left empty,
+          # Filebeat will choose the paths depending on your OS.
+          #var.paths:
+      ```
+      Additional module configuration can be done using the per module config files located in the modules.d folder, for haproxy we want to configure the haproxy module to read from file, uncomment and edit the `var.input` line to say
+
+      ```cmd copy
+      var.input: file
+      ```
+    </Tab>
+  </Tabs>
+
+  ### Update Your Configuration File
+
+  <UpdateFilebeatConfigFile />
+
+  ### Validate Configuration
+
+  <ValidateBeat beatname="filebeat" />
+  
+  ### Start filebeat
+
+  <Tabs items={["Linux", "macOS", "DEB", "RPM"]}>
+    <Tab>
+      To start Filebeat, run:
+
+      ```bash copy
+      sudo chown root filebeat.yml 
+      sudo chown root modules.d/{modulename}.yml 
+      sudo ./filebeat -e
+      ```
+
+      You'll be running filebeat as root, so you need to __change ownership of the configuration file__ and any 
+      configurations enabled in the modules.d directory, or run filebeat with __--strict.perms=false__ as shown above. 
+
+      Read more about how to [change ownership](https://www.elastic.co/guide/en/beats/libbeat/master/config-file-permissions.html).
+    </Tab>
+
+    <Tab>
+      To start Filebeat, run:
+
+      ```bash copy
+      sudo chown root filebeat.yml 
+      sudo chown root modules.d/{modulename}.yml 
+      sudo ./filebeat -e
+      ```
+
+      You'll be running filebeat as root, so you need to __change ownership of the configuration file__ and any 
+      configurations enabled in the modules.d directory, or run filebeat with __--strict.perms=false__ as shown above. 
+      
+      Read more about how to [change ownership](https://www.elastic.co/guide/en/beats/libbeat/master/config-file-permissions.html).
+    </Tab>
+
+    <Tab>
+      To start Filebeat, run:
+
+      ```bash copy
+      sudo service filebeat start
+      ```
+    </Tab>
+
+    <Tab>
+      To start Filebeat, run:
+
+      ```bash copy
+      sudo service filebeat start
+      ```
+    </Tab>
+  </Tabs>
+
+  ### Check Logit.io for your logs
+  <LaunchStack utmMedium="logs" utmCampaign="haproxy" source="haproxy" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+  ### HAProxy dashboard
+
+  ![Predefined kibana dashboard screenshot](@/images/integrations/filebeat/haproxy.png)
+</Steps>
+
+### HAProxy Logs Overview
+
+HAProxy (High Availability Proxy) is an open-source software load balancer for 
+proxying [HTTP](/integrations/metrics/protocols/metricbeat-module-http) & [TCP](/integrations/logs/protocols/tcp) based 
+applications. As the tool offers high availability by default it is well suited 
+for high traffic websites. HAProxy is the de-facto proxy server powering many of 
+the web's most popular sites & is often the default deployment in most cloud platforms. 
+
+For most Linux distributions it is the reference load-balancer recommended for container 
+orchestration (E.G [Kubernetes](/integrations/logs/containerisation/kubernetes)).
+HAProxy logs hold data on HTTP queries, error codes & how long the request took to send, 
+if it was queued and how long for, how long the TCP connection took to establish, as well 
+as information on response size and cookies, among other valuable insights for reporting & 
+security. These logs can be difficult to process for analysis at scale & so a log analyser 
+will likely be required to process HAProxy logs efficiently. 
+
+Requests & traffic for HTTP & TCP based applications are spread across multiple servers 
+when HAProxy is used. The proxy is well known for its flexibility & the tool's logs can 
+be used in a log management solution such as Logit.io for easy identification of critical 
+issues within an application. The Logit.io platform offers a complete solution for 
+centralising your log files from multiple applications and servers and provides a HAProxy 
+log analyser as standard. You can also use our Kibana integrations to visualise key server 
+metrics from both frontend and backend applications for fast error resolution & troubleshooting.
+Followed our HAProxy log configuration guide and are still encountering issues? We're here 
+to help you get started. Feel free to reach out by contacting our support team by visiting 
+our dedicated Help Centre or via live chat & we'll be happy to assist.

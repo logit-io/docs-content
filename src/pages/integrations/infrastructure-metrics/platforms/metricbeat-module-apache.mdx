@@ -1,0 +1,121 @@
+---
+title: Apache Metrics
+subTitle: Collect and ship Apache HTTPD server metrics to Logstash and Elasticsearch
+logo: apache
+color: "#cc2235"
+description: How to send Apache server metrics to your Hosted ELK Logstash instance. Configure Metricbeat to send Apache HTTPD server metrics to Logstash or Elasticsearch. 
+stackTypes: metrics
+sslPortType: beats-ssl
+---
+
+Metricbeat is a lightweight shipper that helps you monitor your Apache HTTPD 
+servers by collecting metrics running on the Apache server. Configure Metricbeat 
+using the pre-defined examples below to collect and ship Apache web service 
+metrics and statistics to Logstash or Elasticsearch.
+
+<Steps>
+  ### Install Metricbeat
+
+  <InstallBeat beatname="metricbeat" />
+
+  ### Copy Configuration File
+
+  <MetricbeatOutput />
+
+  ### Enable Module
+
+  <EnableMetricbeatModule module="apache" />
+
+  ### Configure Module
+
+  Each module has its own configuration file where different metricsets 
+  can be enabled / disabled. Locate the configuration file for the Apache module.
+        
+  <Tabs items={["DEB/RPM", "macOS/Windows"]}>
+    <Tab>
+      ```txt copy
+      /etc/metricbeat/modules.d/apache.yml
+      ```
+    </Tab>
+    <Tab>
+      ```txt copy
+      ~/<EXTRACTED_ARCHIVE>/modules.d/apache.yml
+      ```
+    </Tab>
+  </Tabs>
+
+  By default the status metricset is disabled. To enable or 
+  disable a metric simply comment or uncomment the line out.
+
+  ```yml copy
+  - module: apache
+  metricsets:
+    #- status
+  period: 10s
+  hosts: ["localhost:8080"]
+  ```
+
+  In order for the status metricset to work & correctly display the dashboard 
+  on Kibana, you will need to enable `mod_status` on your Apache server.
+
+  ### Start Metricbeat
+
+  [Start or restart Metricbeat](https://www.elastic.co/guide/en/beats/metricbeat/master/metricbeat-starting.html) 
+  to apply the configuration changes.
+
+  ### Check Logit.io for your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="apache_metricbeat" source="metrics_apache" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+  ### Compatibility
+
+  The Apache metricsets were tested with Apache `2.4.12` and `2.4.20` 
+  and are expected to work with all versions >= `2.2.31` and >= `2.4.16`.
+
+  ### Apache Module Dashboard
+
+  The Apache module comes with predefined Kibana dashboards.
+        
+  ![Kibana dashboard preview](@/images/integrations/metricbeats/metricbeat_system_module.png)
+</Steps>
+
+## Apache MetricBeat Module Overview
+
+The Metricbeat Module for [Apache](/integrations/logs/applications/apache) is a specialized tool crafted 
+to enhance the monitoring of Apache servers by collecting critical metrics. 
+For users already familiar with Metricbeat's capabilities in aggregating data 
+from various sources, its application to Apache serves as a seamless extension, 
+offering a robust solution for Apache monitoring.
+
+Apache HTTP Server, being one of the most widely used web servers in the world, 
+provides a rich set of features and metrics crucial for understanding server 
+performance, including request handling efficiency, worker status, and load 
+distribution. The Metricbeat Module for Apache leverages Apache's mod_status 
+to fetch these metrics, enabling detailed insights into server health, 
+performance bottlenecks, and operational efficiency.
+
+This module is particularly valuable for system administrators, web developers, 
+and IT professionals tasked with overseeing Apache web servers. Its easy setup 
+and integration with the [ELK Stack](https://logit.io/blog/post/elk-stack-guide/) 
+empower users with real-time monitoring, advanced analytics, and visualization 
+capabilities, significantly surpassing the scope of traditional monitoring tools.
+
+Compared to other monitoring approaches that might utilize proprietary 
+formats or offer limited adaptability, the Metricbeat Module for Apache 
+is designed for ease of use, detailed analysis, and efficient 
+troubleshooting within Apache server environments.
+
+Our platform extends comprehensive support for the Metricbeat Module for 
+Apache, offering centralized management of metrics for simplified analysis 
+and proactive monitoring. This support effectively removes the hurdles of 
+manually collecting and analyzing metrics across distributed Apache server setups.
+
+Should you need assistance with configuring the Metricbeat Module for 
+Apache or have any queries about how to effectively monitor your Apache 
+servers, the Logit.io team is here to help. We encourage you to visit 
+our Help Centre or contact our support team through 
+<IntercomButton text="live chat" /> and we'll be happy to assist.

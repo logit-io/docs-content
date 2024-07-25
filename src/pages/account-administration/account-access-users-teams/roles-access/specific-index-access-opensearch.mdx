@@ -1,0 +1,47 @@
+---
+title: How to give a user or team access only to a specific index in OpenSearch
+description: Learn how to grant users and teams index level access in your Stack in this helpful article from Logit.io
+---
+
+# How to give a user or team access only to a specific index in OpenSearch
+
+To grant Index Level access to users of your Stack you first need to create a 
+team and configure the required OpenSearch Custom Role. This is a special role 
+that gives you the flexibility to manage the users within this team by choosing 
+from any available Security Roles for your Stack.
+
+Based on your permissions you can view your teams via Account Settings > Teams. 
+From here you can view existing and add new teams to your account.
+
+### Adding an OpenSearch Custom Role Team
+
+All Logit.io accounts have a number of predefined teams that you can use to manage 
+common scenarios, in this case, we want to add a new team, so choose 'Create a new team'.
+
+Give the team a suitable name e.g. My Custom Index Only Team.
+Under "Stack Only Permission Roles" choose Manage Roles for the required Stack.
+
+![Stack Only Permissions](@/images/help/account-access/stack-only-permissions.png)
+
+Select the "OpenSearch Custom Role" checkbox and choose the roles that you want this Custom Role to have.
+
+![OpenSearch Stack Roles](@/images/help/account-access/opensearch-stack-roles.png)
+
+<Callout type="info">
+  If you have added roles in OpenSearch Security but don't see them listed here, 
+  choose "Re-Sync Roles". Alternatively, if you need to add a new role then choose 
+  "Create Role In OpenSearch" to open up OpenSearch Security.
+</Callout>
+
+Under Team Members and Access Permissions, you can choose which team members belong to this team.
+
+![Team Access Permissions](@/images/help/account-access/team-access.png)
+
+Team members added to an OpenSearch Custom Role team here will automatically be 
+added to the relevant role in OpenSearch Security as shown below.
+
+![Roles](@/images/help/account-access/roles(2).png)
+
+In addition, if you would like to manage permissions for users directly in 
+OpenSearch Security we also give you the flexibility to do this, see how to 
+manage [permissions directly using OpenSearch Security](/account-administration/account-access-users-teams/roles-access/opensearch-custom-role).

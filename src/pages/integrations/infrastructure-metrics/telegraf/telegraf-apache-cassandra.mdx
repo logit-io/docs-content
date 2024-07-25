@@ -1,0 +1,84 @@
+---
+title: Apache Cassandra Metrics via Telegraf
+subTitle: Ship your Apache Cassandra Metrics via Telegraf to your Logit.io Stack
+logo: cassandra
+color: "#4d4d4d"
+description: Configure Telegraf to ship Apache Cassandra metrics to your Logit.io stacks. Configure Telegraf to send Apache Cassandra metrics to Logstash or Elastic. Get started using our Telegraf Apache Cassandra metrics example configuration.
+stackTypes: metrics
+sslPortType: beats-ssl
+---
+
+Configure Telegraf to ship Apache Cassandra metrics to your Logit.io stacks via Logstash.
+
+<Steps>
+### Install Telegraf
+
+<InstallTelegraf />
+
+### Configure the Telegraf input plugin
+
+The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+
+```yaml copy
+# Read Cassandra metrics through Jolokia
+[[inputs.cassandra]]
+  context = "/jolokia/read"
+  ## List of cassandra servers exposing jolokia read service
+  servers = ["myuser:mypassword@10.10.10.1:8778","10.10.10.2:8778",":8778"]
+  ## List of metrics collected on above servers
+  ## Each metric consists of a jmx path.
+  ## This will collect all heap memory usage metrics from the jvm and
+  ## ReadLatency metrics for all keyspaces and tables.
+  ## "type=Table" in the query works with Cassandra3.0. Older versions might
+  ## need to use "type=ColumnFamily"
+  metrics  = [
+    "/java.lang:type=Memory/HeapMemoryUsage",
+    "/org.apache.cassandra.metrics:type=Table,keyspace=*,scope=*,name=ReadLatency"
+  ]
+```
+
+<Callout type="info">
+  Read more about how to configure data scraping and configuration options for [Apache Cassandra](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/cassandra)
+</Callout>
+
+### Configure The Output plugin
+
+<TelegrafOutputPlugin />
+
+### Start Telegraf
+
+<StartTelegraf />
+
+### View your metrics
+<LaunchStack source="Apache_Cassandra_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-ApacheCassandra-metrics" />
+
+### How to diagnose no data in Stack
+
+<DiagnoseNoData />
+
+</Steps>
+
+### Telegraf Apache Cassandra Overview
+
+In order to efficiently monitor and analyze Apache Cassandra metrics in a distributed environment, it's essential to utilize a trustworthy and 
+effective metrics management solution. Telegraf, an open-source metrics collection agent, fits this role perfectly, capable of extracting Apache 
+Cassandra metrics from a multitude of sources, including operational Cassandra clusters, databases, and other relevant applications.
+
+Telegraf provides an extensive range of input plugins, allowing users to gather metrics from diverse sources such as CPU usage, memory 
+consumption, network activity, and more. For storing and querying these collected metrics, organizations can turn to Prometheus, an open-source 
+monitoring and alerting system noted for its flexible querying language and powerful graphical data visualization capabilities.
+
+To ship Apache Cassandra metrics from Telegraf to Prometheus, organizations need to configure Telegraf to output metrics in the Prometheus 
+format, and then arrange for Prometheus to scrape these metrics from the Telegraf server. This process involves configuring Telegraf to 
+accumulate Apache Cassandra metrics, rendering them in the Prometheus format, setting up Prometheus to retrieve these metrics from the Telegraf 
+server, and then visually interpreting the data using Prometheus's dynamic querying and graphical visualization tools.
+
+Once the metrics are successfully incorporated into Prometheus, further analysis and visualization can be conducted using Grafana. Grafana is an 
+open-source platform renowned for its monitoring and observability capabilities, and is fully compatible with Prometheus. It enables users to 
+construct dynamic and interactive dashboards for a deeper understanding of the metrics data, offering a more comprehensive view of performance 
+trends and potential issues.
+
+If you need any further assistance with shipping your log data to Logit.io we're here to help you get started. Feel free to get in contact with 
+our support team by sending us a message via <IntercomButton text="live chat" /> & we'll be happy to assist.
+
+

@@ -1,0 +1,74 @@
+---
+title: Multi-Tenancy
+description: Learn how to use OpenSearch Multi-Tenancy to manage spaces and control access to indexes, visualisations and dashboards
+---
+
+# Managing OpenSearch Dashboards Multi-Tenancy
+
+## OpenSearch Tenants Introduction
+
+OpenSearch Security Multi-Tenancy allows you to maintain separate spaces 
+for working with indexes, visualisations, dashboards and other OpenSearch objects. 
+
+By default, all OpenSearch users have access to two tenants; Global, which is 
+shared by all users and Private which can't be shared and is only available privately to a single user.
+
+<Callout type="info">
+  Security roles requires a Logit.io Stack running OpenSearch 1.3.1 onwards.
+</Callout>
+
+![OpenSearch Tenants](@/images/help/log-management/storage/opensearch-tenants.png)
+
+You can use Tenants to securely share and collaborate with other Logit.io users. 
+By controlling which roles have access to which tenants allows you to define 
+granular read or write access to dashboards, visualisations and more.
+
+You may want to share a single corporate dashboard only with members of 
+the management team by defining a corporate tenant, which is then applied 
+to an associated role to restrict access as needed.
+
+## Creating a Tenant
+
+Creating a Tenant requires a Stack Administrator role, from the 
+Security Menu choose **Tenants > Create Tenant.**
+
+![Create Tenant](@/images/help/log-management/storage/create-tenant.png)
+
+You can view and switch which Tenant you are currently viewing using the 
+menu in the top-right menu of OpenSearch, below we are viewing the Global Tenant.
+
+![Tenants](@/images/help/log-management/storage/tenants.png)
+
+From the Tenants screen above you can choose View Dashboards or View Visualisations 
+to switch to that Tenant, in addition to duplicating and deleting existing Tenants. 
+
+## How to restrict a user's access to a specific Tenant using Roles
+
+Once the Tenant is created, choose **Security > Roles** and select the required Role. 
+Now choose **Edit Role** and under Tenant permissions enter the name of your Tenant, 
+give Read or Write permissions as required and choose **Update** to apply the changes.
+
+![Tenant Permissions](@/images/help/log-management/storage/tenant-permissions.png)
+
+If you need to create a new role to save time you can duplicate an existing role, 
+for example, the *stack_user* role and choose **Actions > Duplicate.** 
+This allows you to then edit the duplicated role and just modify index 
+and tenant permissions where needed.
+
+<Callout type="info">
+  In most cases, any new roles will need to have read access to the 
+  following indexes to allow the OpenSearch Discover view to work 
+  as expected: `.kibana` `.kibana-6` .kibana_*.
+</Callout>
+
+[Learn more about creating OpenSearch Roles and Mapping users to Roles](/account-administration/account-access-users-teams/roles-access/opensearch-custom-role)
+
+By restricting the Role to a single Tenant and setting this as read-only, 
+any users in that role are prevented from accessing the Global Tenant.
+
+![Select Tenant](@/images/help/log-management/storage/select-tenant.png)
+
+Users in these restricted roles will need to choose from the Custom 
+Tenant dropdown to access only what they are authorised to.
+
+![Custom Tenant](@/images/help/log-management/storage/custom-tenant.png)

@@ -1,0 +1,57 @@
+---
+title: OpenTelemetry Java (HTTP/S)
+pageTitle: OpenTelemetry Java (HTTP/S) Configuration
+subTitle: Ship traces from Java to OpenSearch with OpenTelemetry (via HTTP/S)
+logo: java
+color: "#f39100"
+stackTypes: apm
+description: Learn how to ship your Java program traces to OpenSearch with our example configurations.
+protocol: https
+protocolName: http
+---
+
+Use OpenTelemetry to easily send Java traces to your Logit.io Stack.
+
+<Steps>
+  ### Getting Started
+
+  To automatically instrument your Java application and send traces 
+  to your   Logit.io Stack you just need to ensure the Environment 
+  variables or system properties are added correctly.
+
+  The full list of environment variable and system property names can be found 
+  [here](https://github.com/open-telemetry/opentelemetry-java/blob/main/sdk-extensions/autoconfigure/README.md#opentelemetry-resource). 
+  
+  The variables that need to be updated to allow the traces to be sent 
+  to your Logit.io Stack are shown below. Be sure to update the path to 
+  the location of the OpenTelemetry javaagent jar file and set your service name.
+
+  Environment Variables
+
+  ```env copy
+  JAVA_TOOL_OPTIONS = -javaagent:path/to/jar/file/opentelemetry-javaagent.jar
+  OTEL_TRACES_EXPORTER = otlp
+  OTEL_EXPORTER_OTLP_ENDPOINT = https://@opentelemetry.endpointAddress:@opentelemetry.port
+  OTEL_EXPORTER_OTLP_TRACES_PROTOCOL = @opentelemetry.protocol
+  OTEL_EXPORTER_OTLP_TRACES_HEADERS = Authorization=Basic @opentelemetry.base64encodedAuthString
+  ```
+
+  Java system properties (can be provided as arguments when running the Java application):
+
+  ```env copy
+  -javaagent:path/to/jar/file/opentelemetry-javaagent.jar
+  otel.service.name=<your-service-name>
+  otel.traces.exporter=otlp
+  otel.exporter.otlp.endpoint=https://@opentelemetry.endpointAddress:@opentelemetry.port
+  otel.exporter.otlp.traces.protocol=@opentelemetry.protocol
+  otel.exporter.otlp.traces.headers=Authorization=Basic @opentelemetry.base64encodedAuthString
+  ```
+
+  ### Launch Logit.io to view your traces
+
+  <LaunchStack utmMedium="apm" utmCampaign="java" source="apm_java_http" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>

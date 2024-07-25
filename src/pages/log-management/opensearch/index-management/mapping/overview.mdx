@@ -1,0 +1,69 @@
+---
+title: Overview
+description: Discover the key facts you need to know about OpenSearch index mappings in this helpful guide from Logit.io
+---
+
+# What are OpenSearch Mappings?
+
+### What are mappings?
+An index mapping specifies the data structure of the data within that index, listing all the fields and their data types.
+
+Importantly a field can only be of *one* type, sending data of another type can result in a mapping conflict and data being rejected.
+
+### How mappings are generated
+Mappings can be passed in on index creation, but are usually built from [templates](/log-management/opensearch/index-management/index-templates) and then expanded by data as it's received.
+
+If a field isn't specified in the template (and built into the index's mappings when it was created), then the type will be chosen based on the data when it is seen for the first time by that index.
+
+This can result in issues where inconsistent data is being sent as the first data seen each day is assumed to be the desired type.
+
+### How to view the mappings for an index
+To view your mappings you can follow the [article here](/log-management/opensearch/index-management/mapping/viewing-mappings).
+
+### Worked example mapping
+A very short example of index mapping is displayed and commented below;
+
+```json copy showLineNumbers
+{
+  "logstash-1970.01.01": {              # Index name we're looking at 
+    "mappings": {
+      "doc": {                          # The Mapping Type being used 
+                                        # (depreciated)
+        "properties": {
+          "@timestamp": {               # The @timestamp field is of
+            "type": "date"              # date format allowing for
+                                        # time based searching, 
+                                        # eg betweeen 10:00am and 
+                                        # 11:00am
+
+          },
+          "client_ip": {                # The client_ip field stores 
+            "type": "text",             # it's contents as text,
+            "norms": false,
+            "fields": {                 # and also a keyword if less
+              "keyword": {              # than 256 bytes in length, 
+                "type": "keyword",      # the default limit is to 
+                                        # avoid the excessive disk
+                "ignore_above": 256     # usage of keywork indexing 
+                                        # long strings, the limit is
+                                        # not required but can result
+              }                         # in additional disk and 
+            }                           # memory usage
+          },
+          "latencies": {                # The latencies field has 
+            "properties": {             # nested fields below it,
+                                        # proxy and request
+              "proxy": {
+                "type": "long"          # A 64bit integer, if this
+              },                        # mapping had been generated
+              "request": {              # from a template, an integer
+                "type": "long"          # (32 bit) or short (16 bit) 
+              }                         # would probably have been
+            }                           # chosen as a range of
+          }                             # -9223372036854775808 to
+        }                               # 9223372036854775807 wouldn't
+      }                                 # have been required, and
+    }                                   # would have reduced disk and
+  }                                     # memory usage slightly
+}
+```

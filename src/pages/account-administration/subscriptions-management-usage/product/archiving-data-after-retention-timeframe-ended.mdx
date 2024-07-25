@@ -1,0 +1,28 @@
+---
+title: How can I archive my logs, data and metrics after my retention timeframe has ended?
+description: Is it possible to keep my logs, data and metrics indefinitely and how can I restore my data again in the future?
+---
+
+# How can I archive my logs, data, and metrics after my retention timeframe has ended?
+
+If you need to keep any logs that you have sent to Logit.io after your stack 
+retention period we recommend taking a snapshot of your Elasticsearch indices. 
+The snapshot is a backup that can then be stored in Amazon S3 or any similar 
+cloud storage service such as Microsoft Azure or Google Cloud. By archiving to 
+S3 or similar, also known as cold storage, you can keep your logs beyond your 
+stack retention period for as long as you require or indefinitely.
+
+## How to setup S3 index archives for my Logit.io account
+
+If using an S3 account, you simply need to create a bucket with the relevant 
+permissions and then raise a request with the support team, we will do the rest. 
+Storing/backing up logs and metrics in this way ensures that for auditing and 
+regulatory purposes you can restore them to an Elasticsearch instance in the 
+future where necessary.
+
+## What is the next step?
+
+If keeping your logs beyond the retention period is something that you require 
+from Logit.io or perhaps you have already taken advantage of this service and 
+now want to restore a previous snapshot? Please contact our support team who 
+will be happy to help guide you through the process.

@@ -1,0 +1,347 @@
+---
+title: Aggregatable Text Fields
+description: Learn how to change the status of a text field from non-aggregatable to aggregatable.
+---
+
+# Aggregatable text fields
+
+## Why make a text field aggregatable?
+
+Text fields, by default, are analysed before indexing so that a value like "red car" 
+can be found by searching for both "red" and "car". However, you may want to perform 
+calculations on words rather than simply search using them and this is where aggregation is useful.
+
+Making a text field aggregatable means that all values of all documents for the text field 
+are loaded into memory. This process is called Bucketing.
+
+### What is bucketing?
+
+Bucket aggregations create buckets of documents. In our example of a red car, an 
+aggregation on the field will return a "red" bucket and a "car" bucket. Any document 
+with a mention of the word red in this text field will be added to the "red" bucket 
+and the same for the word car and the "car" bucket. Obviously, if we have lots of words 
+in a text field over many documents we will end up with a lot of buckets. Some documents 
+will be found in more than one bucket depending on the content of the field whilst others may not.
+
+### What are the benefits?
+
+The benefit is that you are now able to perform calculations on the documents. 
+So, for example, if we have another field in our document that contains a country 
+we would be able to calculate the number of red cars by country. Perhaps we have 
+another field that contains a year. We can work out the average number of red cars 
+in a country by year. We can then visualise our calculations using OpenSearch.
+
+<Callout type="info">
+  Please remember that aggregating on a text field using fielddata 
+  is very expensive because values for all documents of that field 
+  are loaded into memory which can cause performance problems.
+</Callout>
+
+## How do I check if a field is aggregatable?
+
+To check if a field is aggregatable open OpenSearch choose the *Management* option 
+on the left-hand side menu and then choose *index patterns*. If there is a 
+check/circle under the aggregatable column then this means the field is aggregated.
+
+## How do I make a field aggregatable?
+
+<Steps>
+  ### Select a field
+
+  First, you need to choose a field. For this example I've opted to use 
+  the message field, as you can see in the image below the message field is not aggregated.
+
+  Now you need to find out what index pattern this particular message field appears under. 
+  As you're on the index pattern page you'll be able to view the index pattern at the top 
+  of the page. The Logstash-* index pattern is being used in the example above.
+
+  ### Fetching the templates
+
+  The second part requires the use of the 'OpenSearch Dev Tools' section, select 
+  the wrench tool icon on the OpenSearch menu and run the following command in 
+  the dev tools section. You can also use the OpenSearch API to get the templates, 
+  but in this example you'll be using *'OpenSearch Dev Tools'*.
+ 
+  ```cmd
+  GET _cat/templates
+  ```
+
+  This will return the names of the templates currently in OpenSearch. 
+  The name of the template required in the example is Logstash. So now on 
+  a new line in OpenSearch Dev Tools you're going to run the following command.
+  
+  ```cmd
+  GET _template/logstash
+  ```
+
+  Running this command will fetch the Logstash index template, as shown below:
+  
+  ```json
+  {
+    "order" : 0,
+    "version" : 60001,
+    "index_patterns" : [
+      "logstash-*"
+    ],
+    "settings" : {
+      "index" : {
+        "refresh_interval" : "5s"
+      }
+    },
+    "mappings" : {
+      "_default_" : {
+        "dynamic_templates" : [
+          {
+            "message_field" : {
+              "path_match" : "message",
+              "match_mapping_type" : "string",
+              "mapping" : {
+                "type" : "text",
+                "norms" : false,
+              }
+            }
+          },
+          {
+            "string_fields" : {
+              "match" : "*",
+              "match_mapping_type" : "string",
+              "mapping" : {
+                "type" : "text",
+                "norms" : false,
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "properties" : {
+          "@timestamp" : {
+            "type" : "date"
+          },
+          "@version" : {
+            "type" : "keyword"
+          },
+          "geoip" : {
+            "dynamic" : true,
+            "properties" : {
+              "ip" : {
+                "type" : "ip"
+              },
+              "location" : {
+                "type" : "geo_point"
+              },
+              "latitude" : {
+                "type" : "half_float"
+              },
+              "longitude" : {
+                "type" : "half_float"
+              }
+            }
+          }
+        }
+      }
+    },
+    "aliases" : { }
+  }
+  ```
+
+  ### Creating a keyword field
+
+  In the template above find the "message_field" section. You can see that the current 
+  mapping type is text, you can't aggregate on a text field type. 
+  You need a keyword field type in order to aggregate.
+
+  The easiest way to change the mapping type of the field is to input a new template. 
+  Copy the template above into a text editor and convert the "message_field" to a keyword. 
+  You can do this by adding the next code snippet to the message field.
+ 
+  ```json
+  "fields" : {
+    "keyword" : {
+      "ignore_above" : 2048,
+      "type" : "keyword"
+    }
+  }
+  ```
+
+  The message field mapping should now look like this:
+
+  ```json
+  "mappings" : {
+    "_default_" : {
+      "dynamic_templates" : [
+        {
+          "message_field" : {
+            "path_match" : "message",
+            "match_mapping_type" : "string",
+            "mapping" : {
+              "type" : "text",
+              "norms" : false,
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 2048
+                }
+              }
+            }
+          }
+        },
+        ...
+      ]
+    }
+  }
+  ```
+
+  <Callout type="info">
+      mappings __default__ has been deprecated in version 7 and will appear as mappings _doc:
+
+    ```json
+    "mappings" : {
+      "_doc" : {
+        "dynamic_templates" : [ ... ],
+      }
+    }
+    ```
+  </Callout>
+
+  You need to set a reasonable size on 'ignore above' so not to impact performance. 
+  Most messages are smaller than 1500 characters, but they may grow. In this example 
+  you have allowed up to 2048 total characters, longer messages will be ignored.
+
+  ### Changing the template order
+  You also need to change the order of the template to make sure it gets applied 
+  to the message field. If you change the order number to 4 it will have the highest 
+  order number out of all of the templates. 
+  
+  This means it will be the top-level 
+  template that gets applied. The way orders work for templates is that the lowest 
+  order number gets applied first and the higher number sits on top of that. 
+  
+  So a template with an order number 0 would be applied first, then an order number of 1 
+  would be applied second, an order number of 4 would sit above both of those and be 
+  applied as the top-level template. Go ahead and change the order to have the value of 4.
+  
+  ```json
+  PUT _template/logstash_msg_keyword
+  {
+    "order" : 4,
+    "version" : 60001,
+    "index_patterns" : ["logstash-*"]
+  }
+  ```
+
+  ### Putting a new template into OpenSearch
+  Copy the new template as it is ready to be added. Before you paste the template 
+  into OpenSearch. You need to first add the following line into 'OpenSearch Dev Tools.' 
+  This tells OpenSearch you're going to input a new template and name it *logstash_msg_keyword*.
+  
+  ```cmd
+  PUT _template/logstash_msg_keyword
+  ```
+
+  On a new line in 'OpenSearch Dev Tools' paste the new template. 
+  You should have something similar to the below section.
+
+  ```json
+  PUT _template/logstash_msg_keyword
+  {
+    "order" : 4,
+    "version" : 60001,
+    "index_patterns" : [
+      "logstash-*"
+    ],
+    "settings" : {
+      "index" : {
+        "refresh_interval" : "5s"
+      }
+    },
+    "mappings" : {
+      "_default_" : {
+        "dynamic_templates" : [
+          {
+            "message_field" : {
+              "path_match" : "message",
+              "match_mapping_type" : "string",
+              "mapping" : {
+                "type" : "text",
+                "norms" : false,
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 2048
+                  }
+                }
+              }
+            }
+          },
+          {
+            "string_fields" : {
+              "match" : "*",
+              "match_mapping_type" : "string",
+              "mapping" : {
+                "type" : "text",
+                "norms" : false,
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "properties" : {
+          "@timestamp" : {
+            "type" : "date"
+          },
+          "@version" : {
+            "type" : "keyword"
+          },
+          "geoip" : {
+            "dynamic" : true,
+            "properties" : {
+              "ip" : {
+                "type" : "ip"
+              },
+              "location" : {
+                "type" : "geo_point"
+              },
+              "latitude" : {
+                "type" : "half_float"
+              },
+              "longitude" : {
+                "type" : "half_float"
+              }
+            }
+          }
+        }
+      }
+    },
+    "aliases" : { }
+  }
+  ```
+
+  ### Send test data with a date in the future
+  
+  Templates are applied on index creation, as data is likely to already have 
+  been sent to the  stack today. You need to use a future index creation. This 
+  can be achieved by using a date in the future for example 1/1/2030. You can 
+  then use your stacks API key to send data from the command line into the stack. 
+  This can be found on the Stack > Settings page of 
+  your [Logit.io](https://logit.io/?_gl=1*fysv35*_ga*NzE2MTk2MzcxLjE3MTAyNDM2MTA.*_ga_W546BZYLYM*MTcxODI4NzM3MS4xMTIuMS4xNzE4Mjk3MjE5LjYwLjAuMA..) Dashboard.
+  
+  ```cmd
+  curl -i -H "ApiKey: <your-stack-api-key" -i -H "Content-Type: application/json" -H "LogType: default" https://api.logit.io/v2 -d '{"message":"Logit.io Test Log", "@timestamp":"2019-11-08T11:00:0.000Z"}'
+  ```
+
+  ### Confirm the results
+
+  Once you have confirmed data has arrived into your stack. On OpenSearch you need 
+  to go to the Management tab, select index patterns, refresh the index field list 
+  and search for the message.keyword field, check whether the field is now aggregatable.
+</Steps>

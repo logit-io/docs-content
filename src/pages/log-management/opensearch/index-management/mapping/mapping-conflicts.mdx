@@ -1,0 +1,21 @@
+---
+title: Mapping Conflicts
+description: Discover how OpenSearch mapping conflicts and OpenSearch Dashboards mapping conflicts differ in this helpful guide from Logit.io
+---
+
+# How OpenSearch mapping conflict & OpenSearch Dashboards mapping conflict differ
+
+OpenSearch Dashboard mapping conflicts and OpenSearch mapping conflicts are not the same.
+
+### OpenSearch Mapping Conflicts
+OpenSearch mappings are built from the OpenSearch templates, for fields that don't have settings specified in the templates, the mappings are created dynamically from the data you send in. A mapping conflict occurs when you try to send data into a field that already has a mapping created but the data doesn't meet the same type (date, integer, string, etc.)
+
+### OpenSearch Dashboard Mapping Conflicts
+OpenSearch Dashboards mapping conflicts occur when the fields don't match the type saved in the index pattern. This can be fixed by updating the index pattern field list. 
+This can be found in:
+
+*OpenSearch Dashboards >> Management >> Index patterns.*
+
+Then click on the rotating arrows in the top right corner.
+
+![Kibana Index Pattern Fieldlist](@/images/help/log-management/storage/kibana-index-pattern-fieldlist.png)

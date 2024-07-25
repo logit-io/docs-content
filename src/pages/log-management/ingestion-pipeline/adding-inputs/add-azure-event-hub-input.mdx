@@ -1,0 +1,29 @@
+---
+title: Add Azure Event Hub Input
+description: Learn how to configure a Azure Event Hub Input on your Logstash Instance
+---
+
+# How to add an Azure Event Hub Input to your Log Stack
+
+To configure the Azure Event Hub input in your Logstash stack, follow these steps:
+
+1. Navigate to `Logstash Inputs` settings.
+2. Click on the "Add New Input" button in the Logstash configuration wizard.
+3. Select the "Azure Event Hub" option from the available input types.
+4. Complete the configuration details:
+   - **Consumer Group:** Specify the consumer group used to read the Event Hub(s). Create a consumer group specifically for Logstash.
+   - **Storage Connection String:** Provide the name of the storage container used to persist offsets and allow multiple instances of Logstash to work together.
+   - **Event Hub Connection String - Primary Key:** Enter the connection string that identifies the Event Hub to be read. This option accepts only one connection string.
+5. The following configuration details are optional, only add if required:
+   - **Decorate Events:** Enable this option to add metadata about the Event Hub, including Event Hub name, consumer group, processor host, partition, offset, sequence, timestamp, and event size.
+   - **Initial Position:** When first reading from an Event Hub, start from this position (beginning, end, look_back).
+   - **Display Name:** Provide a name for the Azure Event Hub input.
+   - **Display Description:** Add a description for better identification.
+   - **Tags:** Assign tags to your events (comma-separated).
+   - **Type:** Add a type field to all events handled by this input.
+   - **Add Field:** Include additional fields to the events. You can add multiple key-value pairs.
+5. Click the "Configure Input" button to save the Azure Event Hub input configuration.
+6. Click "Cancel" to discard changes.
+
+This guide provides a step-by-step process for configuring an Azure Event Hub input in Logstash. 
+Adjust the values based on your specific use case and preferences.

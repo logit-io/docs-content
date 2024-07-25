@@ -1,0 +1,136 @@
+---
+title: Diagnose No Data Appearing in Elasticsearch, OpenSearch or Grafana
+description: No data appearing in Elasticsearch, OpenSearch or Grafana? Learn how to troubleshoot common issues when sending data to Logit.io Stacks
+---
+
+# How can I diagnose no data appearing in Elasticsearch, OpenSearch or Grafana?
+
+This article will help you diagnose no data appearing in your Logit.io Logs, Metrics or Tracing Stacks.
+
+## 1. Ensure your data source is configured correctly 
+
+Getting started sending data to your Logit.io Stacks is quick and simple, 
+using the Data Source Integrations you can access pre-configured setups 
+and snippets for nearly hundreds of data sources.
+
+### How to use the Data Source Integrations
+
+1. Login to your Logit.io account.
+2. For any of your Logit.io stacks choose _Send Logs_, _Send Metrics_ or _Send Traces_.
+3. Type the name of the data source you are configuring or just browse for it.
+4. Follow the integration steps for your chosen data source (you can copy the snippets including pre-populated stack ids and keys!).
+
+## 2. Enable logging if you are using an Elastic Beat
+
+If you are using an Elastic Beat to send data into Elasticsearch or 
+OpenSearch (e.g. Filebeat, Metricbeat etc.)  You can enable additional 
+logging to the daemon by running it with the -e command line flag. This 
+will redirect the output that is normally sent to Syslog to standard error. 
+For example, see the command below.
+
+```cmd copy
+filebeat -e
+```
+
+![Filebeat](@/images/help/log-management/troubleshooting/filebeat.png)
+
+You will be able to diagnose whether the Elastic Beat is able to harvest the 
+files properly or if it can connect to your Logstash or Elasticsearch node.
+
+## 3. Check Logstash logs for your stack
+
+You can check the Logstash log output for your ELK stack from your dashboard.
+
+From any Logit.io stack in your dashboard click `Diagnostic Logs` settings. 
+You will see an output similar to below. Any errors with Logstash will appear here.
+
+![Logstash Logs](@/images/help/log-management/troubleshooting/logstash-logs.png)
+
+## 4. Can you see your data in OpenSearch?
+
+To check if your data is in OpenSearch we need to query the indices. To do 
+this you will need to know your endpoint address and your API Key. 
+From any Logit.io Stack in your dashboard navigate to `OpenSearch` settings
+
+![OpenSearch Access](@/images/help/log-management/troubleshooting/elasticsearch-access.png)
+
+To query the indices run the following curl command, substituting the endpoint 
+address and API key for your own. Alternatively, you can navigate to the URL 
+in a web browser remembering to substitute the endpoint address and API key for your own.
+
+```cmd copy
+curl "https://Your Endpoint-es.logit.io/_cat/indices?v&apikey=Your-API-Key"
+```
+
+You should see something returned similar to the below image. Anything that 
+starts with . are system indices. Everything else are regular indices, if you 
+can see regular indices that means your data is being received by Elasticsearch.
+
+![Elasticsearch](@/images/help/log-management/troubleshooting/elasticsearch.png)
+
+If your data is being sent to OpenSearch but you can't see it in OpenSearch Dashboards, 
+it could be that you're querying one index in OpenSearch Dashboards but your data is 
+in another index. You can refer to 
+this [help article](/log-management/opensearch/index-management/index-patterns) to 
+learn more about indexes.
+
+## 5. Can you connect to your Logit.io Stack?
+Can you connect to your stack or is your firewall blocking the connection?
+
+Run the following commands to check if you can connect to your stack. 
+
+<Callout type="info">
+  Remember to substitute the Logstash endpoint address & 
+  TCP SSL port for your own Logstash endpoint address & port.
+</Callout>
+
+### On Linux/MacOS
+
+In terminal run:
+
+```cmd copy
+openssl s_client -connect <Your Logstash Endpoint>-ls.logit.io:<your-stack-TCP-SSL-port>
+```
+
+### On Windows
+
+In Powershell run:
+
+```powershell copy
+Test-NetConnection -Port <your-stack-TCP-SSL-port> -ComputerName <Your Logstash Endpoint>-ls.logit.io -InformationLevel Detailed
+```
+
+If your ports are open you should receive output similar to the 
+below ending with a verify return code of 0 from the Openssl command.
+
+![OpenSSL Command](@/images/help/log-management/troubleshooting/openssl-command.png)
+
+From Powershell you should see something similar to the below if the port is open:
+
+![Powershell](@/images/help/log-management/troubleshooting/powershell.png)
+
+You can find the details for your stacks Logstash endpoint address 
+& TCP SSL port by navigating to `Logstash inputs` settings.
+
+![Logstash Inputs](@/images/help/log-management/troubleshooting/logstash-inputs.png)
+
+## 6. Can you resolve the DNS? 
+
+To confirm you can connect to your stack use the example below to 
+try and resolve the DNS of your stacks Logstash endpoint.
+
+In Windows open a command prompt and run the following command:
+
+```cmd copy
+nslookup your-logstash-endpoint-ls.logit.io
+```
+
+On Linux / Unix / macOS you can use dig.
+
+```cmd copy
+dig a your-logstash-endpoint-ls.logit.io
+```
+
+### Still having trouble?
+
+If you are still having trouble you can contact our support team [here.](https://logit.io/about-us/contact-us/)

@@ -1,0 +1,56 @@
+---
+title: OpenTelemetry Inputs
+description: Learn how to view and edit your OpenTelemetry inputs in Logit.io
+---
+
+# APM: OpenTelemetry Inputs
+
+## What is OpenTelemetry?
+
+OpenTelemetry is an open-source project and set of APIs, libraries, agents, 
+and instrumentation to provide observability for applications. It enables 
+the collection of telemetry data from software systems to monitor, trace, 
+and analyze their behavior and performance. OpenTelemetry is designed to 
+help developers and operations teams gain insights into the health and 
+behavior of distributed and microservices-based applications.
+
+## Working with OpenTelemetry Inputs in APM
+
+'OpenTelemetry Inputs' can be located from the menu on the left, under 
+the heading 'Application Performance Monitoring'.
+
+![Jaeger Collector Inputs](@/images/help/apm/jaeger-collector-inputs.png)
+
+## APM: OpenTelemetry Inputs
+
+This page provides access to the OpenTelemetry endpoint details, allowing 
+you to retrieve and copy the information required for sending data to your 
+stack. It will include information such as: plugin, protocol, port, 
+https username and https password.
+
+## Stack OpenTelemetry Endpoint
+
+This is the endpoint where you can send OpenTelemetry data to your Logit.io 
+stack for analysis and monitoring. It's represented as a 
+unique identifier: "12345-9871-4ff0-6789-696ef2841b55-apm.logit.io."
+
+## Copy Endpoint Button
+
+This button allows you to copy the stack OpenTelemetry endpoint to your 
+clipboard for easy use when configuring data sources.
+
+## Protocol
+
+It indicates the protocol you can use to send data to the provided endpoint. 
+In this case, "https" and "grpc" are the available options.
+
+## Port
+
+The port number you need to use when configuring the data source to send 
+data to the specified endpoint. It lists "1234" as the port number for both "https" and "grpc."
+
+## Https User and Https Password
+
+These fields might be used for authentication when sending data over HTTPS. 
+However, they are currently hidden or not visible, so you may need to 
+reveal them to enter the appropriate credentials if required

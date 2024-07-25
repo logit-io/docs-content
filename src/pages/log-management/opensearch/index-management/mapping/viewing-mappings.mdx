@@ -1,0 +1,84 @@
+---
+title: How to View Mappings
+description: Discover how to get started with viewing your OpenSearch Mappings in this helpful article from Logit.io
+---
+
+# How do I view my OpenSearch Mappings?
+
+### What is an OpenSearch mapping?
+To understand OpenSearch Mappings you can read the article [here](/log-management/opensearch/index-management/mapping/overview).
+
+### How can I view the current mappings?
+There are two ways you can view the current mappings on your Logit.io stacks.
+
+### Using OpenSearch Dashboards Dev Tools
+One way is to use dev tools in OpenSearch Dashboards. You can access OpenSearch Dashboards for any stack by clicking the _Launch Logs_ button.
+
+Once OpenSearch has opened you need to choose Dev Tools in the left-hand menu.
+
+![Kibana Dev Tools](@/images/help/log-management/ingestion-pipelines/kibana-dev-tools.png)
+
+In the console section of the screen, we are going to enter the following command.
+```plaintext
+GET _all/_mapping
+```
+You should get an output similar to that of the screenshot below. Here you can see all the mappings currently used on the OpenSearch server.
+
+![OpenSearch Mappings](@/images/help/log-management/ingestion-pipelines/opensearch-mappings.png)
+
+### Using OpenSearch Dev Tools to retrieve the mappings of a specific index name
+You can also search for a specific mapping of an Index name. For example, if we wanted to see the mappings for a Filebeat index name we can run the following to return only the desired mappings.
+
+You can also search for the specific mappings of an index name. First, we will get the names of our indices and then secondly we will use index name to view the indices mappings.
+
+First, run the following;
+```plaintext
+GET _cat/indices
+```
+This should give an output similar to the below screenshot:
+
+![Get Indices](@/images/help/log-management/ingestion-pipelines/get-indices.png)
+
+From here we can then choose an index-name from the third column of information. For this example, I have chosen the index-name filebeat-2019.05.17.
+
+We can now use this to get the mappings by running the following command in OpenSearch Deb Tools.
+```plaintext
+GET filebeat-2019.05.17/_mapping
+```
+This will give an output similar to the screenshot below:
+
+![Filebeat Example](@/images/help/log-management/ingestion-pipelines/get-filebeat-example.png)
+
+### Using the Mapping API
+The second way to review the mappings currently in use is to use the mapping API. To do this you will need your OpenSearch endpoint address and your ApiKey. These can be accessed from your dashboard by navigating to `OpenSearch Dashboards Settings`.
+
+![Elasticsearch Access](@/images/help/log-management/ingestion-pipelines/elasticsearchaccess.png)
+
+The next step is to write a curl -x get command to retrieve the mappings from OpenSearch.
+```plaintext
+curl -X GET your-elasticsearch-endpoint-address-es.logit.io/_all/_mapping?your-api-key&pretty
+```
+You will be returned with a JSON output similar to the below screenshot.
+
+![JSON Output](@/images/help/log-management/ingestion-pipelines/jsonoutput.png)
+
+### Using the Mapping API to retrieve the mappings of a specific index name
+Similar to OpenSearch Dev Tools you can also use the Mapping API to retrieve the mappings of a specific index-name.
+
+To do so you will need to know the name of the index, so first we need to retrieve the names of our indices by running the following command.
+```plaintext
+curl -X GET your-elasticsearch-endpoint-address-es.logit.io/_cat/indices?your-api-key&pretty
+```
+Once the command has been run you will get an output similar to the screenshot below:
+
+![Elasticsearch Curl](@/images/help/log-management/ingestion-pipelines/elasticsearch-curl.png)
+
+Now we can select the index-name from the third column of information and use it to retrieve the mappings. So again in the below example, I have used the index-name of filebeat-2019.05.17.
+
+```cmd
+curl -X GET your-elasticsearch-endpoint-address-es.logit.io/filebeat-2019.05.17/_mapping?your-api-key&pretty
+```
+
+This will return an output similar to that of the below screenshot:
+
+![Elasticsearch Curl Get](@/images/help/log-management/ingestion-pipelines/elasticsearch-curl-get.png)

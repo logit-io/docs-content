@@ -1,0 +1,67 @@
+---
+title: Azure Container Activity Logs
+subTitle: Pull Container Activity logs from an Azure Event Hub to Logstash
+logo: azure
+color: "#0089d6"
+description: Ship your Azure container activity logs to Logit.io via Logstash using the instructions below and start analysing your data
+stackTypes: metrics
+---
+
+Learn how to ship Azure Container activity logs into the Logit.io ELK Stack via Logstash.
+
+<Steps>
+  ### Ensure Azure Event Hub
+
+  Before you begin you will need to ensure you have an available Azure Event Hub in your [Azure Portal](https://portal.azure.com/)
+
+  We will configure your Container instance to ship activity logs directly to this Azure Event Hub.
+
+  ![View your Event hub](@/images/integrations/azure-container-activity-logs/container_activity_logs_step_event_hub.png)
+
+  Once you have configured your Event Hub and Event Hub namespace, we need to configure the Container Activity Logs.
+
+  ### Configure Container Activity Logs
+
+  Browse to the Azure Containers on the [Azure Portal](https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.ContainerInstance%2FcontainerGroups) 
+  and select an existing or choose to Add a new container.   
+
+  ![Azure containers showing in Azure Portal](@/images/integrations/azure-container-activity-logs/container_activity_logs_step1.png)
+
+  Select the required container and from the left menu and choose Activity Logs. You will see recent Activity logs for the selected container instance.
+
+  ![Select container](@/images/integrations/azure-container-activity-logs/container_activity_logs_step2.png)
+
+  ### Configure Activity Log Diagnostic Settings
+
+  In order to direct the Azure Container Activity Logs to our Event Hub we need to configure the diagnostic settings.
+
+  Choose Diagnostic settings from the top menu, then choose Add diagnostic setting. Here we can specify which activity logs we want to stream to the Event Hub.
+
+  ![Diagnostic settings](@/images/integrations/azure-container-activity-logs/container_activity_logs_step3.png)
+
+  ### Confirm Messages in Event Hub
+
+  In your Azure Portal browse to your Event Hub and confirm that messages are arriving. 
+
+  <Callout type="info">
+    You should see spikes in the graph and the incoming requests count should not be zero.
+  </Callout>
+
+  ![Graphs showing messages arriving to event hub](@/images/integrations/azure-container-activity-logs/container_activity_logs_step4.png)
+
+  ### Configure Permissions
+
+  <AzureConfiguration />
+
+  ### Configure Logstash For Azure Event Hub
+
+  <AzureInput stackType="metrics" utmMedium="logs" utmCampaign="azurecontaineractivitylogs" type="azure_container" />
+
+  ### Check Logit.io for your logs
+  <LaunchStack utmMedium="logs" utmCampaign="azurecontaineractivitylogs" source="azurecontaineractivitylogs" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>

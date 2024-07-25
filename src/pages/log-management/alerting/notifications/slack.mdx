@@ -1,0 +1,47 @@
+---
+title: How To Send Alerts & Notifications from Logit.io to Slack
+description: Discover the steps you need to take to setup and configure alerts notifications to be sent to Slack in this helpful article from Logit.io.
+---
+
+# How to send alerts & notifications from Logit.io to Slack
+
+It only takes a few minutes to add alerting to any of your Logit.io stacks. Once enabled, you'll be able to edit and set up alerting rules for all your stacks.
+
+### Provision Alerting for a Stack
+To enable alerting for a stack, navigate to `Alerting & Notifications` settings and then click _Enable Alerting_.
+
+### Create your Alerting Rule
+Use the code block below to quickly get started with your Slack alert.
+```yaml
+name: Production App Errors
+
+type: any
+
+index: logstash-*
+
+filter:
+- query:
+    query_string:
+      query: "type:error"
+
+## Receive an alert for every single match
+realert:
+  minutes: 0
+
+# (Required)
+# The alert used when a match is found
+alert:
+- "slack"
+
+## Live alerts channel
+slack_webhook_url:
+- “[YOUR SLACK HOOK]”
+```
+### How to use the code
+1. Paste the code into the alert replacing any existing rule.
+2. Then just edit the code to match the filter query you need, in this case, we are looking for matches on "type:error".
+3. Replace [YOUR SLACK HOOK] with your slack hook URL.
+4. Choose test to run the rule against your data over the last 2 hrs.
+5. Once happy, choose update to apply and save the rule.
+
+Now you're all set to send alerts to Slack from Logit.io!

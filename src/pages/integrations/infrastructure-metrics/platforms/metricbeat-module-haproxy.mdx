@@ -1,0 +1,79 @@
+---
+title: HAProxy Metrics
+subTitle: Collect and ship HAProxy server metrics to Logstash and Elasticsearch
+logo: haproxy
+color: "#009edb"
+description: How to send HAProxy metrics to your Hosted ELK Logstash instance. Configure Metricbeat to send HAProxy server metrics to Logstash or Elasticsearch. 
+stackTypes: metrics
+sslPortType: beats-ssl
+---
+
+Metricbeat is a lightweight shipper that helps you monitor your HAProxy servers 
+by collecting metrics from the HAProxy server. Configure Metricbeat using the 
+pre-defined examples below to collect and ship HAProxy service metrics 
+and statistics to Logstash or Elasticsearch.
+
+<Steps>
+  ### Install Metricbeat
+
+  <InstallBeat beatname="metricbeat" />
+
+  ### Copy Configuration File
+
+  <MetricbeatOutput />
+
+  ### Enable module
+
+  There are several built in metricbeat modules you can use. To enable the HAProxy module, run the following:
+
+  <Tabs items={["DEB/RPM", "macOS", "Windows"]}>
+    <Tab>
+      ```bash copy
+      metricbeat modules list
+      metricbeat modules enable haproxy
+      ```
+    </Tab>
+    <Tab>
+      ```bash copy
+      ./metricbeat modules list
+      ./metricbeat modules enable haproxy
+      ```
+    </Tab>
+    <Tab>
+      ```cmd copy
+      PS > .\metricbeat.exe modules enable haproxy
+      ```
+    </Tab>
+  </Tabs>
+
+  ### Configure Module
+  
+  <ConfigureMetricbeatModule module="haproxy">
+    ```yml copy showLineNumbers
+    - module: haproxy
+      metricsets:
+        - info
+        - stat
+      period: 10s
+      hosts: ["tcp://127.0.0.1:14567"]
+    ```
+  </ConfigureMetricbeatModule>
+
+  ### Start Metricbeat
+
+  [Start or restart Metricbeat](https://www.elastic.co/guide/en/beats/metricbeat/master/metricbeat-starting.html) 
+  to apply the configuration changes.
+
+  ### Check Logit.io for your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="haproxy_metricbeat" source="metrics_haproxy" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+  ### Compatibility
+
+  The HAProxy metricsets are tested with HAProxy versions `1.6`, `1.7` and `1.8`.
+
+</Steps>

@@ -1,0 +1,40 @@
+---
+title: How can I view my Logit.io ELK stack usage and daily log volume?
+description: Discover how Logit.io calculates your Elasticsearch stack disk usage in our helpful guide.
+---
+
+# How can I view my Logit.io ELK stack usage and daily log volume?
+
+### Daily Log Volume
+
+Upon logging into your account, the stack usage dashboard page displays your daily log volume.
+
+![Logit dashboard](@/images/help/subscription-usage/logit-dashboard.png)
+
+You can use this, along with an estimate of the percentage of logs that you have sent us.
+
+### How is Stack Usage calculated?
+
+The Logit.io platform calculates stack usage based on the total disk used for Elasticsearch indexes for a given day.
+
+The values used to display usage in the statistics page are calculated using the max index sizes and data directly gathered from your Elasticsearch stacks.
+
+### Viewing your usage statistics
+
+After logging in, for any stack, choose 'View Stack Settings' > 'Usage Statistics' to dive deeper into your data volumes.
+
+![Usage Statistics](@/images/help/subscription-usage/usage-stats.png)
+
+If you have concerns about your usage accuracy, viewing the Elasticsearch \_cat/indices value does give you an indication of how the usage data correlates.
+
+Use the URL below to view your indices.
+
+```
+[STACK ID]-es.logit.io/_cat/indices?pretty=true&s=index&v&apikey=[API KEY]
+```
+
+### How to use the code
+
+Replace [STACK ID] with your stack id, which can be found in your dashboard.
+Replace [API KEY] with your API key, which can be found on your stack settings page.
+Open the URL in your browser.

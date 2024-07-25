@@ -1,0 +1,323 @@
+---
+title: Overview
+description: Discover how to get started with the setup and configuration of alerts with Logit.io in our helpful guide.
+---
+
+# An introduction to Alerting
+
+## Alerting and Notifications
+
+Proactive alerting is crucial to any organisation, whether it be critical 
+production errors in your logs, server metrics exceeding expected thresholds 
+or security alerting when someone is trying to gain unauthorised access to your system. 
+
+With Logit.io, your team can get notified and receive alerts with our built-in 
+integrations that complement your existing workflow. Choose from many notification 
+options, including Email and Slack. You can also receive webhooks into your 
+applications to automatically restart a service or raise a PagerDuty alert 
+to notify your team.
+
+You can configure flexible and powerful alerting directly from your Logit.io 
+dashboard using your existing OpenSearch queries. Not only does this protect 
+your organisation and ensure you stay compliant, but it 
+helps everyone to sleep easy at night.
+
+
+## Rule Types
+## Rule Types
+Several rule types with common monitoring paradigms are included with Logit.io:
+
+- `Match where there are X events in Y time` (frequency type)
+- `Match when the rate of events increases or decreases` (spike type)
+- `Match when there are less than X events in Y time` (flatline type)
+- `Match when a certain field matches a blacklist/whitelist` (blacklist and whitelist type)
+- `Match on any event matching a given filter` (any type)
+- `Match when a field has two different values within some time` (change type)
+
+## In addition to this basic usage, there are many other features that make alerts more useful:
+
+- Alerts link to OpenSearch Dashboards
+- Aggregate counts for arbitrary fields
+- Combine alerts into periodic reports
+- Separate alerts by using a unique key field
+- Intercept and enhance match data
+
+```yaml copy
+# From example_rules/example_frequency.yaml
+es_host: elasticsearch.example.com
+es_port: 14900 
+name: Example rule
+type: frequency
+index: logstash-*
+num_events: 50
+timeframe:
+    hours: 4
+filter:
+- term:
+    some_field: "some_value"
+alert:
+- "email"
+email:
+- "elastalert@example.com"
+```
+
+Here is a repository with example alert YAML files that will help you create your own alert rules:
+
+https://salsa.debian.org/debian/elastalert/tree/master/example_rules
+
+## Frequently Asked Questions
+## Frequently Asked Questions
+
+### My rule is not getting any hits?
+### My rule is not getting any hits?
+
+If you write a rule and run it, but nothing happens or the query shows 0 hits 
+and you have tested the rule to see how many documents match your filters in 
+the last 2 hours, you should try removing the filter from your rule and try 
+testing it again. 
+
+This will show you if the index is correct and you have at least some documents. 
+If you have a filter in OpenSearch and you would like to recreate it, you would 
+probably need to use a query string so that your filter looks like this:
+
+```yaml copy
+filter:
+- query:
+    query_string:
+      query: "foo: bar AND baz: abc*"
+```
+
+If you received an error in your alert rule, it is likely that the YAML 
+is not spaced correctly and the filter is not in the right format. If you 
+are using other types of filters, like term, a common problem is not realising 
+that you need to use the analysed token. This is the default if you are 
+using Logstash. For example:
+
+```yaml copy
+filter:
+- term:
+    foo: "Test Document"
+```
+
+This will not match even if the original value for foo was exactly "Test Document". 
+Instead, you want to use `foo.raw`.
+
+### I got hits, why didn't I get an alert?
+### I got hits, why didn't I get an alert?
+
+If you got logs that had `X query hits, 0 matches, 0 alerts sent`, it will depend 
+on the type that you have used.  If you used type: any a match will occur for every hit.
+If you used `type: frequency` then the num_events must occur within the timeframe for 
+a match to occur. Different rules apply for the different rule types.
+
+```yaml copy
+es_host: 127.0.0.1
+es_port: 9200
+name: Log frequency rule
+type: frequency
+index: logstash-*
+is_enabled: false
+buffer_time:
+  minutes: 1
+run_every:
+  minutes: 1
+num_events: 30
+timeframe:
+  seconds: 30
+alert:
+- "email"
+email:
+- "test@example.com"
+```
+
+If you see `X matches, 0 alerts sent`, this may have occurred for several reasons. 
+If you have set an aggregation, the alert will not be sent until after that time 
+has been elapsed. If you have gotten an alert for this same rule before then rule 
+could have been silenced for a period of time. The default time for alerts is set 
+to fire every one minute between alerts. If the rule is silenced you would see 
+`Ignoring match for silenced rule` in the logs.
+
+### Why did I only get one alert when I expected to get several?
+### Why did I only get one alert when I expected to get several?
+
+There is a setting called `realert` which is the minimum time between two 
+alerts for the same rule. Any alert that occurs within this time will simply be dropped. 
+The default value is set to one minute. So if you want to receive an alert for every 
+match, even if they occur right after each other you can use:
+
+```yaml copy
+realert:
+  minutes: 0
+```
+
+You can also set it higher as well.
+
+### How can I prevent duplicate alerts?
+### How can I prevent duplicate alerts?
+
+By setting `realert`, you will prevent the same rule from alerting twice in an amount of time.
+
+```yaml copy
+realert:
+  days: 1
+```
+
+You can also prevent duplicates based on a certain field by using `query_key`. 
+For example, to prevent multiple alerts for the same user, you might use:
+
+```yaml copy
+realert:
+  hours: 8
+query_key: user
+```
+
+### How can I make the alert come at a certain time?
+### How can I make the alert come at a certain time?
+
+The aggregation feature will take every alert that has occurred over a period of 
+time and send them together in one alert. You can use cron style syntax to send 
+all alerts that have occurred since the last one by using
+
+```yaml copy
+aggregation:
+  schedule: '2 4 * * mon,fri'
+```
+
+### I'm not using @timestamp, what do I do?
+### I'm not using @timestamp, what do I do?
+
+You can use `timestamp_field` to change which field ElastAlert will use as 
+the timestamp. You can use `timestamp_type` to change it between 
+**ISO8601** and **Unix** timestamps. You must have some kind of timestamp 
+for ElastAlert to work. If your events are not in real-time, you can use 
+`query_delay` and `buffer_time` to adjust when ElastAlert will look for documents.
+
+If you have a second timestamp field other than @timestamp, you can use that instead by setting:
+
+```yaml copy
+timestamp_field: log-time
+```
+
+## Getting Started with OpenSearch Alerting
+## Getting Started with OpenSearch Alerting
+
+Logit.io provides extensive features and configurations to ingest, monitor, alert, 
+and notify based on your infrastructure and so much more! Follow this quickstart 
+guide to configure an alert and notification to Slack based on your data.
+Logit.io provides extensive features and configurations to ingest, monitor, alert, 
+and notify based on your infrastructure and so much more! Follow this quickstart 
+guide to configure an alert and notification to Slack based on your data.
+
+### Pre-requisites
+
+You'll need a Logit.io account. Sign up for a free 
+trial [here](https://dashboard.logit.io/sign-up?utm_source=GettingStartedGuideOpenTelemetryMetrics&utm_medium=SignUp).
+If your Logs stack isn't yet receiving data, see Getting Started Sending a File to Logit.io.
+You'll need a Logit.io account. Sign up for a free 
+trial [here](https://dashboard.logit.io/sign-up?utm_source=GettingStartedGuideOpenTelemetryMetrics&utm_medium=SignUp).
+If your Logs stack isn't yet receiving data, see Getting Started Sending a File to Logit.io.
+
+### Step 1: Configure an Alerting Monitor
+
+We'll walk you through the steps to access OpenSearch Alerting after clicking 
+"Launch Logs" from your dashboard. Whether you're new to alerting or an 
+experienced user, you'll find the insights and instructions you need to 
+harness the full potential of OpenSearch Alerting.
+We'll walk you through the steps to access OpenSearch Alerting after clicking 
+"Launch Logs" from your dashboard. Whether you're new to alerting or an 
+experienced user, you'll find the insights and instructions you need to 
+harness the full potential of OpenSearch Alerting.
+
+**Create a Monitor**
+
+1. Login to Logit.io
+
+2. From your dashboard choose Launch Logs, this opens OpenSearch which serves as the default Log viewer.
+
+3. From the left menu choose Alerting under the OpenSearch Plugins section.
+
+4. Choose Create Monitor
+
+![Create Monitor](@/images/help/getting-started/create-monitor.png)
+
+**Choose the Monitor Type**
+
+1. Move to the Monitor details section.
+
+2. Monitor Name: Give your monitor a meaningful name to identify its purpose.
+
+3. Monitor Type: Select "Per Query Monitor" to create a monitor that tracks individual search queries.
+
+4. Monitor Defining Method: Choose "Visual Editor" as the defining method. This provides a user-friendly interface for creating your monitor.
+
+5. Schedule Frequency: Set "Run Every" to specify how often you want the monitor to run. For this example, every 5 minutes.
+
+**Choose the Data Source**
+
+1. Move to the Data Source section.
+
+2. Index: Type the index that contains your data, in this case, enter filebeat-_ and hit enter. In this case, we are using a wildcard _ to look for any indexes that begin with Filebeat.
+
+3. Time field: Select the @timestamp in the Time field.
+
+![Data Source](@/images/help/getting-started/data-source.png)
+
+<Callout type="info">
+  To find the index value that contains your data from your 
+  dashboard https://dashboard.logit.io choose Launch Logs, 
+  select one of your documents, and look for the `\_index` field (shown below).
+</Callout>
+
+![Index Field](@/images/help/getting-started/index-field.png)
+
+### Configure the Filter
+
+
+1. Move to the Query section, here we can add the data filter that will trigger the alert.
+2. Data filter: Choose + Add filter and select the field you would like to filter on, in this case we are searching for 87.98.140.66 in the message field (shown below).
+
+![Query](@/images/help/getting-started/query.png)
+
+3. Expand the preview to see if that query would have matched any existing logs and confirm it's filtering as expected.
+
+![Count of Documents](@/images/help/getting-started/count-documents.png)
+
+### Configure the Trigger
+
+
+1. Move to the Trigger section, here we will add a Trigger so that if the number of matching logs are above a certain threshold.
+2. Trigger name: Enter a name for the Trigger
+3. Trigger condition: To test the trigger we're going to set this to IS ABOVE 0, if there are any logs in the given timeframe then the trigger will fire. Next we're going to set the trigger action to send a slack alert.
+
+![Trigger Action](@/images/help/getting-started/trigger-action.png)
+
+### Configure the Notification
+
+
+If you want to take specific actions when an alert is triggered, you can define actions. Actions can include sending notifications or executing custom scripts.
+1. Choose Add action.
+2. Choose “Manage Channels” to open a new window where you can add your slack channel details, then return to this tab and select your slack channel from the list. You can also choose from email, custom webhooks and other action channel types.
+3. You can leave the Message as the default and choose “Send test message” to check that the alert arrives in your Slack channel.
+
+![Configure Notification](@/images/help/getting-started/configure-notification.png)
+
+In slack you should see a message like that shown below when you test the message.
+
+![Webhook](@/images/help/getting-started/webhook.png)
+
+Choose Create at the bottom of the screen to configure the Trigger, Action and return the Monitor view.
+
+### Step 3: Monitor and Troubleshoot
+
+
+You can monitor your alerts with the monitor dashboard that facilitates monitoring and troubleshooting. 
+
+![Monitor Logs](@/images/help/getting-started/monitor-logs.png)
+
+Alerts are displayed in the timeline and are highlighted in red.
+
+![Alerts History](@/images/help/getting-started/alerts-history.png)
+
+The Alerts tab shows all active alerts as they occur.
+
+![Alert Triggers](@/images/help/getting-started/alert-triggers.png)

@@ -1,0 +1,123 @@
+---
+title: How Can I Monitor My Stack Health
+description: Viewing the health and logs for my stacks and resolving common issues and problems
+---
+
+# How Can I Monitor My Logit.io Stack Health and Recover From Common Issues?
+
+### How can I see the health of my stacks?
+
+If you are experiencing performance problems shipping logs to Logit.io using Filebeat or 
+other shippers it could indicate a problem with your OpenSearch stack. In order to 
+diagnose what the potential issue may be you can check the health of your stack(s) 
+by navigating to `Overview` settings.
+
+### Using Overview to view the health of your stacks
+
+![Stack Health](@/images/help/log-management/troubleshooting/stack-health.png)
+
+There are status indicators for OpenSearch, Logstash and OpenSeach Dashboards 
+instances. If there is an error or one of the instances requires attention, 
+you will be notified here. In addition, you can also see if the stack has 
+received data successfully over the last 24 hours.
+
+If there aren't currently any issues with any of your stacks the status indicators 
+will display green and healthy, anything different than this indicates a 
+problem with at least one of your instances.
+
+### Viewing the health of your stacks using your API Key
+
+You can also check the health of your stack by accessing the API directly. 
+To do this, from your Dashboard:
+
+- Navigate to `OpenSearch` settings for your stack.
+- Here you will see a section called "OpenSearch Api Access" which contains your Endpoint Address and your API Key.
+
+Use these to create a URL in the format shown below:
+
+```markdown
+[Your Endpoint Address]/\_cluster/health?apikey=[Your Api Key]
+```
+
+This displays a list of values similar to what is shown below:
+
+```json
+{
+  "cluster_name": "********-****-****-****-************",
+  "status": "green",
+  "timed_out": false,
+  "number_of_nodes": 3,
+  "number_of_data_nodes": 3,
+  "active_primary_shards": 3,
+  "active_shards": 6,
+  "relocating_shards": 0,
+  "initializing_shards": 0,
+  "unassigned_shards": 0,
+  "delayed_unassigned_shards": 0,
+  "number_of_pending_tasks": 0,
+  "number_of_in_flight_fetch": 0,
+  "task_max_waiting_in_queue_millis": 0,
+  "active_shards_percent_as_number": 100.0
+}
+```
+
+The main value to be concerned with here is the "status".
+
+**Green** shows that everything is fine and your cluster is fully operational.
+
+**Yellow** shows that Elasticsearch has allocated all of the primary shards but some or all of the replicas have not been allocated - if more shards were to disappear then this may impact your data.
+
+**Red** indicates that some or all of the primary shards are not currently ready - you are missing data and any searches may return partial or incomplete results.
+
+### Logstash logs and filters
+
+Viewing your Logstash logs is another good way to get an overview of activity 
+on your stack, and is, therefore, a good place to look when trying to diagnose 
+Logstash configuration changes that may have impacted your stack performance. 
+To view your Logstash logs from your Dashboard:
+
+- Navigate to `Diagnostic Logs` settings for the stack that you want to investigate.
+
+Your stack Logstash logs view gives you the ability to understand if there is a 
+potential issue and where in the pipeline the cause may potentially lie. Could 
+there be an issue with the data that you are sending? Is there a potential problem 
+with how the data is being received and filtered? Is there a general problem with Logstash itself?
+
+If the logs indicate a potential problem with Logstash and how it is processing the 
+data that is being received, the problem may lie with your Logstash filters. If you 
+have created custom filters it could be that they are preventing data from being 
+processed. To view your Logstash filters from the dashboard:
+
+- Navigate to `Logstash Pipelines` settings on the stack that you want to investigate.
+
+You can sense check your Logstash filters and make any syntax changes as necessary. 
+All Logit.io stacks enable you to test your Logstash filter syntax before applying them to your stack.
+
+![Advanced Logstash Filter Settings](@/images/help/log-management/troubleshooting/advanced-logstash-filter-settings.png)
+
+At the very bottom of the page, there is a section labelled "Advanced Logstash 
+Filter Settings" with a "Restart Logstash" button. Pressing this will restart 
+your Logstash instance. You will have to enter the name of your stack or your 
+stack ID to confirm that you want to go ahead with the restart process, during this 
+time Logstash is unable to receive any logs. Depending on the way that logs are 
+being sent to Logstash, this could result in some logs being dropped.
+
+### Rebuilding your stack
+
+If you think that your OpensSearch has gone down Logit.io makes it easy for you to 
+recover and rebuild the stacks yourself. You can rebuild any stack that you think 
+is causing problems or failing to respond. If, for example, you have made changes 
+or ran some commands that may be causing intermittent issues, then rebuilding may 
+quickly resolve the problem. You will not lose your OpenSearch data when you rebuild
+ the stack, however, there is a chance that any data that is currently in the 
+ process of being sent may be lost.
+
+![Rebuild Stack](@/images/help/log-management/troubleshooting/rebuild-stack.png)
+
+#### To rebuild a stack:
+
+- Navigate to the `Overview` settings for a service on the stack you wish to rebuild.
+- From here scroll right down to the bottom of the page and you will see a section labelled "Advanced Settings".
+- You will see a "Rebuild" button.
+
+You will have to enter the name of your stack or your Stack ID to confirm that you want to go ahead with the rebuild process.

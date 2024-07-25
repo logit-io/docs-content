@@ -1,0 +1,38 @@
+---
+title: Viewing Logs in Grafana
+description: Learn how to get started and explore your logs with Grafana
+---
+
+# Viewing Logs in Grafana
+
+### How to view your logs in Grafana
+Navigate to `Overview` settings for the stack that you want use Grafana to view logs and metrics.
+
+![View Logs Grafana](@/images/help/log-management/getting-started/view-logs-grafana.png)
+
+If you do not see the Grafana _Launch_ link shown above then you need to enable grafana for the stack.
+
+To do this, navigate to `Grafana Settings` and click the _Enable Grafana_ button. Once Grafana has finished provisioning
+you will can then return to `Overview` setting and you will see the Grafana _Launch_ button
+
+Once you have a few logs stored, click the Grafana _Launch_ button shown above and you should be able to view them from Grafana. 
+Make sure that you have the correct date range specified at the top-right corner of Grafana so that you are viewing logs received 
+roughly around the same time you sent them.
+
+![Grafana Date Range](@/images/help/log-management/getting-started/grafana-date-range.png)
+
+Then your explore view should look similar to the following:
+
+![Grafana Explore View](@/images/help/log-management/getting-started/grafana-explore-view.png)
+
+The dashboard page lets you create useful graphs and visualisations for displaying your data depending on your requirements, to get started choose the + symbol from the left menu and then Create. From here you can choose to add an empty panel.
+
+![Grafana Dashboard Page](@/images/help/log-management/getting-started/grafana-dashboard-page.png)
+
+This brings up the Edit Panel screen shown below, where you can customise the data displayed. In the example below we are displaying the average value for the selected field and displaying this as a bar graph. You can use the right panel to customise a whole host of options for how to display the data in your dashboard panel.
+
+![Grafana Edit Panel](@/images/help/log-management/getting-started/grafana-edit-panel.png)
+
+You will notice at the top of your Grafana dashboard, OpenSearch is selected as the data source, you can launch both OpenSearch Dashboards and Grafana for any stack and use your preferred tool depending on your use case.
+
+Using the blue refresh button in the top right, you can drop down the list and select a time to refresh and update the dashboard automatically.

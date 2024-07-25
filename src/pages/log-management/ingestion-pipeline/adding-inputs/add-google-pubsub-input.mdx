@@ -1,0 +1,31 @@
+---
+title: Add Google Pub/Sub Input
+description: Learn how to configure a Google Pub/Sub Input on your Logstash Instance
+---
+
+# How to add a Google Pub/Sub Input to your Log Stack
+
+To configure the Google Pub/Sub input in your Logstash stack, follow these steps:
+
+1. Navigate to `Logstash Inputs` settings.
+2. Click on the "Add New Input" button in the Logstash configuration wizard.
+3. Select the "Google Pub/Sub" option from the available input types.
+4. Complete the configuration details:
+   - **JSON Key File:** Specify the contents of a Service Account JSON key file.
+   - **Max Messages:** Set the maximum number of messages returned per request (default is 5).
+   - **Project ID:** Enter your Google Cloud Project ID (name, not number).
+   - **Subscription:** Provide the name of the Pub/Sub subscription. There is no default value for this setting.
+   - **Topic:** Enter the Google Cloud Pub/Sub Topic and Subscription. Note that the topic must be created manually with Cloud Logging pre-configured export to PubSub configured to use the defined topic. The subscription will be created automatically by the plugin.
+5. The following configuration details are optional, only add if required:
+   - **Include Metadata:** If set to true, it will include the full message data in the [@metadata][pubsub_message] field.
+   - **Create Subscription:** If true, the plugin will try to create the subscription before publishing. Note: this requires additional permissions to be granted to the client and is not recommended for most use-cases.
+   - **Display Name:** Provide a name for the Google Pub/Sub input.
+   - **Display Description:** Add a description for better identification.
+   - **Tags:** Assign tags to your events (comma-separated).
+   - **Type:** Add a type field to all events handled by this input.
+   - **Add Field:** Include additional fields to the events. You can add multiple key-value pairs.
+6. Click the "Configure Input" button to save the Google Pub/Sub input configuration.
+7. Click "Cancel" to discard changes.
+
+This guide provides a step-by-step process for configuring a Google Pub/Sub input in Logstash. 
+Adjust the values based on your specific use case and preferences.

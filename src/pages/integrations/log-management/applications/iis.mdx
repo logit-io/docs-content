@@ -1,0 +1,103 @@
+---
+title: IIS
+pageTitle: IIS Log Configuration
+subTitle: Ship logs from your IIS Websites to Logstash
+logo: iis
+color: "#0adef"
+description: Get started with analysing IIS logs with our easy integration allowing you to ship application logs from Filebeat to Logstash & Elasticsearch (ELK).
+stackTypes: logs
+sslPortType: beats-ssl
+---
+
+Send your HashiCorp Vault logs to logit.io via logstash 
+using the instructions below and begin searching your data.
+
+<Steps>
+  ### Install Filebeat
+
+  <InstallFilebeat />
+
+  ### Enable IIS module in Filebeat
+
+  We need to enable the IIS module in Filebeat so that filebeat know to look for IIS logs.
+  In Powershell run the following command:
+
+  `.\Filebeat modules enable iis`
+
+  Additional module configuration can be done using the per module config files located in the modules.d folder, 
+  most commonly this would be to read logs from a non-default location
+      
+  __win__ `<EXTRACTED_ARCHIVE>/modules.d/`
+
+  ```yml copy
+  - module: iis
+      # Access logs
+      access:
+      enabled: true
+
+      # Set custom paths for the log files. If left empty,
+      # Filebeat will choose the paths depending on your OS.
+      # var.paths: ["C:/inetpub/logs/LogFiles/*/*.log"]
+
+      # Error logs
+      error:
+      enabled: true
+
+      # Set custom paths for the log files. If left empty,
+      # Filebeat will choose the paths depending on your OS.
+      # var.paths: ["C:/Windows/System32/LogFiles/HTTPERR/*.log"]
+  ```
+
+  ### Update Your Configuration File
+
+  <UpdateFilebeatConfigFile />
+
+  ### Validate configuration
+
+  <ValidateBeat beatname="filebeat" />
+
+  ### Start filebeat
+  
+  <StartFilebeat />
+
+  ### Launch Logit.io to view your logs
+  <LaunchStack utmMedium="logs" utmCampaign="iis" source="iis" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>
+
+### IIS dashboard
+The IIS module comes with predefined Kibana dashboards. To view your dashboards for any of your Logit.io stacks, launch Logs and choose Dashboards.
+![Predefined kibana dashboard screenshot](@/images/integrations/filebeat/iis.png)
+
+### IIS Logging Overview
+
+Applications developed for [.NET](/integrations/logs/languages-and-libraries/dotnet) can 
+be hosted on an IIS (Internet Information Services) web server which can only 
+be used on the Windows operating system. IIS is commonly used to host web apps 
+& static sites running on ASP.Net.
+            
+IIS is known for its high flexibility & rich features. The most recent version 
+of IIS includes a number of out of the box security features including request 
+filters, client certificate mapping & URL authorisation.
+
+Modules for the latest version of IIS can be added as extensions to your 
+configuration if required to process requests. These include modules for 
+security, compression, content & caching which all hold a wealth of unique 
+features essential to server administration teams.
+
+Remote management is also included as part of the server's functionality 
+making it an ideal choice for DevOps teams undertaking remote work.
+
+All of this server activity generates a huge amount of log data for analysis. 
+Our IIS log file analyser can be used to centralise your data & 
+set up [alerts](https://logit.io/platform/features/hosted-elk/elk-alerting) to 
+monitor your application security in real-time as well as deliver metrics 
+for Kibana visualisations & reports easily.
+
+If you need any further assistance with analysing your IIS logs we're here 
+to help you get started. Feel free to reach out by contacting our support 
+team by visiting our dedicate Help Centre 
+or via <IntercomButton text="live chat"/> & we'll be happy to assist.

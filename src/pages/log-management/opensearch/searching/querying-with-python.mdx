@@ -1,0 +1,108 @@
+---
+title: Querying with Python
+description: Learn how to search OpenSearch with Python using Logit.io
+---
+
+# Querying OpenSearch with Python
+
+Navigating log management and analytics with hosted OpenSearch and Logit.io 
+can transform how you monitor, troubleshoot, and secure your applications. 
+
+This guide will walk you through the steps to craft efficient search queries in 
+OpenSearch, utilizing Python to interact with the Logit.io API.
+
+### Getting Started
+
+Before diving into the details, ensure you have the following:
+
+- An active Logit.io account.
+- Python installed on your system, version 3.6 or newer recommended.
+- Your Logit.io API credentials at hand.
+
+### Setting Up Your Python Environment
+
+**Install Python Libraries:** Your first step involves setting up your 
+Python environment with the necessary libraries. We'll use `requests` 
+for HTTP communication. Install it using pip:
+
+```sh copy
+pip install requests
+```
+
+**Locate Your Logit.io API Credentials:** Log into your Logit.io dashboard. 
+You'll need your API token and the listener URL specific to your account. 
+These are crucial for authenticating your requests.
+
+### Understanding OpenSearch Query DSL
+OpenSearch utilizes a JSON-based Domain Specific Language (DSL) for crafting 
+queries. It's tailored for filtering and searching logs efficiently.
+
+**Query Structure:** Queries in OpenSearch are structured in JSON. Familiarity 
+with JSON will help you understand and write these queries with ease.
+
+**Common Queries:**
+match for full-text search.
+term for exact matches.
+range for selecting logs within a specific timeframe.
+
+These types form the backbone of most searches you'll perform in OpenSearch.
+
+### Crafting Your First Query with Python
+Let's practice by writing a Python script that queries your Logit.io logs.
+
+**Establish a Connection:** Utilize the `requests` library to connect to Logit.io's 
+API endpoint. Remember to replace placeholders with your actual API token and 
+listener URL. Find out more about 
+this [here](/log-management/security/opensearch-api-access).
+
+```python copy showLineNumbers
+import requests
+
+api_url = "https://your-listener-url-goes-here/api/v1/search"
+api_token = "your_api_token_here"
+
+headers = {
+  "Content-Type": "application/json",
+  "X-API-TOKEN": api_token
+}
+```
+
+**Formulate a Query:** Construct a simple query in JSON format. This example searches 
+for logs that match a specific value in a field and filters logs from the last day.
+
+```python copy showLineNumbers
+query = {
+  "query": {
+    "bool": {
+      "must": [
+        {"match": {"some_field": "some_value"}}
+      ],
+      "filter": [
+        {"range": {"@timestamp": {"gte": "now-1d/d"}}}
+      ]
+    }
+  }
+}
+```
+
+**Execute and Handle the Response:** Send the query and process the response. 
+This step fetches your logs based on the query parameters and displays the results.
+
+```python copy showLineNumbers
+response = requests.post(api_url, headers=headers, json=query)
+response_json = response.json()
+print(response_json)
+```
+
+### Going Beyond Basic Queries
+
+**Leverage Aggregations:** Aggregations can uncover trends and patterns in your data. 
+They're powerful tools for data analysis within Logit.io.
+
+**Avoid Common Mistakes:** Broad queries can be resource-intensive. Focus on 
+crafting precise queries to enhance performance and relevancy.
+
+Mastering OpenSearch query DSL is a game-changer for utilizing Logit.io to its 
+full potential. With this guide, you're well on your way to becoming proficient 
+in searching and analyzing logs. Experiment with different queries and leverage 
+the extensive documentation provided by Logit.io and OpenSearch for further learning.

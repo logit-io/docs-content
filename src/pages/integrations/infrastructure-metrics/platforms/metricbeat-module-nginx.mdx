@@ -1,0 +1,113 @@
+---
+title: NGINX Metrics
+subTitle: Collect and ship NGINX server metrics to Logstash and Elasticsearch
+logo: nginx
+color: "#00aa4e"
+description: How to send NGINX server metrics to your Hosted ELK Logstash instance. Configure Metricbeat to send NGINX web server metrics to Logstash or Elasticsearch. 
+stackTypes: metrics
+sslPortType: beats-ssl
+---
+
+Metricbeat is a lightweight shipper that helps you monitor your NGINX web 
+servers by collecting metrics running on the NGINX server. Configure 
+Metricbeat using the pre-defined examples below to collect and ship NGINX 
+web service metrics and statistics to Logstash or Elasticsearch.
+
+<Steps>
+  ### Install Metricbeat
+
+  <InstallBeat beatname="metricbeat" />
+
+  ### Copy Configuration File
+
+  <MetricbeatOutput />
+
+  ### Enable Module
+
+  <EnableMetricbeatModule module="nginx" />
+
+  ### Configure Module
+
+  <ConfigureMetricbeatModule module="nginx">
+    ```yml copy showLineNumbers
+    - module: nginx
+      metricsets:
+        - stubstatus
+      period: 10s
+    
+      # NGINX hosts
+      hosts: ["http://127.0.0.1"]
+    
+      # Path to server status. Default server-status
+      server_status_path: "nginx_status"
+    
+      #username: "user"
+      #password: "secret"
+    ```
+  </ConfigureMetricbeatModule>
+
+  In order for the status metricset to work and correctly display the 
+  dashboard on Kibana, you will need to enable ngx_http_stub_status on your NGINX web server.
+
+  ### Start Metricbeat
+
+  Start or restart [Metricbeat](https://www.elastic.co/guide/en/beats/metricbeat/master/metricbeat-starting.html) 
+  to apply the configuration changes.
+
+  ### Check Logit.io for your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="nginx_metricbeat" source="metrics_nginx" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+  
+  ### Compatibility
+
+  The NGINX metricsets were tested with NGINX `1.9` and are expected to work with all versions >= `1.9`.
+
+  ### NGINX Module Dashboard
+
+  The NGINX module comes with predefined Kibana dashboards. To view your dashboards for any 
+  of your Logit.io stacks, launch Logs and choose Dashboards.
+
+  ![Predefined Kibana dashboard](@/images/integrations/metricbeats/metricbeat_nginx_module.png)
+
+</Steps>
+
+## NGINX Metricbeat Module Overview
+
+The Metricbeat Module for NGINX is an expertly crafted tool designed to 
+enhance the monitoring of NGINX servers by gathering crucial metrics. 
+For those who have previously utilized Metricbeat for data collection 
+across various platforms, its application to NGINX will be both 
+familiar and remarkably efficient.
+
+NGINX, known for its high performance, scalability, and ability to 
+handle large volumes of concurrent connections, is a cornerstone in modern 
+web architectures. The Metricbeat Module for NGINX taps into NGINX's status 
+module to collect important metrics such as active connections, request 
+rates, and error logs. This module thus provides vital insights into 
+server performance, enabling proactive management and optimization.
+
+This module is a favored choice among system administrators 
+and [DevOps](https://logit.io/blog/post/what-is-devops/) professionals 
+responsible for maintaining NGINX servers, thanks to its straightforward 
+configuration and its seamless integration with the Elastic Stack. This 
+powerful synergy offers an advanced platform for monitoring, visualizing, 
+and analyzing NGINX metrics in real time, far surpassing the 
+capabilities of traditional monitoring tools.
+
+In contrast to other monitoring solutions that might use proprietary or 
+inflexible formats, the Metricbeat Module for NGINX is designed for 
+simplicity, thorough analysis, and ease of troubleshooting within NGINX environments.
+
+Our platform extends robust support for the Metricbeat Module for NGINX, 
+providing centralized metrics management designed for effortless analysis 
+and active monitoring of your NGINX servers. This eliminates the need 
+for manual metric collection and analysis across distributed server environments.
+
+If you're seeking assistance with setting up the Metricbeat Module for 
+NGINX or have any questions about how to best monitor your NGINX servers, 
+the Logit.io team is here to help. Feel free to visit our Help Centre or 
+contact our support team <IntercomButton text="via live chat" /> and we'll be happy to assist.

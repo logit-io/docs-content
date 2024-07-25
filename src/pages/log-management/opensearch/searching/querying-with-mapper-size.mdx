@@ -1,0 +1,78 @@
+---
+title: Querying With Mapper Size
+description: Discover how to query OpenSearch to find large log messages in this guide
+---
+
+# How to query OpenSearch to find large log messages
+
+The "mapper-size" plugin allows you to track the size of documents in your 
+OpenSearch indices. Here's how you can enable it and query for large log messages:
+
+### Enable "mapper-size" Plugin
+
+Before you can query for large log messages, you need to enable the "mapper-size" 
+plugin for your OpenSearch indices. You can do this by updating the 
+mapping of your index. In the OpenSearch Dev Tools console, run the following command:
+
+```json
+PUT your-index-name
+{
+  "mappings": {
+    "_doc": {
+      "_size": {
+        "enabled": true
+      }
+    }
+  }
+}
+
+```
+Replace your-index-name with the actual name of your log index. This command enables the "mapper-size" for that specific index.
+
+### Query for Large Log Messages:
+Now that "mapper-size" is enabled, you can query for large log messages. 
+You can use OpenSearch's Discover or Visualize feature to create a 
+search for large log messages. Here's an example OpenSearch Query DSL 
+for finding log messages larger than a specific size (e.g., 1MB):
+
+```json
+{
+  "query": {
+    "range": {
+      "_size": {
+        "gte": 1000000
+      }
+    }
+  }
+}
+```
+
+This query will return log messages with a size greater than or equal to 1MB. 
+You can adjust the value (1,000,000 in this example) to fit your specific size threshold.
+
+### Save and Visualize:
+After creating your query, you can save it in OpenSearch and create visualizations or dashboards to monitor large log messages effectively.
+
+By following these steps, you can enable the "mapper-size" plugin, configure your index to track document sizes and create queries in OpenSearch to find and analyze large log messages in your OpenSearch indices.
+
+### Daily Ingestion
+
+If you wanted to have the size field available for all ingested data going forward then you would need to make some changes to the index templates, for example:
+
+```json
+PUT _template/your-template-name
+{
+  "order": 5,
+  "index_patterns": ["filebeat-*"],
+  "mappings": {
+    "_doc": {
+      "_size": {
+        "enabled": true
+      }
+    }
+  }
+}
+```
+
+If you need assistance updating your templates to include this change 
+simply reach today to a member of our team via live chat or via support@logit.io.

@@ -1,0 +1,115 @@
+---
+title: Jenkins Metrics via Telegraf
+subTitle: Ship your Jenkins Metrics via Telegraf to your Logit.io Stack
+logo: jenkins
+color: "#4d4d4d"
+description: Configure Telegraf to ship Jenkins metrics to your Logit.io stacks. Configure Telegraf to send Jenkins metrics to Logstash or Elastic. Get started using our Telegraf Jenkins metrics example configuration.
+stackTypes: metrics
+sslPortType: beats-ssl
+---
+
+Configure Telegraf to ship Jenkins metrics to your Logit.io stacks via Logstash.
+
+<Steps>
+
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+
+  ```yaml copy
+  # Read jobs and cluster metrics from Jenkins instances
+  [[inputs.jenkins]]
+    ## The Jenkins URL in the format "schema://host:port"
+    url = "http://my-jenkins-instance:8080"
+    # username = "admin"
+    # password = "admin"
+
+    ## Set response_timeout
+    response_timeout = "5s"
+
+    ## Optional TLS Config
+    # tls_ca = "/etc/telegraf/ca.pem"
+    # tls_cert = "/etc/telegraf/cert.pem"
+    # tls_key = "/etc/telegraf/key.pem"
+    ## Use SSL but skip chain & host verification
+    # insecure_skip_verify = false
+
+    ## Optional Max Job Build Age filter
+    ## Default 1 hour, ignore builds older than max_build_age
+    # max_build_age = "1h"
+
+    ## Optional Sub Job Depth filter
+    ## Jenkins can have unlimited layer of sub jobs
+    ## This config will limit the layers of pulling, default value 0 means
+    ## unlimited pulling until no more sub jobs
+    # max_subjob_depth = 0
+
+    ## Optional Sub Job Per Layer
+    ## In workflow-multibranch-plugin, each branch will be created as a sub job.
+    ## This config will limit to call only the lasted branches in each layer,
+    ## empty will use default value 10
+    # max_subjob_per_layer = 10
+
+    ## Jobs to include or exclude from gathering
+    ## When using both lists, job_exclude has priority.
+    ## Wildcards are supported: [ "jobA/*", "jobB/subjob1/*"]
+    # job_include = [ "*" ]
+    # job_exclude = [ ]
+
+    ## Nodes to include or exclude from gathering
+    ## When using both lists, node_exclude has priority.
+    # node_include = [ "*" ]
+    # node_exclude = [ ]
+
+    ## Worker pool for jenkins plugin only
+    ## Empty this field will use default value 5
+    # max_connections = 5
+  ```
+
+  <Callout type="info">
+    Read more about how to configure data scraping and configuration options for [Jenkins](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/jenkins)
+  </Callout>
+
+  ### Configure The Output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack source="Jenkins_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-Jenkins-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+### Telegraf Jenkins metrics Overview
+
+Jenkins is a robust continuous integration/continuous delivery (CI/CD) tool that's vital for streamlining and automating software development 
+rocesses. To maximize its capabilities, effective Jenkins monitoring and analysis are paramount. This is where Telegraf, the open-source server 
+monitoring agent, comes into play. Telegraf is ideal for collecting Jenkins metrics and data across various sources, including the Jenkins 
+server, operating systems, and databases.
+
+Telegraf's diverse range of plugins allows for comprehensive Jenkins monitoring. It collects a broad scope of Jenkins metrics, such as build 
+times, job statuses, and queue lengths. These metrics are invaluable in gaining insight into Jenkins server health and performance, enabling 
+organizations to enhance their CI/CD pipeline management.
+
+Prometheus, an advanced open-source monitoring and alerting toolkit, is the go-to choice for storing and analyzing the collected Jenkins metrics. 
+With its flexible query language and data visualization capabilities, Prometheus facilitates deep insights into Jenkins CI/CD pipelines. 
+Configuring Telegraf to convert Jenkins metrics into the Prometheus format, and setting up Prometheus to scrape these metrics from the Telegraf 
+server, ensures seamless integration.
+
+By using Telegraf for Jenkins monitoring and shipping those metrics to Prometheus, businesses establish a reliable and efficient CI/CD metrics 
+management solution. This process empowers them to closely monitor Jenkins performance, optimize their software delivery pipelines, and make 
+informed, data-driven decisions to guarantee optimal system health and performance.
+
+If you need any further assistance with shipping your log data to Logit.io we're here to help you get started. Feel free to get in contact with 
+our support team by sending us a message via <IntercomButton text="live chat" /> & we'll be happy to assist.

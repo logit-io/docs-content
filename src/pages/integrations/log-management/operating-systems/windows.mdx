@@ -1,0 +1,69 @@
+---
+title: Windows
+pageTitle: Windows Winlogbeat Setup
+subTitle: Use Logstash with Windows to ship logs to Elasticsearch and Kibana
+logo: windows
+color: "#00bfb3"
+description: Send your Windows application/access/error logs to your Logstash instance via Winlogbeat. Simplify sending logs with Logit.io's data source configurations.
+stackTypes: logs
+sslPortType: beats-ssl
+---
+
+Winlogbeat is a Windows specific event-log shipping agent installed 
+as a Windows service. It can be used to collect and send event 
+logs to one or more destinations, including Logstash.
+
+<Steps>
+  ### Install Winlogbeat
+
+ <InstallWindowsBeat
+    beatname = "winlogbeat"
+    version = "8.12.2"
+  />
+
+  ### Update your configuration file
+
+  <WinlogBeatConfigFile />
+
+  ### Validate Configuration
+
+  <ValidateWinlogBeat beatname="winlogbeat" />
+
+  ### Start winlogbeat
+
+  From the PowerShell prompt, (in the directory where winlogbeat was installed) run the following command:
+
+  ```ps copy
+  Start-Service winlogbeat
+  ```
+
+  ### Check Logit.io for your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="windows" source="windows" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+### Windows Centralised Logging Overview
+
+[Centralized logging](https://logit.io/) can provide several benefits for Windows environments, including:
+
+_Improved visibility_: By consolidating all logs from various Windows machines into a central location, it becomes easier to see what's happening across the entire infrastructure. 
+This can help with troubleshooting, identifying security threats, and monitoring system health.
+
+_Simplified management_: Instead of having to access logs on each individual Windows machine, administrators can manage logs from a single location. This can save time and reduce complexity.
+
+_Easier compliance_: Many regulatory frameworks require organizations to maintain logs for a certain period of time. Centralized logging can make it easier to meet these requirements by 
+providing a single location to store and manage logs.
+
+_Better security_: By monitoring logs from a central location, it becomes easier to identify suspicious activity and security threats across the entire infrastructure. This can help organizations 
+to proactively address potential security risks.
+
+_Scalability_: As organizations grow and add more Windows machines, [centralized logging](https://logit.io/) can scale to accommodate the increased volume of logs. This can help ensure that logs 
+are always available and accessible when needed.
+
+Overall, [centralized logging](https://logit.io/) for Windows can provide significant benefits for organizations of all sizes, including improved visibility, simplified management, easier compliance, 
+better security, and scalability.

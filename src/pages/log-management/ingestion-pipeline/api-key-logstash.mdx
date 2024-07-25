@@ -1,0 +1,50 @@
+---
+title: How To Use Your API Key in Logstash
+description: Discover the steps you need to take to send log files securely to Logstash using an API key in this helpful article from Logit.io
+---
+
+# How to use your API Key in Logstash
+
+Sending data to Logstash is quick and simple to set up. If you 
+have not already done so, please check out 
+our [Logstash data source guide](/integrations/log-management/shippers/logstash) before 
+learning how to properly use the API key.
+
+Once you have set up and configured your data source, you can configure 
+a custom API key in Logstash to ensure authorisation to send messages.
+
+## Adding the API key to every message
+
+Sending the API key with each message is the most common and preferred 
+way of authorising requests. This API key can be anything you 
+like (such as a GUID or a special string value of your choice).
+
+You will also need to create a Logstash filter to drop all incoming 
+messages that are missing the API key. The following code snippet 
+can do this, as well as check that the API key is of a GUID format:
+
+```ruby copy
+if [logstashApiKey] != "GUID" 
+{ 
+  drop {} 
+}
+```
+
+## Example using Filebeat
+
+To add the API key to messages being sent from Filebeat to Logstash, add it as 
+a field inside the YAML config file (`/etc/filebeat/filebeat.yml`):
+
+```yml copy
+filebeat.prospectors:
+  type: log
+  enabled: true
+  paths:
+    /var/log/nginx/access.log
+  fields:
+    type: nginx-access
+    logstashApiKey: <your-api-key>
+    fields_under_root: true
+    encoding: utf-8
+    exclude_files: [".gz"]
+```

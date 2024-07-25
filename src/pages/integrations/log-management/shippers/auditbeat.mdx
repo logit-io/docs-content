@@ -1,0 +1,94 @@
+---
+title: Auditbeat
+subTitle: A log shipper designed for audit data
+logo: auditbeat
+color: "#19c5b9"
+description: Learn how to send UDP logs to your Logstash instance using our configuration examples - Ship over 100 log data types easily with Logit.ioAuditbeat is an open-source shipping agent from Elastic that lets you ship audit data & events to Logstash & Elasticsearch (ELK).
+stackTypes: logs
+sslPortType: beats-ssl
+---
+
+Auditbeat is an open source shipping agent that lets you ship 
+audit data to one or more destinations, including Logstash.
+
+<Steps>
+  ### Install Auditbeat
+
+  <InstallBeat beatname="auditbeat" />
+
+  ### Configure Modules
+
+ <Tabs items={["DEB/RPM", "Windows", "macOS"]} unlink>
+    <Tab>
+      * __deb/rpm__ (Debian/Ubuntu/Mint/CentOS/RHEL/Fedora): `/etc/auditbeat/auditbeat.yml`
+    </Tab>
+    <Tab>
+      * __Windows:__ `C:\Program Files\auditbeat\auditbeat.yml`
+    </Tab>
+    <Tab>
+      * __Mac:__ `<EXTRACTED_ARCHIVE>/auditbeat.yml`
+    </Tab>
+  </Tabs>
+
+  By default, the `file_integrity` module will be enabled. This module watches for file changes such as when a file is created, updated or deleted. 
+  When a change is detected, auditbeat will send events containing metadata to one or more configured output sources (e.g. Logstash). 
+
+  The module can be configured in `auditbeat.yml` by adding or removing path addresses. Auditbeat will watch for changes in files relative to these paths.
+
+  <Callout type="info">
+    There is also a full example configuration file called auditbeat.reference.yml that shows all the possible options.
+  </Callout>
+
+  ### Configure output
+
+  <Output>
+    We'll be shipping to Logstash so that we have the option to run filters before the data is indexed.  
+    Comment out the elasticsearch output block.
+
+    ```yaml copy
+    ## Comment out elasticsearch output
+    #output.elasticsearch:
+    #  hosts: ["localhost:9200"]
+    ```
+  </Output>
+
+  ### Validate Configuration
+
+  <ValidateBeat beatname="auditbeat" />
+
+  ### Start Auditbeat
+
+  Start or restart [Auditbeat](https://www.elastic.co/guide/en/beats/auditbeat/master/auditbeat-starting.html) 
+  to apply the configuration changes.
+
+  ### Check Logit.io for your logs
+
+  <LaunchStack utmMedium="beats" utmCampaign="auditbeat" source="auditbeat" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+### Auditbeat Logging Overview
+
+Auditbeat is one of the most recent additions to Elastic Stack's Beats. 
+It is primarily used to gather audit data on user activity and processes 
+running on your server's infrastructure. Additionally, Auditbeat can be 
+used to detect crucial and unexpected changes to configuration files & binaries.
+
+This can be key to helping you to 
+identify [compliance](https://logit.io/solutions/compliance-and-auditing) issues 
+and [security](https://logit.io/about-us/security) violations in your organisation. 
+Once configured, changes to the file are updated in real-time to your output, 
+allowing for optimised visibility of security-related instances. It can be used 
+directly to undertake these processes & gather data without the need to 
+access Linux's [Auditd](/integrations/logs/applications/auditd).
+
+Centralising your Auditbeat event data using a log management system such as 
+Logit.io provides a way of easily managing your ELK Stack overheads in one single platform.
+
+If you need any further assistance with migrating your Auditbeat data to 
+Logstash we're here to help you get started. Feel free to reach out by 
+contacting our support team <IntercomButton text="via live chat" /> & we'll be happy to assist.

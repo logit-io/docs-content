@@ -1,0 +1,88 @@
+---
+title: Axonius
+subTitle: Ship Axonius logs to Logstash
+logo: axonius
+color: "#F26422"
+description: Send your Axonius logs to logit.io via logstash using the instructions below and begin searching your data
+stackTypes: logs
+sslPortType: beats-ssl
+---
+
+Send your Axonius logs to logit.io via logstash using the instructions below and begin searching your data.
+
+<Steps>
+  ### Setup Syslog Output
+
+  On your Axonius web interface, go to System Settings > Global Settings > Syslog Settings.
+
+  Select Use Syslog.
+
+  Enter the IP address of your remote syslog server into the Syslog host field. This is your Filebeat Server.
+
+  Enter the port number.
+
+  Select UDP in the Protocol menu.
+
+  ### Install Filebeat
+
+  <InstallFilebeat />
+
+  ### Configure Filebeat
+
+  The configuration file below is pre-configured to send data to your Logit.io Stack.
+          
+  Copy the configuration file below and overwrite the contents of the Filebeat configuration file typically located at `/etc/filebeat/filebeat.yml`
+
+  ```yml copy
+  # ============================== Filebeat inputs ===============================
+  filebeat.inputs:
+
+  - type: udp
+      max_message_size: 10MiB
+      host: "0.0.0.0:514"
+      enabled: true
+
+      fields:
+          type: axonius
+      fields_under_root: true
+      encoding: utf-8
+      ignore_older: 12h
+
+  # ================================== Outputs ===================================
+  output.logstash:
+      hosts: ["@logstash.host:@logstash.sslPort"]
+      loadbalance: true
+      ssl.enabled: true
+  ```
+
+  If you're running __Filebeat 7__, add this code block to the end. Otherwise, you can leave it out.
+
+  ```yml copy
+  # ... For Filebeat 7 only ...
+  filebeat.registry.path: /var/lib/filebeat
+  ```
+
+  If you're running __Filebeat 6__, add this code block to the end.
+
+  ```yml copy
+  # ... For Filebeat 6 only ...
+  registry_file: /var/lib/filebeat/registry
+  ```
+
+  __Validate your YAML__
+
+  _It's a good idea to run the configuration file through a YAML validator to rule out indentation errors, 
+  clean up extra characters, and check if your YAML file is valid. [Yamllint.com](https://yamllint.com) is a great choice._
+
+  ### Start filebeat
+  
+  <StartFilebeat />
+
+  ### Launch Logit.io to view your logs
+  <LaunchStack utmMedium="logs" utmCampaign="axonius" source="axonius" />
+
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>

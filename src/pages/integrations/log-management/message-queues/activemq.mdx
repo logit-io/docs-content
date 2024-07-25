@@ -1,0 +1,103 @@
+---
+title: ActiveMQ
+pageTitle: ActiveMQ Logs
+subTitle: Ship logs from a ActiveMQ message queue to Logstash
+logo: activemq
+color: "#d10066"
+description: How to send ActiveMQ message queue logs to your Hosted ELK Logstash instance. Configure Filebeat to send data to logstash.  
+stackTypes: logs
+sslPortType: beats-ssl
+---
+
+Filebeat is a lightweight shipper that enables you to send your ActiveMQ message queue logs to Logstash and Elasticsearch. 
+Configure Filebeat using the pre-defined examples below to start sending and analysing your ActiveMQ message queue logs.
+
+<Steps>
+
+  ### Configure the input.conf
+
+  Create the 00_input.conf file
+
+  ```ruby copy
+  input {
+    jms {
+      broker_url => 'failover:(tcp://{yourhost}:61616)?initialReconnectDelay=100'
+      destination => 'yourdestination'
+      factory => 'org.apache.activemq.ActiveMQConnectionFactory'
+      username => 'your-username'
+      password => 'your-password'
+      require_jars => ['/usr/share/jms/activemq-all-{version}.jar']
+    }
+  } 
+  ```
+
+  ### Configure the output
+
+  Create the 95_output.conf file to use tcp
+
+  ```ruby copy /"@logstash.sslPort:strip_quotes"/ /@logstash.host/
+  output {
+    tcp {
+        codec => json_lines
+        host => "@logstash.host"
+        port => "@logstash.sslPort:strip_quotes"
+        ssl_enable => true
+      }
+    }
+  ```
+
+### Configure the log4j2.properties
+
+Create the log4j2.properties file
+
+```cmd copy
+status = error
+
+appender.console.type = Console
+appender.console.name = console
+appender.console.layout.type = PatternLayout
+appender.console.layout.pattern = [%d{ISO8601}][%-5p][%-25c{1.}] %marker%m%n
+
+rootLogger.level = info
+rootLogger.appenderRef.console.ref = console
+```
+
+### Install Logstash
+
+__Docker__ *(/Ubuntu/Mac)*
+
+Create the Dockerfile
+
+```bash cpy
+FROM docker.elastic.co/logstash-oss:$version
+
+Run  logstash-plugin install logstash-input-jms
+```
+
+Build the docker image
+
+```bash copy
+docker build -t $Image_name:version .
+```
+
+Run the image
+
+```bash copy
+docker run -d --name ls \
+  -v $(pwd)/config/log4j2.properties:/etc/logstash/log4j2.properties:ro \
+  -v path_to_configuration_files:/cusdata:rw \
+  -p 9600:9600 \
+  -p 5044:5044 \
+  -p 3389:3389 \
+  logit/logstash:6.8.4 \
+  /usr/share/logstash/bin/logstash -f '/cusdata/*.conf' \
+  --config.reload.automatic \
+  --http.host=0.0.0.0 
+```
+
+### How to diagnose no data in Stack
+
+<DiagnoseNoData />
+
+</Steps>
+

@@ -1,0 +1,70 @@
+---
+title: Calculating Span Ingestion
+description: Learn how Logit.io calculates tracing & span ingestion
+---
+
+# How does Logit.io calculate span ingestion?
+
+## What is Span Ingestion?
+
+Span ingestion refers to the process of collecting and incorporating trace 
+data, often in the form of distributed tracing spans, into a monitoring or 
+observability system. Distributed tracing is a method used in software 
+engineering to trace the path of a request as it moves through various 
+components or services in a distributed system. Each step in the request's 
+journey generates a span that contains information about that step's 
+duration, dependencies, and other relevant data.
+
+Span ingestion involves taking these trace spans and sending them 
+to a monitoring or observability platform, where they can be analyzed 
+and visualized to gain insights into the performance and behaviour of 
+the distributed system. This data can be invaluable for diagnosing 
+performance issues, identifying bottlenecks, and optimizing 
+the system's overall performance.
+
+## How Logit.io calculates Span Ingestion
+
+Span ingestion is calculated based on the number of spans you ingest into 
+Logit.io every month. This refers to the count of individual spans or 
+trace data documents stored. Spans represent individual segments of distributed traces.
+
+The APM stacks retain the trace data by default, including spans, for 
+a period of 10 days. If you require a different data retention time 
+just reach out to the team to discuss your requirements.
+
+## Working with APM Metrics: Metrics Statistics
+
+To view your APM Usage Statistics, from the initial dashboard, scroll 
+down until you reach the Application Performance Monitoring section. 
+From here, in the top right, you will see a 'Statistics' button. Clicking 
+this will take you to the Usage Statistics page. Also, you can find usage 
+statistics from the menu on the left-hand side of your screen. You'll see 
+the heading 'Application Performance Monitoring' under this you will find 
+'Statistics' which will take you to the same 'Usage Statistics' page.
+
+![APM Stack](@/images/help/apm/overview/apm-stack.png)
+
+The Statistics screen empowers you to proactively manage your APM data usage for sending to your stack. It provides valuable insights and tools to optimize and streamline your data volume, helping you maximise your APM capabilities.
+
+![Usage Statistics](@/images/help/apm/apm-usage-statistics.png)
+
+**Usage Table:** The table at the end of the page provides more detailed information on data usage trends. It shows a daily breakdown of spans collected, spans sent per month, and your current plan limits for data.
+
+**APM Statistics - Today:**
+
+**Spans for Today:** This section displays the number of spans collected for the current day, which is "1,988,413" in this example.
+
+**Spans This Month:** This section displays the total number of spans collected for the current month, which is "167,252,189" in this example.
+
+**Planned Limit:** It indicates the planned monthly send limit, which is "5,000,000" spans in this example.
+
+**Usage Percentage:** This shows the percentage of the planned limit that has been used so far this month, which is "3345.0%" in this example.
+
+**Historic Usage:** The section titled "Showing by day" lists dates along with the spans sent for each day, allowing users to track usage trends over time.
+
+**Usage Table:** The table provides detailed statistics for each day, including span count, monthly count, planned monthly send limit, plan retention, and date.
+
+APM statistics allow you to monitor your APM data usage and ensure it 
+aligns with any plan limits and expectations. It also provides historical 
+context to understand trends in data usage over time. Users can use this 
+data to manage and optimize their APM data ingestion and storage.

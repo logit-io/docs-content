@@ -1,0 +1,69 @@
+---
+title: CheckPoint
+subTitle: Ship logs from CheckPoint to Logstash
+logo: checkpoint
+color: "#E0005A"
+description: Follow our Checkpoint tutorial to get started sending Checkpoint logs to Logstash for monitoring and analysis.
+stackTypes: logs
+---
+
+Follow our Checkpoint tutorial to get started sending Checkpoint logs to Logstash for monitoring and analysis.
+
+<Steps>
+  ### Prerequisites
+
+  Check Point "Log Exporter" is an easy and secure method for exporting Check Point logs over the syslog protocol.
+  Exporting can be done in few standard protocols and formats.
+
+  [CheckPoint Log Exporter](https://supportcenter.checkpoint.com/supportcenter/portal?eventSubmit_doGoviewsolutiondetails=&solutionid=sk122323)
+
+  ### Configure Check Point Log Exporter
+
+  You can start CheckPoint Log Exporter with the following syntax:
+
+  To send logs from all domains:
+
+  ```cmd copy
+  cp_log_export add name logitio_filebeat_exporter \
+  target-server <Insert_IP_of_Filebeat_Server> \
+  target-port 514 \
+  protocol udp \
+  format syslog \
+  --apply-now
+  ```
+
+  To send logs for a specific domain
+
+  ```cmd copy
+  cp_log_export add name logitio_filebeat_exporter \
+  domain-server <Insert_Your_Domain> \
+  target-server <Insert_IP_of_Filebeat_Server> \
+  target-port 514 \
+  protocol udp \
+  format syslog \
+  --apply-now
+  ```
+
+  For more configuration options see [CheckPoint Log Exporter](https://supportcenter.checkpoint.com/supportcenter/portal?eventSubmit_doGoviewsolutiondetails=&solutionid=sk122323).
+
+  ### Install Filebeat
+
+  <InstallFilebeat />
+
+  ### Update your configuration file
+
+  <FilebeatUdp type="checkpoint" />
+
+  ### Start Filebeat
+
+  <StartFilebeat />
+
+  ### Launch Logit.io to view your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="checkpoint" source="checkpoint" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>

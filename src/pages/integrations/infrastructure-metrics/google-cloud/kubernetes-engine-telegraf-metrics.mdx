@@ -1,0 +1,64 @@
+---
+title: Google Kubernetes Engine Metrics via Telegraf
+subTitle: Ship your Google Kubernetes Engine Metrics via Telegraf to your Logit.io Stack
+logo: GoogleCloudFirewallRules
+color: "#3c76d7"
+description: Configure Telegraf to ship Google Kubernetes Engine metrics to your Logit.io stacks. Get started using our Telegraf Google Kubernetes Engine metrics example.
+stackTypes: metrics
+---
+
+Configure Telegraf to ship Google Kubernetes Engine metrics to your Logit.io stacks via Logstash.
+
+<Steps>
+  ### Set Credentials in GCP
+
+  <SetGCPCredentials intro="Google Kubernetes Engine (GKE) is a managed container orchestration service offered by Google Cloud. It allows organizations to deploy, manage, and scale containerized applications using Kubernetes. GKE provides a reliable and scalable infrastructure for running containerized workloads, simplifying the management of Kubernetes clusters."/>
+  
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  <TelegrafStackDriverInput metric_type="kubernetes.io"/>
+
+  ### Configure the output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack stackType="metrics" source="Google_Kubernetes_Engine_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-GoogleKubernetesEngine-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>
+
+## Telegraf Google Kubernetes Engine Platform metrics Overview
+
+To ensure effective monitoring and analysis of Google Kubernetes Engine clusters, it is important to 
+implement a robust metrics management solution. Telegraf, an open-source server agent, is widely 
+recognized for its ability to collect and report metrics from various sources, including cluster 
+resource utilization, node health, and container performance.
+
+Telegraf offers a wide range of input plugins that enable users to collect diverse metrics related to 
+Kubernetes cluster performance, such as CPU and memory usage, network traffic, and pod status. 
+These metrics provide valuable insights into the efficiency and health of Kubernetes deployments.
+
+For storing and analyzing these metrics, organizations can leverage Prometheus, an open-source monitoring 
+and alerting toolkit known for its flexible query language and powerful data visualization capabilities. 
+The process of transmitting Google Kubernetes Engine metrics from Telegraf to Prometheus involves 
+configuring Telegraf to present metrics in Prometheus's format and instructing Prometheus to scrape 
+these metrics from the Telegraf server.
+
+Once the metrics are successfully integrated into Prometheus, organizations can perform comprehensive 
+analysis and visualization using Grafana. Grafana, a leading open-source platform for monitoring and 
+observability, seamlessly integrates with Prometheus, allowing users to create dynamic and interactive 
+dashboards to monitor Kubernetes cluster performance, troubleshoot issues, and optimize resource utilization.
+
+If you need any further assistance with shipping your log data to Logit.io we're here to help you get started. 
+Feel free to get in contact with our support team by sending us a message via <IntercomButton text="live chat" /> & we'll be happy to assist.

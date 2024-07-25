@@ -1,0 +1,177 @@
+---
+title: How Do I Check My Elastalert Rule is Configured Correctly?
+description: Making sure that your Elastalert yaml file is formatted and configured correctly
+---
+
+# How can I check my Elastalert rule is configured correctly?
+
+### Checking your YAML file
+
+All of the below points will prevent alerts from being fired but 
+there may not be an error message associated with the problem. It 
+is possible you may need to contact support to investigate this issue for you.
+
+- Issues with YAML spacing/formatting
+- Incorrect syntax
+- Required fields for rules that are missing
+- Two rules with the same name
+
+Make sure to proofread the rule you have written to ensure that it is 
+what you expect to see as most of the issues regarding Elastalert not 
+working correctly is related to the points above.
+
+Below is an example of a rule that has been misconfigured, it is 
+currently missing the recipient's email address from the rule. This 
+will not throw an error message but it will not work as intended. 
+Ensure that all fields that are required for a rule to trigger an 
+alert are in your YAML configuration.
+
+```yaml copy
+name: Log frequency rule
+type: frequency
+index: loginfo*
+is_enabled: false
+
+buffer_time:
+  minutes: 1
+run_every:
+  minutes: 1
+
+num_events: 30
+timeframe:
+  seconds: 30
+
+alert:
+- "email"
+```
+
+### Rule types & their required fields
+
+Different rules will have different required fields that need to be set in order for the rule to work. Below are the list of rules that you can configure in Elastalert and the fields required in order for the rule to work correctly. If these fields are missing or the YAML format is incorrect the rule will not work and the alert will fail.
+
+### Change
+This rule will monitor a certain field and match if that field changes. The field must change with respect to the last event with the same query_key. This rule requires three additional options without these fields the alerts will not be triggered:
+- **compare_key:** The names of the field to monitor for changes for example `compare_key: country_name`. This means that the rule will check that the country_name has changed and if it has the alert will be triggered.
+- **ignore_null:** For example `ignore_null: true` will check for any change in the compare_key but ignore the null value.
+- **query_key:** This rule is applied on a per-querykey basis. For example `querykey: username` will check that for each username against `thecomparekey` which in this example is thecountryname. So user A's country login will not affect the result of user B.
+
+### Frequency
+
+This rule matches where there are at least a certain number of events in a given time frame. This may be counted on a per-querykey basis meaning that it will check against a value you want to count, for example: querykey: "message: heartbeat*". This will then check the number of heartbeat message you are receiving in a set period of time. This rule requires two additional options:
+- **num_events:** For the `num_events` field this is the number of events that will trigger an alert, inclusive so if are expecting less than 10 events (example `message: heartbeat`) every 10 minutes you then you would want to set the `num_events` to 10. This will then trigger the alert if it ever exceeds 10 in that time period.
+- **timeframe:** The time that `num_events` must occur within so if you want to check your alert to ensure that any event is appearing more than you would expect in a certain time period.
+
+### Spike
+
+This rule matches when the volume of events during a given time period is `spike_height` times larger or smaller than during the previous time period. It uses two sliding windows to compare the current and reference frequency of events. This can be called windows "reference" and "current".This rule requires three additional options:
+- **spike_height:** The ratio of the number of events in the last timeframe to the previous timeframe that when hit will trigger an alert. So if you want to see if the frequency of events is 10 more than usual in 10 minutes you would set the `spike_height` to 10.
+- **spike_type:** Either 'up', 'down' or 'both'. 'Up' meaning the rule will only match when the number of events is `spike_height` times higher. 'Down' meaning the reference number is `spike_height` higher than the current number. 'Both' will match either.
+- **timeframe:** The time that `num_events` must occur within so if you want to check your alert to ensure that any event is appearing more than you would expect in a certain time period.
+
+### Flatline
+
+This rule matches when the total number of events is under a given threshold for a time period. This rule requires two additional options:
+- **threshold:** The minimum number of events for an alert not to be triggered so if the frequency of events drops below 100 in ten minutes you would see the alert being triggered.
+- **timeframe:** The time that `num_events` must occur within so if you want to check your alert to ensure that any event is appearing more than you would expect in a certain time period.
+
+If your timeframe is 10 minutes and you look for events that happened in 
+the last 10 minutes, `timeframe_elapsed` will always default to False. For 
+flatline rules, `first_event` gets populated with an empty "placeholder" 
+timestamp after the first query is made. So, it's guaranteed to get 
+populated after the first query.
+
+### Alerts
+Misconfigured alerts are a very common issue resulting in alerts not working correctly. 
+Each rule may have a number of alerts attached to it. They are configured in 
+the rule configuration file similarly to rule types. To set the alerts for a 
+rule, set the `alert` option to the name of the alert, or a list of the names of alerts.
+
+Below is the most common types of alerting used, which is email, Jira and slack.
+
+```yaml copy
+alert:
+- email
+- jira
+- slack
+```
+### Email
+
+Alerter can either be defined at the top level of the YAML file like 
+the example below of sending an email alert with a 'To' and 'From' field.
+
+```yaml copy
+alert:
+ - email
+from_addr: "no-reply@example.com"
+email: "customer@example.com"
+```
+
+Here is an example sending multiple emails in a nested format 
+but with different 'To' and 'From' fields:
+
+```yaml copy
+alert:
+ - email:
+     from_addr: "no-reply@example.com"
+     email: "custom@example.com"
+ - email:
+     from_addr: "elastalert@example.com"
+     email: "devs@example.com"
+```
+
+From both of these examples, you must ensure that the spacing is correct 
+for the alerts ensuring that they are properly aligned. If it is 
+incorrectly aligned you will get the error message: 
+
+```txt
+yaml.parser.ParserError: while parsing a block mapping and it will tell 
+you the line number where the configuration is incorrect.
+```
+
+### JIRA
+
+If you want to use ElasticAlert to create a solution to automatically 
+create and assign issues on JIRA, the JIRA alert requires 4 additional 
+options **jira_server**, **jira_project**, **jira_issuetype** and 
+**jiraaccountfile**. Here is how to configure your YAML correctly to send a JIRA alert:
+
+```yaml copy
+alert:
+- "jira"
+
+# The hostname of the JIRA server.
+jira_server: "XXXXjira.atlassian.net"
+
+# The project to open the ticket under.
+jira_project: "QBOX_ELAST_ALERT"
+
+#  The type of issue that the ticket will be filed as. Note that this is case sensitive.
+jira_issuetype: "bug"
+
+# The path to the file which contains JIRA account credentials.
+jira_account_file: "BASE_PATH/jira_acct.txt"
+```
+The account file is where your user name and password is but it should not be globally readable except for the example below. This account file is also formatted in YAML.
+
+```yaml copy
+# Jira username
+user: jira-user
+# Jira password
+password: p455XXXw0rd
+```
+
+### Slack
+
+Slack alerter will send a notification to a predefined Slack channel. 
+The body of the notification is formatted the same as with other alerters.
+
+The alerter requires the following option: `slack_webhook_url`. The webhook 
+URL that includes your auth data and the ID of the channel (room) you want to post to. Go to the Incoming Webhooks section in your Slack account https://XXXXX.slack.com/services/new/incoming-webhook, choose the channel, click 'Add Incoming Webhooks Integration' and copy the resulting URL. You can use a list of URLs to send to multiple channels.
+
+```yaml copy
+alert:
+  - "slack"
+slack_webhook_url: "https://hooks.slack.com/services/XXXXXXXXX/YYYYYYYYY/zzzzzzzzzzzzzzzzzzzzzzzzz"
+slack_emoji_override: ":alert:"
+slack_msg_color: "warning"
+```

@@ -1,0 +1,81 @@
+---
+title: Azure AKS Metrics
+subTitle: Ship Azure AKS metrics using VictoriaMetrics vmagent
+logo: AKS
+color: "#834c9a"
+description: Send Azure AKS Metrics to VictoriaMetrics using the vmagent instructions below and begin analysing your data
+stackTypes: metrics
+---
+
+Vmagent is a tiny but mighty agent which helps you collect 
+metrics from various sources and store them in VictoriaMetrics.
+
+<Steps>
+  ### Check you have an AKS cluster
+
+  This article assumes that you have an existing AKS cluster. 
+
+  If you need an AKS cluster, see the AKS quickstart using 
+  the [Azure CLI](https://docs.microsoft.com/en-us/azure/aks/learn/quick-kubernetes-deploy-cli), 
+  using [Azure PowerShell](https://docs.microsoft.com/en-us/azure/aks/learn/quick-kubernetes-deploy-powershell), 
+  or using the [Azure Portal](https://docs.microsoft.com/en-us/azure/aks/learn/quick-kubernetes-deploy-portal).
+
+  ### Verify your version of Helm
+
+  Use the Helm version command to verify your version of Helm
+
+  ```cmd copy
+  helm version
+  ```
+
+  ### Add VictoriaMetrics Helm Chart
+
+  Run the following to add the Victoria Metrics Helm chart.
+
+  ```cmd copy
+  helm repo add vm https://victoriametrics.github.io/helm-charts/
+  ```
+
+  ### Export Default Configuration YAML
+
+  Export the default configuration to a yaml file so that we can make an edit.
+
+  ```cmd copy
+  helm show values vm/victoria-metrics-agent >> vmagent-kubernetes.yml
+  ```
+
+  ### Add remoteWriteUrls
+
+  Open the exported configuration in a text editor to add in the remoteWriteUrls.
+
+  You will need to edit Line 65 of the vmagent-kubernetes.yml 
+
+  From:
+
+  ```yml copy
+  # WARN: need to specify at least one remote write url or one multi tenant url
+  remoteWriteUrls: []
+  # remoteWriteUrls:
+  #   - http://vm-insert:8480/insert/0/prometheus
+  #   - http://prometheus:8480/insert/0/prometheus
+  ```
+
+  To:
+
+  ```yml copy
+  # WARN: need to specify at least one remote write url or one multi tenant url
+  remoteWriteUrls: ["https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"]
+  # remoteWriteUrls:
+  #   - http://vm-insert:8480/insert/0/prometheus
+  #   - http://prometheus:8480/insert/0/prometheus
+  ```
+
+  ### Install Helm Chart
+
+  You are now ready to install the helm chart.
+
+  ```cmd copy
+  helm --namespace=victoriametrics install vmagent vm/victoria-metrics-agent --create-namespace -f vmagent-kubernetes.yml
+  ```
+
+</Steps>

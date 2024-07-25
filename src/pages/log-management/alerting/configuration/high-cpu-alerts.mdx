@@ -1,0 +1,112 @@
+---
+title: Configure OpenSearch Notifications for High CPU Alerts for Logs
+description: Learn how to get started and explore OpenSearch Alerting for Log Management
+---
+
+# Configure OpenSearch Notifications for High CPU Alerts for Logs
+
+## Alerting and Notifications for Log Management
+
+Managing and responding to critical events and anomalies in your OpenSearch 
+environment is essential for maintaining the health and performance of your 
+system. OpenSearch Alerting provides a powerful toolset for creating, configuring, 
+and managing alerts and monitors that keep you informed about the state of 
+your data. The article focuses on configuring a High CPU Warning Notification 
+and is based on already having 
+configured [shipping Metricbeat data.](/integrations/log-management/shippers/metricbeat)
+
+![Server High CPU Warning](@/images/help/log-management/alerting/high-cpu.png)
+An example Server High CPU Alert that is currently triggered
+
+To help users efficiently harness the capabilities of OpenSearch, Alerting is 
+organized into three distinct areas: Alerts, Monitors, and Notifications. 
+Each section serves a unique purpose in the alerting and monitoring workflow, 
+allowing users to create, customize, and execute a comprehensive alerting strategy.
+
+In this article, we'll explore these three areas, offering insights into their 
+functionalities and how they work together seamlessly. Whether you're new to 
+OpenSearch Alerting or looking to optimize your monitoring and alerting 
+processes, this article will serve as your roadmap to success.
+
+## Alerts, Monitors and Notifications
+
+### Alerts Tab
+
+![Alerts Tab](@/images/help/log-management/alerting/alerts-tab.png)
+
+- **Overview:** The "Alerts" tab serves as the central hub for managing your alerts. Here, you can view a list of all configured alerts, including their current status and last triggered time.
+- **Managing Alerts:** Alerts are fired depending on the Monitors that are configured, under “Monitor name” you can click the alert that has fired to see a detailed overview of the current status.
+- **Alert Status:** Users can quickly see which alerts are active, acknowledged, or resolved, helping them prioritize their responses.
+
+### Monitors Tab
+
+![Monitors Tab](@/images/help/log-management/alerting/monitors-tab.png)
+
+- **Overview:** The "Monitors" tab focuses on the configuration and management of monitoring checks or monitors. These monitors continuously evaluate data or conditions and may or may not generate alerts.
+- **Creating Monitors:** Users can set up monitors to track specific conditions or changes in their data. Monitors are often used to provide ongoing health checks without generating alerts.
+- **Monitoring Metrics:** This tab provides a detailed view of the performance metrics and statistics related to each monitor. Users can track how often monitors are executed and whether they are performing as expected.
+- **Integration with Alerts:** Users can link monitors to alerts, so when a monitor detects an issue, it can trigger an associated alert. This integration ensures a streamlined response to critical situations.
+
+### Notifications Tab
+
+![Notifications Tab](@/images/help/log-management/alerting/notifications-tab.png)
+
+- **Overview:** The "Notifications" area is your command centre for configuring how and where you receive notifications when an alert is triggered. This section allows you to set up various notification channels, define custom messages, and choose who should be notified.
+- **Creating Notification Channels:** Users can create notification channels for different communication platforms, such as email, Slack, or custom webhooks. This tab is where you configure the channels through which alerts will reach you and your team.
+- **Recipient Settings:** Define who should receive notifications for each alert. Specify individuals, groups, or roles within your organization to ensure that the right people are alerted when incidents occur.
+
+## Creating a Server High CPU Alert
+
+We'll walk you through the steps to access OpenSearch Alerting after 
+clicking "Launch Logs" from your dashboard. Whether you're new to 
+alerting or an experienced user, you'll find the insights and 
+instructions you need to harness the full potential of OpenSearch Alerting.
+
+![Creating a Server High CPU Alert](@/images/help/log-management/alerting/server-high-cpu-alert.png)
+
+After choosing "Launch Logs", select "Alerting" from the left menu and then move to the Monitors Tab.
+
+Choose 'Create Monitor'.
+
+![Create Monitor](@/images/help/log-management/alerting/create-monitor.png)
+
+- **Monitor Name:** Give your monitor a meaningful name to identify its purpose.
+- **Monitor Type:** Select "Per Query Monitor" to create a monitor that tracks individual search queries.
+- **Monitor Defining Method:** Choose "Visual Editor" as the defining method. This provides a user-friendly interface for creating your monitor.
+- **Schedule Frequency:** Set "Run Every" to specify how often you want the monitor to run. For this example, every 5 minutes.
+
+### Define Your Data Source, Query and Triggers:
+
+**Define Query:**
+
+- In the Visual Editor, you'll see a query builder interface.
+- Configure your query by selecting the index, timefield which is normally @timestamp, and defining search conditions.
+
+![Data Source](@/images/help/log-management/alerting/data-source.png)
+Selecting the data source and time field
+
+- Edit the query in the query editor, set the “Time range for the last” to 1 minute and the “Data filter” to system.cpu.user.norm.pct is greater than 0.85. Click on “Preview query and performance” to see the number of hits this would match in your data.
+
+![Query](@/images/help/log-management/alerting/query.png)
+
+**Set Trigger Conditions:**
+
+- Click on "Add Trigger" to create alert conditions.
+- Specify the severity level for each trigger condition (e.g., High, Medium, Low).
+- Configure the trigger conditions based on your query results. For example, you can trigger an alert when the number of results exceeds a certain threshold, in this case, set the “Trigger condition” to 0 for the purpose of testing.
+
+![Triggers](@/images/help/log-management/alerting/triggers.png)
+
+**Define Actions:**
+
+- If you want to take specific actions when an alert is triggered, you can define actions. Actions can include sending notifications or executing custom scripts.
+- Choose “Manage Channels” to open a new window where you can add your slack channel details, then return to this tab and select your slack channel from the list.
+
+![Define Actions](@/images/help/log-management/alerting/define-actions.png)
+
+- You can leave the Message as the default and choose “Send test message” to check that the alert arrives in your Slack channel.
+
+**Save and Activate:**
+
+- Once you're satisfied with the monitor configuration, click select “Create” to save the new Monitor.
+- After saving, you can activate the monitor to start monitoring your data based on the defined query and trigger conditions.

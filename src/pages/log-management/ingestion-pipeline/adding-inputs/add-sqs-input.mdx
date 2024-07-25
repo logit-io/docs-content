@@ -1,0 +1,44 @@
+---
+title: Add SQS Input
+description: Learn how to configure a SQS Input on your Logstash Instance
+---
+
+# How to add a SQS Input to your Log Stack
+
+To configure the SQS input in your Logstash stack, follow these steps:
+
+1. Navigate to `Logstash Inputs` settings.
+2. Click on the "Add New Input" button in the Logstash configuration wizard.
+3. Select the "SQS" option from the available input types.
+4. Complete the configuration details:
+   - **Access Key Id:** This plugin uses the AWS SDK and needs the access key ID.
+   - **Queue:** Name of the SQS Queue to pull messages from.
+   - **Region:** The AWS Region (Default value is "us-east-1").
+   - **Secret Access Key:** The AWS Secret Access Key.
+5. The following configuration details are optional, only add if required:
+   - **Additional Settings:** Key-value pairs of settings and corresponding values used to parametrize the connection to SQS. Refer to the full list in the AWS SDK documentation.
+   - **Endpoint:** The endpoint to connect to, constructed by default using the value of the region.
+   - **Id Field:** Name of the event field in which to store the SQS message ID.
+   - **MD5 Field:** Name of the event field in which to store the SQS message MD5 checksum.
+   - **Polling Frequency:** Polling frequency, default is 20 seconds.
+   - **Proxy Uri:** URI to proxy server if required.
+   - **Queue:** Name of the SQS Queue to pull messages from.
+   - **Queue Owner Aws Account Id:** ID of the AWS account owning the queue if you want to use a cross-account queue with embedded policy.
+   - **Region:** The AWS Region (Default value is "us-east-1").
+   - **Role ARN:** ID of the AWS account owning the queue if you want to use a cross-account queue with embedded policy.
+   - **Role Session Name:** Session name to use when assuming an IAM role.
+   - **Secret Access Key:** The AWS Secret Access Key.
+   - **Sent Timestamp Field:** Name of the event field in which to store the SQS message Sent Timestamp.
+   - **Session Token:** The AWS Session token for temporary credential.
+   - **Threads:** Default value is 1.
+   - **Use AWS Bundled CA:** Use bundled CA certificates that ship with AWS SDK to verify SSL peer certificates.
+   - **Display Name:** Provide a name for the SQS input.
+   - **Display Description:** Add a description for better identification.
+   - **Tags:** Assign tags to your events (comma-separated).
+   - **Type:** Add a type field to all events handled by this input.
+   - **Add Field:** Include additional fields to the events. You can add multiple key-value pairs.
+5. Click the "Configure Input" button to save the SQS input configuration.
+6. Click "Cancel" to discard changes.
+
+This guide provides a step-by-step process for configuring an SQS input in Logstash. 
+Adjust the values based on your specific use case and preferences.

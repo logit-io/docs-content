@@ -1,0 +1,83 @@
+---
+title: Overview
+description: Learn how to view and manage your Infrastructure Metrics stack in Logit.io
+---
+
+# Infrastructure Metrics Overview
+
+## What is an Infrastructure Metrics Stack?
+
+In the context of Infrastructure Metrics on Logit.io a stack refers to a collection or 
+set of software tools, services, and components that work together to monitor and 
+manage various aspects of an IT infrastructure.
+
+![Infrastructure Metrics Stack](@/images/help/infrastructure-metrics/infrastructure-metrics-stack.png)
+
+Regarding the Ingestion Pipeline this is the entry point of the stack where data is 
+collected from various sources. It includes components for data collection, such as 
+metrics shippers, data connectors, or APIs, that bring data into the pipeline. Here 
+you can utilise VM Agents to collect your metrics from a variety of different sources, 
+as well as view your individual VM Agent Instances and its health and size.
+
+For the Storage section, after processing, the data needs to be stored. This layer 
+includes databases, data warehouses, data lakes, or other storage solutions where 
+processed data is persisted for future retrieval and analysis. Here, you can utilise 
+VM Agents to collect and store your metrics from a variety of different sources, as 
+well as view your individual VM Agent Instances and its health, size, and number of cores.
+
+Finally, in reference to Visualizers, to make data insights accessible and understandable, 
+visualization tools and libraries are used to create charts, graphs, dashboards, and 
+reports. These visualizations can be interactive and provide a user-friendly interface for 
+exploring data. Here you can employ Grafana dashboards to produce interactive, customizable 
+visual displays that provide insights and real-time monitoring of data from various sources. 
+Also, you can view your Grafana nodes and their individual instances.
+
+## Working with your stack in Infrastructure Metrics
+
+To locate your Infrastructure Metrics stack in Logit.io, from the initial dashboard scroll 
+down to find Infrastructure Metrics, from here you can view your entire stack. There's a 
+lot of information in this section, so to support you we have broken this down. 
+
+## Stack Plan
+
+To begin with, directly below the application performance monitoring heading you'll find 
+'stack plan.' This will detail your stack details and subscription, including how many 
+spans per month and the retention time period.
+
+## Remote Write
+
+Beneath Stack Plan is the heading 'Services'. The first of the two 'Services' is 
+'Remote Write'. Here you can copy the endpoint to send metrics from a remote system.
+
+## Grafana
+
+The second option under 'Services' is 'Grafana'. From here you can copy your Grafana 
+endpoint. or select 'launch' which will take you to your Grafana dashboard homepage.
+
+![Hosted Grafana](@/images/help/infrastructure-metrics/hosted-grafana.png)
+
+## View Data Integrations
+
+Towards the top right of the Infrastructure Metrics section you will find 'View Data Integrations.' 
+Clicking this link will take you to our source integration tool. This tool has a wide variety 
+of source integrations available for you to use in Logit.io, with detailed and easy-to-follow 
+instructions to seamlessly integrate your data into the platform.
+
+![View Data Integrations](@/images/help/infrastructure-metrics/view-data-integrations.png)
+
+## View Statistics
+
+To the right of 'view data integrations' you'll find 'view statistics.' Clicking this link 
+will take you to a detailed page that will give you access to details about your stack 
+data usage and utilization. Additionally, historical usage data for up to one year's worth 
+of records is available. For a more comprehensive analysis of these patterns, the usage 
+table located at the bottom of this page provides a detailed breakdown. It illustrates 
+daily trends in active metrics, metrics sent per minute, and your existing data plan limits.
+
+## Manage Stack in Infrastructure Metrics
+
+Lastly, to the far right of the APM section, you will find the 'manage stack' button. 
+This page provides access to your Metrics Stack version details, allowing you to 
+either rebuild or remove your Stack as needed.
+
+![Infrastructure Metrics Overview](@/images/help/infrastructure-metrics/infrastructure-metrics-overview.png)

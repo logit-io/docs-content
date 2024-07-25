@@ -1,0 +1,64 @@
+---
+title: SSL Configuration
+description: Learn how to update your SSL configuration for Elastic Beats and Rsyslog with Logit.io
+---
+
+# How to update your SSL configuration for Elastic Beats and Rsyslog
+
+**To view the SSL Certificate Expiry Notice it can be found [here.](/log-management/security/ssl-certificate-expiry-notice)**
+
+The [updated certificate file](https://cdn.logit.io/root.logit.io.crt?_gl=1*6mao2j*_ga*NzE2MTk2MzcxLjE3MTAyNDM2MTA.*_ga_W546BZYLYM*MTcxODI4NzM3MS4xMTIuMS4xNzE4MjkwMDA5LjU3LjAuMA..) contains 
+both the old and new root certificates and should be updated as soon as possible, 
+if you have any issues with the new certificate, please contact us.
+
+## Rsyslog
+If you're not sending over an encrypted connection no changes are required, but we would urge you to upgrade to a TLS endpoint.
+
+Look for the double @@ before the logstash address to confirm.
+
+Sample configuration snippet:
+
+```plaintext copy
+$DefaultNetstreamDriverCAFile /etc/rsyslog.d/keys/ca.d/root.logit.io.crt
+
+$ActionSendStreamDriver gtls
+$ActionSendStreamDriverMode 1
+$ActionSendStreamDriverAuthMode x509/name
+$ActionSendStreamDriverPermittedPeer *.logit.io
+
+*.* @@YOUR-LOGSTASH-ENDPOINT:YOUR-SYSLOG-SSL-PORT
+```
+
+Rsyslog will only accept a single file name to verify the SSL connection 
+with, but you can have more than one certificate in that file.
+
+Replace the certificate file with a new file available from [here](https://cdn.logit.io/root.logit.io.crt?_gl=1*14o90h8*_ga*NzE2MTk2MzcxLjE3MTAyNDM2MTA.*_ga_W546BZYLYM*MTcxODI4NzM3MS4xMTIuMS4xNzE4MjkwMTk2LjYwLjAuMA..)
+
+Restart rsyslog and confirm it's reconnected and still sending data and reporting no errors.
+
+## Legacy Filebeat / Metricbeat / Other Elastic Beats 
+With older configurations (typically v1.3 or below) you may have specified a `certificate_authority` 
+and will need to update the intermediate.crt on your system, see below and example:
+
+```yml copy
+output.logstash:
+  hosts: ["YOUR-LOGSTASH-ENDPOINT:YOUR-BEATS-SSL-PORT"]
+
+  tls:
+    certificate_authorities: ['/etc/pki/tls/certs/root.logit.io.crt']
+    enabled: true
+```
+
+Please [download](https://cdn.logit.io/root.logit.io.crt?_gl=1*1wwfhtn*_ga*NzE2MTk2MzcxLjE3MTAyNDM2MTA.*_ga_W546BZYLYM*MTcxODI4NzM3MS4xMTIuMS4xNzE4MjkwMTk2LjYwLjAuMA..) the 
+new certificate and replace the old intermediate.crt. 
+
+Newer configurations that do not specify a certificate_authority are unlikely to 
+require configuration changes, however you may need to add our intermediate to 
+your certificate store as per your OS defaults, see below for an example which requires no action:
+
+```yml copy
+output.logstash:
+  hosts: ["YOUR-LOGSTASH-ENDPOINT:YOUR-BEATS-SSL-PORT"]
+  ssl.enabled: true
+```
+

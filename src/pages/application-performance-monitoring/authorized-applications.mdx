@@ -1,0 +1,48 @@
+---
+title: Configure Authorized Applications
+description: Authorizing Applications with User Credentials for Secure Tracing in your OpenSearch/Jaeger Stack
+---
+
+# How do you ensure that only authorized applications can send traces/spans to OpenSearch
+
+Securing traces and spans sent to OpenSearch is crucial for maintaining the 
+integrity of your distributed tracing data. This guide highlights the use 
+of username and password credentials over secure protocols like HTTPS and 
+gRPC to ensure that only authorized applications can send data. Discover 
+how the platform/UI simplifies this process, providing effortless 
+authentication for your OpenSearch cluster.
+
+## Authorizing Applications with User Credentials
+
+Your Logit.io stacks are configured for HTTPS and gRPC using username 
+and password, to view your Jaeger Open Telemetry endpoint details for 
+a stack, navigate to `Open Telemetry Inputs` settings.
+
+![Jaeger Collector Inputs](@/images/help/apm/jaeger-collector-inputs.png)
+
+## User Authentication Over HTTPS:
+
+- **Automatic SSL/TLS Certificates:**
+	- The platform/UI streamlines SSL/TLS certificate management for secure HTTPS communication.
+- **OpenSearch Configuration:**
+	- User authentication is seamlessly handled, allowing secure access using usernames and passwords.
+- **Application Integration:**
+	- Easily integrate your application or tracing agent with the automatically configured HTTPS endpoint, utilizing user credentials for authentication.
+
+## User Authentication Over gRPC:
+
+- **Automatic gRPC Support:**
+	- The platform/UI enables gRPC support on your OpenSearch instance.
+- **Secure OpenSearch Configuration:**
+	- User credentials for gRPC authentication are effortlessly managed by the platform/UI.
+- **Application Configuration:**
+	- Update your application configuration to utilize the automatically configured gRPC endpoint, securing communication with user credentials.
+
+## Conclusion:
+
+By prioritizing the use of username and password credentials over secure 
+protocols like HTTPS and gRPC, the platform/UI simplifies the authentication 
+process. This ensures that only authorized applications can seamlessly send 
+traces and spans to your OpenSearch cluster, simplifying the configuration 
+of encryption and secure communication while bolstering the overall 
+security of your distributed tracing data.

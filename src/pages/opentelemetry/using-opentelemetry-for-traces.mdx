@@ -1,0 +1,82 @@
+---
+title: Using OpenTelemetry for Traces
+description: How to Onboard and Get Started Sending Data using OpenTelemetry to your Traces/APM Stack
+---
+
+# Getting Started With OpenTelemetry for Traces
+
+Logit.io provides extensive features and configurations to ingest, 
+monitor, and analyze data, manage your infrastructure and so much more!
+
+Follow this quickstart guide to send metrics data using the OpenTelemetry collector.
+
+## Pre-requisites
+
+You'll need a Logit.io account. Sign up for a free 
+trial [here](https://dashboard.logit.io/sign-up?utm_source=GettingStartedGuideOpenTelemetryMetrics&utm_medium=SignUp).
+
+## Step 1: Get your data into Logit.io
+
+Your data analytics journey starts by sending your Logs, Metrics or Traces 
+to Logit.io. For this purpose, we will be using the OpenTelemetry Collector. 
+This choice enables you to quickly and securely ship your data. 
+
+The OpenTelemetry Collector offers a vendor-agnostic way to collect, 
+process, and export telemetry data, ensuring compatibility and 
+flexibility across different monitoring tools and services.
+
+## Set up your data source
+
+**Traces OpenTelemetry Collector**
+
+1. Login to Logit.io
+
+2. Initiate the configuration process by clicking on _View Data Integrations_.
+
+![APM Stack](@/images/help/apm/overview/apm-stack.png) 
+
+Navigate to "Integrations" > "OpenTelemetry" > "Traces OpenTelemetry Collector"
+
+![Traces OpenTelemetry Collector](@/images/help/getting-started/traces-opentelemetry-collector.png)
+
+3. After you have installed and configured the OpenTelemetry Collector return to your dashboard https://dashboard.logit.io
+
+4. From your dashboard choose Launch APM.
+
+## Step 2: Verify and Search your Data
+
+As Jaeger launches, which serves as the default Trace viewer, you are redirected to the SearchView.
+
+**The Search View**
+
+The Search View in Jaeger enables the exploration and analysis of your 
+stack's incoming trace data. It provides an intuitive interface for quickly 
+identifying specific traces, pinpointing errors, or examining varied 
+trace information and metadata.
+The Search View in Jaeger enables the exploration and analysis of your 
+stack's incoming trace data. It provides an intuitive interface for quickly 
+identifying specific traces, pinpointing errors, or examining varied 
+trace information and metadata.
+
+![Jaeger Search](@/images/help/getting-started/jaeger-search.png)
+
+Select the required Service from the list as shown below and 
+choose Find Traces to visualize your data.
+Select the required Service from the list as shown below and 
+choose Find Traces to visualize your data.
+
+![Traces Visualize](@/images/help/getting-started/traces-visualize.png)
+
+## Step 3: Investigate and Troubleshoot
+
+To investigate a trace in greater detail, click on a trace summary in Jaeger's Overview. 
+This action allows for an in-depth examination of a trace's span durations and operational 
+flow, essential for diagnosing issues and optimizing system performance.
+
+![Investigate and Troubleshoot](@/images/help/getting-started/investigate-troubleshoot.png)
+
+Once you've sent your traces to Logit.io, you can gain an in-depth perspective 
+on the health and performance of your distributed cloud services through using 
+real-time monitoring, and custom dashboards. This allows your team to dive deep 
+into logs for troubleshooting, while simultaneously offering a broad view of 
+your infrastructure's status via custom dashboards and notifications.

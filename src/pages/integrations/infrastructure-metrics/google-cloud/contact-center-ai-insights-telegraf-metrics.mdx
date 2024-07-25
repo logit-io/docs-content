@@ -1,0 +1,75 @@
+---
+title: Google Contact Center AI Insights Metrics via Telegraf
+subTitle: Ship your Google Contact Center AI Insights Metrics via Telegraf to your Logit.io Stack
+logo: googlecloud
+color: "#3c76d7"
+description: Set up Telegraf to ship Google Contact Center AI Insights metrics to Logit.io. Use our Telegraf Google Contact Center AI Insights metrics example configuration.
+stackTypes: metrics
+---
+
+Configure Telegraf to ship Google Contact Center AI Insights metrics to your Logit.io stacks via Logstash.
+
+<Steps>
+  ### Set Credentials in GCP
+
+  <SetGCPCredentials intro="Google Contact Center AI Insights is an exclusive aggregation of services encapsulated within Google Cloud. It's intentionally designed for the creation, deployment, and management of asynchronous task queues, fostering secure and efficient coordination between various software entities in a cloud-driven landscape."/>
+  
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  <TelegrafStackDriverInput metric_type="contactcenterinsights.googleapis.com"/>
+
+  ### Configure the output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack stackType="metrics" source="Google_Contact_Center_AI_Insights_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-GoogleContactCenterAi-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>
+
+## Telegraf Google Contact Center AI Insights Platform metrics Overview
+
+Telegraf, the versatile open-source server agent from InfluxData, is designed for collecting metrics 
+and data from various sources, tailored to enhance monitoring and analytics. A noteworthy integration 
+is with Google Contact Center AI (CCAI) Insights, a part of Google Cloud's suite of artificial 
+intelligence tools aimed at transforming contact centers through AI-powered conversation analysis 
+and insights. Google CCAI Insights provides deep analysis of contact center interactions to improve 
+customer service experience, operational efficiency, and agent performance by leveraging advanced 
+natural language understanding and machine learning technologies.
+
+Integrating Telegraf with Google Contact Center AI Insights enables organizations to monitor and 
+analyze the performance and effectiveness of their contact center operations in real time. This 
+capability is critical for customer service managers and IT teams focused on optimizing contact 
+center interactions, understanding customer sentiments, and identifying trends and areas for 
+improvement. Metrics such as call duration, resolution times, customer satisfaction scores, and 
+AI response effectiveness are vital for assessing the quality of customer service, agent performance, 
+and the overall efficiency of contact center operations.
+
+However, the complexity and volume of data generated from analyzing contact center interactions 
+pose significant challenges in terms of data management, analysis, and visualization. Logit.io 
+offers a comprehensive solution by providing an advanced analytics platform that simplifies the 
+processing and visualization of metrics from Telegraf and Google CCAI Insights. 
+
+With Logit.io, businesses can enhance their contact center analytics capabilities, enabling them 
+to gain actionable insights into customer interactions, improve customer satisfaction, and 
+optimize contact center performance. The platform's advanced analytics and visualization tools 
+support data-driven decision-making, facilitating the identification of trends, patterns, and 
+opportunities for improvement in contact center operations.
+
+In addition, to delve into our Google data integration capabilities and maximize your data 
+management, explore [Google Workflow](/integrations/metrics/google-cloud/workflows-telegraf-metrics) 
+and [Memory Store Memcached](/integrations/metrics/google-cloud/memory-store-memcached-telegraf-metrics) 
+metrics for a comprehensive approach to enhancing your organization's performance and 
+decision-making processes. Seamless integration is one of the core strengths of 
+Logit.io's [GCP logging](https://logit.io/solutions/gcp-logging/) service.

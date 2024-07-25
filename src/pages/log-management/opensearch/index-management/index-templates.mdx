@@ -1,0 +1,84 @@
+---
+title: Index Templates
+description: What are OpenSearch index templates and how can I view them for my Stacks?
+---
+
+# Understanding OpenSearch index templates and how to view them
+
+## What is an OpenSearch index template?
+
+Index templates define settings and mappings that you can automatically 
+apply when creating new indices. OpenSearch applies templates to new 
+indices based on an index pattern that matches the index name. Index 
+templates are only applied during index creation. Changes to index 
+templates do not affect existing indices. Settings and mappings specified 
+in create index API requests override any settings or mappings 
+specified in an index template.
+
+## How can I view the current templates?
+
+There are two ways you can view the current index templates on your Logit.io stacks.
+
+### 1. Using OpenSearch Dashboards Dev tools
+
+One way is to use dev tools in OpenSearch Dashboards. You can access 
+OpenSearch Dashboards from any of your stacks by clicking the _Launch Logs_ button.
+Once OpenSearch Dashboards has opened you need to open Dev Tools by 
+clicking on the wrench icon in the left-hand menu.
+
+![OpenSearch Dashboards](@/images/help/log-management/storage/opensearch-dashboards.png)
+
+In the console section of the screen, we are going to enter the following command.
+```plaintext
+GET _template
+```
+You should get an output similar to that of the screenshot below. Here you can 
+see all the index templates currently used on this OpenSearch instance.
+
+![OpenSearch Instance](@/images/help/log-management/storage/opensearch-instance.png)
+
+You can also search for a specific template. For example, if we wanted to see the 
+template for the filebeat-* index pattern we can run the following command to return 
+only the desired template. We have used a wildcard expression below to return any 
+template that contains filebeat-'wildcard'.
+
+```cmd copy
+GET _template/filebeat-*
+```
+
+This will return a JSON output similar to the screenshot below. Here you can see the following:
+
+- The index template name = filebeat-7.7
+- The order of the template = 1 
+- The index pattern this template applies to = filebeat-*
+
+![OpenSearch Dev Tools](@/images/help/log-management/storage/opensearch-dev-tools.png)
+
+### 2. Using the Template Index API
+
+The second way to review the index templates currently in use is to use the index template API. 
+To do this you will need your Elasticsearch endpoint address and your ApiKey. 
+To access these navigate to `OpenSearch Dashboards Settings` .
+
+![Index API](@/images/help/log-management/storage/index-api.png)
+
+The next step is to write a curl -x get command to retrieve the mappings from Elasticsearch. 
+In your terminal window, you can run a command similar to the below.
+
+```cmd copy
+curl -X GET https://<your-stack-id>-es.logit.io/_template/?apikey=<your-stack-api-key>&pretty
+```
+
+This will return a JSON output similar to the screenshot below.
+
+![JSON Output](@/images/help/log-management/storage/json-output.png)
+
+Similar to using Kibana Dev Tools you can also search for a specific template using the index template API. 
+
+To do this you can run a command similar to the below remembering to substitute in your stack ID and stack ApiKey.
+
+```cmd copy
+curl -X GET https://<Your-stack-ID>-es.logit.io/_template/filebeat-*/?apikey=<your-stack-ApiKey>&pretty
+```
+
+By adding the 'filebeat-*/ ' to the command we can search for only the index templates that contain filebeat-*.

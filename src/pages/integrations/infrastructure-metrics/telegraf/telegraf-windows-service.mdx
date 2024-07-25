@@ -1,0 +1,84 @@
+---
+title: Windows Services Metrics via Telegraf
+subTitle: Ship your Windows Services Metrics via Telegraf to your Logit.io Stack
+logo: windows
+color: "#4d4d4d"
+description: Configure Telegraf to ship Windows Services metrics to your Logit.io stacks. Configure Telegraf to send Windows Services metrics to Logstash or Elastic. Get started using our Telegraf Windows Services metrics example configuration.
+stackTypes: metrics
+sslPortType: beats-ssl
+---
+
+Configure Telegraf to ship Windows Services metrics to your Logit.io stacks via Logstash.
+
+<Steps>
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+
+  ```yaml copy
+  # Input plugin to report Windows services info.
+  # This plugin ONLY supports Windows
+  [[inputs.win_services]]
+    ## Names of the services to monitor. Leave empty to monitor all the available services on the host. Globs accepted. Case sensitive.
+    service_names = [
+      "LanmanServer",
+      "TermService",
+      "Win*",
+    ]
+    excluded_service_names = ['WinRM'] # optional, list of service names to exclude
+  ```
+
+  <Callout type="info">
+    Read more about how to configure data scraping and configuration options for [Windows Services](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/win_services)
+  </Callout>
+
+  ### Configure the output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack source="Windows_Services_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-WindowsServices-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+### Telegraf Windows Services metrics Overview
+
+For effectively monitoring and analyzing Windows services metrics in a distributed environment, 
+it's crucial to utilize a robust and reliable metrics management solution. Telegraf, an open-source 
+server agent recognized for its metrics collection capabilities, serves as an excellent tool for 
+collecting Windows services metrics from a wide range of sources, such as active Windows servers, 
+databases, and other related software applications.
+
+Telegraf comes equipped with an extensive variety of input plugins, allowing users to amass metrics 
+from several sources like CPU usage, memory consumption, network activity, and more. To store and 
+interrogate these gathered metrics, organizations can utilize Prometheus, an open-source monitoring 
+and alerting system known for its flexible querying language and powerful graphic data visualization.
+
+To transport Windows services metrics from Telegraf to Prometheus, organizations need to configure 
+Telegraf to output metrics in the Prometheus format, followed by using Prometheus to scrape these 
+metrics from the Telegraf server. This process entails setting up Telegraf to gather Windows services 
+metrics and output them in the Prometheus format, arranging Prometheus to fetch these metrics from 
+the Telegraf server, and then analyzing and visualizing the data using Prometheus's flexible 
+querying and visualization tools.
+
+Once the metrics are successfully imported into Prometheus, they can be further scrutinized and 
+visualized using Grafana. Grafana, an open-source platform known for its monitoring and observability 
+capabilities, is fully compatible with Prometheus. It provides users the ability to create dynamic, 
+interactive dashboards for a deeper dive into metrics data, enabling a more thorough understanding 
+of performance trends and potential issues.
+
+If you need any further assistance with shipping your log data to Logit.io we're here to help you get started. 
+Feel free to get in contact with our support team by sending us a message via <IntercomButton text="live chat" /> 
+& we'll be happy to assist.

@@ -1,0 +1,292 @@
+---
+title: RabbitMQ
+pageTitle: Logstash RabbitMQ App Configuration
+subTitle: Ship RabbitMQ application logs to Logstash
+logo: rabbitmq
+color: "#f66000"
+description: Learn how to send RabbitMQ application logs to your Logstash instance - Ship over 100 log data types easily with Logit.io
+stackTypes: logs
+sslPortType: beats-ssl
+---
+
+Learn how to send RabbitMQ application logs to your Logstash instance - Ship over 100 log data types easily with Logit.io.
+
+<Steps>
+  ### Install Filebeat
+
+  <InstallFilebeat />
+
+  ### Update Your Configuration File
+
+  <Tabs items={["Windows", "Linux", "macOS", "DEB", "RPM"]}>
+    <Tab>
+      The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+
+      __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ 
+      field in the Logstash outputs section are correctly populated.
+
+      If you are logged into your Logit.io account the ___'hosts'___ field should have 
+      been pre-populated with the correct values. The ___'paths'___ field will need to be set 
+      to the location of the rabbitMQ logs you want to send to your Stack.
+      
+      Copy the configuration file below (making the above changes as necessary) and overwrite 
+      the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step. If it is missing create a new file with that name and populate it with the configuration details below).
+
+      ```yml copy showLineNumbers
+      ###################### Logit.io Filebeat Configuration ########################
+      # ============================== Filebeat inputs ==============================
+      filebeat.inputs:
+      - type: filestream
+          enabled: true
+          paths:
+          - /var/log/rabbitmq/*.log
+          fields:
+          type: rabbitmq
+          multiline.pattern: ^\=
+          multiline.match: before
+      
+      # ============================== Filebeat modules ==============================
+      filebeat.config.modules:
+          path: ${path.config}/modules.d/*.yml
+          reload.enabled: false
+          #reload.period: 10s
+
+      # ================================== Outputs ===================================
+      # ------------------------------ Logstash Output -------------------------------
+      output.logstash:
+          hosts: ["@logstash.host:@logstash.sslPort"]
+          loadbalance: true
+          ssl.enabled: true
+
+      # ================================= Processors =================================
+      processors:
+          - add_host_metadata:
+              when.not.contains.tags: forwarded
+          - add_cloud_metadata: ~
+          - add_docker_metadata: ~
+          - add_kubernetes_metadata: ~
+      ```
+    </Tab>
+    <Tab>
+      The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+
+      __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ 
+      field in the Logstash outputs section are correctly populated.
+
+      If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
+      The ___'paths'___ field will need to be set to the location of the rabbitMQ logs you want to send to your Stack.
+      
+      Copy the configuration file below (making the above changes as necessary) and overwrite the 
+      contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
+
+      ```yml copy showLineNumbers
+      ###################### Logit.io Filebeat Configuration ########################
+      # ============================== Filebeat inputs ==============================
+      filebeat.inputs:
+      - type: filestream
+          enabled: true
+          paths:
+          - /var/log/rabbitmq/*.log
+          fields:
+          type: rabbitmq
+          multiline.pattern: ^\=
+          multiline.match: before
+      
+      # ============================== Filebeat modules ==============================
+      filebeat.config.modules:
+          path: ${path.config}/modules.d/*.yml
+          reload.enabled: false
+          #reload.period: 10s
+
+      # ================================== Outputs ===================================
+      # ------------------------------ Logstash Output -------------------------------
+      output.logstash:
+          hosts: ["@logstash.host:@logstash.sslPort"]
+          loadbalance: true
+          ssl.enabled: true
+
+      # ================================= Processors =================================
+      processors:
+          - add_host_metadata:
+              when.not.contains.tags: forwarded
+          - add_cloud_metadata: ~
+          - add_docker_metadata: ~
+          - add_kubernetes_metadata: ~
+      ```
+    </Tab>
+    <Tab>
+      The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+
+      __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ 
+      field in the Logstash outputs section are correctly populated.
+
+      If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
+      The ___'paths'___ field will need to be set to the location of the rabbitMQ logs you want to send to your Stack.
+      
+      Copy the configuration file below (making the above changes as necessary) and overwrite 
+      the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
+
+      ```yml copy showLineNumbers
+      ###################### Logit.io Filebeat Configuration ########################
+      # ============================== Filebeat inputs ==============================
+      filebeat.inputs:
+      - type: filestream
+          enabled: true
+          paths:
+          - /var/log/rabbitmq/*.log
+          fields:
+          type: rabbitmq
+          multiline.pattern: ^\=
+          multiline.match: before
+
+      # ============================== Filebeat modules ==============================
+      filebeat.config.modules:
+          path: ${path.config}/modules.d/*.yml
+          reload.enabled: false
+          #reload.period: 10s
+
+      # ================================== Outputs ===================================
+      # ------------------------------ Logstash Output -------------------------------
+      output.logstash:
+          hosts: ["@logstash.host:@logstash.sslPort"]
+          loadbalance: true
+          ssl.enabled: true
+
+      # ================================= Processors =================================
+      processors:
+          - add_host_metadata:
+              when.not.contains.tags: forwarded
+          - add_cloud_metadata: ~
+          - add_docker_metadata: ~
+          - add_kubernetes_metadata: ~
+      ```
+    </Tab>
+    <Tab>
+      The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+
+      __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ 
+      field in the Logstash outputs section are correctly populated.
+
+      If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
+      The ___'paths'___ field will need to be set to the location of the rabbitMQ logs you want to send to your Stack.
+      
+      Copy the configuration file below (making the above changes as necessary) and overwrite the 
+      contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
+
+      ```yml copy showLineNumbers
+      ###################### Logit.io Filebeat Configuration ########################
+      # ============================== Filebeat inputs ==============================
+      filebeat.inputs:
+      - type: filestream
+          enabled: true
+          paths:
+          - /var/log/rabbitmq/*.log
+          fields:
+          type: rabbitmq
+          multiline.pattern: ^\=
+          multiline.match: before
+
+      # ============================== Filebeat modules ==============================
+      filebeat.config.modules:
+          path: ${path.config}/modules.d/*.yml
+          reload.enabled: false
+          #reload.period: 10s
+
+      # ================================== Outputs ===================================
+      # ------------------------------ Logstash Output -------------------------------
+      output.logstash:
+          hosts: ["@logstash.host:@logstash.sslPort"]
+          loadbalance: true
+          ssl.enabled: true
+
+      # ================================= Processors =================================
+      processors:
+          - add_host_metadata:
+              when.not.contains.tags: forwarded
+          - add_cloud_metadata: ~
+          - add_docker_metadata: ~
+          - add_kubernetes_metadata: ~
+      ```
+    </Tab>
+    <Tab>
+      The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+
+      __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ 
+      field in the Logstash outputs section are correctly populated.
+
+      If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
+      The ___'paths'___ field will need to be set to the location of the rabbitMQ logs you want to send to your Stack.
+      
+      Copy the configuration file below (making the above changes as necessary) and overwrite the 
+      contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
+
+      ```yml copy showLineNumbers
+      ###################### Logit.io Filebeat Configuration ########################
+      # ============================== Filebeat inputs ==============================
+      filebeat.inputs:
+      - type: filestream
+          enabled: true
+          paths:
+          - /var/log/rabbitmq/*.log
+          fields:
+          type: rabbitmq
+          multiline.pattern: ^\=
+          multiline.match: before
+
+      # ============================== Filebeat modules ==============================
+      filebeat.config.modules:
+          path: ${path.config}/modules.d/*.yml
+          reload.enabled: false
+          #reload.period: 10s
+
+      # ================================== Outputs ===================================
+      # ------------------------------ Logstash Output -------------------------------
+      output.logstash:
+          hosts: ["@logstash.host:@logstash.sslPort"]
+          loadbalance: true
+          ssl.enabled: true
+
+      # ================================= Processors =================================
+      processors:
+          - add_host_metadata:
+              when.not.contains.tags: forwarded
+          - add_cloud_metadata: ~
+          - add_docker_metadata: ~
+          - add_kubernetes_metadata: ~
+      ```
+    </Tab>
+  </Tabs>
+
+  ### Earlier Filebeat Versions than 8.1
+
+  If you're running an earlier version of Filebeat than 8.1 `filebeat.inputs` needs to be `log` instead of `filestream`:
+
+  ```yml copy showLineNumbers
+  filebeat.inputs:
+
+  - type: log
+      enabled: true
+      paths:
+      - /var/log/rabbitmq/*.log
+      fields:
+      type: rabbitmq
+      multiline.pattern: ^\=
+      multiline.match: before
+      
+  ```
+
+  ### Validate configuration
+
+  <ValidateBeat beatname="filebeat" />
+  
+  ### Start filebeat
+
+  <StartFilebeat />
+
+  ### Check Logit.io for your logs
+  <LaunchStack utmMedium="logs" utmCampaign="rabbitmqapp" source="rabbitmq_app" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>

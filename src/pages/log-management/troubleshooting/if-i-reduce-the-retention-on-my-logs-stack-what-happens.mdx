@@ -1,0 +1,29 @@
+---
+title: What Happens To My Index If I Temporarily Reduce The Retention on My Logs Stack
+description: Learn about the retention period, how to reduce it, and what happens if you do this
+---
+
+# If I reduce the retention on my logs stack temporarily what happens to the indexes?
+
+## Logit.io's Retention Period
+
+Each stack has a retention period and this outlines how long logs and 
+metrics are stored and searchable in your Logit.io stack. You can set 
+the retention to any value allowed in your stack configuration. To 
+gain a deeper look at your stack retention period, select settings, 
+and then under this choose usage statistics.
+
+## How to change the retention period
+
+To change the retention period, navigate the `Manage Billing` settings, 
+here you can set the retention period for each stack. If you change the 
+retention period, once the new retention period has run, 
+all previous indexes will be deleted.
+
+## Clearing The Data From Old Indexes
+
+When new indices are generated, the retention job removes indices/data 
+with a date preceding the specified retention period. For example: The 
+indices get created as logstash-2022.11.08, filebeat-2023.10.23 etc. 
+The retention job deletes indices with a date older than whatever 
+the retention is set to.

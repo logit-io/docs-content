@@ -1,0 +1,106 @@
+---
+title: How Do I Create a New Alerting Rule?
+description: Discover the steps you need to take to create Elasticsearch alert rules in this help article from Logit.io.
+---
+
+# How do I create a new Alerting rule?
+
+### Provision Alerting for a Stack
+To enable alerts for a stack, go to the `Alerting & Notifications` settings and then click the _Enable Alerting_ button.
+
+### Create your Alerting Rule
+Once Alerting has been provisioned and you have clicked *Alerting* is ready you will see two sample YAML files that have default examples for alert rules.
+
+You can click *Edit* to see the configuration of the YAML files to give you an idea of how to properly configure your YAML files.
+
+If you want to create a new alert rule click *New Rule* where you will then enter your rule name for your YAML file, then click the *Create* button.
+
+This will configure and the rule will be added. Click the *Go to rule* button which will then bring you to the YAML file for configuration. Here is a working example of an ElastAlert rule for a field change for a different 'country_name' compare against a 'user'.
+```yaml
+# Alert when some field changes between documents
+# This rule would alert on documents similar to the following:
+# {'username': 'bob', 'country_name': 'USA', '@timestamp': '2014-10-15T00:00:00'}
+# {'username': 'bob', 'country_name': 'Russia', '@timestamp': '2014-10-15T05:00:00'}
+# Because the user (query_key) bob logged in from different countries (compare_key) in the same day (timeframe)
+
+# (Required)
+# Rule name, must be unique
+name: New country login
+
+# (Required)
+# Type of alert.
+# the change rule will alert when a certain field changes in two documents within a timeframe
+type: change
+
+# (Required)
+# Index to search, wildcard supported
+index: logstash-*
+
+# (Required, change specific)
+# The field to look for changes in
+compare_key: country_name
+
+# (Required, change specific)
+# Ignore documents without the compare_key (country_name) field
+ignore_null: true
+
+# (Required, change specific)
+# The change must occur in two documents with the same query_key
+query_key: username
+
+# (Required, change specific)
+# The value of compare_key must change in two events that are less than timeframe apart to trigger an alert
+timeframe:
+  days: 1
+
+# (Required)
+# A list of Elasticsearch filters used for find events
+# These filters are joined with AND and nested in a filtered query
+# For more info: http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl.html
+filter:
+- query:
+    query_string:
+      query: "document_type: login"
+
+# (Required)
+# The alert is use when a match is found
+alert:
+- "email"
+
+# (required, email specific)
+# a list of email addresses to send alerts to
+email:
+- "elastalert@example.com"
+```
+Once you are finished with your configuration you can then click 'Test only' to see if your YAML file has been configured correctly.
+
+If there is incorrect spelling in your YAML it will be shown in the logs like below.
+
+![YAML Logs](@/images/help/log-management/alerting/yaml-logs.png)
+
+**Tip!:** If there is a spacing issue in your YAML the error will be shown like this:
+
+![YAML Error](@/images/help/log-management/alerting/yaml-error.png)
+
+Once you are happy with the rule click *Update* to save your rule.
+
+![Update Alert](@/images/help/log-management/alerting/update-alert.png)
+
+Once you have updated your rule, you will see that the job has been executed and the rule has been updated.
+
+![Updated Alert Rule](@/images/help/log-management/alerting/updated-alert-rule.png)
+
+The rule will be then added to your list of rules once you go back to the *Alerts* tab.
+
+![Alerts Tab](@/images/help/log-management/alerting/alerts-rule-tab.png)
+
+Several rule types that are common when creating your alert rule are:
+- **Frequency type:** Match where there are X events in Y time
+- **Spike type:** Match when the rate of events increases or decreases
+- **Flatline type:** Match when there are less than X events in Y time
+- **Blacklist type:** Match when a certain field matches a blacklist
+- **Whitelist type:** Match when a certain field matches a whitelist
+- **Any type:** Match on any event matching a given filter
+- **Change type:** Match when a field has two different values within some time
+ 
+ElastAlert supports alert types of Command, Email, JIRA, OpsGenie, SNS, HipChat, Slack, Telegram, GoogleChat, Debug, Stomp, theHive which you can use for your alerts.

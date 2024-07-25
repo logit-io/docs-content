@@ -1,0 +1,30 @@
+---
+title: Whitelisted Hosts
+description: Learn how to ensure only whitelisted hosts can send logs via any inputs
+---
+
+# How to ensure only whitelisted hosts can send logs
+
+### Why you may want to only allow whitelisted hosts to send logs
+
+Enabling only whitelisted hosts to send logs provides a higher level of 
+security and control over the logging environment. This is because reducing 
+log transmission to whitelisted hosts only reduces the available attack surface. 
+
+Additionally, another option to provide further security over your logging 
+environment is to establish [Logstash firewall configurations](/log-management/ingestion-pipeline/configuration/configure-logstash-firewall). 
+This allows you to manage and restrict which IP addresses can 
+send data to your stacks and which ports those restrictions apply to. 
+
+This ensures that only trusted and approved devices or systems can 
+send logs, minimizing the risk of unauthorized access or potential 
+security breaches. Also, in regulated industries or environments with 
+strict compliance requirements, enabling only whitelisted hosts to 
+transmit logs aids in meeting regulatory standards.
+
+### Whitelisted Hosts Sending Logs
+
+To ensure authentication, when using an input such as Beats-SSL, 
+we recommend checking that you have IP whitelisting enabled. Having 
+this enabled will guarantee that only whitelisted hosts can 
+send logs via any of the inputs.

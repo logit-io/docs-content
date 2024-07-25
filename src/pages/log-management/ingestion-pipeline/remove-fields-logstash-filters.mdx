@@ -1,0 +1,103 @@
+---
+title: Removing Fields with Logstash Filters
+description: Learn the best practices for removing and mutating fields in your logs and metrics using Logstash filters
+---
+
+# How do I remove fields using Logstash filters?
+
+When transporting data from a source to your Logit.io stacks using Logstash, there may be fields you do not wish to retain or see in OpenSearch Dashboards. You can remove these using the `mutate` filter plugin. There are several different ways of using this plugin to cover a wide range of use-cases, and so it is important to choose the right strategy depending on your situation.
+
+If you always want to remove a field, or fields, from your data regardless of the situation, you can include the remove_field setting. This setting should point to an array of field names (or a single field name):
+
+```plaintext
+filter {
+       mutate {
+               remove_field => ["field_name"]
+       }
+ }
+```
+
+If the array only contains one field name, you can omit the square brackets:
+
+```plaintext
+remove_field => "field_name"
+```
+
+If you want to remove more than one field you can supply additional field names to the array:
+
+```plaintext
+filter {
+    mutate {
+        remove_field => [ "%{@index}","%{@version}","%{@type}" ]
+    }
+}
+```
+
+### Conditional Removals
+
+Often you only want to remove a field if a given condition is true. One of the most common use-cases for a conditional remove is to only remove a field if the field's value matches another value:
+
+```plaintext
+if [action] == "login" {
+   mutate {
+           remove_field => ["last_login"]
+           }
+}
+```
+
+You can invert these conditions to remove a field if the condition is not true by using the not equals comparison operator (`!=`):
+
+```plaintext
+if [action] != "login"
+```
+
+To remove a field if the field's value makes up part of a larger string (i.e. a sub-string) you can use the special `in` keyword:
+
+```plaintext
+if [action] in "login" {
+   mutate {
+            remove_field => ["last_login"]
+     }
+ }
+```
+
+You can also use the `in` keyword to check if a field's value matches at least one of many strings in an array:
+
+```plaintext
+if [action] in ["hello", "world", "foo"] {
+    mutate {
+        remove_field => ["field_name"]
+        }
+ }
+```
+
+These types of conditions can be inverted using the `not` operator:
+
+```plaintext
+if [action] not in ["hello", "world", "foo"]
+```
+
+### Removing by range
+
+If your field's value is an integer, you can check if the value is inside a
+range of values. Before doing this, you must ensure that the value is interpreted
+as an integer by Logstash and not a number inside a string. To do this, use the convert plugin:
+
+```ruby copy
+mutate {
+  convert => [ "field_name", "integer" ]
+}
+```
+
+Then you will be able to use a compound statement to compare the value against a
+minimum and maximum value to check if the value is in range:
+
+```ruby copy
+if [field_name] > 50 and [field_name] < 100 {
+  mutate {
+    remove_field => [ "field_name" ]
+  }
+}
+```
+
+The above snippet will remove the `field_name` field if its value is between 50 and 100.

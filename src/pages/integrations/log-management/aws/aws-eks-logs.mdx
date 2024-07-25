@@ -1,0 +1,127 @@
+---
+title: AWS Elastic Kubernetes Service Logs
+subTitle: Ship AWS EKS Logs to Logstash
+logo: aws
+color: "#ff9900"
+stackTypes: logs
+description: Send your AWS EKS Logs to logit.io via logstash using the instructions below and begin searching your data
+sslPortType: beats-ssl
+---
+
+Filebeat is an open source shipping agent that lets you ship AWS 
+Elastic Kubernetes Service (EKS) container Logs to one or more destinations, including Logstash.
+
+<Steps>
+  ### Prerequisites
+
+  Firstly Make sure you have the aws cli, eksctl & kubectl installed on local 
+  machine using the [following guide](https://docs.aws.amazon.com/eks/latest/userguide/getting-started-eksctl.html).
+
+  Also make sure you have setup aws configure with your AWS credentials. 
+
+  To do this run the following command in your aws terminal.
+
+  ```cmd copy
+  aws configure
+  ```
+
+  When you type this command, the AWS CLI prompts you for four pieces of information: 
+  access key, secret access key, AWS Region, and output format. This information is 
+  stored in a profile named default. This profile is used when you run commands, 
+  unless you specify another one.
+
+  ### Connecting to the cluster
+
+  Update your config by running the following command. Replace `<enter_region>` and `<enter_name>` with your AWS cluster region and name.
+        
+  ```cmd copy
+  aws eks --region <enter_region> update-kubeconfig --name <enter_name>
+  ```
+
+  Check you can connect to your cluster by running the following command:
+
+  ```cmd copy
+  kubectl get svc
+  ```
+
+  ### Deploy Filebeat
+
+  You're going to need the filebeat deployment manifest.
+
+  ```cmd copy
+  curl -L -O cdn.logit.io/filebeat-kubernetes.yaml
+  ```
+
+  Now you have the manifest we need to add your Stack Logstash endpoint details. 
+  
+  Open the file in a text editor and around lines 58 you'll see the environment variables that need changing.
+
+  ```yml copy
+  env:
+  - name: LOGSTASH_HOST
+    value: "guid-ls.logit.io"
+  - name: BEATS_PORT
+    value: "00000"
+  ```
+
+  After updating the code should look as below.
+
+  ```yml copy
+  env:
+  - name: LOGSTASH_HOST
+    value: ["@logstash.host"]
+  - name: BEATS_PORT
+    value: ["@logstash.sslPort"]
+  ```
+
+  Exit and save the file.
+
+  ### Apply your updates
+
+  Now we're going to apply the file to the cluster.
+
+  ```cmd copy
+  kubectl apply -f filebeat-kubernetes.yaml
+  ```
+
+  <Callout type="info">
+    If you need to apply further updates after running the apply command 
+    you may need to remove the yaml file, make your changes and then apply again.
+  </Callout>
+
+  ### Confirm Deployment
+
+  Confirm your pod has deployed, you should see output similar to that below.
+
+  ```cmd copy
+  kubectl get po -A
+  ```
+
+  or
+
+  ```cmd copy
+  kubectl logs ["podname"] --namespace=kube-system
+  ```
+
+  Browse to your Kibana instance and you should see Logs arriving in your Stack.
+
+  ### Check Logit.io for your logs
+  <LaunchStack utmMedium="aws" utmCampaign="awseks" source="AWS_EKS_Logs" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>
+
+
+## AWS EKS Logs Overview
+
+Sending data to Logit.io from AWS EKS Logs streamlines the process of log management for 
+Kubernetes container orchestration. With effortless integration, users can easily ship 
+logs from their AWS EKS clusters to Logit.io's powerful log management and analysis platform, 
+ensuring real-time visibility into their environments. This enables rapid issue resolution, 
+performance optimization, and comprehensive log analysis to uncover trends and anomalies. 
+Moreover, centralizing logs in Logit.io supports security monitoring, threat detection, 
+and compliance adherence, ensuring a complete audit trail.
+
+The simplicity of these integrations all work side by side within Logit.io's [AWS logging solution](https://logit.io/solutions/aws-logging/).

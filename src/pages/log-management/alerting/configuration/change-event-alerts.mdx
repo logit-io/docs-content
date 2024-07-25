@@ -1,0 +1,41 @@
+---
+title: Configure Change Alerts for OpenSearch
+description: Find out more about how to create a change alert for your OpenSearch logs or metrics in this article from Logit.io.
+---
+
+# Configure Change Alerts for OpenSearch
+
+A Change alert matches when a certain monitored field value `compare_key` 
+changes, the field must change for the last event with the same `query_key` field value.
+
+This would allow you to receive alerts in scenarios such as if there is a 
+match on two events for the same **username field** `query_key` and the 
+**country_name field** `compare_key` is different in the **same day** `timeframe`.
+
+Additionally, you can choose to `ignore_null` values, this will mean that 
+events without a `compare_key` will not count as changed. Here is an example below:
+
+```yaml copy
+name: "Change alert example"
+type: change
+index: "*-*"
+compare_key: country_name
+ignore_null: true
+query_key: username
+timeframe:
+  days: 1
+filter:
+- query:
+    query_string:
+      query: "type: login"
+alert:
+- "email"
+email:
+- "example@logit.io"
+```
+
+### Additional Options
+
+In addition, you can also provide a `timeframe` value to define the 
+maximum time between changes, after which time period the previous 
+value of compare_key will be forgotten.

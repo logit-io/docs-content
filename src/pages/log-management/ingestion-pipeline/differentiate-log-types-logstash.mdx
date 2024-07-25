@@ -1,0 +1,84 @@
+---
+title: Differentiating Log Types in Logstash
+description: Find out more about how to create separate indexes for log types using hosted Logstash in this article from Logit.io.
+---
+
+# How can I differentiate between different log types in Logstash
+
+## Why would I want to differentiate between different log types?
+
+If you are collecting two sets of logs using the same Elastic beat
+source you may want to separate them so that you can perform certain
+actions on them if they meet certain conditions.
+
+For example, you may want to change the index name of one log type to help make it more identifiable.
+
+## How do I separate my logs into different log types?
+
+Differentiating between different log types in Logstash can be achieved
+in various ways. If you are using an Elastic Beat source such as
+Auditbeat, Filebeat or Metricbeat you can have multiple inputs sections
+in your configuration file to distinguish between different types of logs
+by editing the Beat configuration file and setting the type to be named differently.
+
+For the example, below we are editing the Filebeat configuration
+file to separate our logs into different types.
+
+```yml copy
+filebeat.inputs:
+  - type: logType1
+    enabled: true
+    paths:
+      - /var/folder_of_logs/*.log
+
+  - type: logType2
+    enabled: true
+    paths:
+      - /var/another_folder_of_logs/*.log
+    fields_under_root: true
+```
+
+In the above example we have two folders that contain logs.
+
+- /var/folder_of_logs/
+- /var/another_folder_of_logs/
+
+In order to tell the difference between the logs that are coming from
+these folders, we have added logType1 to one set of logs and logType2 to the other set of logs. From here we can then use Logstash to further differentiate between these log types.
+
+## Using Logstash to further differentiate between log types
+
+To further differentiate between the log types, we need to make use of the
+Logstash Filter. You can access your Logstash filters from the dashboard
+for any of your Logit Stacks by navigating to `Logstash Pipelines` settings.
+
+You can use Logstash to query log types in your Logstash filter and then
+perform actions based upon that condition. For example, we may want to
+change the index name the logs appear under in OpenSearch and OpenSearch Dashboards.
+
+```ruby copy
+if [type] == "logType1" {
+  mutate {
+    add_field => { "[@metadata][beat]" => "YOURINDEXNAME" }
+  }
+}
+else if [type] == "logType2" {
+  mutate {
+    add_field => { "[@metadata][beat]" => "YOURINDEXNAMETWO" }
+  }
+}
+```
+
+## Using log fields to distinguish log types
+
+You can also query your log fields to check the log type if you have
+created the field in your log. For example, you could create the `mylog.type`
+field and then transform that field to iis.logs.
+
+```ruby copy
+if [mylog][type] == "my-iis-logs" {
+  mutate {
+    rename => { "[mylog][type]" => "[iis][logs]" }
+  }
+}
+```

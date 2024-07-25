@@ -1,0 +1,114 @@
+---
+title: PostgreSQL Metrics via Telegraf
+subTitle: Ship your PostgreSQL Metrics via Telegraf to your Logit.io Stack
+logo: postgresqlelephant
+color: "#4d4d4d"
+description: Configure Telegraf to ship PostgreSQL metrics to your Logit.io stacks. Configure Telegraf to send PostgreSQL metrics to Logstash or Elastic. Get started using our Telegraf PostgreSQL metrics example configuration.
+stackTypes: metrics
+sslPortType: beats-ssl
+---
+
+Configure Telegraf to ship PostgreSQL metrics to your Logit.io stacks via Logstash.
+
+<Steps>
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+
+  ```yaml copy
+  # Read metrics from one or many postgresql servers
+  [[inputs.postgresql]]
+    ## Specify address via a url matching:
+    ##   postgres://[pqgotest[:password]]@localhost[/dbname]?sslmode=[disable|verify-ca|verify-full]&statement_timeout=...
+    ## or a simple string:
+    ##   host=localhost user=pqgotest password=... sslmode=... dbname=app_production
+    ## Users can pass the path to the socket as the host value to use a socket
+    ## connection (e.g. `/var/run/postgresql`).
+    ##
+    ## All connection parameters are optional.
+    ##
+    ## Without the dbname parameter, the driver will default to a database
+    ## with the same name as the user. This dbname is just for instantiating a
+    ## connection with the server and doesn't restrict the databases we are trying
+    ## to grab metrics for.
+    ##
+    address = "host=localhost user=postgres sslmode=disable"
+
+    ## A custom name for the database that will be used as the "server" tag in the
+    ## measurement output. If not specified, a default one generated from
+    ## the connection address is used.
+    # outputaddress = "db01"
+
+    ## connection configuration.
+    ## maxlifetime - specify the maximum lifetime of a connection.
+    ## default is forever (0s)
+    ##
+    ## Note that this does not interrupt queries, the lifetime will not be enforced
+    ## whilst a query is running
+    # max_lifetime = "0s"
+
+    ## A  list of databases to explicitly ignore.  If not specified, metrics for all
+    ## databases are gathered.  Do NOT use with the 'databases' option.
+    # ignored_databases = ["postgres", "template0", "template1"]
+
+    ## A list of databases to pull metrics about. If not specified, metrics for all
+    ## databases are gathered.  Do NOT use with the 'ignored_databases' option.
+    # databases = ["app_production", "testing"]
+
+    ## Whether to use prepared statements when connecting to the database.
+    ## This should be set to false when connecting through a PgBouncer instance
+    ## with pool_mode set to transaction.
+    prepared_statements = true
+  ```
+  <Callout type="info">
+    Read more about how to configure data scraping and configuration options for [PostgreSQL](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/postgresql)
+  </Callout>
+
+  ### Configure the output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack source="PostgreSQL_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-PostgreSQL-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+### Telegraf PostgreSQL Overview
+
+To efficiently monitor and analyze PostgreSQL metrics across a distributed environment, a reliable and efficient 
+metrics management solution is essential. Telegraf is an open-source server agent well-suited for this role, 
+capable of gathering PostgreSQL metrics from numerous sources, including operational PostgreSQL instances, 
+databases, and other relevant applications.
+      
+Telegraf offers a wide range of input plugins, enabling the collection of various metrics such as CPU usage, 
+memory utilization, network traffic, and more. These are key to understanding PostgreSQL performance. 
+To store and analyze these metrics, organizations can use Prometheus, an open-source monitoring and alerting 
+toolkit known for its flexible querying language and impressive data visualization capabilities.
+
+The process of transmitting PostgreSQL metrics from Telegraf to Prometheus involves configuring Telegraf to 
+output metrics in the Prometheus format, and then setting up Prometheus to scrape these metrics from the 
+Telegraf server. This involves setting up Telegraf to collect PostgreSQL metrics, outputting them in the 
+Prometheus format, configuring Prometheus to retrieve these metrics from the Telegraf server, and then visually 
+interpreting the data using Prometheus's dynamic querying and graphical visualization tools.
+
+After the successful integration of the metrics into Prometheus, further analysis and visualization can be 
+carried out using Grafana. Grafana is a leading open-source platform known for its monitoring and observability 
+features, and is fully compatible with Prometheus. It allows users to create dynamic, interactive dashboards 
+for a deeper dive into the metrics data, providing a comprehensive understanding of performance 
+trends and potential issues within the PostgreSQL system.
+
+If you need any further assistance with shipping your log data to Logit.io we're here to help you get started. 
+Feel free to get in contact with our support team by sending us a message via <IntercomButton text="live chat" /> 
+& we'll be happy to assist.

@@ -1,0 +1,61 @@
+---
+title: List Indexes
+description: Learn how to list indexes in OpenSearch with Logit.io?
+---
+
+# How to list indexes in OpenSearch with Logit.io?
+
+Listing indexes in your OpenSearch cluster is a basic operation that 
+allows you to see all available indexes and their status. Follow this 
+guide to learn how to list all indexes in your Logit.io hosted OpenSearch service.
+
+## Step 1: Access the OpenSearch Dashboard
+
+Once logged in to Logit.io, navigate to the OpenSearch Dashboards by clicking _Launch Logs_.
+
+## Step 2: Open the Dev Tools
+
+Logit.io's OpenSearch Dashboards provide a Dev Tools feature, which is 
+an integrated console for directly executing OpenSearch queries and commands.
+
+In the OpenSearch Dashboards, locate and click on "Dev Tools" on the left-hand navigation bar.
+
+You will be presented with a console where you can input and execute commands.
+
+## Step 3: List All Indexes
+
+To list all indexes in your OpenSearch cluster, you can use the _cat/indices 
+API, which provides a human-readable overview of index properties.
+
+In the Dev Tools console, enter the following command to list all indexes:
+
+```cmd copy
+GET /_cat/indices?v
+```
+Press Enter to execute the command.
+
+The v parameter in the command asks for verbose output, 
+meaning it will include headers in the output.
+
+This command will display a list of all indexes along with essential 
+details such as index names, the number of documents, and the size of the disk.
+
+### Understanding the Output
+
+The output from the _cat/indices command provides several 
+pieces of information for each index, including:
+
+- **health:** Indicates the health status of the index (green, yellow, or red).
+- **status:** Shows whether the index is open or closed.
+- **index:** The name of the index.
+- **uuid:** The unique identifier of the index.
+- **pri:** The number of primary shards.
+- **rep:** The number of replica shards.
+- **docs.count:** The number of documents in the index.
+- **docs.deleted:** The number of deleted documents in the index.
+- **store.size:** The total size taken by the index on disk.
+- **pri.store.size:** The size taken by primary shards on disk.
+
+For more detailed analysis or operations on your indexes, consider using 
+additional OpenSearch APIs or reaching out to a member of the Logit.io 
+support team <IntercomButton text="via live chat" /> for further assistance.

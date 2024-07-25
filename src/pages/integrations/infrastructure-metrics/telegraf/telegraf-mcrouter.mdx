@@ -1,0 +1,76 @@
+---
+title: Mcrouter via Telegraf
+subTitle: Ship your Mcrouter via Telegraf to your Logit.io Stack
+color: "#4d4d4d"
+description: Configure Telegraf to ship Mcrouter to your Logit.io stacks. Configure Telegraf to send Mcrouter to Logstash or Elastic. Get started using our Telegraf Mcrouter example configuration.
+stackTypes: metrics
+sslPortType: beats-ssl
+---
+
+Configure Telegraf to ship Mcrouter to your Logit.io stacks via Logstash.
+
+<Steps>
+
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+
+  ```yaml copy
+  # Read metrics from one or many mcrouter servers.
+  [[inputs.mcrouter]]
+    ## An array of address to gather stats about. Specify an ip or hostname
+    ## with port. ie tcp://localhost:11211, tcp://10.0.0.1:11211, etc.
+    servers = ["tcp://localhost:11211", "unix:///var/run/mcrouter.sock"]
+
+    ## Timeout for metric collections from all servers.  Minimum timeout is "1s".
+    # timeout = "5s"
+  ```
+
+  <Callout type="info">
+    Read more about how to configure data scraping and configuration options for [Mcrouter](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/mcrouter)
+  </Callout>
+
+  ### Configure The Output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack source="Mcrouter_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-Mcrouter-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+### Telegraf Mcrouter Overview
+
+To effectively monitor and analyze Mcrouter metrics across various systems, it's vital to utilize a robust and efficient metrics management 
+solution. Telegraf, the open-source server agent for collecting and sending telemetry data, is ideally suited for this role. It is capable of 
+collecting Mcrouter metrics from a wide array of sources, such as operational Mcrouter instances, databases, and other relevant applications.
+
+Telegraf's wide selection of input plugins allows users to collect metrics from diverse sources like CPU usage, memory utilization, network 
+traffic, and more, which are crucial for understanding Mcrouter performance. For storing and scrutinizing these collected metrics, 
+organizations can employ Prometheus, an open-source monitoring and alerting toolkit recognized for its flexible querying language and strong 
+data visualization capabilities.
+
+To channel Mcrouter metrics from Telegraf to Prometheus, organizations need to configure Telegraf to output metrics in the Prometheus format, 
+and then set up Prometheus to scrape these metrics from the Telegraf server. This process includes setting up Telegraf to gather Mcrouter 
+metrics, outputting them in the Prometheus format, configuring Prometheus to retrieve these metrics from the Telegraf server, and then 
+visually interpreting the data using Prometheus's dynamic querying and graphical visualization tools.
+
+Once the metrics are successfully integrated into Prometheus, further analysis and visualization can be conducted using Grafana. Grafana, a 
+leading open-source platform known for its monitoring and observability features, is fully compatible with Prometheus. It allows users to 
+design dynamic, interactive dashboards for an in-depth look into the metrics data, providing a comprehensive understanding of performance 
+trends and potential issues in the Mcrouter system.
+
+If you need any further assistance with shipping your log data to Logit.io we're here to help you get started. Feel free to get in contact with 
+our support team by sending us a message via <IntercomButton text="live chat" /> & we'll be happy to assist.

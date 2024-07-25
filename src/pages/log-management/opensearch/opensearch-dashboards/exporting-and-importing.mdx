@@ -1,0 +1,33 @@
+---
+title: Exporting and Importing
+description: Learn how to migrate visualisations and dashboards from one stack to another stack.
+---
+
+# Exporting and Importing OpenSearch Dashboards and Visualisations
+
+### Exporting
+
+1. Open OpenSearch Dashboards
+2. Visit the _saved objects_ section accessed via _Management > Stack Management_, all the dashboards and visualisations should be listed here
+3. Select the objects you wish to export and choose Export from the top-right menu
+
+![Stack Management](@/images/help/log-management/storage/stack-management.png)
+
+![Saved Objects](@/images/help/log-management/storage/saved-objects.png)
+
+### Importing
+
+1. Open OpenSearch Dashboards
+2. Visit the _Saved Objects_ section accessed via _Management > Stack Management_
+3. In the top-right menu, you should see _Import_, which should allow you to upload an exported JSON/ndjson file
+
+![Import Saved Objects](@/images/help/log-management/storage/import-saved-objects.png)
+
+### Moving between different versions of OpenSearch
+
+In some cases exporting and importing OpenSearch objects may not always reimport successfully.
+However, this is rare. Along as you always have an export it can be quite
+simple to recreate the objects using your exported data. For example:
+
+- Dashboards may not import cleanly on a different version of OpenSearch
+- You may find that data field names are not the same on a different stacks and data is not in the required format for a visualisation to display correctly.

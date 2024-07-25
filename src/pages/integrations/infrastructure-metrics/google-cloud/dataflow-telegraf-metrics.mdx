@@ -1,0 +1,65 @@
+---
+title: Google Dataflow Metrics via Telegraf
+subTitle: Ship your Google Dataflow Metrics via Telegraf to your Logit.io Stack
+logo: GoogleDataflow
+color: "#3c76d7"
+description: Configure Telegraf to ship Google Dataflow metrics to your Logit.io stacks. Configure Telegraf to send Google Dataflow metrics to Logstash or Elastic. Get started using our Telegraf Google Dataflow metrics example configuration.
+stackTypes: metrics
+---
+
+Configure Telegraf to ship Google Dataflow metrics to your Logit.io stacks via Logstash.
+
+<Steps>
+  ### Set Credentials in GCP
+
+  <SetGCPCredentials intro="Google Dataflow is a comprehensive suite of services within Google Cloud that provides a fully managed and serverless approach to building and executing data pipelines. It allows organizations to process and analyze large volumes of data in real-time or batch mode, offering scalability, fault tolerance, and ease of use."/>
+  
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  <TelegrafStackDriverInput metric_type="dataflow.googleapis.com"/>
+
+  ### Configure the output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack stackType="metrics" source="Google_Dataflow_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-GoogleDataflow-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>
+
+## Telegraf Google Dataflow Platform metrics Overview
+
+To ensure effective monitoring and analysis of Google Dataflow pipelines across distributed systems, 
+implementing a robust metrics management solution is crucial. Telegraf, an open-source server agent, 
+is widely recognized for its capability to collect and report metrics from various sources, 
+including Dataflow pipelines, job durations, data processing rates, and other relevant metrics.
+
+Telegraf provides a wide range of input plugins, enabling users to collect diverse metrics such 
+as pipeline latency, element counts, and resource utilization. These metrics are essential for 
+understanding the performance and efficiency of Google Dataflow.
+
+For storing and analyzing these metrics, organizations can leverage Prometheus, an open-source 
+monitoring and alerting toolkit known for its flexible query language and powerful data 
+visualization capabilities. The process of transmitting Google Dataflow metrics from Telegraf 
+to Prometheus involves configuring Telegraf to present metrics in Prometheus's format and 
+instructing Prometheus to scrape these metrics from the Telegraf server.
+
+Once the metrics are successfully integrated into Prometheus, organizations can perform comprehensive 
+analysis and visualization using Grafana. Grafana, a leading open-source platform for monitoring 
+and observability, seamlessly integrates with Prometheus, allowing users to create dynamic and 
+interactive dashboards for in-depth exploration of the metrics data. This empowers organizations 
+to gain valuable insights into Dataflow performance, data processing trends, and potential optimization opportunities.
+
+If you need any further assistance with shipping your log data to Logit.io we're here to help you 
+get started. Feel free to get in contact with our support team by sending us a message via <IntercomButton text="live chat" /> & we'll be happy to assist.

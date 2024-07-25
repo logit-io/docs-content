@@ -1,0 +1,32 @@
+---
+title: Add Google Cloud Storage Input
+description: Learn how to configure a Google Cloud Storage Input on your Logstash Instance
+---
+
+# How to add a Google Cloud Storage Input to your Log Stack
+
+To configure the Google Cloud Storage input in your Logstash stack, follow these steps:
+
+1. Navigate to `Logstash Inputs` settings.
+2. Click on the "Add New Input" button in the Logstash configuration wizard.
+3. Select the "Google Cloud Storage" option from the available input types.
+4. Complete the configuration details:
+   - **Bucket Id:** Provide the ID of the bucket containing your log files.
+   - **JSON Key File:** Enter the key to authenticate your user to the bucket. Ensure this service user has the storage.objects.update permission.
+5. The following configuration details are optional, only add if required:
+   - **Interval:** Set the number of seconds between looking for new files in your bucket (Default 60).
+   - **File Matches:** Specify a regex pattern to filter files. Only files with names matching this pattern will be considered.
+   - **File Exclude:** Exclude files matching this regex pattern from processing.
+   - **Metadata Key:** Set this key on the objects after they've been processed by the plugin.
+   - **Delete:** Choose whether the log file should be deleted after its contents have been updated (Default: False).
+   - **Unpack Gzip:** If set to true, files ending in .gz are decompressed before being parsed by the codec.
+   - **Display Name:** Provide a name for the Google Cloud Storage input.
+   - **Display Description:** Add a description for better identification.
+   - **Tags:** Assign tags to your events (comma-separated).
+   - **Type:** Add a type field to all events handled by this input.
+   - **Add Field:** Include additional fields in the events. You can add multiple key-value pairs.
+6. Click the "Configure Input" button to save the Google Cloud Storage input configuration.
+7. Click "Cancel" to discard changes.
+
+This guide provides a step-by-step process for configuring a Google Cloud Storage input in Logstash. 
+Adjust the values based on your specific use case and preferences.

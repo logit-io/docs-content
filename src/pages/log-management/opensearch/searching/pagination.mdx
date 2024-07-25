@@ -1,0 +1,119 @@
+---
+title: Pagination
+description: Learn How to implement pagination in OpenSearch
+---
+
+# How to implement pagination in OpenSearch?
+
+Navigating through large volumes of data in OpenSearch often requires 
+an efficient approach to pagination. This guide demonstrates how to 
+implement pagination in your OpenSearch queries within the Logit.io 
+environment, ensuring you can access and analyze your data effectively, 
+without overwhelming your application or the OpenSearch cluster.
+
+OpenSearch offers two primary methods for pagination, which we will 
+describe in more detail below:
+
+**From/Size Pagination:** Suitable for small to medium-sized datasets, 
+allowing you to specify the starting point (from) and the number of results (size) to return.
+
+**Search After:** Recommended for deep pagination over large datasets. 
+It uses a sort key to retrieve results after a certain point, which is 
+more efficient than from/size for large volumes of data.
+
+### Step 1: Using From/Size Pagination
+The from/size method is straightforward, making it a good starting point for basic pagination needs.
+
+Access the Dev Tools in your OpenSearch Dashboards on Logit.io. 
+
+Execute a Paginated Query: Here's a basic template:
+
+```json copy
+GET /your_index_name/_search
+{
+  "from": 0,
+  "size": 10,
+  "query": {
+    "match_all": {}
+  },
+  "sort": [
+    { "your_sort_field": { "order": "asc" } }
+  ]
+}
+```
+
+Replace your_index_name with the name of your index.
+
+The from parameter specifies the starting point (offset), and size is the number of records to return.
+
+Adjust your_sort_field to the field you wish to sort by.
+
+**Iterate Over Pages:** To retrieve the next set of results, 
+increment the from parameter by the size used in the previous query.
+
+<Callout type="info">
+  The from/size approach has performance limitations when 
+  dealing with large datasets, as it becomes slower and 
+  more resource-intensive.
+</Callout>
+
+### Step 2: Implementing Search After for Deep Pagination
+For larger datasets or deeper pagination, search_after is the preferred method.
+
+**Specify a Sort Order:** Ensure your query has a unique sort order to use as the pagination key.
+
+**Initial Query:** Start with a query that specifies the sort field(s):
+
+```json copy
+GET /your_index_name/_search
+{
+  "size": 10,
+  "query": {
+    "match_all": {}
+  },
+  "sort": [
+    { "timestamp": { "order": "asc" } },
+    { "_id": "asc" }
+  ]
+}
+```
+
+**Use the Last Result as the Starting Point:** The response will include 
+a sort value for each document. Use the sort value of the last document 
+as the search_after parameter in your next query.
+
+```json copy
+GET /your_index_name/_search
+{
+  "size": 10,
+  "query": {
+    "match_all": {}
+  },
+  "search_after": ["last_doc_timestamp", "last_doc_id"],
+  "sort": [
+    { "timestamp": { "order": "asc" } },
+    { "_id": "asc" }
+  ]
+}
+```
+
+Replace last_doc_timestamp and last_doc_id with the sort 
+values of the last document from the previous response.
+
+### Step 3: Automate and Optimize Pagination
+
+**Automate Pagination:** Implement logic in your application to 
+automatically adjust the from (for from/size) or search_after 
+parameters based on the user's navigation or API calls.
+
+**Optimize Performance:** Use filters to narrow down results and 
+reduce the volume of data paginated through, improving response times.
+
+By using from/size for smaller datasets or search_after for larger, 
+more complex datasets, you can efficiently navigate through your data. 
+Remember to tailor your pagination strategy to the size of your dataset 
+and the specific needs of your application for optimal performance.
+
+If you have any questions at all about this topic just reach out to 
+a member of Logit.io's support 
+team <IntercomButton text="via live chat" /> for further assistance.

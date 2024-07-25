@@ -1,0 +1,98 @@
+---
+title: MySql Metrics
+subTitle: Collect and ship MySql metrics to Logstash and Elasticsearch
+logo: mysql
+color: "#00758f"
+description: How to send MySql database server metrics to your Hosted ELK Logstash instance. Configure Metricbeat to send MySql server metrics to Logstash or Elasticsearch. 
+stackTypes: metrics
+sslPortType: beats-ssl
+---
+
+Metricbeat is a lightweight shipper that helps you monitor your MySql database servers by collecting metrics running on the MySql server. 
+Configure Metricbeat using the pre-defined examples below to collect and ship MySql database server metrics and statistics to Logstash or Elasticsearch.
+
+<Steps>
+  ### Install Metricbeat
+
+  <InstallBeat beatname="metricbeat" />
+
+  ### Copy Configuration File
+
+  <MetricbeatOutput />
+
+  ### Enable Module
+
+  <EnableMetricbeatModule module="mysql" />
+
+  ### Configure Module
+
+  <ConfigureMetricbeatModule module="mysql">
+    ```yml copy showLineNumbers
+    - module: mysql
+      metricsets:
+        - status
+        - galera_status
+      period: 10s
+    ```
+
+    You will also need to enter the host location of the database and the username and password to access it.
+
+    ```cmd copy
+    # Host DSN should be defined as "user:pass@tcp(127.0.0.1:3306)/"
+    # The username and password can either be set in the DSN or using the username
+    # and password config options. Those specified in the DSN take precedence.
+    hosts: ["(127.0.0.1:3306)/"]
+
+    # Username of hosts. Empty by default.
+    username: root
+
+    # Password of hosts. Empty by default.
+    password: secret
+    ```
+  </ConfigureMetricbeatModule>
+
+  ### Start Metricbeat
+
+  Start or restart [Metricbeat](https://www.elastic.co/guide/en/beats/metricbeat/master/metricbeat-starting.html) 
+  to apply the configuration changes.
+
+  ### Check Logit.io for your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="mysql_metricbeat" source="metrics_mysql" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+  ### Compatibility
+
+  The mysql MetricSets were tested with MySQL and Percona 5.7 and 8.0 and are expected to work with all versions >= 5.7.0. 
+  It is also tested with MariaDB 10.2, 10.3 and 10.4.
+</Steps>
+
+### MySQL Module Dashboard
+
+The MySQL module comes with predefined Kibana dashboards. To view your dashboards 
+for any of your Logit.io stacks, launch Logs and choose Dashboards.
+      
+![Prebuilt Kibana dashboard](@/images/integrations/metricbeats/metricbeat_module_mysql.png)
+
+### MySQL Overview
+
+MySQL is an [open-source](/blog/post/open-source-dashboard/) relational database management system (RDBMS) 
+that has gained widespread popularity for its reliability, performance, and ease of use. 
+      
+It serves as a critical component for storing and managing data in various applications, including 
+web services, content management systems, e-commerce platforms, and more. 
+
+MySQL metrics can encompass various aspects, such as query execution times, server resource utilization, throughput, and error rates. 
+
+Collecting these metrics involves the use of monitoring tools and software, which periodically 
+gather data from MySQL servers and then ship it to a centralized location or analytics platform for analysis and visualization. 
+
+By implementing robust monitoring and metric collection processes by using a platform like Logit.io, 
+organizations can proactively manage and optimize their MySQL databases, ensuring efficient performance, 
+high availability, and the ability to scale as their data needs grow.    
+
+If you need any further assistance with migrating your data to Logit.io we're here to help you get started. 
+Feel free to get in contact with our support team by sending us a message via <IntercomButton text="live chat" /> & we'll be happy to assist.

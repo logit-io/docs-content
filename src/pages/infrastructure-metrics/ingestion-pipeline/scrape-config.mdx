@@ -1,0 +1,66 @@
+---
+title: Scrape Config
+description: Learn how to add Infrastructure Metrics config for Victoria Metrics Agent in Logit.io
+---
+
+# Infrastructure Metrics: Scrape Config Overview
+
+## What is a Scrape Config?
+
+A scrape config in the context of infrastructure metrics refers to a 
+configuration used to collect or scrape performance and monitoring data from 
+various components of an IT infrastructure. This data is essential for tracking 
+the health, performance, and availability of infrastructure elements such as 
+servers, databases, network devices, and more. 
+
+## Working with Infrastructure Metrics Scrape Config
+
+To locate Infrastructure Metrics Scrape Config, first, navigate to the menu on 
+the left side of your screen. Then, under the heading 'Infrastructure Metrics' 
+you will find 'Scrape Config', select this. 
+
+![Scrape Config](@/images/help/infrastructure-metrics/scrape-config.png)
+
+Now that you've located Infrastructure Metrics Scrape Config you can add a configuration 
+for your Victoria Metrics Agent. After selecting 'Create New Scrape Config' in the 
+Infrastructure Metrics Scrape Config section, a configuration interface or popup appears 
+(see image below), allowing you to set up the scrape.
+
+![Metrics Scrape Config](@/images/help/infrastructure-metrics/metrics-scrape-config.png)
+
+Here you can configure an input. This is simple to follow, you'll just need to input 
+the appropriate values to each corresponding box. Additionally, you can add multiple labels to the input. 
+
+Here's how you would typically complete the fields: 
+1. Targets: This is where you specify the IP addresses or hostnames of the components 
+or systems from which you want to scrape data. For example, you might enter the IP 
+address of a server or a database.
+2. Scheme: The "scheme" field often refers to the protocol used for scraping data. 
+Common schemes include HTTP and HTTPS for web-based scraping. Choose the appropriate 
+scheme based on your target's protocol.
+
+For the authentication (username and password), if your targets require authentication 
+to access the data, you would enter the username and password in the corresponding fields. 
+This is common for web services or APIs that require authentication.
+
+Regarding the labels, labels are metadata that you can attach to scraped data. They 
+provide additional context to the data you're collecting. For instance, you might add 
+labels to categorize the data by application, location, or other relevant attributes.
+
+Finally, the key and value pairs are often used in scrape configurations to specify 
+additional parameters or options for data collection. The specific usage of key-value 
+pairs can vary based on the scraping system being used (e.g., Prometheus). They can 
+be used to pass configuration options or filters to the scraping process.
+
+Once you've completed the configuration with the necessary details, including targets, 
+authentication, labels, and key-value pairs, the Victoria Metrics Agent will use this 
+configuration to initiate the scraping process. It will connect to the specified targets 
+using the provided IP addresses and scheme, and if authentication is required, 
+it will use the provided username and password to authenticate.
+
+If key-value pairs are used, they will be passed as part of the scraping process, 
+possibly as query parameters or options depending on the specific scraping system and protocol.
+
+The scraped data is then collected and stored by the Victoria Metrics Agent as per 
+the configured settings. This data can be used for monitoring, analysis, and 
+visualization of the health and performance of the targeted infrastructure components.

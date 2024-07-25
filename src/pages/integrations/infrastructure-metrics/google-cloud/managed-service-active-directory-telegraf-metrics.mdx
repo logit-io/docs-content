@@ -1,0 +1,78 @@
+---
+title: Google Managed Service Active Directory Metrics via Telegraf
+subTitle: Ship your Google Managed Service Active Directory Metrics via Telegraf to your Logit.io Stack
+logo: GoogleCloudFirewallRules
+color: "#3c76d7"
+description: Set up Telegraf to ship Google Managed Service Active Directory metrics to Logit.io. Use our Telegraf Google Managed Service Active Directory metrics example.
+stackTypes: metrics
+---
+
+Configure Telegraf to ship Google Managed Service Active Directory metrics to your Logit.io stacks via Logstash.
+
+<Steps>
+  ### Set Credentials in GCP
+
+  <SetGCPCredentials intro="Google Managed Service for Microsoft Active Directory (AD) is a fully managed service offered by Google Cloud that provides a highly available and scalable solution for running Microsoft AD in the cloud. It allows organizations to leverage the capabilities of Microsoft AD for identity and access management, authentication, and authorization, while offloading the operational burden to Google Cloud."/>
+  
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  <TelegrafStackDriverInput metric_type="managedidentities.googleapis.com"/>
+
+  ### Configure the output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  
+  <LaunchStack 
+    stackType="metrics" 
+    source="Google_Managed_Service_Active_Directory_Metrics_via_Telegraf" 
+    utmMedium="metrics" 
+    utmCampaign="telegraf-GoogleManagedAdService-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>
+
+## Telegraf Google Managed Service Active Directory Platform metrics Overview
+
+Integrating Telegraf with Google Managed Service for Microsoft AD allows IT administrators 
+and DevOps teams to efficiently monitor the health, performance, and security of their AD 
+infrastructure on Google Cloud. This is crucial for maintaining operational efficiency, 
+ensuring system security, and complying with various regulatory standards. By leveraging 
+Telegraf for data collection, organizations can gain insights into AD operation metrics, 
+such as authentication requests, directory sync times, and system health indicators, 
+facilitating proactive management and troubleshooting.
+
+However, the complexity and sheer volume of data generated from monitoring AD environments 
+can be challenging to process and analyze effectively. Logit.io provides a robust solution 
+to these challenges, offering a powerful platform designed to handle the aggregation, 
+visualization, and analysis of metrics and logs from Telegraf and Google Managed Service for Microsoft AD. 
+
+With Logit.io, organizations can enhance their monitoring and analytics capabilities, 
+ensuring the reliability and security of their AD infrastructure. The platform's 
+advanced features support in-depth analysis of AD metrics, enabling teams to quickly 
+identify and address potential issues, optimize performance, and ensure compliance 
+with internal and external requirements.
+
+For those utilizing Telegraf in conjunction with Google Managed Service for Microsoft AD 
+and seeking to advance their monitoring and analytics strategies, Logit.io is here to help. 
+Sending data from Google Managed Service for Active Directory to Logit.io is a streamlined 
+process that ensures your organization's logs and events are effectively collected, analyzed, 
+and secured. To get started with sending data from Google Managed Service for Active Directory 
+to Logit.io, you can make use of our source integration instructions. You can also configure 
+[VPC peering](/integrations/metrics/google-cloud/vpc-telegraf-metrics) 
+between your Active Directory environment and Logit.io, creating a secure pathway for data flow. 
+Furthermore, with Logit.io's robust support for various data sources, including the 
+[Google AI Platform](/integrations/metrics/google-cloud/ai-platform-telegraf-metrics), you can enrich 
+your log management with machine learning and artificial intelligence capabilities. 
+Logit.io's [GCP logging](https://logit.io/solutions/gcp-logging/) service comes with integrations that work together seamlessly.

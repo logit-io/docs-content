@@ -1,0 +1,34 @@
+---
+title: What are the risks of sending data via UDP
+description: Discover the steps you need to take to send log data to ElasticSearch via UDP in this help article from Logit.io.
+---
+
+# Understanding UDP
+
+The two most common network transmission protocols are 
+TCP (transmission control protocol) and UDP (user datagram protocol).
+
+TCP is often used for traffic where guaranteed delivery is 
+more important than the speed of delivery and includes protocols 
+to confirm that traffic has been delivered or not. Examples 
+include HTTP and most non-live streaming traffic.
+
+UDP doesn't offer the same delivery guarantees and is often used 
+in situations where speed of delivery is more important than being 
+able to retry a failed delivery. Examples include VOIP traffic where 
+minimising the latency is more important, or DNS traffic where 
+minimising the overhead is valuable.
+
+## What are there risks to sending logs via UDP? 
+
+UDP can offer faster delivery due to the reduced overhead and may be a 
+reasonable choice for transferring logs over a local network where packet loss is unlikely. 
+
+On a large/global network like the internet, some/occasional packet loss 
+can reasonably be expected. This may result in logs failing to be 
+delivered to your stack successfully.
+
+## Why is UDP even supported then?
+
+UDP support for shipping logs is largely there for legacy reasons. We would 
+advise a customer to choose an encrypted log shipping method whenever possible.

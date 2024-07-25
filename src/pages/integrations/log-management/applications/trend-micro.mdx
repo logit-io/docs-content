@@ -1,0 +1,96 @@
+---
+title: Trend Micro
+subTitle: Ship Trend Micro logs to Logstash
+logo: trendmicro
+color: "#D71920"
+description: Send your Trend Micro Secrurity logs to logit.io via logstash using the instructions below and begin searching your data
+stackTypes: logs
+sslPortType: beats-ssl
+---
+
+Ship your Trend Micro Security logs to Logit.io via Logstash.
+
+<Steps>
+    ### Configure Trend Micro to forward logs
+
+    Configure Trend Micro to send logs to TCP port 9000 of your Filebeat server.
+
+    You can consult the [Trend Micro documentation](https://cloudone.trendmicro.com/docs/workload-security/event-syslog/) to do this.
+
+    ### Install the Trend Micro certificate
+
+    Trend Micro sends data in an encrypted format. 
+
+    You need to install the Trend Micro certificate on your Filebeat server.
+
+    ```cmd copy
+    sudo mkdir /etc/trendmicro/certificates
+    sudo openssl req -newkey rsa:2048 -nodes \
+    -keyout /etc/filebeat/certificates/trendmicro.key -x509 \
+    -days 365 \
+    -out /etc/filebeat/certificates/trendmicro.crt
+    ```
+
+    ### Install Filebeat
+
+    <InstallFilebeat />
+    
+    ### Configure Filebeat.yml
+
+    The configuration file below is pre-configured to send data to your Logit.io Stack.
+        
+    Copy the configuration file below and overwrite the contents of the Filebeat configuration file typically located at `/etc/filebeat/filebeat.yml`
+    
+    ```cmd copy
+    # ============================== Filebeat inputs ===============================
+    filebeat.inputs:
+
+    - type: tcp
+        max_message_size: 10MiB
+        host: "0.0.0.0:6515"
+        enabled: true
+
+        fields:
+            type: trendmicro
+        fields_under_root: true
+        encoding: utf-8
+        ignore_older: 12h
+    
+    # ================================== Outputs ===================================
+    output.logstash:
+        hosts: ["@logstash.host:@logstash.sslPort"]
+        loadbalance: true
+        ssl.enabled: true
+
+    ```
+    
+    If you're running __Filebeat 7__, add this code block to the end. Otherwise, you can leave it out.
+
+    ```cmd copy
+    # ... For Filebeat 7 only ...
+    filebeat.registry.path: /var/lib/filebeat
+    ```
+
+    If you're running __Filebeat 6__, add this code block to the end.
+
+    ```cmd copy
+    # ... For Filebeat 6 only ...
+    registry_file: /var/lib/filebeat/registry
+    ```
+
+    __Validate your YAML__
+
+    _It's a good idea to run the configuration file through a YAML validator to rule out indentation errors, 
+    clean up extra characters, and check if your YAML file is valid. [Yamllint.com](https://yamllint.com) is a great choice._
+
+    ### Start filebeat
+
+    <StartFilebeat />
+
+    ### Check Logit.io for your logs
+    <LaunchStack utmMedium="logs" utmCampaign="trendmicro" source="trendmicro" />
+
+    ### How to diagnose no data in Stack
+
+    <DiagnoseNoData />
+</Steps>

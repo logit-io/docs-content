@@ -1,0 +1,88 @@
+---
+title: Logstash Dead Letter Queue (DLQ)
+description: Learn how to use the Logstash Dead Letter Queue (DLQ) to diagnose and troubleshooting data missing and not arriving in your stack
+---
+
+# Logstash Dead Letter Queue (DLQ): Diagnosing and Troubleshooting Data Issues in OpenSearch on Logit.io
+
+The Logstash Dead Letter Queue (DLQ) is a powerful tool for diagnosing and 
+troubleshooting issues with data not arriving into your OpenSearch stack on 
+Logit.io. The DLQ captures events that encounter processing errors in your 
+Logstash pipeline and stores them in a separate index for later analysis. 
+
+In this article, we'll explore how to enable and use the DLQ to identify and 
+resolve data issues in your Logstash pipeline and OpenSearch stack.
+
+## When to Use the Logstash Dead Letter Queue
+
+The DLQ can be used in various scenarios, including:
+
+- Data is not appearing in your OpenSearch index.
+- Data is appearing in your OpenSearch index, but it's missing fields or has incorrect field values.
+- You're seeing errors or warnings in your [Logstash logs](/log-management/troubleshooting/how-can-i-monitor-my-stack#logstash-logs-and-filters) related to event processing.
+- You suspect that there may be issues with your Logstash pipeline configuration or OpenSearch mappings.
+- You're not sure where in your Logstash pipeline the data is failing.
+- You're experiencing intermittent or sporadic data issues that are difficult to diagnose.
+- You're testing a new Logstash pipeline configuration or OpenSearch mapping and want to ensure that it's working correctly before deploying it to production.
+
+## Enabling the DLQ
+
+Enabling the DLQ in your Logstash pipeline on 
+Logit.io is easy. Simply follow these steps:
+
+1. Log in to your Logit.io account and navigate to your stack's Log Management `Overview` settings.
+2. Scroll down to the "Advanced Stack Settings" section.
+3. Under the "Logstash Dead Letter Queue" section, choose Enable DLQ. If the button shows Disable DLQ then this feature is already enabled for your stack.
+
+![Advanced Stack Settings](@/images/help/log-management/ingestion-pipelines/advanced-stack-settings.png)
+
+With the DLQ enabled, any events that encounter processing errors in your 
+Logstash pipeline will be captured and stored in the DLQ index for later analysis.
+
+## Viewing the DLQ in OpenSearch on Logit.io
+
+Once you've enabled and configured the DLQ, you can inspect 
+the failed events in OpenSearch to identify any issues with 
+your data or Logstash pipeline. Here's how to do it:
+
+1. Click `Launch Logs` for your stack.
+2. Click the "Discover" tab in the left-hand menu.
+3. In the "Index pattern" field, select the dlq-*.
+4. You should see a list of events that encountered processing errors in your Logstash pipeline.
+5. You can click expand an event to see its details and diagnose any issues.
+
+![Dead Letter Queue](@/images/help/log-management/ingestion-pipelines/dead-letter-queue.png)
+
+Each DLQ entry has the fields **dead_letter_queue_reason** and 
+**original_data** fields that can help to diagnose mapping 
+conflicts and other issues that prevent your data being processed.
+
+## Resolving Failed Events from the DLQ
+
+Once you have identified and resolved the underlying issues causing 
+events to fail and land in the DLQ, you can retry processing these 
+events in your Logstash pipeline. Here's how you can retry failed 
+events from the DLQ:
+
+1. Review the events in the DLQ in OpenSearch, as explained earlier in this article.
+2. Identify the root cause of the failures and make the necessary changes to your [Logstash configuration](/log-management/ingestion-pipeline/configuration/configure-logstash-filters) or [OpenSearch mappings](/log-management/opensearch/index-management/mapping/overview) to resolve the issues.
+3. Once you are confident that the issues have been addressed, you can retry the failed events.
+4. Monitor the reprocessing to ensure that the events are successfully processed and indexed in your OpenSearch stack.
+
+By retrying failed events from the DLQ, you can ensure that 
+data is correctly processed and prevent data loss.
+
+## Monitoring and Alerting
+
+Monitoring the DLQ is crucial to proactively identify and 
+address data processing issues. You can leverage your Logit.io 
+stacks to monitor the DLQ and receive alerts. Here are some 
+monitoring and alerting practices to consider:
+
+- **Monitor DLQ Event Count:** Track the number of events in the DLQ over time. Set up monitoring thresholds to be alerted if the DLQ event count exceeds a certain threshold, indicating potential issues with data processing.
+- **Monitor DLQ Error Patterns:** Look for recurring error patterns or specific error codes in the DLQ events. Create custom monitoring queries or use Logstash monitoring plugins to detect these patterns and generate alerts.
+- **Configure Notifications:** Set up notifications and alerting such as email alerts, Slack notifications, or notify incident management tools. This ensures that you are promptly notified of any critical issues or a sudden increase in failed events in the DLQ.
+
+Monitoring and alerting provide proactive visibility into data 
+processing issues, allowing you to address them promptly and 
+maintain data integrity in your OpenSearch stack.

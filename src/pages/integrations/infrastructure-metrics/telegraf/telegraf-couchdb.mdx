@@ -1,0 +1,80 @@
+---
+title: CouchDB Metrics via Telegraf
+subTitle: Ship your CouchDB Metrics via Telegraf to your Logit.io Stack
+logo: couchdb
+color: "#4d4d4d"
+description: Configure Telegraf to ship CouchDB metrics to your Logit.io stacks. Configure Telegraf to send CouchDB metrics to Logstash or Elastic. Get started using our Telegraf CouchDB metrics example configuration.
+stackTypes: metrics
+sslPortType: beats-ssl
+---
+
+Configure Telegraf to ship CouchDB metrics to your Logit.io stacks via Logstash.
+
+<Steps>
+
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+
+  ```yaml copy
+  # Read CouchDB Stats from one or more servers
+  [[inputs.couchdb]]
+    ## Works with CouchDB stats endpoints out of the box
+    ## Multiple Hosts from which to read CouchDB stats:
+    hosts = ["http://localhost:8086/_stats"]
+
+    ## Use HTTP Basic Authentication.
+    # basic_username = "telegraf"
+    # basic_password = "p@ssw0rd"
+  ```
+
+  <Callout type="info">
+    Read more about how to configure data scraping and configuration options for [CouchDB](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/couchdb/README.md)
+  </Callout>
+
+  ### Configure The Output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack source="CouchDB_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-Nginx-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+### Telegraf CouchDB metrics Overview
+
+To effectively monitor and analyze CouchDB metrics in a distributed environment, organizations require a reliable and efficient metrics 
+management solution. Telegraf, an open-source metrics collection agent, is the ideal tool for gathering CouchDB metrics from various sources, 
+including CouchDB instances, operating systems, and applications.
+
+With a wide range of input plugins, Telegraf empowers organizations to collect diverse CouchDB metrics, such as database size, document count, 
+read/write operations, latency, and more. These metrics provide valuable insights into the performance and health of CouchDB deployments, 
+enabling organizations to optimize their database operations.
+
+For storing and querying the collected CouchDB metrics, Prometheus, a powerful open-source monitoring and alerting tool, is the preferred 
+choice. Prometheus supports a flexible querying language and graphical visualization capabilities, allowing organizations to gain actionable 
+insights from CouchDB metrics. By configuring Telegraf to output CouchDB metrics in the Prometheus format and setting up Prometheus to scrape 
+the metrics from the Telegraf server, seamless integration is achieved.
+
+This process involves configuring Telegraf to collect CouchDB metrics, formatting them in the Prometheus format, and setting up Prometheus to 
+scrape the metrics from the Telegraf server. Leveraging Prometheus's advanced querying and visualization features, organizations can gain deep 
+insights into CouchDB performance, identify bottlenecks, and troubleshoot issues effectively.
+
+By leveraging Telegraf to ship CouchDB metrics to Prometheus, organizations establish a reliable and efficient metrics management solution for 
+their distributed environments. This empowers them to monitor CouchDB performance, optimize database operations, and make data-driven decisions 
+to ensure optimal system health and performance.
+
+If you need any further assistance with shipping your log data to Logit.io we're here to help you get started. Feel free to get in contact with 
+our support team by sending us a message via <IntercomButton text="live chat" /> & we'll be happy to assist.

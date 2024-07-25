@@ -1,0 +1,180 @@
+---
+title: Get Started Sending Logs
+description: Discover the steps you need to take to get started with ingesting logs and metrics with Filebeat in this helpful article from Logit.io.
+---
+
+# Get Started Sending Logs
+
+Setting up, configuring and sending logs and metrics to Logstash can 
+appear to be a complicated process, this guide aims to show you that 
+by using Logit.io it is actually a simple process.
+
+### Where to start...
+
+Filebeat is the most popular tool for ingesting logs and metrics because 
+it works with minimal configuration and with a wide range of common log 
+formats. For this reason, we recommend it as a good place to start.
+
+<Callout type="info">
+  Remember, Filebeat doesn't cover all logging scenarios and that is why there are several 
+  different shippers available. If you don't think that Filebeat is the solution that 
+  meets your needs then please take a look at other options in our [Data Source Integrations.](/integrations)
+</Callout>
+
+### Installing Filebeat
+
+After you have created your first Logit.io, navigate to `Send Logs` 
+settings and then click _View All Sources_ to get started.
+
+As mentioned earlier, we are going to use the recommended Filebeat in our example 
+so click _Log Management_, then click _Shippers_ and finally click _Filebeat_ to continue.
+
+<Callout type="info">
+  If you do require a shipper other than Filebeat, this is where you choose it. 
+  Choosing a shipper will show you the source wizard that explains 
+  how to get up and running with your chosen data source.
+</Callout>
+
+The first section of the wizard contains instructions for installing Filebeat. 
+The instructions cover several OS so please follow the instructions for the 
+OS that you are using. There are instructions for installing Filebeat on 
+Debian, Ubuntu, Mint, CentOS, RHEL, Fedora, macOS and Windows. However, 
+if you are using a different OS to the ones listed, try the link at the 
+bottom for the downloads page to see if you can find what you require.
+
+![Filebeat](@/images/help/log-management/sending-data/filebeat.png)
+
+Next, you need to locate the configuration file, the wizard shows you where to 
+find this file for each type of OS. Click the "next step" button to do this.
+
+### Configuring the inputs
+
+We need to open the configuration file and make some changes. These changes are 
+also described in the source wizard. Search for the filebeat.inputs section. 
+You will see the following two lines in the file:
+
+```yaml
+# Change to true to enable this input configuration.
+enabled: false
+```
+Change the enabled to true. It should now look as follows:
+
+```yaml
+# Change to true to enable this input configuration.
+enabled: true
+```
+
+You will also see the following lines in the filebeat.inputs section:
+
+```yaml
+# Paths that should be crawled and fetched. Glob based paths.
+paths:
+  - /var/log/*.log
+  #- c:\programdata\elasticsearch\logs\*
+```
+
+This is how you tell Filebeat where the files that you wish to ingest are located. 
+Filebeat is currently looking in the directory */var/log/* for files. 
+The Asterisk means it is looking for all files in this directory with the .log 
+extension but it is possible to be more specific and actually name the files 
+here if this is what you want to do. Change this to point to where your log files are located.
+
+Let's now skip forward to the configure output section of the wizard. 
+Click the "Next step" button until you arrive at this section.
+
+### Configure Output
+
+In this example, we are sending data to Logstash rather than OpenSearch so we 
+must comment out all of the lines in the configuration file that relate 
+to OpenSearch. Commenting out is done using the hash symbol. The OpenSearch 
+output section of the configuration file should look as follows:
+
+```yaml
+# output.elasticsearch:
+# Array of hosts to connect to.
+#  hosts: ["localhost:9200"]
+# Optional protocol and basic auth credentials.
+# protocol: "https"
+# username: "elastic"
+# password: "changeme"
+```
+
+Now we need to update the Logstash output section of the configuration 
+file to include your settings. You will notice that the wizard actually 
+displays your unique settings to save you from looking them up.
+
+Currently, the hosts line in the configuration file will look as follows:
+
+```yaml
+#hosts: ["localhost:5044"]
+```
+
+You need to remove the hash and then copy over the localhost part 
+with the settings shown in the wizard so that it looks similar to below:
+
+```yaml
+hosts: ["11111111-aaaa-1111-1111-111111111111-ls.logit.io:0"]
+```
+
+You then need to add the following two lines to the section:
+```yaml
+loadbalance: true
+ssl.enabled: true
+```
+When finished, the Logstash output section of the configuration 
+file should look similar to the following:
+
+```yaml
+#output.logstash:
+# The Logstash hosts
+hosts: ["11111111-aaaa-1111-1111-111111111111-ls.logit.io:0"]
+# Optional SSL. By default is off.
+# List of root certificates for HTTPS server verifications
+#ssl.certificate_authorities: ["/etc/pki/root/ca.pem"]
+# Certificate for SSL client authentication
+#ssl.certificate: "/etc/pki/client/cert.pem"]
+# Client Certificate Key
+#ssl.key: "/etc/pki/client/cert.key"]
+loadbalance: true
+ssl.enabled: true
+```
+
+Now we are ready to validate the file. Click "Next step" to do this.
+
+### Validate Configuration
+
+This section shows us how to check that the updates we have made to the 
+configuration file during the configuration process haven't broken the format. 
+Again there are instructions for several OS's so follow the instructions for 
+the one that you are using. If the validation fails then go back to the 
+Configuring Inputs and Configuring Outputs sections and check that your 
+file is in the same format as the example shown.
+
+When the validation has passed we are ready to start ingesting data. 
+Click the "Next step" button to learn how to start doing this.
+
+### Start Filebeat
+There are instructions that show how to start Filebeat for each type of OS. 
+Follow the instructions for the system that you are using.
+
+### Confirm data is in OpenSearch
+
+Having followed the instructions we should now be able to view the logs. 
+To do this click the _Launch Logs_ button for your stack.
+
+<Callout type="info">
+  OpenSearch Dashboard and Grafana are the tools that you will use to 
+  visualise your data, we can use them to see any logs and metrics that 
+  have been sent to OpenSearch on this stack.
+</Callout>
+
+When OpenSearch Dashboards is launched you should be able to see the logs 
+and metrics that were ingested into OpenSearch by Logstash. It is possible 
+to filter this data by time, fields, and content, so feel free to explore!
+
+### Troubleshooting?
+
+If you don't see any logs or metrics in OpenSearch Dashboards and/or Grafana then there are a few things that you should check.
+- Are there any files in the folder that was added during file inputs configuration?
+- Is the format of the configuration file correct? Does it validate?
+- Do the Logstash settings in the file match the settings in the source wizard? Have they been copied correctly?

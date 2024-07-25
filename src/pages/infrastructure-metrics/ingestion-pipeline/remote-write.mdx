@@ -1,0 +1,40 @@
+---
+title: Remote Write
+description: Learn how to utilise and configure infrastructure Metrics Remote Write in Logit.io
+---
+
+# Infrastructure Metrics: Remote Write
+
+## What is Infrastructure Metrics Remote Write?
+
+Remote Write in the context of infrastructure metrics refers to a mechanism 
+used for sending collected metric data from one component or system to another, 
+typically in a distributed monitoring and metrics collection environment. 
+This mechanism is commonly associated with monitoring and observability tools 
+like Prometheus and Thanos, but it can be used in other contexts as well.
+
+## Working with Infrastructure Metrics Remote Write?
+
+To locate Infrastructure Metrics Remote write, navigate to the menu at the 
+left side of your screen. Then under the heading 'Infrastructure Metrics' 
+you will find `Remote Write` settings.
+
+![Remote Write](@/images/help/infrastructure-metrics/remote-write.png)
+
+Now you've reached the Remote Write page, you can access and copy your 
+unique Remote Write URL.  Employing Remote write has an array of benefits, 
+such as reliability and resilience. This is because Remote Write enables 
+resilience in metric data collection. If the storage system becomes 
+temporarily unavailable, metrics can still be collected and buffered 
+locally until the storage system is back online. This ensures data 
+continuity and minimizes data loss during transient failures. 
+
+You can choose 'Copy Remote Write URL' to transmit your data to Logit.io 
+in Prometheus format. For detailed instructions for specific data sources 
+view our [data source configurations](/integrations/infrastructure-metrics/telegraf/telegraf-activemq).
+
+Also, remote write is effective in larger organisations. This is due 
+to that in large organizations or multi-tenant environments, you may 
+need to separate metric data by different teams, projects, or customers. 
+Remote Write can facilitate this by allowing you to route metrics to 
+different storage systems or namespaces based on tags or labels.

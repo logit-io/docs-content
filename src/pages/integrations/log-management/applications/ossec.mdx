@@ -1,0 +1,117 @@
+---
+title: Ossec
+subTitle: Ship OSSEC logs to Logstash
+logo: ossec
+color: "#E22F29"
+description: Send your OSSEC logs to logit.io via logstash using the instructions below and begin searching your data
+stackTypes: logs
+sslPortType: beats-ssl
+---
+
+Send your OSSEC logs to logit.io via logstash using the instructions below and begin searching your data.
+
+<Steps>
+  ### Configure OSSEC to output JSON alerts
+
+  In the OSSEC configuration file (/var/ossec/etc/ossec.conf), find the `<global>` tag. 
+
+  Add the `<jsonout_output>` property and set to yes.
+
+  ```cmd copy
+  <global>
+      <jsonout_output>yes</jsonout_output>
+  </global>
+  ```
+
+  Restart OSSEC.
+
+  ```cmd copy
+  sudo /var/ossec/bin/ossec-control restart
+  ```
+
+  ### Install Filebeat
+
+  <InstallFilebeat />
+
+  ### Update Your Configuration File
+
+  The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+          
+  Copy the configuration file below and overwrite the contents of __filebeat.yml__.
+
+  For version `7.16+` and above, use the configuration below:
+
+  ```
+  ###################### Logit.io Filebeat Configuration ########################
+  # ============================== Filebeat inputs ==============================
+  filebeat.inputs:
+  - type: filestream
+    enabled: true
+    id: my_unique_id
+    paths:
+    # REQUIRED CHANGE TO YOUR LOGS PATH
+    - /var/log/*.log
+    #- C:\Windows\System32\winevt\Logs\*
+
+    fields:
+    type: ossec
+  # ============================== Filebeat modules ==============================
+  filebeat.config.modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+    #reload.period: 10s
+
+  # ================================== Outputs ===================================
+  # ------------------------------ Logstash Output -------------------------------
+  output.logstash:
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
+
+  # ================================= Processors =================================
+  processors:
+    - add_host_metadata:
+      when.not.contains.tags: forwarded
+    - add_cloud_metadata: ~
+    - add_docker_metadata: ~
+    - add_kubernetes_metadata: ~
+  ```
+
+  For versions `7.15.x` and below
+
+  ```
+  # ============================== Filebeat inputs ==============================
+  filebeat.inputs:
+  - type: log
+  ```   
+          
+  If you're running `Filebeat 7` add this code block to the end. Otherwise, you can leave it out.
+
+  ```
+  # ... For Filebeat 7 only ...
+  filebeat.registry.path: /var/lib/filebeat
+  ```
+
+  If you're running `Filebeat 6` add this code block to the end. Otherwise, you can leave it out.
+
+  ```
+  # ... For Filebeat 6 only ...
+  registry_file: /var/lib/filebeat/registry
+  ```
+
+  __Validate your YAML__
+
+  _It's a good idea to run the configuration file through a YAML validator to rule out indentation errors, 
+  clean up extra characters, and check if your YAML file is valid. [Yamllint.com](https://yamllint.com) is a great choice._
+
+  ### Start filebeat
+
+  <StartFilebeat />
+
+  ### Check Logit.io for your logs
+  <LaunchStack utmMedium="logs" utmCampaign="ossec" source="ossec" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>

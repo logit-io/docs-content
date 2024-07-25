@@ -1,0 +1,76 @@
+---
+title: Azure Logs
+subTitle: Pull logs from an Azure Event Hub to Logstash
+logo: azure
+color: "#0089d6"
+description: Send your Azure application/access/error logs to logit.io via logstash using the instructions below and begin searching your data
+stackTypes: logs
+---
+
+Stream Azure monitoring logs to an event hub and configure 
+Logstash to pull the logs into the Logit.io stack.
+
+<Steps>
+  ### Ensure Azure Event Hub
+
+  Before you begin you will need to ensure you have an available 
+  Azure Event Hub in your [Azure Portal](https://portal.azure.com/)
+
+  Read more about how to [configure azure monitoring to stream to 
+  an event hub](https://docs.microsoft.com/en-us/azure/azure-monitor/platform/stream-monitoring-data-event-hubs).
+
+  ![Configure Azure monitoring](@/images/integrations/azure-container-activity-logs/container_activity_logs_step_event_hub.png)
+
+  <Callout type="info">
+    The Azure event hub Logstash plugin is only available for stacks running Logstash 6.4 onwards 
+  </Callout>
+
+  ### Configure Permissions
+
+  <AzureConfiguration />
+
+  ### Start Sending Logs To A Stack
+
+  <AzureInput stackType="logs" utmMedium="logs" utmCampaign="azure" type="azure_event_hub" />
+
+  ### Check Logit.io for your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="azure" source="azure" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+### Azure Log Monitoring Overview
+
+As a disaster recovery tool, Azure is known for its advanced site recovery 
+which is operational across all operating systems, locations, & languages. 
+The platform also allows users to customise the frequency of backup schedules 
+& works alongside the Logit.io platform as our hosted ELK Stacks support 
+version control & rollbacks for added peace of mind.
+
+Our platform is built to 
+simplify [Azure log management](https://logit.io/solutions/azure-logging) as 
+we provide your [hybrid cloud & multi-cloud](https://logit.io/solutions/monitoring/cloud-monitoring) Azure 
+environments with the ability to parse & monitor your activity across 
+hybrid environments & audit logs to bring data-driven insights that 
+are valuable for a wide variety of use cases.
+
+Logit.io's hosted Elastic Stack allows you to aggregate and analyze 
+all of your logs centrally, saving your InfoSec & DevOps teams from 
+unnecessary maintenance overheads by centralising all of your Azure monitor logs.
+
+Tail large volumes of logs & gain near real-time insights on the performance 
+and security issues your infrastructure faces using our cloud-based platform. 
+Logit.io also offers automated parsing through highly available Logstash 
+pipelines as a solution for migrating your log data fast.
+
+If you need any further assistance with migrating your Azure data to 
+Logstash we're here to help you discover the insights locked in data hosted on 
+Azure, [GCP](/integrations/logs/google-cloud/operations), AWS or any 
+of the integrations covered in our [data source integrations](/integrations). 
+
+Feel free to reach out by contacting our support 
+team <IntercomButton text="via live chat" /> and we will be happy to assist.

@@ -1,0 +1,74 @@
+---
+title: Reporting
+description: Learn how to generate and schedule reports for dashboards, visualisations and saved searches and output to csv, png and pdf
+---
+
+# Managing OpenSearch Reporting
+
+### OpenSearch Reporting Introduction
+The OpenSearch Reporting feature lets you generate and schedule reports 
+for *dashboards, visualisations and saved searches* and output them to 
+CSV, png and pdf. You can create reports from *Discovery, Visualise, or Dashboard* views.
+
+In addition, you can also create reports using Report definitions and 
+schedule these to be generated automatically at periodic intervals.
+
+<Callout type="info">
+  To use and generate new reports, you must have at least the 
+  `stack_user` [OpenSearch Security](/account-administration/account-access-users-teams/roles-access/managing-opensearch-grafana-security-roles) role.
+</Callout>
+
+![Managing OpenSearch Reporting](@/images/help/log-management/storage/managing-opensearch-reporting.png)
+
+![OpenSearch Reports](@/images/help/log-management/storage/opensearch-reports.png)
+
+Scheduling a CSV report based on a saved search
+
+### On-demand Reports
+On-demand reports let you quickly generate a report from the current view. 
+From  *Discovery, Visualise, or Dashboard* views choose **Reporting** from the top menu.
+
+For dashboards or visualisations choose **Download PDF** or **Download PNG**. 
+From the Discover view, save your search and then choose **Download CSV**. 
+Depending on the size of the report, it might take a few minutes but the reports 
+generate asynchronously and you will see a notification when your report is ready.
+
+![Save Search](@/images/help/log-management/storage/save-search.png)
+
+Using a saved search from the Discover view to generate a CSV report on demand.
+
+![OpenSearch Discover View](@/images/help/log-management/storage/opensearch-discover-view.png)
+
+<Callout type="info">
+  When using a data table or visualisation to generate a png or pdf report, 
+  it's important to set the **Max rows per page** option to ensure that the generated 
+  report includes all the required data.
+</Callout>
+
+![OpenSearch Report](@/images/help/log-management/storage/opensearch-report.png)
+
+### Report Definitions
+Report definitions allow you to generate reports on a pre-defined schedule. 
+To create a new report definition choose **Reporting** from the left menu in OpenSearch. 
+If you can't see this option you may need to speak to your account Administrator, 
+to find out who this is choose **Help and Support** from your Logit.io dashboard. 
+
+Choose **Create** to generate a new reporting definition
+
+![Create Report Definition](@/images/help/log-management/storage/create-report-definition.png)
+
+Enter a name and optional description for your report, choose the report source 
+which can be an existing dashboard, visualisation or saved search and then 
+specify a time range for the required data.
+
+If you choose to schedule your report, you can either select **recurring** 
+or **cron based** on your requirements. 
+Using [Cron](https://opendistro.github.io/for-elasticsearch-docs/docs/alerting/cron/) expressions 
+gives you more flexibility about when exactly to generate the report.
+
+Choose **create** to save the report definition.
+
+![Report Trigger](@/images/help/log-management/storage/report-trigger.png)
+
+Depending on how you have configured your report definition, the report will be created in the Reports window. 
+You can then choose the link under the generate column to download the CSV, png or pdf report.
