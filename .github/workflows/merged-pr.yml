@@ -55,7 +55,16 @@ jobs:
           # Find the existing PR in the private repo
           prs = private_repo.get_pulls(state='open', head=f'{private_repo_owner}:{branch_name}')
           if prs.totalCount > 0:
-              pr = prs[0]
-              # Merge the PR if it exists
-              pr.merge(commit_message='Auto Merging PR from docs-content to deploy')
+              pr = prs[0]             
+              
+              # Try to squash merge the PR if allowed
+              merge_result = pr.merge(commit_message='Auto Merging PR from docs-content', merge_method='squash')
+              
+              # Check the result of the merge
+              if merge_result.merged:
+                  print(f'Successfully merged PR #{pr.number} using squash method')
+              else:
+                  print(f'Failed to merge PR #{pr.number}. Reason: {merge_result.message}')
+          else:
+            print(f'No open PR found for branch {branch_name}')    
           "          
