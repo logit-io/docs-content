@@ -1,0 +1,125 @@
+name: Sync PR to Private Repo
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+  workflow_dispatch:
+
+jobs:
+  sync-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install PyGithub
+        run: pip install PyGithub
+
+      - name: Echo environment variables
+        run: |
+          echo "GITHUB_TOKEN=${{ secrets.PRIVATE_REPO_TOKEN }}"
+          echo "PUBLIC_REPO=${{ github.event.repository.full_name }}"
+          echo "PUBLIC_PR_TITLE=${{ github.event.pull_request.title }}"
+          echo "PUBLIC_PR_BODY=${{ github.event.pull_request.body }}"
+          echo "PUBLIC_PR_URL=${{ github.event.pull_request.html_url }}"
+          echo "PUBLIC_PR_NUMBER=${{ github.event.pull_request.number }}"
+          echo "PRIVATE_REPO_OWNER=${{ secrets.PRIVATE_REPO_OWNER }}"
+          echo "PRIVATE_REPO_NAME=${{ secrets.PRIVATE_REPO_NAME }}"
+
+      - name: Sync PR to Private Repo
+        env:
+          GITHUB_TOKEN: ${{ secrets.PRIVATE_REPO_TOKEN }}
+          PUBLIC_REPO: ${{ github.event.repository.full_name }}
+          PUBLIC_PR_TITLE: ${{ github.event.pull_request.title }}
+          PUBLIC_PR_BODY: ${{ github.event.pull_request.body }}
+          PUBLIC_PR_URL: ${{ github.event.pull_request.html_url }}
+          PUBLIC_PR_NUMBER: ${{ github.event.pull_request.number }}
+          PRIVATE_REPO_OWNER: ${{ secrets.PRIVATE_REPO_OWNER }}
+          PRIVATE_REPO_NAME: ${{ secrets.PRIVATE_REPO_NAME }}
+        run: |
+          python -c "
+          import os
+          from github import Github
+          from datetime import datetime
+          
+          # Load environment variables
+          token = os.getenv('GITHUB_TOKEN')
+          public_repo = os.getenv('PUBLIC_REPO')
+          public_pr_title = os.getenv('PUBLIC_PR_TITLE')
+          public_pr_body = os.getenv('PUBLIC_PR_BODY')
+          public_pr_url = os.getenv('PUBLIC_PR_URL')
+          public_pr_number = os.getenv('PUBLIC_PR_NUMBER')
+          private_repo_owner = os.getenv('PRIVATE_REPO_OWNER')
+          private_repo_name = os.getenv('PRIVATE_REPO_NAME')
+          
+          # Generate branch name and timestamp
+          branch_name = f'pr-sync-{public_pr_number}'
+          current_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+          
+          # Initialize GitHub client
+          g = Github(token)
+          private_repo = g.get_repo(f'{private_repo_owner}/{private_repo_name}')
+          
+          # Check if the branch exists
+          try:
+              ref = private_repo.get_git_ref(f'heads/{branch_name}')
+              branch_exists = True
+          except:
+              branch_exists = False
+          
+          # Create the branch if it does not exist
+          if not branch_exists:
+              master_ref = private_repo.get_git_ref('heads/master')
+              private_repo.create_git_ref(ref=f'refs/heads/{branch_name}', sha=master_ref.object.sha)
+          
+          # Prepare file content and commit message
+          # Prepare file content and commit message
+          content = f'# Pull Request Details\n\n## Title\n{public_pr_title}\n\n## Body\n{public_pr_body}\n\n## Original PR\n[Link to PR]({public_pr_url})\n\n## Timestamp\n{current_timestamp}'
+          content = f'Title: {public_pr_title}\n\nBody: {public_pr_body}\n\nOriginal PR: {public_pr_url}\nTimestamp: {current_timestamp}'
+          file_path = f'docs-content-sync/{public_pr_number}-details.md'
+          commit_message = f'Sync from public PR: {public_pr_title} - {current_timestamp}'
+          
+          # Try to get the existing file SHA if it exists
+          try:
+              file = private_repo.get_contents(file_path, ref=branch_name)
+              file_sha = file.sha
+              # Update the file if it exists
+              private_repo.update_file(
+                  path=file_path,
+                  message=commit_message,
+                  content=content,
+                  sha=file_sha,
+                  branch=branch_name
+              )
+          except:
+              # Create the file if it does not exist
+              private_repo.create_file(
+                  path=file_path,
+                  message=commit_message,
+                  content=content,
+                  branch=branch_name
+              )
+          
+          # Check for existing PRs in the private repo
+          prs = private_repo.get_pulls(state='open', head=f'{private_repo_owner}:{branch_name}')
+          if prs.totalCount == 0:
+              # Create a new PR if none exists
+              private_repo.create_pull(
+                  title=f'[Docs Content PR Sync] {public_pr_title} - {current_timestamp}',
+                  body=f'{public_pr_body}\n\nOriginal PR: {public_pr_url}\nTimestamp: {current_timestamp}',
+                  head=branch_name,
+                  base='master'
+              )
+          else:
+              # Update the existing PR
+              pr = prs[0]
+              pr.edit(
+                  title=f'[Docs Content PR Sync] {public_pr_title} - {current_timestamp}',
+                  body=f'{public_pr_body}\n\nOriginal PR: {public_pr_url}\nTimestamp: {current_timestamp}'
+              )
+          "
