@@ -83,7 +83,13 @@ Click on the button below to open Grafana.
 <LaunchVisualizer />
 
 In Grafana, click on Explore in the side menu and in the Metric drop-down select 'ask' ![Metric drop-down](@/images/getting-started/metrics/grafana-metric1.png)
-and then the blue 'Run query' button in the top-right of the Window ![Run query button](@/images/getting-started/metrics/grafana-metric2.png)
+and then the blue 'Run query' button in the top-right of the Window ![Run query button](@/images/getting-started/metrics/grafana-metric2.png).
+
+You will see three dots appear in the graph in the bottom part of the window, one for each curl request we have just sent. These are the three 'metrics' 
+we just sent as csv data to your Logit.io Infrastructure Metrics stack. 
+
+That's it! You have sent data to your stack and viewed it in Grafana. This is, of course, just the beginning. For more help sending data 
+to your stack check out the following resources and if you need more help please feel free to contact us via Intercom.
 
 <Callout type="info">
   This guide is intended to familiarise you with quickly sending some data to Logit.io
@@ -92,90 +98,8 @@ and then the blue 'Run query' button in the top-right of the Window ![Run query 
   you send metrics from a variety of sources.
 </Callout>
 
-### Confirm data is in Grafana
-
-Having followed the instructions we should now be able to view the 
-metrics in Grafana. To do this choose Launch Dashboard in Step 5 
-of the integration guide or from your main dashboard choose Launch Metrics.
-
-![Launch Buttons](@/images/help/infrastructure-metrics/launch-buttons.png)
-
-When Grafana is launched you should be able to see the metrics that were ingested into 
-OpenSearch via the ingestion pipeline. It is possible to filter this data by time, 
-fields, and content, so feel free to explore!
-
-![Grafana Visualization](@/images/help/infrastructure-metrics/grafana-visualization.png)
-
-### Troubleshooting?
-
-If you don't see any metrics in Grafana then there are a few things that you should check.
-
-While setting up the Telegraf for system metrics monitoring, you may encounter 
-issues with data visibility. If your collected data is not appearing as expected 
-in Victoria Metrics or Grafana, consider the following troubleshooting steps:
-
-**Telegraf Configuration Validation:**
-
-Syntax Errors: Double-check your Telegraf configuration file for syntax errors 
-or typos. A minor mistake can prevent Telegraf from collecting and transmitting data.
-
-**Output Plugin Configuration:**
-
-Output Plugin Settings: Review the configuration of the Telegraf output 
-plugin responsible for sending data to Victoria Metrics. 
-Ensure that the remote write URL is correctly configured.
-
-**Firewall and Network Issues:**
-
-Firewall Rules: Verify that your firewall settings allow outbound connections 
-from the host running Telegraf. Check for any network issues that might be 
-preventing data transmission. 
-This [help article](/log-management/troubleshooting/how-can-i-diagnose-no-data-appearing) 
-contains some useful firewall commands that may help. 
-
-**Remote Write URL:**
-
-Remote Write URL Validity: Confirm that the remote write URL specified in 
-Telegraf matches the one provided. A mismatched URL can prevent data from 
-reaching the correct destination.
-
-# How do I load and view dashboards in my Metrics Stack
-
-To access dashboards within your metrics stack, start by navigating to the 
-Logit.io dashboard. Once you're on the Logit.io dashboard, scroll down until 
-you locate the 'Infrastructure Metrics' section. Simply click on 'Launch' 
-next to 'Grafana' under the 'Services' section. This will take you to Grafana, 
-where you can analyse and interact with your metrics data.
-
-![Infrastructure Metrics](@/images/help/infrastructure-metrics/infrastructure-metrics-stack.png)
-
-Within Grafana, you can kickstart your journey into visualizing your 
-metrics by choosing "New Dashboard" from the menu on the left-hand side.
-
-![Grafana Dashboards](@/images/help/infrastructure-metrics/dashboards.png)
-
-On the following screen, you have the option to include a new panel 
-on your dashboard, allowing you to initiate the display of graphs 
-linked to the metrics sent to your Grafana instance.
-
-![New Dashboard](@/images/help/infrastructure-metrics/new-dashboard.png)
-
-The subsequent example illustrates the screen that appears after selecting the 
-option to add a new panel. After customizing the graph to showcase the specific 
-metrics you want to measure, simply click "Apply" to 
-preserve this new panel as part of your new dashboard.
-
-![Edit Dashboard Panel](@/images/help/infrastructure-metrics/edit-dashboard-panel.png)
-
-From here, you can proceed to include additional panels that showcase the 
-essential metrics you want to monitor consistently.
-
-To access pre existing dashboards, start from the initial screen dashboard's 
-menu, and choose "Browse" to view the dashboards currently accessible, 
-depending on your account's permission level.
-
-![Grafana Dashboards](@/images/help/infrastructure-metrics/dashboards.png)
-
-If you encounter any questions or encounter difficulties while accessing 
-your metrics dashboards, don't hesitate to contact us through our live chat, 
-and we'll gladly assist you.
+<Cards>
+  <Card title="View Data Source Integrations" href="/integrations" />
+  <Card title="Send Metrics" href="/integrations/infrastructure-metrics/telegraf/telegraf-prometheus" />
+  <Card title="Send Traces" href="/application-performance-monitoring/getting-started" />
+</Cards>
