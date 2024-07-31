@@ -1,160 +1,96 @@
 ---
 title: Get Started Sending Metrics
 description: Learn how to get started and explore Infrastructure Metrics with Grafana
+stackTypes: metrics
 ---
 
-# Get Started Sending Metrics
+# Get Started Sending Metric Data
 
-Managing the collection, storage, and visualization of infrastructure metrics 
-might seem like a complex undertaking. By harnessing the power of Victoria Metrics, 
-Grafana, and the remote write capability, you'll not only streamline metric 
-collection but also gain valuable insights into your infrastructure's performance. 
+<Callout type="info">
+  To successfully use this guide, you need to have already created a Logit.io account and Infrastructure Metrics stack. If you haven't, please click [here](/getting-started) to continue
+</ Callout>
+You can send data to your Infrastructure Metrics service in a few seconds by following this guide.
 
-So, let's embark on a journey to simplify infrastructure monitoring and empower 
-your organization with data-driven decisions. This guide aims to show you that 
-by using Logit.io it is actually a simple process.
+*Note*: this guide assumes you have curl installed on your computer. It is provided by default on most Linux distributions and in macOS and Windows 10 / 11. 
+To install on earlier versions of Windows you can follow the instructions [here](https://curl.se/windows/). 
+
+If you are logged in, the endpoint address you need to send data to us will be pre-populated. If you are not logged in please do so and return to this guide.
+
+We are going to send three curl requests with some dummy metric data to your Infrastructure Metrics enddpoint. This guide is an adapted version of the  
+VictoriaMetrics documentation [here](https://docs.victoriametrics.com/single-server-victoriametrics/#how-to-import-csv-data).
+
+
+<Tabs items={["Windows", "Linux", "macOS", "DEB", "RPM"]}>
+  <Tab>
+  Remember that you will need to escape double-quote characters with a backslash in the data field as shown in the example below.
+
+  Command Prompt:
+  ```bash copy 
+  curl -d "GOOG,1.23,4.56,NYSE" "<vm-endpoint>:<vm-port>/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market"
+
+  curl -d "MSFT,3.21,1.67,NASDAQ" "<vm-endpoint>:<vm-port>/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market"
+
+  curl -d "0R2V.L,2.75,3.21,LSE" "<vm-endpoint>:<vm-port>/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market"
+  ```
+  </Tab>
+
+  <Tab>
+  ```bash copy
+  curl -d "GOOG,1.23,4.56,NYSE" '<vm-endpoint>:<vm-port>/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
+
+  curl -d "MSFT,3.21,1.67,NASDAQ" '<vm-endpoint>:<vm-port>/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
+
+  curl -d "0R2V.L,2.75,3.21,LSE" '<vm-endpoint>:<vm-port>/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
+  ```
+  </Tab>
+
+  <Tab>
+  ```bash copy
+  curl -d "GOOG,1.23,4.56,NYSE" '<vm-endpoint>:<vm-port>/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
+
+  curl -d "MSFT,3.21,1.67,NASDAQ" '<vm-endpoint>:<vm-port>/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
+
+  curl -d "0R2V.L,2.75,3.21,LSE" '<vm-endpoint>:<vm-port>/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
+  ```
+  </Tab>
+
+  <Tab>
+  ```bash copy
+  curl -d "GOOG,1.23,4.56,NYSE" '<vm-endpoint>:<vm-port>/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
+
+  curl -d "MSFT,3.21,1.67,NASDAQ" '<vm-endpoint>:<vm-port>/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
+
+  curl -d "0R2V.L,2.75,3.21,LSE" '<vm-endpoint>:<vm-port>/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
+  ```
+  </Tab>
+
+  <Tab>
+  ```bash copy
+  curl -d "GOOG,1.23,4.56,NYSE" '<vm-endpoint>:<vm-port>/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
+
+  curl -d "MSFT,3.21,1.67,NASDAQ" '<vm-endpoint>:<vm-port>/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
+
+  curl -d "0R2V.L,2.75,3.21,LSE" '<vm-endpoint>:<vm-port>/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
+  ```
+  </Tab>
+
+  </Tabs>
 
 ### Where to start...
 
-In this guide, we'll walk you through the process of using a remote write 
-URL to send system metrics to an Ingestion Pipeline via Telegraf. You'll 
-learn how to customize the data scraping, understand how the metrics are 
-stored in Victoria Metrics, and use Grafana to explore and interpret your valuable data.
+Click on the button below to open Grafana.
+
+<LaunchVisualizer />
+
+In Grafana, click on Explore in the side menu and in the Metric drop-down select 'ask' ![Metric drop-down](@/images/getting-started/metrics/grafana-metric1.png)
+and then the blue 'Run query' button in the top-right of the Window ![Run query button](@/images/getting-started/metrics/grafana-metric2.png)
 
 <Callout type="info">
-  Remember, System metrics via Telegraf doesn't cover all the scenarios and 
-  that is why there are several different shippers available. If you don't 
-  think that System Metrics via Telegraf is the solution that meets your 
-  needs then please take a look at other options in our Data Source Integrations.
+  This guide is intended to familiarise you with quickly sending some data to Logit.io
+  and viewing it in Grafana. It is unlikely to be the method you will choose to 
+  send your real metric data to us - we have various data source integration guides to help 
+  you send metrics from a variety of sources.
 </Callout>
-
-### Why Use Telegraf with Victoria Metrics?
-
-Telegraf is a versatile agent for collecting and reporting metrics and data. 
-It's commonly used to capture system performance metrics, making it an ideal 
-choice for sending these metrics to Victoria Metrics. By combining Telegraf 
-with Victoria Metrics and Grafana, you can centralize your infrastructure 
-monitoring and gain deeper insights into your systems.
-
-### Configuring Telegraf to send System Metrics
-
-After you have created your first Logit.io stack you will see it on 
-your Dashboard, click _View Data Integrations_ to get started.
-
-![Infrastructure Metrics](@/images/help/infrastructure-metrics/infrastructure-metrics-stack.png)
-
-As mentioned earlier, we are going to use the System Metrics via Telegraf 
-source in our example so search for or select System Metrics via Telegraf to get started.
-
-<Callout type="info">
-  If you do require a different data source, this is where you choose it. 
-  Choosing a data source will show you the source wizard instructions that 
-  explain how to get up and running with your chosen data source.
-</Callout>
-
-The first section of the wizard contains instructions for installing Telegraf. 
-The instructions cover several OS so please follow the instructions for the OS 
-that you are using. There are instructions for installing Telegraf on Windows, 
-MacOS, Ubuntu/Debian, RedHat and CentOS, SLES/openSUSE and FreeBSD/PC-BSD.
-
-However, if you are using a different OS to the ones listed, try the link at the 
-bottom to read more about how to configure data scraping and configuration options for Telegraf.
-
-![System Metrics Telegraf](@/images/help/infrastructure-metrics/system-metrics-telegraf.png)
-
-Next, you need to locate the configuration file, the next step in the 
-integration guide shows you where to find this file. The configuration 
-file is pre-configured to scrape the system metrics from your hosts, 
-add the configuration code to the configuration file from the previous step.
-
-### Configure Telegraf.yml
-
-We need to open the configuration file and make some changes. These changes 
-are also described in the source wizard. Find the configuration file normally 
-located at /etc/telegraf/telegraf.conf. The exact location for your OS 
-will be detailed in Step 1 of the source wizard.
-
-Copy the entire contents from step 2 as shown below using the Copy button.
-
-```yml copy
-# Read metrics about cpu usage
-[[inputs.cpu]]
-    ## Whether to report per-cpu stats or not
-    percpu = true
-    ## Whether to report total system cpu stats or not
-    totalcpu = true
-    ## If true collect raw cpu time metrics
-    collect_cpu_time = true
-    ## If true compute and report the sum of all non-idle cpu states
-    report_active = true
-
-# Read metrics about memory usage
-[[inputs.mem]]
-
-# Read metrics about system load & uptime
-[[inputs.system]]
-    namepass = ["system"]
-
-# Read metrics about disk usage by mount point
-[[inputs.disk]]
-    ## By default, telegraf gather stats for all mountpoints.
-    ## Setting mountpoints will restrict the stats to the specified mountpoints.
-    # mount_points = ["/"]
-
-    ## Ignore some mountpoints by filesystem type. For example (dev)tmpfs (usually
-    ## present on /run, /var/run, /dev/shm or /dev).
-    ignore_fs = ["tmpfs", "devtmpfs"]
-
-[[inputs.diskio]]
-[[inputs.net]]
-[[inputs.processes]]
-[[inputs.procstat]]
-    pattern = ".*"
-    fieldpass = ["cpu_usage", "memory_rss"] 
-```
-
-Then in your Telegraf configuration file paste the copied content 
-at the bottom of the file, save and close the file.
-
-Let's now skip forward to the configure output plugin section of the 
-integration guide. Move down to Step 3 to continue.
-
-### Configure Output
-
-After updating the configuration file inputs, the next step is to configure 
-the output plug-in, enabling Telegraf to seamlessly transmit your data to 
-Logit.io in the Prometheus format. This can be achieved by incorporating the 
-code snippet from Step 3 of the source wizard into your configuration file, 
-just as we did for the Inputs above.
-
-<Callout type="info">
-  The contents of the output code snippet in this step are pre-configured 
-  with your Logit.io stack id remote write url, so should look similar to that 
-  shown below. If it's not pre-configured your details you can find your Remote 
-  Write Url by going to `Dashboard > Infrastructure Metrics > Manage Stack > Remote Write`.
-</Callout>
-
-Copy the entire contents from step 3 as shown below using the Copy button.
-
-```yaml copy
-[[outputs.http]]
-  url = "https://<your-metrics-username>:<your-metrics-password>@<your-metrics-product-id>-vm.logit.io:<your-vm-agent-port>/api/v1/write"
-  data_format = "prometheusremotewrite"
-
-  [outputs.http.headers]
-    Content-Type = "application/x-protobuf"
-    Content-Encoding = "snappy"
-```
-
-Then in your Telegraf configuration file paste the copied content 
-at the bottom of the file, save and close the file.
-
-Now we are ready to start Telegraf and start shipping metrics to Logit.io. 
-
-### Start Telegraf
-
-There are instructions that show how to start Telegraf for each type of OS in 
-Step 4 of the integration guide. Follow the instructions for the system that you are using.
 
 ### Confirm data is in Grafana
 
