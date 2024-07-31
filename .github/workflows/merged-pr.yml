@@ -1,0 +1,61 @@
+name: Sync Merge of PR to Private Repo
+
+on:
+  pull_request:
+    types: [closed]
+  workflow_dispatch:
+  
+jobs:
+  merged-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install PyGithub
+        run: pip install PyGithub
+
+      - name: Echo environment variables
+        run: |
+          echo "GITHUB_TOKEN=${{ secrets.PRIVATE_REPO_TOKEN }}"
+          echo "PUBLIC_PR_NUMBER=${{ github.event.pull_request.number }}"
+          echo "PRIVATE_REPO_OWNER=${{ secrets.PRIVATE_REPO_OWNER }}"
+          echo "PRIVATE_REPO_NAME=${{ secrets.PRIVATE_REPO_NAME }}"
+          
+      - name: Merge PR in Private Repo
+        if: github.event.pull_request.merged == true
+        env:
+          GITHUB_TOKEN: ${{ secrets.PRIVATE_REPO_TOKEN }}
+          PRIVATE_REPO_OWNER: ${{ secrets.PRIVATE_REPO_OWNER }}
+          PRIVATE_REPO_NAME: ${{ secrets.PRIVATE_REPO_NAME }}
+          PUBLIC_PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          python -c "
+          import os
+          from github import Github
+          
+          # Load environment variables
+          token = os.getenv('GITHUB_TOKEN')
+          private_repo_owner = os.getenv('PRIVATE_REPO_OWNER')
+          private_repo_name = os.getenv('PRIVATE_REPO_NAME')
+          public_pr_number = os.getenv('PUBLIC_PR_NUMBER')
+          
+          # Initialize GitHub client
+          g = Github(token)
+          private_repo = g.get_repo(f'{private_repo_owner}/{private_repo_name}')
+          
+          # Generate branch name
+          branch_name = f'pr-sync-{public_pr_number}'
+          
+          # Find the existing PR in the private repo
+          prs = private_repo.get_pulls(state='open', head=f'{private_repo_owner}:{branch_name}')
+          if prs.totalCount > 0:
+              pr = prs[0]
+              # Merge the PR if it exists
+              pr.merge(commit_message='Auto Merging PR from docs-content to deploy')
+          "          
