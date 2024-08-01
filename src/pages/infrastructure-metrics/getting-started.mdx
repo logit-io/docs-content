@@ -16,61 +16,64 @@ To install on earlier versions of Windows you can follow the instructions [here]
 
 If you are logged in, the endpoint address you need to send data to us will be pre-populated. If you are not logged in please do so and return to this guide.
 
-We are going to send three curl requests with some dummy metric data to your Infrastructure Metrics enddpoint. This guide is an adapted version of the  
+We are going to send three curl requests with some dummy metric data to your Infrastructure Metrics endpoint. This guide is an adapted version of the 
 VictoriaMetrics documentation [here](https://docs.victoriametrics.com/single-server-victoriametrics/#how-to-import-csv-data).
 
 
 <Tabs items={["Windows", "Linux", "macOS", "DEB", "RPM"]}>
   <Tab>
-  Remember that you will need to escape double-quote characters with a backslash in the data field as shown in the example below.
 
   Command Prompt:
   ```bash copy 
-  curl -d "GOOG,1.23,4.56,NYSE" "<vm-endpoint>:<vm-port>/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market"
+  curl -d "GOOG,1.23,4.56,NYSE" "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market"
+  ```
 
-  curl -d "MSFT,3.21,1.67,NASDAQ" "<vm-endpoint>:<vm-port>/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market"
+  ```bash copy 
+  curl -d "MSFT,3.21,1.67,NASDAQ" "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market"
+  ```
 
-  curl -d "0R2V.L,2.75,3.21,LSE" "<vm-endpoint>:<vm-port>/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market"
+  ```bash copy 
+  curl -d "0R2V.L,2.75,3.21,LSE" "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market"
   ```
   </Tab>
 
   <Tab>
   ```bash copy
-  curl -d "GOOG,1.23,4.56,NYSE" '<vm-endpoint>:<vm-port>/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
+  curl -d "GOOG,1.23,4.56,NYSE" 'https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
 
-  curl -d "MSFT,3.21,1.67,NASDAQ" '<vm-endpoint>:<vm-port>/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
+  curl -d "MSFT,3.21,1.67,NASDAQ" 'https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
 
-  curl -d "0R2V.L,2.75,3.21,LSE" '<vm-endpoint>:<vm-port>/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
+  curl -d "0R2V.L,2.75,3.21,LSE" 'https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
   ```
   </Tab>
 
   <Tab>
   ```bash copy
-  curl -d "GOOG,1.23,4.56,NYSE" '<vm-endpoint>:<vm-port>/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
+  curl -d "GOOG,1.23,4.56,NYSE" 'https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
 
-  curl -d "MSFT,3.21,1.67,NASDAQ" '<vm-endpoint>:<vm-port>/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
+  curl -d "MSFT,3.21,1.67,NASDAQ" 'https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
 
-  curl -d "0R2V.L,2.75,3.21,LSE" '<vm-endpoint>:<vm-port>/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
+  curl -d "0R2V.L,2.75,3.21,LSE" 'https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
   ```
   </Tab>
 
   <Tab>
   ```bash copy
-  curl -d "GOOG,1.23,4.56,NYSE" '<vm-endpoint>:<vm-port>/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
+  curl -d "GOOG,1.23,4.56,NYSE" 'https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
 
-  curl -d "MSFT,3.21,1.67,NASDAQ" '<vm-endpoint>:<vm-port>/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
+  curl -d "MSFT,3.21,1.67,NASDAQ" 'https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
 
-  curl -d "0R2V.L,2.75,3.21,LSE" '<vm-endpoint>:<vm-port>/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
+  curl -d "0R2V.L,2.75,3.21,LSE" 'https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
   ```
   </Tab>
 
   <Tab>
   ```bash copy
-  curl -d "GOOG,1.23,4.56,NYSE" '<vm-endpoint>:<vm-port>/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
+  curl -d "GOOG,1.23,4.56,NYSE" 'https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
 
-  curl -d "MSFT,3.21,1.67,NASDAQ" '<vm-endpoint>:<vm-port>/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
+  curl -d "MSFT,3.21,1.67,NASDAQ" 'https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
 
-  curl -d "0R2V.L,2.75,3.21,LSE" '<vm-endpoint>:<vm-port>/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
+  curl -d "0R2V.L,2.75,3.21,LSE" 'https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/import/csv?format=2:metric:ask,3:metric:bid,1:label:ticker,4:label:market'
   ```
   </Tab>
 
@@ -83,10 +86,12 @@ Click on the button below to open Grafana.
 <LaunchVisualizer />
 
 In Grafana, click on Explore in the side menu and in the Metric drop-down select 'ask' ![Metric drop-down](@/images/getting-started/metrics/grafana-metric1.png)
-and then the blue 'Run query' button in the top-right of the Window ![Run query button](@/images/getting-started/metrics/grafana-metric2.png).
 
-You will see three dots appear in the graph in the bottom part of the window, one for each curl request we have just sent. These are the three 'metrics' 
-we just sent as csv data to your Logit.io Infrastructure Metrics stack. 
+and then the blue 'Run query' button in the top-right of the window ![Run query button](@/images/getting-started/metrics/grafana-metric2.png).
+
+You will see dots appear in the right-hand side of the graph in the bottom part of the window. These are the 'metrics' 
+we just sent as csv data to your Logit.io Infrastructure Metrics stack:
+![Metrics graph](@/images/getting-started/metrics/grafana-metric3.png)
 
 That's it! You have sent data to your stack and viewed it in Grafana. This is, of course, just the beginning. For more help sending data 
 to your stack check out the following resources and if you need more help please feel free to contact us via Intercom.
