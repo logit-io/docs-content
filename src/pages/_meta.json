@@ -1,6 +1,7 @@
 {
   "index": {
     "title": "Logit.io Documentation",
+    "description": "Help Articles & Source Integrations - Logit.io Docs",
     "theme": {
       "layout": "full",
       "sidebar": false,
