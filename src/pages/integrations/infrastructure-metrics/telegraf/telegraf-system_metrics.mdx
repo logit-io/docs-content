@@ -25,7 +25,20 @@ Configure Telegraf to ship system metrics to your Logit.io stacks via Logstash.
 
   ### Launch Metrics to View Data
 
-  Click the button below to open the infrastructure metrics visualizer:
+  Click the 'Launch Metrics' button below to open the infrastructure metrics visualizer. Once opened, click on the Explore option 
+  in the left-hand menu:
+  ![Grafana Explore](@/images/integrations/system-metrics/grafana-explore.png)
+  
+  Then under the Metric header where you will see 'Select metric' open the drop-down menu 
+  and scroll to and select 'mem_used':
+  ![Grafana Select Metric](@/images/integrations/system-metrics/grafana-metric.png)
+
+  Click on the blue Run query near the top-right of the screen
+  ![Grafana Run Query](@/images/integrations/system-metrics/grafana-run-query.png)
+
+  You will now see the 'mem_used' metric data displayed and if you click on the blue Run query button this will be updated.
+
+  When you want to stop Telegraf sending metric data press Ctrl + C in the terminal app / Powershell.
 
   <LaunchVisualizer type="metrics" />
 
