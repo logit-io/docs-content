@@ -1,12 +1,11 @@
 ---
-title: OpenTelemetry Java (gRPC)
-pageTitle: OpenTelemetry Java (gRPC) Configuration
-subTitle: Ship traces from Java to OpenSearch with OpenTelemetry (via gRPC)
+title: OpenTelemetry Java
+pageTitle: OpenTelemetry Java Configuration
+subTitle: Ship traces from Java to OpenSearch with OpenTelemetry
 logo: java
 color: "#f39100"
 stackTypes: apm
 description: Learn how to ship your Java program traces to OpenSearch with our example configurations.
-protocol: grpc
 ---
 
 Use OpenTelemetry to easily send Java traces to your Logit.io Stack.
@@ -25,26 +24,17 @@ Use OpenTelemetry to easily send Java traces to your Logit.io Stack.
   to your Logit.io Stack are shown below. Be sure to update the path to 
   the location of the OpenTelemetry javaagent jar file and set your service name.
 
-  Environment Variables
+  <Tabs items={["HTTPS", "gRPC"]}>
+  
+  <Tab>
+    <JavaOtlpExporterSettings protocol="http" port="@opentelemetry.httpsPort" />
+  </Tab>
 
-  ```env copy
-  JAVA_TOOL_OPTIONS = -javaagent:path/to/jar/file/opentelemetry-javaagent.jar
-  OTEL_TRACES_EXPORTER = otlp
-  OTEL_EXPORTER_OTLP_ENDPOINT = https://@opentelemetry.endpointAddress:@opentelemetry.grpcPort
-  OTEL_EXPORTER_OTLP_TRACES_PROTOCOL = @opentelemetry.protocol
-  OTEL_EXPORTER_OTLP_TRACES_HEADERS = Authorization=Basic @opentelemetry.base64encodedAuthString
-  ```
+  <Tab>
+    <JavaOtlpExporterSettings protocol="grpc" port="@opentelemetry.grpcPort" />
+  </Tab>
 
-  Java system properties (can be provided as arguments when running the Java application):
-
-  ```env copy
-  -javaagent:path/to/jar/file/opentelemetry-javaagent.jar
-  otel.service.name=<your-service-name>
-  otel.traces.exporter=otlp
-  otel.exporter.otlp.endpoint=https://@opentelemetry.endpointAddress:@opentelemetry.grpcPort
-  otel.exporter.otlp.traces.protocol=@opentelemetry.protocol
-  otel.exporter.otlp.traces.headers=Authorization=Basic @opentelemetry.base64encodedAuthString
-  ```
+  </Tabs>
 
   ### Launch Logit.io to view your traces
 
