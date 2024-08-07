@@ -21,7 +21,7 @@ Use OpenTelemetry to easily send PHP traces to your Logit.io Stack.
   
   OTLP HTTP/S Exporter settings:
 
-  ```php copy showLineNumbers /@opentelemetry.endpointAddress/ /@opentelemetry.port/ /@opentelemetry.base64encodedAuthString/
+  ```php copy showLineNumbers /@opentelemetry.endpointAddress/ /@opentelemetry.httpsPort/ /@opentelemetry.base64encodedAuthString/
   <?php
 
   require __DIR__ . '/vendor/autoload.php';
@@ -32,7 +32,7 @@ Use OpenTelemetry to easily send PHP traces to your Logit.io Stack.
   use OpenTelemetry\SDK\Trace\TracerProvider;
 
   $transport = (new OtlpHttpTransportFactory())->create(
-    'https://@opentelemetry.endpointAddress:@opentelemetry.port', 
+    'https://@opentelemetry.endpointAddress:@opentelemetry.httpsPort', 
     'application/x-protobuf', 
     ['Authorization' => 'Basic @opentelemetry.base64encodedAuthString']);
   $exporter = new SpanExporter($transport);

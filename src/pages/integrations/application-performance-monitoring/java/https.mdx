@@ -5,9 +5,8 @@ subTitle: Ship traces from Java to OpenSearch with OpenTelemetry (via HTTP/S)
 logo: java
 color: "#f39100"
 stackTypes: apm
-description: Use our example configuration to ship your Java program traces to OpenSearch. Send Java program traces to your Logit.io stacks.
+description: Learn how to ship your Java program traces to OpenSearch with our example configurations.
 protocol: https
-protocolName: http
 ---
 
 Use OpenTelemetry to easily send Java traces to your Logit.io Stack.
@@ -31,8 +30,8 @@ Use OpenTelemetry to easily send Java traces to your Logit.io Stack.
   ```env copy
   JAVA_TOOL_OPTIONS = -javaagent:path/to/jar/file/opentelemetry-javaagent.jar
   OTEL_TRACES_EXPORTER = otlp
-  OTEL_EXPORTER_OTLP_ENDPOINT = https://@opentelemetry.endpointAddress:@opentelemetry.port
-  OTEL_EXPORTER_OTLP_TRACES_PROTOCOL = @opentelemetry.protocol
+  OTEL_EXPORTER_OTLP_ENDPOINT = https://@opentelemetry.endpointAddress:@opentelemetry.httpsPort
+  OTEL_EXPORTER_OTLP_TRACES_PROTOCOL = http
   OTEL_EXPORTER_OTLP_TRACES_HEADERS = Authorization=Basic @opentelemetry.base64encodedAuthString
   ```
 
@@ -42,8 +41,8 @@ Use OpenTelemetry to easily send Java traces to your Logit.io Stack.
   -javaagent:path/to/jar/file/opentelemetry-javaagent.jar
   otel.service.name=<your-service-name>
   otel.traces.exporter=otlp
-  otel.exporter.otlp.endpoint=https://@opentelemetry.endpointAddress:@opentelemetry.port
-  otel.exporter.otlp.traces.protocol=@opentelemetry.protocol
+  otel.exporter.otlp.endpoint=https://@opentelemetry.endpointAddress:@opentelemetry.httpsPort
+  otel.exporter.otlp.traces.protocol=http
   otel.exporter.otlp.traces.headers=Authorization=Basic @opentelemetry.base64encodedAuthString
   ```
 

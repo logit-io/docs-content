@@ -1,12 +1,11 @@
 ---
-title: OpenTelemetry .NET Core (gRPC)
-pageTitle: OpenTelemetry .NET Core gRPC Configuration
-subTitle: Ship traces from ASP.Net Core to OpenSearch with OpenTelemetry (via gRPC)
+title: OpenTelemetry .NET Core
+pageTitle: OpenTelemetry .NET Core Configuration
+subTitle: Ship traces from ASP.Net Core to OpenSearch with OpenTelemetry
 logo: aspnetcore
 color: "#465aaa"
 stackTypes: apm
 description: Learn how to ship your dotnet core application traces to OpenSearch with our example configurations.
-protocol: grpc
 ---
 
 Use OpenTelemetry to easily send .NET Core traces to your Logit.io Stack.
@@ -18,7 +17,17 @@ Use OpenTelemetry to easily send .NET Core traces to your Logit.io Stack.
 
   ### Configuring AppSettings
 
-  <ConfigureOtel />
+  <Tabs items={["HTTPS", "gRPC"]}>
+  
+  <Tab>
+    <ConfigureOtel protocol="https" port="@opentelemetry.httpsPort" />
+  </Tab>
+
+  <Tab>
+    <ConfigureOtel protocol="grpc" port="@opentelemetry.grpcPort" />
+  </Tab>
+
+  </Tabs>
 
   ### Using OpenTelemetry
 
@@ -26,7 +35,7 @@ Use OpenTelemetry to easily send .NET Core traces to your Logit.io Stack.
 
   ### Launch Logit.io to view your traces
 
-  <LaunchStack utmMedium="apm" utmCampaign="dotnetcore" source="apm_dotnetcore_grpc" />
+  <LaunchVisualizer type="apm" />
 
   ### How to diagnose no data in Stack
 

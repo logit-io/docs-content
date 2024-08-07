@@ -77,7 +77,7 @@ The OpenTelemetry Collector allows you to send traces to your Logit.io stacks.
         auth:
           authenticator: basicauth/apm
           # use the grpc port
-        endpoint: '@opentelemetry.endpointAddress:strip_quotes':'@opentelemetry.port:strip_quotes'
+        endpoint: '@opentelemetry.endpointAddress:strip_quotes':'@opentelemetry.httpsPort:strip_quotes'
       logging:
         verbosity: detailed
 

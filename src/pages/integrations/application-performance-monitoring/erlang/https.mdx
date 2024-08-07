@@ -5,9 +5,8 @@ subTitle: Ship traces from Erlang to OpenSearch with OpenTelemetry (via HTTP/S)
 logo: erlang
 color: "#a31f34"
 stackTypes: apm
-description: Use our example configuration to ship your Erlang program traces to OpenSearch. Send Erlang program traces to your Logit.io stacks.
+description: Learn how to ship your Erlang program traces to OpenSearch with our example configurations.
 protocol: https
-protocolName: http_protobuf
 ---
 
 Use OpenTelemetry to easily send Erlang traces to your Logit.io Stack.
@@ -22,7 +21,7 @@ Use OpenTelemetry to easily send Erlang traces to your Logit.io Stack.
   
   OTLP HTTP/S Exporter settings:
 
-  ```erlang copy showLineNumbers filename="sys.config.src" /"@opentelemetry.protocol:strip_quotes"/ /@opentelemetry.endpointAddress/ /@opentelemetry.port/ /@opentelemetry.base64encodedAuthString/
+  ```erlang copy showLineNumbers filename="sys.config.src" /@opentelemetry.endpointAddress/ /@opentelemetry.httpsPort/ /@opentelemetry.base64encodedAuthString/
   %% config/sys.config.src
   [
   {opentelemetry,
@@ -30,9 +29,9 @@ Use OpenTelemetry to easily send Erlang traces to your Logit.io Stack.
     {traces_exporter, otlp}]},
 
   {opentelemetry_exporter,
-    [{otlp_protocol, "@opentelemetry.protocol:strip_quotes"},
+    [{otlp_protocol, http_protobuf},
     {otlp_headers, [{"authorization", "Basic @opentelemetry.base64encodedAuthString"}]}
-    {otlp_endpoint, "https://@opentelemetry.endpointAddress:@opentelemetry.port"}]}]}
+    {otlp_endpoint, "https://@opentelemetry.endpointAddress:@opentelemetry.httpsPort"}]}]}
   ].
   ```
 

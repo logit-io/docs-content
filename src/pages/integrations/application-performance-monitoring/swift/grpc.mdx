@@ -5,7 +5,7 @@ subTitle: Ship traces from Swift to OpenSearch with OpenTelemetry (via gRPC)
 logo: swift
 color: "#ff9900"
 stackTypes: apm
-description: Use our example configuration to ship your Swift program traces to OpenSearch. Send your Swift program traces to your Logit.io stacks.
+description: Learn how to ship your Swift program traces to OpenSearch with our example configurations.
 protocol: grpc
 ---
 
@@ -19,7 +19,7 @@ Use OpenTelemetry to easily send Swift traces to your Logit.io Stack.
   
   To initialize the trace exporter use the snippet below as a starting point:
 
-  ```swift copy showLineNumbers /@opentelemetry.endpointAddress/ /"@opentelemetry.port:strip_quotes"/
+  ```swift copy showLineNumbers /@opentelemetry.endpointAddress/ /"@opentelemetry.grpcPort:strip_quotes"/
   import GRPC
   import OpenTelemetryApi
   import OpenTelemetrySdk
@@ -30,7 +30,7 @@ Use OpenTelemetry to easily send Swift traces to your Logit.io Stack.
 
   let grpcChannel = ClientConnection
       .usingPlatformAppropriateTLS(for: MultiThreadedEventLoopGroup(numberOfThreads:1))
-      .connect(host: "https://@opentelemetry.endpointAddress", port: "@opentelemetry.port:strip_quotes")
+      .connect(host: "https://@opentelemetry.endpointAddress", port: "@opentelemetry.grpcPort:strip_quotes")
 
   let traceExporter = OtlpTraceExporter(channel: grpcChannel,
                                         config: otlpConfiguration)
@@ -44,9 +44,9 @@ Use OpenTelemetry to easily send Swift traces to your Logit.io Stack.
 
   You can also configure various settings by specifying the appropriate Environment variables, for example:
 
-  ```env copy /@opentelemetry.endpointAddress/ /@opentelemetry.port/ /@opentelemetry.base64encodedAuthString/ /@opentelemetry.protocol/
+  ```env copy /@opentelemetry.endpointAddress/ /@opentelemetry.grpcPort/ /@opentelemetry.base64encodedAuthString/ /@opentelemetry.protocol/
   OTEL_TRACES_EXPORTER = otlp
-  OTEL_EXPORTER_OTLP_ENDPOINT = https://@opentelemetry.endpointAddress:@opentelemetry.port
+  OTEL_EXPORTER_OTLP_ENDPOINT = https://@opentelemetry.endpointAddress:@opentelemetry.grpcPort
   OTEL_EXPORTER_OTLP_TRACES_PROTOCOL = @opentelemetry.protocol
   OTEL_EXPORTER_OTLP_TRACES_HEADERS = Authorization=Basic @opentelemetry.base64encodedAuthString
   ```

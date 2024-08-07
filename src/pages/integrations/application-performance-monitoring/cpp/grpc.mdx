@@ -4,7 +4,7 @@ pageTitle: OpenTelemetry C++ (gRPC) Configuration
 subTitle: Ship traces from C++ to OpenSearch with OpenTelemetry (via gRPC)
 logo: cpp
 color: "#1a3b63"
-description: Use our example configuration to ship your C++ program traces to OpenSearch. Send C++ program traces to your Logit.io stacks.
+description: Learn how to ship your C++ program traces to OpenSearch with our example configurations.
 stackTypes: apm
 protocol: grpc
 ---
@@ -20,14 +20,14 @@ Use OpenTelemetry to easily send C++ traces to your Logit.io Stack.
   
   OTLP gRPC Exporter settings:
 
-  ```cpp copy showLineNumbers /@opentelemetry.endpointAddress/ /@opentelemetry.port/ /@opentelemetry.base64encodedAuthString/
+  ```cpp copy showLineNumbers /@opentelemetry.endpointAddress/ /@opentelemetry.grpcPort/ /@opentelemetry.base64encodedAuthString/
   #include "opentelemetry/exporters/otlp/otlp_grpc_exporter_factory.h"
   #include "opentelemetry/exporters/otlp/otlp_grpc_exporter_options.h"
 
   namespace otlp = opentelemetry::exporter::otlp;
 
   otlp::OtlpGrpcExporterOptions opts;
-  opts.endpoint = "https://@opentelemetry.endpointAddress:@opentelemetry.port";
+  opts.endpoint = "https://@opentelemetry.endpointAddress:@opentelemetry.grpcPort";
   opts.metadata.insert(std::pair<std::string, std::string>(
       "authorization", "Basic @opentelemetry.base64encodedAuthString"));
 

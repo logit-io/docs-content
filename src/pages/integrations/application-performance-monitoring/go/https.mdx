@@ -5,9 +5,8 @@ subTitle: Ship traces from Go to OpenSearch with OpenTelemetry (via HTTP/S)
 logo: golang
 color: "#00b1d1"
 stackTypes: apm
-description: Use our example configuration to learn how to ship your Go program traces to OpenSearch. Send Go program traces to your Logit.io stacks.
+description: Learn how to ship your Go program traces to OpenSearch with our example configurations.
 protocol: https
-protocolName: http
 ---
 
 Use OpenTelemetry to easily send Go traces to your Logit.io Stack.
@@ -21,7 +20,7 @@ Use OpenTelemetry to easily send Go traces to your Logit.io Stack.
 
   This code is added to `main.go` and when run will send the example traces to your Logit.io Stack to be viewed in Jaeger.
 
-  ```go copy showLineNumbers /"@opentelemetry.protocol:strip_quotes"/ /@opentelemetry.protocol/ /@opentelemetry.endpointAddress/ /@opentelemetry.port/ /@opentelemetry.base64encodedAuthString/ /@opentelemetry.username/ /@opentelemetry.password/
+  ```go copy showLineNumbers /@opentelemetry.protocol/ /@opentelemetry.endpointAddress/ /@opentelemetry.httpsPort/ /@opentelemetry.base64encodedAuthString/ /@opentelemetry.username/ /@opentelemetry.password/
     package main
 
     import (
@@ -72,10 +71,10 @@ Use OpenTelemetry to easily send Go traces to your Logit.io Stack.
       }
       
       // Set up a trace exporter
-      traceExporter, err := otlptrace"@opentelemetry.protocol:strip_quotes"
-        .New(ctx, otlptrace"@opentelemetry.protocol:strip_quotes"
-          .WithEndpoint("@opentelemetry.endpointAddress:@opentelemetry.port"),
-        otlptrace{{opentelemetry.protocol}}.WithHeaders(headers))
+      traceExporter, err := otlptrace"http"
+        .New(ctx, otlptrace"http"
+          .WithEndpoint("@opentelemetry.endpointAddress:@opentelemetry.httpsPort"),
+        otlptrace{{http}}.WithHeaders(headers))
       if err != nil {
         return nil, fmt.Errorf("failed to create trace exporter: %w", err)
       }

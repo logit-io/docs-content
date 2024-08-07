@@ -5,9 +5,8 @@ subTitle: Ship traces from Rust to OpenSearch with OpenTelemetry (via gRPC)
 logo: rust
 color: "#0f172a"
 stackTypes: apm
-description: Use our example configuration to ship your Rust program traces to OpenSearch. Send Rust program traces to your Logit.io stacks.
+description: Learn how to ship your Rust program traces to OpenSearch with our example configurations.
 protocol: grpc
-protocolName: Grpc
 ---
 
 Use OpenTelemetry to easily send Rust traces to your Logit.io Stack.
@@ -20,7 +19,7 @@ Use OpenTelemetry to easily send Rust traces to your Logit.io Stack.
 
   This example uses the snippet found [here](https://docs.rs/opentelemetry-otlp/latest/opentelemetry_otlp/) as its basis.
 
-  ```rust copy showLineNumbers /@opentelemetry.base64encodedAuthString/ /@opentelemetry.endpointAddress/ /@opentelemetry.port/ /"@opentelemetry.protocol:strip_quotes"/
+  ```rust copy showLineNumbers /@opentelemetry.base64encodedAuthString/ /@opentelemetry.endpointAddress/ /@opentelemetry.grpcPort/
   use opentelemetry_api::{KeyValue, trace::Tracer};
   use opentelemetry_sdk::{trace::{self, RandomIdGenerator, Sampler}, Resource};
   use opentelemetry_sdk::util::tokio_interval_stream;
@@ -38,7 +37,7 @@ Use OpenTelemetry to easily send Rust traces to your Logit.io Stack.
           .with_exporter(
               opentelemetry_otlp::new_exporter()
               .tonic()
-              .with_endpoint("https://@opentelemetry.endpointAddress:@opentelemetry.port")
+              .with_endpoint("https://@opentelemetry.endpointAddress:@opentelemetry.grpcPort")
               .with_metadata(map)
           )
           // The trace config below should be amended to your requirements
@@ -54,8 +53,8 @@ Use OpenTelemetry to easily send Rust traces to your Logit.io Stack.
           .install_batch(opentelemetry::runtime::Tokio)?;
 
       let export_config = ExportConfig {
-          endpoint: "https://@opentelemetry.endpointAddress:@opentelemetry.port".to_string(),
-          protocol: Protocol::"@opentelemetry.protocol:strip_quotes"
+          endpoint: "https://@opentelemetry.endpointAddress:@opentelemetry.grpcPort".to_string(),
+          protocol: Protocol::Grpc
       };
 
       tracer.in_span("doing_work", |cx| {
