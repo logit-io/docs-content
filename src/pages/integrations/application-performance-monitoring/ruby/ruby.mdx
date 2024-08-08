@@ -1,12 +1,11 @@
 ---
-title: OpenTelemetry Ruby (gRPC)
-pageTitle: OpenTelemetry Ruby (gRPC) Configuration
-subTitle: Ship traces from Ruby to OpenSearch with OpenTelemetry (via gRPC)
+title: OpenTelemetry Ruby
+pageTitle: OpenTelemetry Ruby Configuration
+subTitle: Ship traces from Ruby to OpenSearch with OpenTelemetry
 logo: ruby
 color: "#ff0000"
 stackTypes: apm
 description: Learn how to ship your Ruby program traces to OpenSearch with our example configurations.
-protocol: grpc
 ---
 
 Use OpenTelemetry to easily send Ruby traces to your Logit.io Stack.
@@ -24,15 +23,17 @@ Use OpenTelemetry to easily send Ruby traces to your Logit.io Stack.
 
   #### Environment Variables
 
-  ```env copy /@opentelemetry.endpointAddress/ /@opentelemetry.grpcPort/ /@opentelemetry.protocol/ /@opentelemetry.base64encodedAuthString/
-  OTEL_TRACES_EXPORTER = otlp
-  OTEL_EXPORTER_OTLP_ENDPOINT = https://@opentelemetry.endpointAddress:@opentelemetry.grpcPort
-  OTEL_EXPORTER_OTLP_TRACES_PROTOCOL = @opentelemetry.protocol
-  OTEL_EXPORTER_OTLP_TRACES_HEADERS = Authorization=Basic @opentelemetry.base64encodedAuthString
-  ```
+  <Tabs items={["HTTPS", "gRPC"]}>
+  
+  <Tab>
+    <RubyOtlpExporterSettings protocol="http" port="@opentelemetry.httpsPort" />
+  </Tab>
 
-  For more information about exporter configuration with Ruby please refer to the 
-  [official documentation](https://opentelemetry.io/docs/instrumentation/ruby/exporters/).
+  <Tab>
+    <RubyOtlpExporterSettings protocol="grpc" port="@opentelemetry.grpcPort" />
+  </Tab>
+
+  </Tabs>
 
   ### Launch Logit.io to view your traces
 

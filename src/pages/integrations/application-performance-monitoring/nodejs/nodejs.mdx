@@ -1,0 +1,35 @@
+---
+title: OpenTelemetry Node.js
+pageTitle: OpenTelemetry Node.js Configuration
+subTitle: Ship traces from Node.js to OpenSearch with OpenTelemetry
+logo: nodejs
+color: "#82bb26"
+stackTypes: apm
+description: Learn how to ship your Node.js program traces to OpenSearch with our example configurations.
+---
+
+Use OpenTelemetry to easily send Node.js traces to your Logit.io Stack.
+
+<Steps>
+  ### Getting Started
+
+  <Tabs items={["HTTPS", "gRPC"]}>
+  
+  <Tab>
+    <NodejsOtlpExporterSettings protocol="proto" port="@opentelemetry.httpsPort" />
+  </Tab>
+
+  <Tab>
+    <NodejsOtlpExporterSettings protocol="grpc" port="@opentelemetry.grpcPort" />
+  </Tab>
+
+  </Tabs>
+
+  ### Launch Logit.io to view your traces
+
+  <LaunchStack utmMedium="apm" utmCampaign="nodejs" source="apm_nodejs_grpc" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>
