@@ -24,7 +24,7 @@ Use Serilog to send .NET logs to your Logit.io Stack.
   dotnet new mvc -n MyAspNetCoreApp
   ```
 
-  You will need to use Nuget or the command line to install three Serilog packages: `Serilog.AspNetCore` and `Serilog.Sinks.Network` to send logs using TCP/TLS or UDP.
+  You will need to use NuGet or the command line to install three Serilog packages: `Serilog.AspNetCore` and `Serilog.Sinks.Network` to send logs using TCP/TLS or UDP.
   
   `Serilog.Settings.Configuration` is needed to setup Serilog using settings from appsettings.json (instead of hardcoded settings).
   
@@ -36,23 +36,23 @@ Use Serilog to send .NET logs to your Logit.io Stack.
   ```
 
   If you are using Visual Studio, navigate to Tools -> NuGet Package Manager -> Manage NuGet packages for solution, 
-  browse for the 3 packages mentioned above and install them in the new application.
+  browse for the 3 packages mentioned above and install them in your new application.
 
   ### Configuring Serilog
   <ConfigureSerilog />
 
   ### Using Serilog
 
-  Inside `Program.cs`, add Serilog to the `WebHost` build process:
+  Inside `Program.cs`, add Serilog to the `WebApplication` build process:
         
   ```csharp copy showLineNumbers
-  public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-      WebHost.CreateDefaultBuilder(args)
-          .UseSerilog((ctx, config) => { config.ReadFrom.Configuration(ctx.Configuration); })
-          .UseStartup<Startup>();
+  builder.Host.UseSerilog((hostContext, _, configuration) =>
+  {
+      configuration.ReadFrom.Configuration(hostContext.Configuration);
+  });
   ```
   
-  You can now log from anywhere in your application.
+  You can now log from anywhere in your application. For example, add the following line to the Index action in the HomeController file.
   
   ```csharp copy
   Log.Information("The global logger has been configured");
