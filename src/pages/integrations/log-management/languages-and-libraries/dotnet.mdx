@@ -1,30 +1,42 @@
 ---
-title: .NET Core
-pageTitle: Serilog .NET Core Configuration
-subTitle: Ship logs from ASP.Net Core to Logstash with Serilog
-logo: aspnetcore
+title: .NET (5+)
+pageTitle: Serilog .NET Configuration
+subTitle: Ship logs from ASP.NET to Logstash with Serilog
+logo: aspnet
 color: "#5c2d91"
 stackTypes: logs
-description: Learn how to ship your dotnet core application/access/error logs to Logstash with our example configurations.
+description: Learn how to ship your dotnet application/access/error logs to Logstash with our example configurations.
 sslPortType: tcp-ssl
 ---
 
 import ConfigureSerilog from "@/components/integrations/partials/configure-serilog";
 
-Use Serilog to easily send .NET Core logs to your Logit.io Stack.
+Use Serilog to send .NET logs to your Logit.io Stack.
 
 <Steps>
   ### Install
 
-  You will need the main `Serilog.AspNetCore` package and `Serilog.Sinks.Network` to send logs using TCP/TLS or UDP.
+  If using Visual Studio, create a new application using the ASP.NET Core Web App (Model-View_controller) template.
+
+  If using a terminal application e.g. Powershell run the following command (where 'MyAspNetCoreApp' is the name of the application you want to create):
+
+  ```ps copy
+  dotnet new mvc -n MyAspNetCoreApp
+  ```
+
+  You will need to use Nuget or the command line to install three Serilog packages: `Serilog.AspNetCore` and `Serilog.Sinks.Network` to send logs using TCP/TLS or UDP.
   
   `Serilog.Settings.Configuration` is needed to setup Serilog using settings from appsettings.json (instead of hardcoded settings).
   
+  In Powershell:
   ```ps copy 
   Install-Package Serilog.AspNetCore
   Install-Package Serilog.Settings.Configuration
   Install-Package Serilog.Sinks.Network
   ```
+
+  If you are using Visual Studio, navigate to Tools -> NuGet Package Manager -> Manage NuGet packages for solution, 
+  browse for the 3 packages mentioned above and install them in the new application.
 
   ### Configuring Serilog
   <ConfigureSerilog />
