@@ -16,7 +16,7 @@ Use Serilog to send .NET logs to your Logit.io Stack.
 <Steps>
   ### Install
 
-  If using Visual Studio, create a new application using the ASP.NET Core Web App (Model-View_controller) template.
+  If using Visual Studio, create a new application using the ASP.NET Core Web App (Model-View-Controller) template.
 
   If using a terminal application e.g. Powershell run the following command (where 'MyAspNetCoreApp' is the name of the application you want to create):
 
@@ -64,26 +64,9 @@ Use Serilog to send .NET logs to your Logit.io Stack.
 
   ### Check Logit.io for your logs
 
-  <LaunchStack source="dotnetcore" utmMedium="logs" utmCampaign="dotnetcore" />
+  <LaunchVisualizer type="logs" />
 
-  ### How to diagnose no data in Stack
-
-  <DiagnoseNoData />
 </Steps>
 
-## .NET Core Logging Overview
-
-.NET Core is an open-source platform created by Microsoft for development across Linux, 
-macOS & Windows and makes [.NET](/integrations/logs/languages-and-libraries/dotnet) itself run as a cross-platform framework. 
-It can be used to write APIs, and ASP.NET websites.
-        
-Tracing & tailing logs for .NET Core can often encounter difficulties when debugging over longer 
-time periods. If these log messages are being recorded across distributed environments then it can 
-make centralising your logs nearly impossible for logging analysis and management at scale.
-        
-The Logit.io platform offers [hosted Kibana](https://logit.io/platform/features/hosted-kibana) which 
-makes visualising .NET Core log instances far more streamlined than comparable logging solutions. 
-We believe that monitoring & analysis play a crucial role in maintaining the health of your applications across the cloud & on-premise.
-        
-If you need any help with migrating your .NET Core logs to Logstash we are here to help. 
+If you need any help with migrating your .NET Core logs to Logit.io we are here to help. 
 Feel free to <IntercomButton text="get in touch with our support team via Intercom" /> and we will be happy to assist.
