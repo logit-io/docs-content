@@ -18,10 +18,10 @@ Use Serilog to send .NET logs to your Logit.io Stack.
 
   If using Visual Studio, create a new application using the ASP.NET Core Web App (Model-View-Controller) template.
 
-  If using a terminal application e.g. Powershell run the following command (where 'MyAspNetCoreApp' is the name of the application you want to create):
+  If using a terminal application e.g. Powershell run the following command (where 'SerilogTestApp' is the name of the application you want to create):
 
   ```ps copy
-  dotnet new mvc -n MyAspNetCoreApp
+  dotnet new mvc -n SerilogTestApp
   ```
 
   You will need to use NuGet or the command line to install three Serilog packages: `Serilog.AspNetCore` and `Serilog.Sinks.Network` to send logs using TCP/TLS or UDP.
@@ -52,21 +52,51 @@ Use Serilog to send .NET logs to your Logit.io Stack.
   });
   ```
   
-  You can now log from anywhere in your application. For example, add the following line to the Index action in the HomeController file.
+  You can now log from anywhere in your application. For example, the following code will send a warning log to your stack when the application 
+  hits the Index action of the Home controller:
   
   ```csharp copy
-  Log.Information("The global logger has been configured");
-  ```
-  
-  Serilog is a fully featured logging framework and has many other capabilities that are not detailed here.
-  
-  Please see the [Serilog.AspNetCore Documentation](https://github.com/serilog/serilog-aspnetcore) for more information.
+  using Microsoft.AspNetCore.Mvc;
+  using SerilogTestApp.Models;
+  using System.Diagnostics;
 
-  ### Check Logit.io for your logs
+  namespace SerilogTestApp.Controllers
+  {
+      public class HomeController(ILogger<HomeController> logger) : Controller
+      {
+          public IActionResult Index()
+          {
+              logger.LogWarning("This is something you need to be warned about!");
+              return View();
+          }
+
+          public IActionResult Privacy()
+          {
+              return View();
+          }
+
+          [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+          public IActionResult Error()
+          {
+              return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+          }
+      }
+  }
+  ``` 
+
+  ### Launch Logs to View Data
+
+  Run the application and click on the button below to open the log management visualizer:
 
   <LaunchVisualizer type="logs" />
 
+  You should now see the above log stored in your stack.
+
 </Steps>
+
+Serilog is a fully featured logging framework and has many other capabilities that are not detailed here.
+  
+Please see the [Serilog.AspNetCore Documentation](https://github.com/serilog/serilog-aspnetcore) for more information.
 
 If you need any help with migrating your .NET Core logs to Logit.io we are here to help. 
 Feel free to <IntercomButton text="get in touch with our support team via Intercom" /> and we will be happy to assist.
