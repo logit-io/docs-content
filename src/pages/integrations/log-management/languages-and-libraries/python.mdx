@@ -1,13 +1,12 @@
 ---
 title: Python
-pageTitle: Logstash Python Configuration Example
-subTitle: Ship logs from Python applications to Logstash
+pageTitle: Python Logging Configuration Example
+subTitle: Ship logs from Python applications to Logit.io
 logo: python
 color: "#0e64a9"
 stackTypes: logs
-description: Learn how to send Python logs to your Logstash instance using our configuration examples - Ship over 100 log data types easily with Logit.io
+description: Learn how to send Python logs to your Logit.io stack using our configuration examples
 sslPortType: beats-ssl
-portType: beats
 ---
 
 This guide has been setup and tested using Python `3.6-3.11` (64-bit) environments. 
@@ -15,18 +14,18 @@ Code samples included can be used inside a basic Python script, or web framework
 To send logs to Logstash through Python you will need the python-logstash-async (version `2.5.0`) Python plugin.
 
 <Steps>
-  ### Installing
+  ### Installing the Python logging handler
 
-  Execute the following command using pip:
+  Execute the following command using `pip` (the official Python package installer) to install the logging handler. This sends Python logging 
+  events to Logstash, which is part of your Logit.io log management stack:
         
   ```cmd copy
   pip install python-logstash-async
   ```
     
   <Callout type="info">
-    If you receive errors suggesting pip is an unknown command, 
-    navigate to its installed location with your chosen terminal program and try again (or add pip to your 
-    environmental variables if using Windows).
+    PIP is available by default on v3.4 or later of Python. If you are using an earlier version of Python consider updating to a more recent version. 
+    Older versions are available [here](https://pypi.org/project/pip/#history) but are no longer supported by the PIP development team.
   </Callout>
 
   ### Sending Logs

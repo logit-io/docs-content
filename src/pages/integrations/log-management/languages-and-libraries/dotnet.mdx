@@ -43,13 +43,43 @@ Use Serilog to send .NET logs to your Logit.io Stack.
 
   ### Using Serilog
 
-  Inside `Program.cs`, add Serilog to the `WebApplication` build process:
+  Inside `Program.cs`, add Serilog to the `WebApplication` build process. Below is the updated `Program.cs` code in full:
         
   ```csharp copy showLineNumbers
+  using Serilog;
+
+  var builder = WebApplication.CreateBuilder(args);
+
   builder.Host.UseSerilog((hostContext, _, configuration) =>
   {
       configuration.ReadFrom.Configuration(hostContext.Configuration);
   });
+
+  // Add services to the container.
+  builder.Services.AddControllersWithViews();
+
+  var app = builder.Build();
+
+  // Configure the HTTP request pipeline.
+  if (!app.Environment.IsDevelopment())
+  {
+      app.UseExceptionHandler("/Home/Error");
+      // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+      app.UseHsts();
+  }
+
+  app.UseHttpsRedirection();
+  app.UseStaticFiles();
+
+  app.UseRouting();
+
+  app.UseAuthorization();
+
+  app.MapControllerRoute(
+      name: "default",
+      pattern: "{controller=Home}/{action=Index}/{id?}");
+
+  app.Run();
   ```
   
   You can now log from anywhere in your application. For example, the following code will send a warning log to your stack when the application 
