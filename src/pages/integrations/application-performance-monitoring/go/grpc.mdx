@@ -1,0 +1,160 @@
+---
+title: OpenTelemetry Go (gRPC)
+pageTitle: OpenTelemetry Go (gRPC) Configuration
+subTitle: Ship traces from Go to OpenSearch with OpenTelemetry (via gRPC)
+logo: golang
+color: "#00b1d1"
+stackTypes: apm
+description: Learn how to ship your Go program traces to OpenSearch with our example configurations.
+protocol: grpc
+---
+
+Use OpenTelemetry to easily send Go traces to your Logit.io Stack.
+
+<Steps>
+  ### Getting Started
+
+  This guide uses the 
+  [OpenTelemetry Go collector example](https://github.com/open-telemetry/opentelemetry-go/blob/main/example/otel-collector/main.go) 
+  application as its starting point with some modifications to allow the traces to be sent to your Logit.io Stack.
+
+  This code is added to `main.go` and when run will send the example traces to your Logit.io Stack to be viewed in Jaeger.
+        
+  ```go copy showLineNumbers /"@opentelemetry.protocol:strip_quotes"/ /@opentelemetry.protocol/ /@opentelemetry.endpointAddress/ /@opentelemetry.grpcPort/ /@opentelemetry.base64encodedAuthString/ /@opentelemetry.username/ /@opentelemetry.password/
+    package main
+
+    import (
+      "context"
+      "encoding/base64"
+      "fmt"
+      "log"
+      "os"
+      "os/signal"
+      "time"
+
+      "go.opentelemetry.io/otel"
+      "go.opentelemetry.io/otel/attribute"
+      "go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptrace@opentelemetry.protocol"
+      "go.opentelemetry.io/otel/propagation"
+      "go.opentelemetry.io/otel/sdk/resource"
+      sdktrace "go.opentelemetry.io/otel/sdk/trace"
+      semconv "go.opentelemetry.io/otel/semconv/v1.21.0"
+      "go.opentelemetry.io/otel/trace"
+    )
+
+    // Initializes an OTLP exporter, and configures the corresponding trace and
+    // metric providers.
+    func initProvider() (func(context.Context) error, error) {
+      ctx := context.Background()
+
+      res, err := resource.New(ctx,
+        resource.WithAttributes(
+          // the service name used to display traces in backends
+          semconv.ServiceName("test-service"),
+        ),
+      )
+      if err != nil {
+        return nil, fmt.Errorf("failed to create resource: %w", err)
+      }
+
+      ctx, cancel := context.WithTimeout(ctx, time.Second)
+      defer cancel()
+
+      creds := &basicAuthCreds{
+        username: "@opentelemetry.username",
+        password: "@opentelemetry.password",
+      }
+
+      headers, err := creds.GetRequestMetadata(ctx)
+      if err != nil {
+        log.Fatalf("failed to get request metadata: %v", err)
+      }
+      
+      // Set up a trace exporter
+      traceExporter, err := otlptrace"@opentelemetry.protocol:strip_quotes"
+        .New(ctx, otlptrace"@opentelemetry.protocol:strip_quotes"
+          .WithEndpoint("@opentelemetry.endpointAddress:@opentelemetry.grpcPort"),
+        otlptrace{{opentelemetry.protocol}}.WithHeaders(headers))
+      if err != nil {
+        return nil, fmt.Errorf("failed to create trace exporter: %w", err)
+      }
+
+      // Register the trace exporter with a TracerProvider, using a batch
+      // span processor to aggregate spans before export.
+      bsp := sdktrace.NewBatchSpanProcessor(traceExporter)
+      tracerProvider := sdktrace.NewTracerProvider(
+        sdktrace.WithSampler(sdktrace.AlwaysSample()),
+        sdktrace.WithResource(res),
+        sdktrace.WithSpanProcessor(bsp),
+      )
+      otel.SetTracerProvider(tracerProvider)
+
+      // set global propagator to tracecontext (the default is no-op).
+      otel.SetTextMapPropagator(propagation.TraceContext{})
+
+      // Shutdown will flush any remaining spans and shut down the exporter.
+      return tracerProvider.Shutdown, nil
+    }
+
+    func main() {
+      log.Printf("Waiting for connection...")
+
+      ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
+      defer cancel()
+
+      shutdown, err := initProvider()
+      if err != nil {
+        log.Fatal(err)
+      }
+      defer func() {
+        if err := shutdown(ctx); err != nil {
+          log.Fatal("failed to shutdown TracerProvider: %w", err)
+        }
+      }()
+
+      tracer := otel.Tracer("test-tracer")
+
+      // Attributes represent additional key-value descriptors that can be bound
+      // to a metric observer or recorder.
+      commonAttrs := []attribute.KeyValue{
+        attribute.String("attrA", "chocolate"),
+        attribute.String("attrB", "raspberry"),
+        attribute.String("attrC", "vanilla"),
+      }
+
+      // work begins
+      ctx, span := tracer.Start(
+        ctx,
+        "CollectorExporter-Example",
+        trace.WithAttributes(commonAttrs...))
+      defer span.End()
+      for i := 0; i < 10; i++ {
+        _, iSpan := tracer.Start(ctx, fmt.Sprintf("Sample-%d", i))
+        log.Printf("Doing really hard work (%d / 10)\n", i+1)
+
+        <-time.After(time.Second)
+        iSpan.End()
+      }
+
+      log.Printf("Done!")
+    }
+
+    type basicAuthCreds struct {
+      username, password string
+    }
+
+    func (c *basicAuthCreds) GetRequestMetadata(context.Context, ...string) (map[string]string, error) {
+      return map[string]string{
+        "authorization": "Basic " + base64.StdEncoding.EncodeToString([]byte(c.username+":"+c.password)),
+      }, nil
+    }
+  ```
+
+  ### Launch Logit.io to view your traces
+
+  <LaunchStack utmMedium="apm" utmCampaign="golang" source="apm_golang_grpc" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>

@@ -1,0 +1,78 @@
+---
+title: OpenTelemetry Rust (gRPC)
+pageTitle: OpenTelemetry Rust (gRPC) Configuration
+subTitle: Ship traces from Rust to OpenSearch with OpenTelemetry (via gRPC)
+logo: rust
+color: "#0f172a"
+stackTypes: apm
+description: Learn how to ship your Rust program traces to OpenSearch with our example configurations.
+protocol: grpc
+---
+
+Use OpenTelemetry to easily send Rust traces to your Logit.io Stack.
+
+<Steps>
+  ### Getting Started
+
+  You can get help Getting Started with OpenTelemetry for Rust by referring to the 
+  [official documentation](https://opentelemetry.io/docs/instrumentation/rust/getting-started/). 
+
+  This example uses the snippet found [here](https://docs.rs/opentelemetry-otlp/latest/opentelemetry_otlp/) as its basis.
+
+  ```rust copy showLineNumbers /@opentelemetry.base64encodedAuthString/ /@opentelemetry.endpointAddress/ /@opentelemetry.grpcPort/
+  use opentelemetry_api::{KeyValue, trace::Tracer};
+  use opentelemetry_sdk::{trace::{self, RandomIdGenerator, Sampler}, Resource};
+  use opentelemetry_sdk::util::tokio_interval_stream;
+  use opentelemetry_otlp::{Protocol, WithExportConfig, ExportConfig};
+  use std::time::Duration;
+  use tonic::metadata::*;
+
+  fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync + 'static>> {
+      let mut map = MetadataMap::with_capacity(1);
+
+      map.insert("authorization", "Basic @opentelemetry.base64encodedAuthString".parse().unwrap());
+
+      let tracer = opentelemetry_otlp::new_pipeline()
+          .tracing()
+          .with_exporter(
+              opentelemetry_otlp::new_exporter()
+              .tonic()
+              .with_endpoint("https://@opentelemetry.endpointAddress:@opentelemetry.grpcPort")
+              .with_metadata(map)
+          )
+          // The trace config below should be amended to your requirements
+          .with_trace_config(
+              trace::config()
+                  .with_sampler(Sampler::AlwaysOn)
+                  .with_id_generator(RandomIdGenerator::default())
+                  .with_max_events_per_span(64)
+                  .with_max_attributes_per_span(16)
+                  .with_max_events_per_span(16)
+                  .with_resource(Resource::new(vec![KeyValue::new("service.name", "example")])),
+          )
+          .install_batch(opentelemetry::runtime::Tokio)?;
+
+      let export_config = ExportConfig {
+          endpoint: "https://@opentelemetry.endpointAddress:@opentelemetry.grpcPort".to_string(),
+          protocol: Protocol::Grpc
+      };
+
+      tracer.in_span("doing_work", |cx| {
+          // Traced app logic here...
+      });
+
+      Ok(())
+  }
+  ```
+
+  For more information about exporter configuration with Rust please refer to the 
+  [official documentation](https://opentelemetry.io/docs/instrumentation/rust/exporters/).
+
+  ### Launch Logit.io to view your traces
+
+  <LaunchStack utmMedium="apm" utmCampaign="rust" source="apm_rust_grpc" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>

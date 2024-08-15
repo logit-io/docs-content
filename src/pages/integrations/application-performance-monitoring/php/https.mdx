@@ -1,0 +1,55 @@
+---
+title: OpenTelemetry PHP (HTTP/S)
+pageTitle: OpenTelemetry PHP (HTTP/S) Configuration
+subTitle: Ship traces from PHP to OpenSearch with OpenTelemetry (via HTTP/S)
+logo: php
+color: "#777bb3"
+stackTypes: apm
+description: Learn how to ship your PHP program traces to OpenSearch with our example configurations.
+protocol: https
+---
+
+Use OpenTelemetry to easily send PHP traces to your Logit.io Stack.
+
+<Steps>
+  ### Getting Started
+
+  You can get help Getting Started with OpenTelemetry for PHP by referring to the 
+  [official documentation](https://opentelemetry.io/docs/instrumentation/php/getting-started/). 
+  
+  You need to configure the OTLP exporter to ensure the trace data reaches your Logit.io Stack.
+  
+  OTLP HTTP/S Exporter settings:
+
+  ```php copy showLineNumbers /@opentelemetry.endpointAddress/ /@opentelemetry.httpsPort/ /@opentelemetry.base64encodedAuthString/
+  <?php
+
+  require __DIR__ . '/vendor/autoload.php';
+
+  use OpenTelemetry\Contrib\Otlp\OtlpHttpTransportFactory;
+  use OpenTelemetry\Contrib\Otlp\SpanExporter;
+  use OpenTelemetry\SDK\Trace\SpanProcessor\SimpleSpanProcessor;
+  use OpenTelemetry\SDK\Trace\TracerProvider;
+
+  $transport = (new OtlpHttpTransportFactory())->create(
+    'https://@opentelemetry.endpointAddress:@opentelemetry.httpsPort', 
+    'application/x-protobuf', 
+    ['Authorization' => 'Basic @opentelemetry.base64encodedAuthString']);
+  $exporter = new SpanExporter($transport);
+
+  $tracerProvider =  new TracerProvider(
+      new SimpleSpanProcessor($exporter)
+  );
+  ```
+
+  For more information about exporter configuration with PHP please refer to 
+  the [official documentation](https://opentelemetry.io/docs/instrumentation/php/exporters/).
+
+    ### Launch Logit.io to view your traces
+
+  <LaunchStack utmMedium="apm" utmCampaign="php" source="apm_php_http" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>
