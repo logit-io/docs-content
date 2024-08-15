@@ -5,9 +5,8 @@ subTitle: Ship traces from Python to OpenSearch with OpenTelemetry (via HTTP/S)
 logo: python
 color: "#0e64a9"
 stackTypes: apm
-description: Use our example configuration to ship your Python script traces to OpenSearch. Send Python script traces to your Logit.io stacks.
+description: Learn how to ship your Python script traces to OpenSearch with our example configurations.
 protocol: https
-protocolName: http/protobuf
 ---
 
 Use OpenTelemetry to easily send Python traces to your Logit.io Stack.
@@ -24,7 +23,7 @@ Use OpenTelemetry to easily send Python traces to your Logit.io Stack.
   The snippet below shows a breakdown of the Command Line 
   Arguments required to send the trace data to Logit.io
           
-  ```yml copy /@opentelemetry.endpointAddress/ /@opentelemetry.port/ /@opentelemetry.base64encodedAuthString/ /@opentelemetry.protocol/
+  ```yml copy /@opentelemetry.endpointAddress/ /@opentelemetry.httpsPort/ /@opentelemetry.base64encodedAuthString/ /@opentelemetry.protocol/
   # The instrumented application is called using this command
   opentelemetry-instrument
 
@@ -32,10 +31,10 @@ Use OpenTelemetry to easily send Python traces to your Logit.io Stack.
   --traces_exporter otlp
 
   # This is where Logit.io host the OpenTelemetry Collector
-  --exporter_otlp_endpoint https://@opentelemetry.endpointAddress:@opentelemetry.port
+  --exporter_otlp_endpoint https://@opentelemetry.endpointAddress:@opentelemetry.httpsPort
 
   # This can be either grpc or http/protobuf
-  --exporter_otlp_traces_protocol @opentelemetry.protocol
+  --exporter_otlp_traces_protocol http/protobuf
 
   # We authenticate the access to the collector using Basic authentication in an http header (which is safe because we are using the https protocol)
   --exporter_otlp_traces_headers "Authorization=Basic%20@opentelemetry.base64encodedAuthString"
@@ -52,8 +51,8 @@ Use OpenTelemetry to easily send Python traces to your Logit.io Stack.
 
   So the full command including arguments is:
 
-  ```cmd copy /@opentelemetry.endpointAddress/ /@opentelemetry.port/ /@opentelemetry.base64encodedAuthString/ /@opentelemetry.protocol/
-  opentelemetry-instrument --traces_exporter otlp --exporter_otlp_endpoint https://@opentelemetry.endpointAddress:@opentelemetry.port --exporter_otlp_traces_protocol @opentelemetry.protocol --exporter_otlp_traces_headers "Authorization=Basic%20@opentelemetry.base64encodedAuthString" --metrics_exporter console --service_name your-service-name python -m flask run -p 8080
+  ```cmd copy /@opentelemetry.endpointAddress/ /@opentelemetry.httpsPort/ /@opentelemetry.base64encodedAuthString/ /@opentelemetry.protocol/
+  opentelemetry-instrument --traces_exporter otlp --exporter_otlp_endpoint https://@opentelemetry.endpointAddress:@opentelemetry.httpsPort --exporter_otlp_traces_protocol http/protobuf --exporter_otlp_traces_headers "Authorization=Basic%20@opentelemetry.base64encodedAuthString" --metrics_exporter console --service_name your-service-name python -m flask run -p 8080
   ```
 
   ### Alternative to Command Line arguments
