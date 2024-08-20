@@ -1,22 +1,23 @@
 ---
 title: Django
-pageTitle: Logstash Django Configuration Example
-subTitle: Ship logs from Django applications to Logstash
+pageTitle: Django Logging Configuration Example
+subTitle: Ship logs from Django applications to Logit.io
 logo: django
 color: "#00aa4e"
 stackTypes: logs
-description: Learn how to send Django logs to your Logstash instance using our configuration examples - Ship over 100 log data types easily with Logit.io
+description: Learn how to send Django logs to your Logit.io stack using our configuration examples
 sslPortType: beats-ssl
 ---
 
 import ConfigurePythonLogstash from "@/components/integrations/partials/configure-python-logstash";
 
-Use Serilog to easily send .NET Core logs to your Logit.io Stack.
+To send logs to Logit.io via Django you will need the python-logstash-async (version `2.5.0`) Python plugin.
 
 <Steps>
-  ### Installing
+  ### Installing the Python logging handler
 
-  Execute the following command using `pip`:
+  Execute the following command using `pip` (the official Python package installer) to install the logging handler. This sends Python logging 
+  events to Logstash, which is part of your Logit.io log management stack:
 
   ```cmd copy
   pip install python-logstash-async
