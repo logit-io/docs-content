@@ -17,26 +17,30 @@ Use OpenTelemetry to easily send Node.js traces to your Logit.io stack.
 </Callout>
 
 <Steps>
-
   ### Install
 
-  Create a new folder for the project called `opentelemetry_nodejs_example` and then open the command prompt or terminal window and navigate to the folder. Paste in the following command:
+  Create a new folder for the project called `opentelemetry_nodejs_example` and 
+  then open the command prompt or terminal window and navigate to the folder. 
+  Paste in the following command:
 
-  ```bash copy
+  ```cmd copy
   npm init -y
   ```
 
   This will create a `package.json` file with default settings.
 
-  This guide uses the Express framework to simplify handling HTTP requests. Next we need to paste the following command into the command prompt or terminal window:
+  This guide uses the Express framework to simplify handling HTTP requests. 
+  Next we need to paste the following command into the command prompt or terminal window:
 
-  ```bash copy
+  ```cmd copy
   npm install express
   ```
 
-  You will we now have a `node_modules` folder in addition to the `package.json` and a `package-lock.json` file.
+  You will we now have a `node_modules` folder in addition to 
+  the `package.json` and a `package-lock.json` file.
 
-  We now need to install the necessary OpenTelemetry packages using npm (node package manager), the packages that we will be using are as follows:
+  We now need to install the necessary OpenTelemetry packages using npm (node package manager), 
+  the packages that we will be using are as follows:
 
   - `opentelemetry-api`: Core API for OpenTelemetry
   - `opentelemetry-sdk`: SDK implementation
@@ -46,7 +50,7 @@ Use OpenTelemetry to easily send Node.js traces to your Logit.io stack.
 
   We install them with the following command.
 
-  ```bash copy
+  ```cmd copy
   npm install @opentelemetry/api @opentelemetry/sdk-node @opentelemetry/auto-instrumentations-node @opentelemetry/sdk-trace-base @opentelemetry/exporter-trace-otlp-http @opentelemetry/exporter-trace-otlp-grpc
   ```
   
@@ -54,7 +58,7 @@ Use OpenTelemetry to easily send Node.js traces to your Logit.io stack.
 
   Open the `tracing.js` file with your choice of text editor, copy and past the following code into the file and then save.
 
-  ```js copy
+  ```js copy showLineNumbers filename="tracing.js"
   const config = require('./config');
 
   const { NodeSDK } = require('@opentelemetry/sdk-node');
@@ -72,9 +76,7 @@ Use OpenTelemetry to easily send Node.js traces to your Logit.io stack.
   // Encode the username and password for Basic Authentication
   const auth = Buffer.from(`${config.username}:${config.password}`).toString('base64');
 
-
-  if (config.protocol === "grpc"){
-    
+  if (config.protocol === "grpc") {    
     const OTLP_ENDPOINT = `grpc://${config.endpoint}:${config.port}`;
     const grpc = require('@grpc/grpc-js');
     const { credentials } = grpc;
@@ -102,10 +104,8 @@ Use OpenTelemetry to easily send Node.js traces to your Logit.io stack.
       resource: new Resource({
       [SemanticResourceAttributes.SERVICE_NAME]: serviceName,
       }),
-    });
-    
-  }else{
-    
+    });    
+  } else {    
     const OTLP_ENDPOINT = `https://${config.endpoint}:${config.port}/v1/traces`;
     
     // Create HTTPS credentials with Basic Auth
@@ -132,7 +132,7 @@ Use OpenTelemetry to easily send Node.js traces to your Logit.io stack.
 
   Next open the `app.js` file with your text editor, copy and past the following code into the file and then save.
 
-  ```js copy
+  ```js copy showLineNumbers filename="app.js"
   // Import and initialize OpenTelemetry
   require('./tracing');
 
@@ -151,11 +151,11 @@ Use OpenTelemetry to easily send Node.js traces to your Logit.io stack.
 
   ### Configuring the App
 
-  Open the `config.js` file using your text editor, copy and paste the following into the file and then save. Use the tab to choose between 
+  Open the `config.js` file using your text editor, copy and paste the 
+  following into the file and then save. Use the tab to choose between 
   sending via HTTPS or gRPC. 
 
-  <Tabs items={["HTTPS", "gRPC"]}>
-  
+  <Tabs items={["HTTPS", "gRPC"]}>  
     <Tab>
       <NodejsConfigSettings protocol="http" port="@opentelemetry.httpsPort" />
     </Tab>
@@ -170,23 +170,25 @@ Use OpenTelemetry to easily send Node.js traces to your Logit.io stack.
 
   Run the NodeJS app with the following command in Terminal or the Command Prompt window.
 
-  ```bash copy
+  ```cmd copy
   node app.js
   ```
 
-  You will see feedback from the app so that you know that is running, the message should say "Server is running on http://localhost:3000".
+  You will see feedback from the app so that you know that is running, 
+  the message should say "Server is running on http://localhost:3000".
 
-  The action of launching the NodeJS app will have sent traces to your stack which can now be viewed in Jaeger.
+  The action of launching the NodeJS app will have sent traces 
+  to your stack which can now be viewed in Jaeger.
   
   ### Launch Logit.io to view your traces
 
   <LaunchVisualizer type="apm" />
 
-  If you open your browser and enter http://localhost:3000 you will see that action of browsing to the page served by the NodeJS app will 
-  send further traces to your stack.
+  If you open your browser and enter http://localhost:3000 you will 
+  see that action of browsing to the page served by the NodeJS app 
+  will send further traces to your stack.
 
   ### How to diagnose no data in stack
 
   <DiagnoseNoData />
-
 </Steps>
