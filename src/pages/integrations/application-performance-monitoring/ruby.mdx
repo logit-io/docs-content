@@ -1,7 +1,45 @@
 ---
 title: Ruby
-pagination: false
-timestamp: false
+pageTitle: OpenTelemetry Ruby Configuration
+subTitle: Ship traces from Ruby to OpenSearch with OpenTelemetry
+logo: ruby
+color: "#ff0000"
+stackTypes: apm
+description: Learn how to ship your Ruby program traces to OpenSearch with our example configurations.
 ---
 
-<FolderBrowser />
+Use OpenTelemetry to easily send Ruby traces to your Logit.io Stack.
+
+<Steps>
+  ### Getting Started
+
+  You can get help Getting Started with OpenTelemetry for Ruby by referring to the 
+  [official documentation](https://opentelemetry.io/docs/instrumentation/ruby/getting-started/). 
+
+  To automatically instrument your Ruby application and send traces to your Logit.io 
+  Stack you just need to ensure the Environment variables or system properties are added correctly.
+
+  The variables that need to be updated to allow the traces to be sent to your Logit.io Stack are shown below.
+
+  #### Environment Variables
+
+  <Tabs items={["HTTPS", "gRPC"]}>
+  
+  <Tab>
+    <RubyOtlpExporterSettings protocol="http" port="@opentelemetry.httpsPort" />
+  </Tab>
+
+  <Tab>
+    <RubyOtlpExporterSettings protocol="grpc" port="@opentelemetry.grpcPort" />
+  </Tab>
+
+  </Tabs>
+
+  ### Launch Logit.io to view your traces
+
+  <LaunchStack utmMedium="apm" utmCampaign="ruby" source="apm_ruby_grpc" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>

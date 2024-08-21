@@ -5,104 +5,95 @@ timestamp: false
 stackTypes: logs
 ---
 
-## Getting Started Sending Log data
+## Getting Started Sending Logs to Your Logit.io Stack
 
-<Callout type="info">
-  To successfully use this guide, you need to have already created a Logit.io account and Log Management stack. If you haven't, please click [here](/getting-started) to continue
-</ Callout>
-You can send data to your Log Management service in a few seconds by following this guide.
+<Steps>
+  ### Send Sample Log
 
-*Note*: this guide assumes you have curl installed on your computer. It is provided by default on most Linux distributions and in macOS and Windows 10 / 11. 
-To install on earlier versions of Windows you can follow the instructions [here](https://curl.se/windows/). 
+  First, verify that you can send a sample log message to your stack using Logit.io's API.
 
-If you are logged in the Logit.io API endpoint and key values you need to send data to us will be pre-populated. If you are not logged in please do so and return to this guide.
+  <Tabs items={["Windows (via Command Prompt)", "Windows (via PowerShell)", "macOS", "Linux"]}>
+    <Tab>    
+      ```bash copy /@apikey/ 
+      curl -i ^
+      -H "ApiKey: @apikey" ^
+      -H "Content-Type: application/json" ^
+      -H "LogType: json" ^
+      https://@logitApiEndpoint/v2 ^
+      -d "{\"test-field-name\":\"test-field-value\"}"
+      ```
+    </Tab>
+    <Tab>
+      ```ps1 copy /@apikey/ 
+      $headers = @{
+        ApiKey = "@apikey"
+        "Content-Type" = "application/json"
+        LogType = "json"
+      }
 
-<Tabs items={["Windows", "Linux", "macOS", "DEB", "RPM"]}>
-  <Tab>
-  Remember that you will need to escape double-quote characters with a backslash in the data field as shown in the example below.
+      $body = @{
+        "test-field-name" = "test-field-value"
+      } | ConvertTo-Json
 
-  Command Prompt:
-  ```bash copy 
-  curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: json" https:/@logitApiEndpoint/v2 -d "{\"test-field-name\":\"test-field-value\" }"
-  ```
+      curl -Uri "https://@logitApiEndpoint/v2" `
+        -Method Post `
+        -Headers $headers `
+        -Body $body
+      ```
+    </Tab>
 
-  Powershell:
-  ```ps1 copy
-  curl -Method Post `
-  -Uri "https:/@logitApiEndpoint/v2" `
-  -Headers @{
-      "ApiKey" = "@apikey";
-      "Content-Type" = "application/json";
-      "LogType" = "json"
-  } `
-  -Body (@{
-      test-field-name = "test-field-value";
-  } | ConvertTo-Json)
-  ```
-  </Tab>
+    <Tab>
+      ```bash copy /@apikey/ 
+      curl -i \
+      -H "ApiKey: @apikey" \
+      -H "Content-Type: application/json" \
+      -H "LogType: json" \
+      https://@logitApiEndpoint/v2 \
+      -d '{"test-field-name":"test-field-value"}'
+      ```
+    </Tab>
 
-  <Tab>
-  ```bash copy
-  curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json"\
-  -H "LogType: json" https:/@logitApiEndpoint/v2\
-  -d '{"test-field-name":"test-field-value" }'
-  ```
-  </Tab>
-
-  <Tab>
-  ```bash copy
-  curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json"\
-  -H "LogType: json" https:/@logitApiEndpoint/v2\
-  -d '{"test-field-name":"test-field-value" }'
-  ```
-  </Tab>
-
-  <Tab>
-  ```bash copy
-  curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json"\
-  -H "LogType: json" https:/@logitApiEndpoint/v2\
-  -d '{"test-field-name":"test-field-value" }'
-  ```
-  </Tab>
-
-  <Tab>
-  ```bash copy
-  curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json"\
-  -H "LogType: json" https:/@logitApiEndpoint/v2\
-  -d '{"test-field-name":"test-field-value" }'
-  ```
-  </Tab>
-
+    <Tab>
+      ```bash copy /@apikey/ 
+      curl -i \
+      -H "ApiKey: @apikey" \
+      -H "Content-Type: application/json" \
+      -H "LogType: json" \
+      https://@logitApiEndpoint/v2 \
+      -d '{"test-field-name":"test-field-value"}'
+      ```
+    </Tab>
   </Tabs>
 
-  ### Response
-
-  You should expect to receive a 202 ACCEPTED response code for a successful message
+  You should expect to receive a `202 ACCEPTED` response:
 
   ```cmd
   HTTP/1.1 202 ACCEPTED
-  Content-Type: application/json
-  Content-Length: 39
-  Connection: keep-alive
-  Server: Logit-API-Server
-  Date: Wed, 27 Mar 2024 14:34:39 GMT
-  Access-Control-Allow-Origin: *
-  Strict-Transport-Security: max-age=31536000; includeSubDomains
-  X-Xss-Protection: 1; mode=block
-  X-Content-Type-Options: nosniff
-  X-Frame-Options: SAMEORIGIN
   {"message":"Message Received, Thanks"}
   ```
 
-To view the data you have just sent please click on the button below
+  ### Launch Logs to View Sample Data
+  
+  Click the button below to open the log management visualizer:
 
-<LaunchVisualizer />
+  <LaunchVisualizer type="logs" />
 
-That's it! You have sent data to your stack and viewed it in an Opensearch Dashboard. This is, of course, just the beginning. For more help sending data 
-to your stack check out the following resources and if you need more help please feel free to contact us via Intercom.
+  You should now see the sample log stored in your stack.
+  
+  ### Start Integrating Your Logs
 
-<Cards>
-  <Card title="View Data Source Integrations" href="/integrations" />
-  <Card title="Send Metrics" href="/infrastructure-metrics/getting-started" />
-  <Card title="Send Traces" href="/application-performance-monitoring/getting-started" />
-</Cards>
+  Logit.io provides more than 350 data source integration guides to help you get started. 
+  
+  Click the link below to get started.
+
+  <Cards>
+    <Card title="Log Management Integrations" href="/integrations/log-management" />
+  </Cards>
+
+</Steps>
+
+<Callout type="info">
+  If you get stuck and need help, or can't find an integration guide that 
+  meets your requirements, then please feel free to get in touch with our support 
+  team <IntercomButton text="via live chat" />, and we'll be happy to assist you.
+</Callout>

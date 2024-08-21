@@ -1,7 +1,35 @@
 ---
 title: Rust
-pagination: false
-timestamp: false
+pageTitle: OpenTelemetry Rust Configuration
+subTitle: Ship traces from Rust to OpenSearch with OpenTelemetry
+logo: rust
+color: "#0f172a"
+stackTypes: apm
+description: Learn how to ship your Rust program traces to OpenSearch with our example configurations.
 ---
 
-<FolderBrowser />
+Use OpenTelemetry to easily send Rust traces to your Logit.io Stack.
+
+<Steps>
+  ### Getting Started
+
+  <Tabs items={["HTTPS", "gRPC"]}>
+  
+  <Tab>
+    <RustOtlpExporterSettings protocol="http/protobuf" port="@opentelemetry.httpsPort" />
+  </Tab>
+
+  <Tab>
+    <RustOtlpExporterSettings protocol="Grpc" port="@opentelemetry.grpcPort" />
+  </Tab>
+
+  </Tabs>
+
+  ### Launch Logit.io to view your traces
+
+  <LaunchStack utmMedium="apm" utmCampaign="rust" source="apm_rust_grpc" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>

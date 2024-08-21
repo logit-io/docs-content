@@ -1,7 +1,64 @@
 ---
 title: .Net
-pagination: false
-timestamp: false
+pageTitle: OpenTelemetry .NET Core Configuration
+subTitle: Ship traces from ASP.Net Core to OpenSearch with OpenTelemetry
+logo: aspnetcore
+color: "#465aaa"
+stackTypes: apm
+description: Follow the steps outlined in Logit.io's .Net source integrations to ship traces from ASP.Net Core to OpenSearch with OpenTelemetry.
 ---
 
-<FolderBrowser />
+Use OpenTelemetry to easily send .NET Core traces to your Logit.io Stack.
+
+<Steps>
+  ### Install
+
+  <InstallOtel />
+
+  ### Configuring AppSettings
+
+  <Tabs items={["HTTPS", "gRPC"]}>
+  
+  <Tab>
+    <ConfigureOtel protocol="https" port="@opentelemetry.httpsPort" />
+  </Tab>
+
+  <Tab>
+    <ConfigureOtel protocol="grpc" port="@opentelemetry.grpcPort" />
+  </Tab>
+
+  </Tabs>
+
+  ### Using OpenTelemetry
+
+  <UsingOtel />
+
+  ### Launch Logit.io to view your traces
+
+  <LaunchVisualizer type="apm" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+## .NET Core Traces Overview
+
+.NET Core is an open-source platform created by Microsoft for development 
+across Linux, macOS & Windows and makes .NET run as a cross-platform 
+framework. It can be used to write APIs, and ASP.NET websites.
+
+Tracing & tailing logs for .NET Core can often encounter difficulties when 
+debugging over longer time periods. If these log messages are being 
+recorded across distributed environments then it can make centralising your 
+logs nearly impossible for logging analysis and management at scale.
+
+The Logit.io platform offers [hosted OpenSearch](https://logit.io/platform/features/hosted-opensearch) 
+which makes visualising .NET Core log instances far more streamlined than comparable 
+logging solutions. We believe that monitoring & analysis play a crucial role 
+in maintaining the health of your applications across the cloud & on-premise.
+
+If you need any help with migrating your .NET Core traces to OpenSearch we are 
+here to help. Feel free to get in contact with our support team by sending us a message 
+<IntercomButton text="via live chat" /> and we'll be happy to assist.
