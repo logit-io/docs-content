@@ -33,53 +33,14 @@ To send logs to Logit.io via Django you will need the python-logstash-async (ver
 
   <ConfigurePythonLogstash />
 
-  ### Check Logit.io for your logs
+  ### Launch Logs to View Data
 
-  <LaunchStack utmMedium="logs" utmCampaign="python" source="django" />
-
-  ### How to diagnose no data in Stack
-
-  <DiagnoseNoData />
+  <LaunchVisualizer type="logs" />
 
 </Steps>
 
-## Django Centralised Logging Overview
-
-Django leverages Python's logging module, which is widely adopted across various 
-third-party libraries, facilitating seamless integration of your application's 
-logging with logs specific to your Django project.
-
-The Python logging module categorizes logs into five standard levels: 
-`CRITICAL`, `ERROR`, `WARNING`, `INFO`, and `DEBUG`. 
-Here's what each level signifies within a Django context:
-
-- `CRITICAL` logs indicate severe problems that cause your Django application to terminate, necessitating a restart to recover.
-- `ERROR` logs are for recording unexpected issues that can be resolved without restarting the application, such as HTTP 503 (Service Unavailable) or 404 (Not Found) responses.
-- `WARNING` logs might signal potential problems, like diminishing resources or the detection of suspicious HTTP requests, helping in safeguarding your application's security.
-- `INFO` logs collect and convey data about your application's operational metrics, often sent to a log management solution like the ELK Stack for analysis.
-- `DEBUG` logs provide detailed insights for debugging purposes, especially useful during development and troubleshooting stages.
-
-When developing with Django, especially when transitioning to a production environment, 
-the volume of logs can escalate rapidly, with each logging level adding to the complexity 
-of managing and interpreting log data. This complexity underscores the importance of effective 
-log management strategies to mitigate potential issues and facilitate smooth development workflows.
-
-Logit.io offers a solution for centralizing and managing logs from Django applications, streamlining 
-the processes of monitoring, troubleshooting, and debugging in the cloud. By aggregating all five types 
-of logs, Logit.io enables efficient analysis through pre-configured Kibana dashboards. It also supports 
-setting up alerts for critical issues and integrates with various notification services like Opsgenie, 
-Slack, Webhooks, and PagerDuty to keep development teams informed.
-
-For those looking to enhance their Django application logging with Logstash, Logit.io provides 
-resources and support to simplify the migration process. Assistance is readily available through 
-their Help Centre or live chat, ensuring a smooth onboarding experience to their logging platform.
-
-Using Logit.io you can view all of the five log types for easy analysis with our out of the box 
-Kibana dashboards. Set alerts on errors, warnings and mission-critical Django issues from one 
-centralised dashboard. Logit.io integrates with Opsgenie, Slack, Webhooks and PagerDuty to send 
-notification messages to your Dev teams. 
+## More Help
 
 If you need any further assistance with migrating your Django 
-[application logs](https://logit.io/platform/logging/logging-as-a-service/application-logging/) to Logstash 
-we're here to help you get started. Just get in contact with our support team by visiting our dedicated 
-Help Centre or <IntercomButton text="via live chat" /> & we'll be happy to assist.
+[application logs](https://logit.io/platform/logging/logging-as-a-service/application-logging/) to Logit.io 
+we're here to help you get started. Just get in contact with our support team <IntercomButton text="via live chat" /> & we'll be happy to assist.
