@@ -1,0 +1,43 @@
+---
+<<<<<<< HEAD
+title: OpenTelemetry Elixir
+=======
+title: Elixir
+>>>>>>> master
+pageTitle: OpenTelemetry Elixir Configuration
+subTitle: Ship traces from Elixir to OpenSearch with OpenTelemetry
+logo: elixir
+color: "#800080"
+stackTypes: apm
+<<<<<<< HEAD
+description: Learn how to ship your Elixir program traces to OpenSearch with our example configurations.
+=======
+description: Follow the simple steps in our source integrations to ship traces from Elixir to OpenSearch with OpenTelemetry. Send Elixir data to your Logit.io stacks.
+>>>>>>> master
+---
+
+Use OpenTelemetry to easily send Elixir traces to your Logit.io Stack.
+
+<Steps>
+  ### Getting Started
+
+  <Tabs items={["HTTPS", "gRPC"]}>
+  
+  <Tab>
+    <ElixirOtlpExporterSettings protocol="http_protobuf" port="@opentelemetry.httpsPort" />
+  </Tab>
+
+  <Tab>
+    <ElixirOtlpExporterSettings protocol="grpc" port="@opentelemetry.grpcPort" />
+  </Tab>
+
+  </Tabs>
+
+  ### Launch Logit.io to view your traces
+
+  <LaunchStack utmMedium="apm" utmCampaign="elixir" source="apm_elixir_http" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>
