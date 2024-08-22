@@ -1,7 +1,35 @@
 ---
 title: Swift
-pagination: false
-timestamp: false
+pageTitle: OpenTelemetry Swift Configuration
+subTitle: Ship traces from Swift to OpenSearch with OpenTelemetry
+logo: swift
+color: "#ff9900"
+stackTypes: apm
+description: Learn how to ship your Swift program traces to OpenSearch with our example configurations.
 ---
 
-<FolderBrowser />
+Use OpenTelemetry to easily send Swift traces to your Logit.io Stack.
+
+<Steps>
+  ### Getting Started
+
+  <Tabs items={["HTTPS", "gRPC"]}>
+  
+  <Tab>
+    <SwiftOtlpExporterSettings protocol="https" port="@opentelemetry.httpsPort" />
+  </Tab>
+
+  <Tab>
+    <SwiftOtlpExporterSettings protocol="grpc" port="@opentelemetry.grpcPort" />
+  </Tab>
+
+  </Tabs>
+
+  ### Launch Logit.io to view your traces
+
+  <LaunchStack utmMedium="apm" utmCampaign="swift" source="apm_swift_grpc" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>
