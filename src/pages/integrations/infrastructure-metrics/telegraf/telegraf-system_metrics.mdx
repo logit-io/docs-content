@@ -1,9 +1,9 @@
 ---
-title: System Metrics via Telegraf
-subTitle: Ship your System Metrics via Telegraf to your Logit.io Stack
+title: System Metrics
+subTitle: Ship your System Metrics to your Logit.io stack
 logo: influx
 color: "#4d4d4d"
-description: Configure Telegraf to ship system metrics to your Logit.io stacks. Configure Telegraf to send system metrics to Logstash or Elastic. Get started using our Telegraf system metrics example configuration.
+description: Use our example to configure Telegraf to ship system metrics to your Logit.io stacks. Configure Telegraf to send system metrics to Logstash or Elastic.
 stackTypes: metrics
 sslPortType: beats-ssl
 ---
@@ -15,87 +15,38 @@ Configure Telegraf to ship system metrics to your Logit.io stacks via Logstash.
 
   <InstallTelegraf />
 
-  ### Configure the Telegraf input plugin
+  ### Configure the plugin
 
-  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
-
-  ```yaml copy
-  # Read metrics about cpu usage
-  [[inputs.cpu]]
-      ## Whether to report per-cpu stats or not
-      percpu = true
-      ## Whether to report total system cpu stats or not
-      totalcpu = true
-      ## If true collect raw cpu time metrics
-      collect_cpu_time = true
-      ## If true compute and report the sum of all non-idle cpu states
-      report_active = true
-
-  # Read metrics about memory usage
-  [[inputs.mem]]
-
-  # Read metrics about system load & uptime
-  [[inputs.system]]
-      namepass = ["system"]
-
-  # Read metrics about disk usage by mount point
-  [[inputs.disk]]
-      ## By default, telegraf gather stats for all mountpoints.
-      ## Setting mountpoints will restrict the stats to the specified mountpoints.
-      # mount_points = ["/"]
-
-      ## Ignore some mountpoints by filesystem type. For example (dev)tmpfs (usually
-      ## present on /run, /var/run, /dev/shm or /dev).
-      ignore_fs = ["tmpfs", "devtmpfs"]
-
-  [[inputs.diskio]]
-  [[inputs.net]]
-  [[inputs.processes]]
-  [[inputs.procstat]]
-      pattern = ".*"
-      fieldpass = ["cpu_usage", "memory_rss"]
-  ```
-
-  ### Configure the output plugin
-
-  <TelegrafOutputPlugin />
+  <TelegrafPlugin />
 
   ### Start Telegraf
 
   <StartTelegraf />
 
-  ### View your metrics
-  <LaunchStack source="System_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-system-metrics" />
+  ### Launch Metrics to View Data
 
-  ### How to diagnose no data in Stack
+  Click the 'Launch Metrics' button below to open the infrastructure metrics visualizer. 
+  
+  <LaunchVisualizer type="metrics" />
+  
+  Once opened, click on the Explore option in the left-hand menu:
+  ![Grafana Explore](@/images/integrations/system-metrics/grafana-explore.png)
+  
+  Under the Metric header you will see 'Select metric'. Open the drop-down menu 
+  and scroll to and select 'mem_used':
+  ![Grafana Select Metric](@/images/integrations/system-metrics/grafana-metric.png)
 
-  <DiagnoseNoData />
+  Click on the blue Run query button near the top-right of the screen:
+  ![Grafana Run Query](@/images/integrations/system-metrics/grafana-run-query.png)
+
+  You will now see the 'mem_used' metric data displayed and if you click on the blue Run query button this will be updated.
+  You can set this to automatically update by clicking on the arrow on the blue button and chosing the interval you want the 
+  data to be updated.
+
+  When you want to stop Telegraf sending metric data press Ctrl + C in the terminal app / Powershell.
 
 </Steps>
 
-### Telegraf System Metrics Overview
-
-In order to effectively monitor and analyze system metrics in a distributed environment, it's essential 
-to have a reliable and efficient metrics management solution. Telegraf is an open-source metrics 
-collection agent that can be used to gather system metrics from various sources, 
-including operating systems, databases, and other applications.
-
-Telegraf provides a wide range of input plugins that allow users to collect metrics from different sources, 
-including CPU usage, memory usage, network activity, and more. To store and query the collected metrics, 
-organizations can use Prometheus, an open-source monitoring and alerting system that 
-supports a flexible querying language and graphical visualization of data.
-
-To ship system metrics from Telegraf to Prometheus, organizations can configure Telegraf to 
-output metrics in the Prometheus format, and then use Prometheus to scrape the metrics from the Telegraf server. 
-This process involves setting up Telegraf to collect metrics from various sources and output them in the 
-Prometheus format, configuring Prometheus to scrape the metrics from the Telegraf server, and 
-visualizing the data using Prometheus' flexible querying and graphical visualization capabilities.
-
-In summary, using Telegraf to ship system metrics to Prometheus is a reliable and efficient metrics 
-management solution for distributed environments. By configuring Telegraf to output metrics in the 
-Prometheus format and using Prometheus to scrape the metrics from the Telegraf server, organizations 
-can gain insights into system performance and take action to optimize and troubleshoot their distributed systems.
-
-If you need any further assistance with shipping your log data to Logit.io we're here to help you get started. 
+If you need any further assistance with shipping your metric data to Logit.io we're here to help you get started. 
 Feel free to get in contact with our support team by sending us a message via <IntercomButton text="live chat" /> 
 & we'll be happy to assist.

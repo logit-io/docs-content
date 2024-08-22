@@ -1,73 +1,132 @@
 ---
-title: .NET
-subTitle: Ship logs from your .NET application to Logstash
-logo: microsoftnet
-color: "#512bd4"
+title: .NET (Core / 5+)
+pageTitle: .NET Serilog Configuration
+subTitle: Ship logs from ASP.NET to Logit.io with Serilog
+logo: aspnetcore
+color: "#5c2d91"
 stackTypes: logs
-description: Learn how to ship your dotnet application, access or error logs to Logstash with our example configurations.
+description: Learn how to ship your dotnet application/access/error logs to Logstash with our example configurations.
+sslPortType: tcp-ssl
 ---
 
-Use Serilog to easily send .NET logs to your Logit.io Stack.
+import ConfigureSerilog from "@/components/integrations/partials/configure-serilog";
+
+Use Serilog to send .NET logs to your Logit.io Stack.
 
 <Steps>
   ### Install
 
-  You can ship logs from .NET and MONO applications using common logging frameworks. 
-  We have documentation for:        
+  If using Visual Studio, create a new application using the ASP.NET Core Web App (Model-View-Controller) template.
+
+  If using a terminal application e.g. Powershell run the following command (where 'SerilogTestApp' is the name of the application you want to create):
+
+  ```ps copy
+  dotnet new mvc -n SerilogTestApp
+  ```
+
+  You will need to use NuGet or the command line to install three Serilog packages: `Serilog.AspNetCore` and `Serilog.Sinks.Network` to send logs using TCP/TLS or UDP.
   
-  - Serilog configuration
-  - NLog configuration
-  - log4net configuration
+  `Serilog.Settings.Configuration` is needed to setup Serilog using settings from appsettings.json (instead of hardcoded settings).
+  
+  In Powershell:
+  ```ps copy 
+  dotnet add package Serilog.AspNetCore
+  dotnet add package Serilog.Settings.Configuration
+  dotnet add package Serilog.Sinks.Network
+  ```
+
+  If you are using Visual Studio, navigate to Tools -> NuGet Package Manager -> Manage NuGet packages for solution, 
+  browse for the 3 packages mentioned above and install them in your new application.
+
+  ### Configuring Serilog
+  <ConfigureSerilog />
+
+  ### Using Serilog
+
+  Inside `Program.cs`, add Serilog to the `WebApplication` build process. Below is the updated `Program.cs` code in full:
         
-  <Callout type="info">
-    I'm choosing a framework, which should I use? We recommend Serilog as it has structured logging support.
-  </Callout>
-      
-  <Callout type="info">
-    I can't use Serilog, NLog or Log4net! If you are not using a framework 
-    listed above there are a number of options you can consider:
+  ```csharp copy showLineNumbers
+  using Serilog;
 
-    - Log to file and use Filebeat to ship logs
-    - Modify logging framework to output to HTTP
-    - Modify logging framework to output to TCP
-  </Callout>
+  var builder = WebApplication.CreateBuilder(args);
 
-  ### Check Logit.io for your logs
+  builder.Host.UseSerilog((hostContext, _, configuration) =>
+  {
+      configuration.ReadFrom.Configuration(hostContext.Configuration);
+  });
 
-  <LaunchStack source="dotnet" utmMedium="logs" utmCampaign="dotnet" />
+  // Add services to the container.
+  builder.Services.AddControllersWithViews();
 
-  ### How to diagnose no data in Stack
+  var app = builder.Build();
 
-  <DiagnoseNoData />
+  // Configure the HTTP request pipeline.
+  if (!app.Environment.IsDevelopment())
+  {
+      app.UseExceptionHandler("/Home/Error");
+      // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+      app.UseHsts();
+  }
+
+  app.UseHttpsRedirection();
+  app.UseStaticFiles();
+
+  app.UseRouting();
+
+  app.UseAuthorization();
+
+  app.MapControllerRoute(
+      name: "default",
+      pattern: "{controller=Home}/{action=Index}/{id?}");
+
+  app.Run();
+  ```
+  
+  You can now log from anywhere in your application. For example, the following code will send a warning log to your stack when the application 
+  hits the Index action of the Home controller:
+  
+  ```csharp copy
+  using Microsoft.AspNetCore.Mvc;
+  using SerilogTestApp.Models;
+  using System.Diagnostics;
+
+  namespace SerilogTestApp.Controllers
+  {
+      public class HomeController(ILogger<HomeController> logger) : Controller
+      {
+          public IActionResult Index()
+          {
+              logger.LogWarning("This is something you need to be warned about!");
+              return View();
+          }
+
+          public IActionResult Privacy()
+          {
+              return View();
+          }
+
+          [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+          public IActionResult Error()
+          {
+              return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+          }
+      }
+  }
+  ``` 
+
+  ### Launch Logs to View Data
+
+  Run the application and click on the button below to open the log management visualizer:
+
+  <LaunchVisualizer type="logs" />
+
+  You should now see the above log stored in your stack.
+
 </Steps>
 
-## .NET Logging Overview
+Serilog is a fully featured logging framework and has many other capabilities that are not detailed here.
+  
+Please see the [Serilog.AspNetCore Documentation](https://github.com/serilog/serilog-aspnetcore) for more information.
 
-.NET is a free development framework created by Microsoft that allows for easier application engineering. 
-The framework provides an environment for programmers to use throughout the software development process. 
-
-.NET is compatible with multiple libraries, editors and programming languages 
-including F#, PowerShell, Visual Basic and IronPython.
-
-By default .NET only works on [Windows](/integrations/logs/operating-systems/windows) devices, unless you use a tool like Mono to make .NET 
-compatible with your Linux device. If cross operating system compatibility is a concern for your development 
-process then you'll likely prefer using .NET Core as a framework of choice.
-
-When .NET encounters an error these log files can be found by inspecting the 
-[Windows event log](https://logit.io/solutions/analysis/event-log-analyser/). 
-.NET is associated with a number of log types including, security, application, OS, and 
-[IIS](/integrations/logs/applications/iis) logs, as .NET applications typically run on IIS Servers.
-
-Among these log types you'll also find statuses on the applications log events, 
-in reverse severity these include Error, Warning & Information.
-
-With all these logs being generated by a single development framework, it can be difficult to identify 
-and visualise which of your .NET logs may be of highest importance when it comes to spotting errors and creating security reports.
-
-Thanks to our [log viewer](https://logit.io/solutions/log-viewer/) and 
-[ELK as a Service offering](https://logit.io/platform/features/hosted-elk/elk-as-a-service/), 
-Logit.io makes parsing and managing your logs from .Net  effective. Our platform is able to centralise all 
-of your log data across tools, platforms and services that you use on a daily basis.
-
-If you need any more assistance in analysing your .NET logs we're here to help. Feel free to 
-<IntercomButton text="get in touch with our support team via Intercom" /> and we will be happy to assist.
+If you need any help with migrating your .NET Core logs to Logit.io we are here to help. 
+Feel free to <IntercomButton text="get in touch with our support team via Intercom" /> and we will be happy to assist.

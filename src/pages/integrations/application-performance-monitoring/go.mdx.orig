@@ -1,0 +1,49 @@
+---
+<<<<<<< HEAD
+title: OpenTelemetry Go
+=======
+title: Go
+>>>>>>> master
+pageTitle: OpenTelemetry Go Configuration
+subTitle: Ship traces from Go to OpenSearch with OpenTelemetry
+logo: golang
+color: "#00b1d1"
+stackTypes: apm
+<<<<<<< HEAD
+description: Learn how to ship your Go program traces to OpenSearch with our example configurations.
+=======
+description: Follow our source integrations to send traces from Go to OpenSearch with OpenTelemetry. Ship Go data to your Logit.io stacks.
+>>>>>>> master
+---
+
+Use OpenTelemetry to easily send Go traces to your Logit.io Stack.
+
+<Steps>
+  ### Getting Started
+
+  This guide uses the 
+  [OpenTelemetry Go collector example](https://github.com/open-telemetry/opentelemetry-go/blob/main/example/otel-collector/main.go) 
+  application as its starting point with some modifications to allow the traces to be sent to your Logit.io Stack.
+
+  This code is added to `main.go` and when run will send the example traces to your Logit.io Stack to be viewed in Jaeger.
+        
+  <Tabs items={["HTTPS", "gRPC"]}>
+  
+  <Tab>
+    <GoOtlpExporterSettings protocol="http" port="@opentelemetry.httpsPort" />
+  </Tab>
+
+  <Tab>
+    <GoOtlpExporterSettings protocol="grpc" port="@opentelemetry.grpcPort" />
+  </Tab>
+
+  </Tabs>
+
+  ### Launch Logit.io to view your traces
+
+  <LaunchStack utmMedium="apm" utmCampaign="golang" source="apm_golang_grpc" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>
