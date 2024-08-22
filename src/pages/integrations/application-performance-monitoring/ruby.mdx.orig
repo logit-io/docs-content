@@ -29,7 +29,7 @@ Use OpenTelemetry to easily send Ruby traces to your Logit.io Stack.
 
 Create a new directory for your project and call the new directory `opentelemetry_example`.
 
-Open a Terminal window or Command Prompt and navigate into the new `opentelemetry_example` folder. 
+Open a Terminal window or Command Prompt and navigate into the new `opentelemetry_example` directory. 
 Then enter the following command.
 
 ```bash copy

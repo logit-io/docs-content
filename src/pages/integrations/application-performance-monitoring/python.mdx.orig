@@ -33,7 +33,7 @@ Use OpenTelemetry to easily send Python traces to your Logit.io Stack.
 
   Create a new directory for your project and name it `opentelemetry_python_example`.
 
-  Open a Terminal window or Command Prompt and navigate into the new `opentelemetry_python_example` folder. 
+  Open a Terminal window or Command Prompt and navigate into the new `opentelemetry_python_example` directory. 
   Create a virtual environment for your project to manage dependencies, this is done by entering the following command.
 
   <Tabs items={["Windows", "Linux/macOs/DEB/RPM"]}>
