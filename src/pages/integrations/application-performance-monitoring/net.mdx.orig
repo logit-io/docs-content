@@ -1,11 +1,19 @@
 ---
+<<<<<<< HEAD
 title: OpenTelemetry .NET Core
+=======
+title: .Net
+>>>>>>> master
 pageTitle: OpenTelemetry .NET Core Configuration
 subTitle: Ship traces from ASP.Net Core to OpenSearch with OpenTelemetry
 logo: aspnetcore
 color: "#465aaa"
 stackTypes: apm
+<<<<<<< HEAD
+description: Learn how to ship your dotnet core application traces to OpenSearch with our example configurations.
+=======
 description: Follow the steps outlined in Logit.io's .Net source integrations to ship traces from ASP.Net Core to OpenSearch with OpenTelemetry.
+>>>>>>> master
 ---
 
 Use OpenTelemetry to easily send .NET Core traces to your Logit.io Stack.

@@ -1,16 +1,25 @@
 ---
+<<<<<<< HEAD
 title: OpenTelemetry Python
+=======
+title: Python
+>>>>>>> master
 pageTitle: OpenTelemetry Python Configuration
 subTitle: Ship traces from Python to OpenSearch with OpenTelemetry
 logo: python
 color: "#0e64a9"
 stackTypes: apm
+<<<<<<< HEAD
+description: Learn how to ship your Python script traces to OpenSearch with our example configurations.
+=======
 description: Follow the simple steps in Logit.io's Python data integrations to start shipping traces from Python to OpenSearch with OpenTelemetry.
+>>>>>>> master
 ---
 
 Use OpenTelemetry to easily send Python traces to your Logit.io Stack.
 
 <Steps>
+<<<<<<< HEAD
 
 <Callout type="info">
   This sample app was created and tested with
@@ -24,7 +33,7 @@ Use OpenTelemetry to easily send Python traces to your Logit.io Stack.
 
   Create a new directory for your project and name it `opentelemetry_python_example`.
 
-  Open a Terminal window or Command Prompt and navigate into the new `opentelemetry_python_example` folder. 
+  Open a Terminal window or Command Prompt and navigate into the new `opentelemetry_python_example` directory. 
   Create a virtual environment for your project to manage dependencies, this is done by entering the following command.
 
   <Tabs items={["Windows", "Linux/macOs/DEB/RPM"]}>
@@ -172,9 +181,37 @@ Use OpenTelemetry to easily send Python traces to your Logit.io Stack.
   ### Launch Logit.io to view your traces
 
   <LaunchVisualizer type="apm" />
+=======
+  ### Getting Started
+
+  <Tabs items={["HTTPS", "gRPC"]}>
+  
+  <Tab>
+    <PythonOtlpExporterSettings protocol="http/protobuf" port="@opentelemetry.httpsPort" />
+  </Tab>
+
+  <Tab>
+    <PythonOtlpExporterSettings protocol="grpc" port="@opentelemetry.grpcPort" />
+  </Tab>
+
+  </Tabs>
+
+  ### Alternative to Command Line arguments
+
+  Instead of specifying the arguments when calling the 
+  instrumentation application you can also set these as 
+  [Environment Variables](https://opentelemetry.io/docs/instrumentation/python/automatic/agent-config/#environment-variables).
+
+  ### Launch Logit.io to view your traces
+
+  <LaunchStack utmMedium="apm" utmCampaign="python" source="apm_python_grpc" />
+>>>>>>> master
 
   ### How to diagnose no data in Stack
 
   <DiagnoseNoData />
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
 </Steps>

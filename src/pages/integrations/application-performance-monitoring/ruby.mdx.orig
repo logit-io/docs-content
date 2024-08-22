@@ -1,11 +1,19 @@
 ---
+<<<<<<< HEAD
 title: OpenTelemetry Ruby
+=======
+title: Ruby
+>>>>>>> master
 pageTitle: OpenTelemetry Ruby Configuration
 subTitle: Ship traces from Ruby to OpenSearch with OpenTelemetry
 logo: ruby
 color: "#ff0000"
 stackTypes: apm
+<<<<<<< HEAD
+description: Learn how to ship your Ruby program traces to OpenSearch with our example configurations.
+=======
 description: Logit.io documentation for Ruby source integrations. Follow our guides to send Ruby data to Logit.io.
+>>>>>>> master
 ---
 
 Use OpenTelemetry to easily send Ruby traces to your Logit.io Stack.

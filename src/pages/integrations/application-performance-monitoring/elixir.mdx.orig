@@ -1,11 +1,19 @@
 ---
+<<<<<<< HEAD
 title: OpenTelemetry Elixir
+=======
+title: Elixir
+>>>>>>> master
 pageTitle: OpenTelemetry Elixir Configuration
 subTitle: Ship traces from Elixir to OpenSearch with OpenTelemetry
 logo: elixir
 color: "#800080"
 stackTypes: apm
+<<<<<<< HEAD
+description: Learn how to ship your Elixir program traces to OpenSearch with our example configurations.
+=======
 description: Follow the simple steps in our source integrations to ship traces from Elixir to OpenSearch with OpenTelemetry. Send Elixir data to your Logit.io stacks.
+>>>>>>> master
 ---
 
 Use OpenTelemetry to easily send Elixir traces to your Logit.io Stack.

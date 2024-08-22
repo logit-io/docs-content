@@ -1,11 +1,19 @@
 ---
+<<<<<<< HEAD
 title: OpenTelemetry PHP
+=======
+title: PHP
+>>>>>>> master
 pageTitle: OpenTelemetry PHP Configuration
 subTitle: Ship traces from PHP to OpenSearch with OpenTelemetry
 logo: php
 color: "#777bb3"
 stackTypes: apm
+<<<<<<< HEAD
+description: Learn how to ship your PHP program traces to OpenSearch with our example configurations.
+=======
 description: Follow the steps in Logit.io's PHP source integrations to ship traces from PHP to OpenSearch with OpenTelemetry.
+>>>>>>> master
 ---
 
 Use OpenTelemetry to easily send PHP traces to your Logit.io Stack.
