@@ -11,7 +11,7 @@ sslPortType: beats-ssl
 
 Metricbeat is an open-source shipping agent used to collect and ship 
 operating system and service metrics to your Logit.io Stack 
-via [Logstash](/integrations/logs/shippers/logstash).
+via [Logstash](/integrations/log-management/shippers/logstash).
 
 <Steps>
   ### Install Metricbeat
@@ -43,28 +43,28 @@ via [Logstash](/integrations/logs/shippers/logstash).
   There are a range of other modules which can be enabled for Metricbeat, please choose the module from 
   the list below if you wish to know more.
 
-  - [apache](/sources/configure/metricbeat_module_apache/), 
-  - [docker](/sources/configure/metricbeat_module_docker/), 
-  - [golang](/sources/configure/metricbeat_module_golang/), 
-  - [haproxy](/sources/configure/metricbeat_module_haproxy/), 
-  - [http](/sources/configure/metricbeat_module_http/), 
-  - [kafka](/sources/configure/metricbeat_module_kafka/), 
-  - [kubernetes](/sources/configure/metricbeat_module_kubernetes/), 
-  - [mongodb](/sources/configure/metricbeat_module_mongodb/), 
-  - [mysql](/sources/configure/metricbeat_module_mysql/), 
-  - [nginx](/sources/configure/metricbeat_module_nginx/), 
-  - [rabbitmq](/sources/configure/metricbeat_module_rabbitmq/), 
-  - [redis](/sources/configure/metricbeat_module_redis/), 
-  - [centos](/sources/configure/metricbeat_module_system_centos/), 
-  - [debian](/sources/configure/metricbeat_module_system_debian/), 
-  - [macos](/sources/configure/metricbeat_module_system_macos/), 
-  - [redhat](/sources/configure/metricbeat_module_system_redhat/), 
-  - [ubuntu](/sources/configure/metricbeat_module_system_ubuntu/), 
-  - [windows](/sources/configure/metricbeat_module_system_windows/), 
-  - [uwsgi](/sources/configure/metricbeat_module_uwsgi/), 
-  - [postgresql](/sources/configure/metricset_module_postgresql/), 
-  - [zookeeper](/sources/configure/metricbeat_module_zookeeper/), 
-  - [puppet](/sources/configure/puppet_server/)
+  - [apache](/integrations/infrastructure-metrics/platforms/metricbeat-module-apache),
+  - [docker](/integrations/infrastructure-metrics/platforms/metricbeat-module-docker),
+  - [golang](/integrations/infrastructure-metrics/languages-and-libraries/metricbeat-module-golang),
+  - [haproxy](/integrations/infrastructure-metrics/platforms/metricbeat-module-haproxy),
+  - [http](/integrations/infrastructure-metrics/protocols/metricbeat-module-http),
+  - [kafka](/integrations/infrastructure-metrics/platforms/metricbeat-module-kafka),
+  - [kubernetes](/integrations/infrastructure-metrics/platforms/metricbeat-module-kubernetes),
+  - [mongodb](/integrations/infrastructure-metrics/applications/mongodb-metrics),
+  - [mysql](/integrations/infrastructure-metrics/applications/mysql-metrics),
+  - [nginx](/integrations/infrastructure-metrics/platforms/metricbeat-module-nginx),
+  - [rabbitmq](/integrations/infrastructure-metrics/message-queues/metricbeat-module-rabbitmq),
+  - [redis](/integrations/infrastructure-metrics/message-queues/metricbeat-module-redis),
+  - [centos](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-system-centos),
+  - [debian](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-system-debian),
+  - [macos](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-system-macos),
+  - [redhat](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-system-redhat),
+  - [ubuntu](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-system-ubuntu),
+  - [windows](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-system-windows),
+  - [uwsgi](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-uwsgi),
+  - [postgresql](/integrations/infrastructure-metrics/applications/postgresql-metrics),
+  - [zookeeper](/integrations/infrastructure-metrics/platforms/metricbeat-module-zookeeper),
+  - [puppet](/integrations/infrastructure-metrics/applications/puppet)
 
   ### How to diagnose no data in Stack
 
@@ -85,11 +85,11 @@ now deprecated Topbeat & it is used for collecting service and system log metric
 and used across the rest of the ELK Stack.
 
 Metricbeat makes sending data for server monitoring simpler by aggregating system metrics from a number of 
-popular tools including [NGINX](/integrations/logs/applications/nginx), 
-[MySQL](/integrations/logs/applications/mysql), 
-[Apache](/integrations/logs/applications/apache) & HAProxy. While Metricbeat 
+popular tools including [NGINX](/integrations/log-management/applications/nginx), 
+[MySQL](/integrations/log-management/applications/mysql), 
+[Apache](/integrations/log-management/applications/apache) & HAProxy. While Metricbeat 
 can push log data directly to the Elastic Stack some users may wish to use a buffering service 
-such as Redis or [Kafka](/integrations/logs/message-queues/kafka). 
+such as Redis or [Kafka](/integrations/log-management/message-queues/kafka). 
 Metricbeat does much more than simply collect metrics as it can be used to tap 
 into a variety of systems and execute a range of enhancements to the log file before shipping the metrics to ELK.
 

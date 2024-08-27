@@ -118,8 +118,8 @@ Filebeat, which is written in Go, combines key features from Logstash-Forwarder 
 tail, and forward common logs within the logging pipeline to be indexed within Elasticsearch. Filebeat is the most 
 popular way to send logs to ELK, out of the entire collection of open-source shipping tools, including Auditbeat, 
 Metricbeat, and Heartbeat. Earlier versions of Filebeat only allowed users to send events to Logstash and Elasticsearch, 
-but recent updates to the shipper have made it compatible with [Redis](/sources/configure/redis_app/) & 
-[Kafka](/sources/configure/kafka/).
+but recent updates to the shipper have made it compatible with [Redis](/integrations/log-management/applications/redis) & 
+[Kafka](/integrations/log-management/message-queues/kafka).
 
 Sending logs from FortiGate firewalls to Filebeat is a simple process that involves configuring the firewall to forward 
 logs to a syslog server. Once the logs are received by the syslog server, Filebeat can be used to collect and forward 

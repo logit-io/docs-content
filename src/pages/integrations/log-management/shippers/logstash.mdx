@@ -10,7 +10,7 @@ sslPortType: tcp-ssl
 ---
 
 All Logit.io ELK Stacks include highly available hosted Logstash instances, removing the need for installing and maintaining your own 
-Logstash server. Logit.io recommends using [Filebeat](/integrations/logs/shippers/filebeat) to ship your logs and metrics to 
+Logstash server. Logit.io recommends using [Filebeat](/integrations/log-management/shippers/filebeat) to ship your logs and metrics to 
 your hosted Logstash instance on Logit.io, you then benefit from predefined filters that can be customised from your dashboard.
 
 <Steps>
@@ -99,8 +99,8 @@ Logstash makes up an essential part of the ELK Stack as it provides the easiest 
 
 Logstash's wide range of over 200 open-source plugins help you easily index your data across multiple log types including error, event & web server files 
 from hundreds of popular integrations. The tool offers an array of input, output, & filter plugins for enriching, and transforming data from a variety of 
-sources including [Golang](/integrations/logs/languages-and-libraries/golang), [Google Cloud](/integrations/logs/google-cloud/operations), & 
-[Azure](/integrations/logs/azure/azure).
+sources including [Golang](/integrations/log-management/languages-and-libraries/golang), [Google Cloud](/integrations/log-management/google-cloud/operations), & 
+[Azure](/integrations/log-management/azure/azure).
 
 __Who can benefit from using Logstash and how can they get started with it?__
 
@@ -147,7 +147,7 @@ __What Are The Advantages Of Using Logstash?__
 
 Some of the advantages of using this pipeline include high availability & flexibility, due to the wide adoption of ELK & the large community supporting their regularly 
 maintained plugins. Some of the most popular plugins include Logtrailing (for tailing live events), Beats (including 
-[Metricbeat](/integrations/logs/shippers/metricbeat) & [Heartbeat](/integrations/logs/shippers/heartbeat)), & [TCP](/integrations/logs/protocols/tcp).
+[Metricbeat](/integrations/log-management/shippers/metricbeat) & [Heartbeat](/integrations/log-management/shippers/heartbeat)), & [TCP](/integrations/log-management/protocols/tcp).
 
 Logstash also benefits from having a straightforward configuration format that reduces the complexity of getting started with ELK. Data ingestion using Logstash is enriched 
 prior to being indexed by Elasticsearch, making it readily available for filtering, analysis & reporting in Kibana once data is migrated to your ELK Stack
