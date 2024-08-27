@@ -11,7 +11,7 @@ sslPortType: beats-ssl
 
 Metricbeat is an open-source shipping agent used to collect and ship 
 operating system and service metrics to your Logit.io Stack 
-via [Logstash](/integrations/logs/shippers/logstash).
+via [Logstash](/integrations/log-management/shippers/logstash).
 
 <Steps>
   ### Install Metricbeat
@@ -85,11 +85,11 @@ now deprecated Topbeat & it is used for collecting service and system log metric
 and used across the rest of the ELK Stack.
 
 Metricbeat makes sending data for server monitoring simpler by aggregating system metrics from a number of 
-popular tools including [NGINX](/integrations/logs/applications/nginx), 
-[MySQL](/integrations/logs/applications/mysql), 
-[Apache](/integrations/logs/applications/apache) & HAProxy. While Metricbeat 
+popular tools including [NGINX](/integrations/log-management/applications/nginx), 
+[MySQL](/integrations/log-management/applications/mysql), 
+[Apache](/integrations/log-management/applications/apache) & HAProxy. While Metricbeat 
 can push log data directly to the Elastic Stack some users may wish to use a buffering service 
-such as Redis or [Kafka](/integrations/logs/message-queues/kafka). 
+such as Redis or [Kafka](/integrations/log-management/message-queues/kafka). 
 Metricbeat does much more than simply collect metrics as it can be used to tap 
 into a variety of systems and execute a range of enhancements to the log file before shipping the metrics to ELK.
 
