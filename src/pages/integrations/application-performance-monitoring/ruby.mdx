@@ -16,133 +16,135 @@ Use OpenTelemetry to easily send Ruby traces to your Logit.io Stack.
 </Callout>
 
 <Steps>
+  ### Install Integration
+  <InstallIntegration/>
 
-### Install
+  ### Install
 
-Create a new directory for your project and call the new directory `opentelemetry_example`.
+  Create a new directory for your project and call the new directory `opentelemetry_example`.
 
-Open a Terminal window or Command Prompt and navigate into the new `opentelemetry_example` directory. 
-Then enter the following command.
+  Open a Terminal window or Command Prompt and navigate into the new `opentelemetry_example` directory. 
+  Then enter the following command.
 
-```bash copy
-bundle init
-```
+  ```bash copy
+  bundle init
+  ```
 
-You will now see a `Gem` file has been created inside the folder.
+  You will now see a `Gem` file has been created inside the folder.
 
-Create two new files in the folder and call them `app.rb` and `config.rb`. There should now be a 
-total of three files in the `opentelemetry_example` folder.
+  Create two new files in the folder and call them `app.rb` and `config.rb`. There should now be a 
+  total of three files in the `opentelemetry_example` folder.
 
-### Configuring the App
+  ### Configuring the App
 
-Open the `Gem` file and paste in the following code, overwriting the existing content.
+  Open the `Gem` file and paste in the following code, overwriting the existing content.
 
-```json copy 
-# frozen_string_literal: true
+  ```json copy 
+  # frozen_string_literal: true
 
-source 'http://www.rubygems.org'
+  source 'http://www.rubygems.org'
 
-# gem "rails"
+  # gem "rails"
 
-gem 'opentelemetry-sdk'
-gem 'opentelemetry-exporter-otlp'
-gem 'opentelemetry-instrumentation-all'
-```
+  gem 'opentelemetry-sdk'
+  gem 'opentelemetry-exporter-otlp'
+  gem 'opentelemetry-instrumentation-all'
+  ```
 
-Install the `Gems` with the following command in Terminal or the Command prompt.
+  Install the `Gems` with the following command in Terminal or the Command prompt.
 
-```bash copy
-bundle install
-```
+  ```bash copy
+  bundle install
+  ```
 
-### Using OpenTelemetry
+  ### Using OpenTelemetry
 
-Copy and Paste the code below into `config.rb`.
+  Copy and Paste the code below into `config.rb`.
 
-<MissingOtelDetailsCallout />
+  <MissingOtelDetailsCallout />
 
-```ruby copy filename="config.rb" /@opentelemetry.password/  /@opentelemetry.username/ /@opentelemetry.httpsPort/ /@opentelemetry.endpointAddress/
-# config.rb
+  ```ruby copy filename="config.rb" /@opentelemetry.password/  /@opentelemetry.username/ /@opentelemetry.httpsPort/ /@opentelemetry.endpointAddress/
+  # config.rb
 
-# Define variables
-OTLP_ENDPOINT_URL = "https://@opentelemetry.endpointAddress"
-PORT = "@opentelemetry.httpsPort"
-OTLP_USERNAME = "@opentelemetry.username"
-OTLP_PASSWORD = "@opentelemetry.password"
-```
+  # Define variables
+  OTLP_ENDPOINT_URL = "https://@opentelemetry.endpointAddress"
+  PORT = "@opentelemetry.httpsPort"
+  OTLP_USERNAME = "@opentelemetry.username"
+  OTLP_PASSWORD = "@opentelemetry.password"
+  ```
 
-Finally copy and paste the code below into `app.rb`
+  Finally copy and paste the code below into `app.rb`
 
-```ruby copy filename="app.rb"
-# app.rb
+  ```ruby copy filename="app.rb"
+  # app.rb
 
-require_relative 'config'
+  require_relative 'config'
 
-require "sinatra"
-require 'opentelemetry/sdk'
-require 'opentelemetry/exporter/otlp'
-require 'base64'
+  require "sinatra"
+  require 'opentelemetry/sdk'
+  require 'opentelemetry/exporter/otlp'
+  require 'base64'
 
-# Configuration Parameters
-ENV['OTEL_EXPORTER_OTLP_ENDPOINT'] = "#{OTLP_ENDPOINT_URL}:#{PORT}"
-ENV['OTEL_EXPORTER_OTLP_HEADERS'] = "Authorization = Basic " + Base64.strict_encode64("#{OTLP_USERNAME}:#{OTLP_PASSWORD}")
-ENV['OTEL_SERVICE_NAME'] = "LogitTestApp"
+  # Configuration Parameters
+  ENV['OTEL_EXPORTER_OTLP_ENDPOINT'] = "#{OTLP_ENDPOINT_URL}:#{PORT}"
+  ENV['OTEL_EXPORTER_OTLP_HEADERS'] = "Authorization = Basic " + Base64.strict_encode64("#{OTLP_USERNAME}:#{OTLP_PASSWORD}")
+  ENV['OTEL_SERVICE_NAME'] = "LogitTestApp"
 
-# Configure the OpenTelemetry SDK with OTLP Exporter
-OpenTelemetry::SDK.configure do |c|
-  c.use_all() # Enable all available instrumentation
-end
-
-# Endpoint to be called to add traces
-get "/" do
- tracer = OpenTelemetry.tracer_provider.tracer('LogitTestService')
- 
- # Start the first span
-tracer.in_span('Logit Span Test') do |span|
-  span.set_attribute('First Message', 'This is a test!')
-  span.set_attribute('Second Message', 'Message sent at ' + Time.now.utc.strftime('%Y-%m-%dT%H:%M:%S'))
-
-  # Start the second span within the context of the first span
-  tracer.in_span('Logit Span Test 2') do |child_span|
-    child_span.set_attribute('First Message', 'This is another test!')
-    child_span.set_attribute('Second Message', 'Message sent at ' + Time.now.utc.strftime('%Y-%m-%dT%H:%M:%S'))
+  # Configure the OpenTelemetry SDK with OTLP Exporter
+  OpenTelemetry::SDK.configure do |c|
+    c.use_all() # Enable all available instrumentation
   end
-end
+
+  # Endpoint to be called to add traces
+  get "/" do
+  tracer = OpenTelemetry.tracer_provider.tracer('LogitTestService')
   
+  # Start the first span
+  tracer.in_span('Logit Span Test') do |span|
+    span.set_attribute('First Message', 'This is a test!')
+    span.set_attribute('Second Message', 'Message sent at ' + Time.now.utc.strftime('%Y-%m-%dT%H:%M:%S'))
 
-end
+    # Start the second span within the context of the first span
+    tracer.in_span('Logit Span Test 2') do |child_span|
+      child_span.set_attribute('First Message', 'This is another test!')
+      child_span.set_attribute('Second Message', 'Message sent at ' + Time.now.utc.strftime('%Y-%m-%dT%H:%M:%S'))
+    end
+  end
+    
 
-# Message when starting app
-puts "Starting Logit Test App"
-```
+  end
 
-### Run the Ruby App
+  # Message when starting app
+  puts "Starting Logit Test App"
+  ```
 
-Run the Ruby app with the following command in Terminal or the Command Prompt window.
+  ### Run the Ruby App
 
-```bash copy
-ruby app.rb
-```
+  Run the Ruby app with the following command in Terminal or the Command Prompt window.
 
-You will see feedback from the app so that you know that is running, make a note of the
-endpoint that it is listening on.
+  ```bash copy
+  ruby app.rb
+  ```
 
-![Ruby Endpoint](@/images/integrations/ruby/ruby-endpoint.png)
+  You will see feedback from the app so that you know that is running, make a note of the
+  endpoint that it is listening on.
 
-Open a new Terminal or Command Prompt window and make a curl request to the listening endpoint
+  ![Ruby Endpoint](@/images/integrations/ruby/ruby-endpoint.png)
 
-```cmd copy
-curl http://127.0.0.1:4567
-```
+  Open a new Terminal or Command Prompt window and make a curl request to the listening endpoint
 
-Traces will now have been sent to your Stack.
+  ```cmd copy
+  curl http://127.0.0.1:4567
+  ```
 
-### Launch Logit.io to view your traces
+  Traces will now have been sent to your Stack.
 
-<LaunchVisualizer type="apm" />
+  ### Launch Logit.io to view your traces
 
-### How to diagnose no data in Stack
+  <LaunchVisualizer type="apm" />
 
-<DiagnoseNoData />
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
 
 </Steps>
