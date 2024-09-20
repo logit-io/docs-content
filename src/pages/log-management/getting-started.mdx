@@ -20,7 +20,7 @@ stackTypes: logs
       -H "Content-Type: application/json" ^
       -H "LogType: json" ^
       https://@logitApiEndpoint/v2 ^
-      -d "{"message":"Sample Message from my computer"}"
+      -d "{/"message/":/"Sample Message from my computer/"}"
       ```
     </Tab>
     <Tab>
@@ -32,7 +32,7 @@ stackTypes: logs
       }
 
       $body = @{
-        "test-field-name" = "test-field-value"
+        "message" = "Sample Message from my computer"
       } | ConvertTo-Json
 
       curl -Uri "https://@logitApiEndpoint/v2" `
@@ -49,7 +49,7 @@ stackTypes: logs
       -H "Content-Type: application/json" \
       -H "LogType: json" \
       https://@logitApiEndpoint/v2 \
-      -d '{"test-field-name":"test-field-value"}'
+      -d '{"message":"Sample Message from my computer"}'
       ```
     </Tab>
 
@@ -60,7 +60,7 @@ stackTypes: logs
       -H "Content-Type: application/json" \
       -H "LogType: json" \
       https://@logitApiEndpoint/v2 \
-      -d '{"test-field-name":"test-field-value"}'
+      -d '{"message":"Sample Message from my computer"}'
       ```
     </Tab>
   </Tabs>
