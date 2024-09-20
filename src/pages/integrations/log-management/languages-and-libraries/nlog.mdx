@@ -71,7 +71,7 @@ ship logs from your .NET or .NET Core application to Logstash.
         <target
           xsi:type="Network"
           name="LogitTarget"
-          address="tcp://@logstash.host:@logstash.port"
+          address="tcp://@logstash.host:@logstash.sslPort"
           newLine="True">
           <layout type="JsonLayout" includeAllProperties="true">
             <attribute name="timestamp" layout="${longdate}" />
@@ -101,7 +101,7 @@ ship logs from your .NET or .NET Core application to Logstash.
       <target
         xsi:type="Network"
         name="LogitTarget"
-        address="tcp://@logstash.host:@logstash.port"
+        address="tcp://@logstash.host:@logstash.sslPort"
         newLine="True">
         <layout type="JsonLayout" includeAllProperties="true">
           <attribute name="timestamp" layout="${longdate}" />
