@@ -33,9 +33,9 @@ Send HTTP/S logs to your Logit.io Stack via Logstash.
   Powershell
   ```ps1 copy
   curl -Method Post `
-  -Uri "https://{{logitApiEndpoint}}/v2" `
+  -Uri "https://@logitApiEndpoint/v2" `
   -Headers @{
-      "ApiKey" = "{{apikey}}";
+      "ApiKey" = "@apikey";
       "Content-Type" = "application/json";
       "LogType" = "json"
   } `
