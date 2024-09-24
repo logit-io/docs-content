@@ -27,15 +27,15 @@ Send HTTP/S logs to your Logit.io Stack via Logstash.
               
   CMD
   ```bash copy
-  curl -i -H "ApiKey: {{apikey}}" -i -H "Content-Type: application/json" -H "LogType: json" https://{{logitApiEndpoint}}/v2 -d "{\"test\":\"test\",\"example\": { \"a\": 1, \"b\": 2 } }"
+  curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: json" https://@logitApiEndpoint/v2 -d "{\"test\":\"test\",\"example\": { \"a\": 1, \"b\": 2 } }"
   ```
 
   Powershell
   ```ps1 copy
   curl -Method Post `
-  -Uri "https://{{logitApiEndpoint}}/v2" `
+  -Uri "https://@logitApiEndpoint/v2" `
   -Headers @{
-      "ApiKey" = "{{apikey}}";
+      "ApiKey" = "@apikey";
       "Content-Type" = "application/json";
       "LogType" = "json"
   } `
@@ -51,25 +51,25 @@ Send HTTP/S logs to your Logit.io Stack via Logstash.
 
   <Tab>
   ```bash copy
-  curl -i -H "ApiKey: {{apikey}}" -i -H "Content-Type: application/json" -H "LogType: json" https://{{logitApiEndpoint}}/v2 -d '{"test":"test","example": { "a": 1, "b": 2 } }'
+  curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: json" https://@logitApiEndpoint/v2 -d '{"test":"test","example": { "a": 1, "b": 2 } }'
   ```
   </Tab>
 
   <Tab>
   ```bash copy
-  curl -i -H "ApiKey: {{apikey}}" -i -H "Content-Type: application/json" -H "LogType: json" https://{{logitApiEndpoint}}/v2 -d '{"test":"test","example": { "a": 1, "b": 2 } }'
+  curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: json" https://@logitApiEndpoint/v2 -d '{"test":"test","example": { "a": 1, "b": 2 } }'
   ```
   </Tab>
 
   <Tab>
   ```bash copy
-  curl -i -H "ApiKey: {{apikey}}" -i -H "Content-Type: application/json" -H "LogType: json" https://{{logitApiEndpoint}}/v2 -d '{"test":"test","example": { "a": 1, "b": 2 } }'
+  curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: json" https://@logitApiEndpoint/v2 -d '{"test":"test","example": { "a": 1, "b": 2 } }'
   ```
   </Tab>
 
   <Tab>
   ```bash copy
-  curl -i -H "ApiKey: {{apikey}}" -i -H "Content-Type: application/json" -H "LogType: json" https://{{logitApiEndpoint}}/v2 -d '{"test":"test","example": { "a": 1, "b": 2 } }'
+  curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: json" https://@logitApiEndpoint/v2 -d '{"test":"test","example": { "a": 1, "b": 2 } }'
   ```
   </Tab>
 

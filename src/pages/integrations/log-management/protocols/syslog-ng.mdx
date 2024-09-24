@@ -22,7 +22,7 @@ appliances or devices where you cannot run one of the [beats shippers](/integrat
 
   ```cmd copy
   destination d_logit {
-      network("{{logstash.host}}-ls.logit.io" port({{logstash.sslPort}})
+      network("@logstash.host" port(@logstash.sslPort)
           transport("tls")
           tls( ca_dir("/etc/ssl/certs/"))
       );
