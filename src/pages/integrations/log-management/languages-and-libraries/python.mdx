@@ -50,6 +50,7 @@ Send Python logs to your Logit.io Stack.
 
   - `python-logstash-async`: Provides a handler for sending logs to Logstash
 
+  The main advantage of using an asynchronous handler is that it sends logs to Logstash without blocking the main application thread. 
   We install it with the following command.
 
   ```bash copy
@@ -97,6 +98,8 @@ Send Python logs to your Logit.io Stack.
       
       # Assign handler to the logger
       logger.addHandler(handler)
+
+      print("Sending logs to Logit.io.")
       
       # Send log records to Logstash 
       logger.error('python-logstash-async: test error message.')
@@ -104,9 +107,10 @@ Send Python logs to your Logit.io Stack.
       logger.warning('python-logstash-async: test warning message.')
       logger.debug('python-logstash-async: test debug message.')
       
-      print("Sending logs to Logit.io.")
-      
       # Flush and close the handler to ensure all logs are sent
+      # If the application crashes before buffered logs are flushed, 
+      # some logs could be lost unless explicitly handled through mechanisms 
+      # like flush intervals or proper shutdown processes
       handler.flush()  # Flush the log queue
       handler.close()  # Wait for background thread to finish
 
