@@ -1,10 +1,10 @@
 ---
 title: Windows
 pageTitle: Windows Winlogbeat Setup
-subTitle: Use Logstash with Windows to ship logs to Elasticsearch and Kibana
+subTitle: Use Winlogbeat to ship logs to Logit.io
 logo: windows
 color: "#00bfb3"
-description: Send your Windows application/access/error logs to your Logstash instance via Winlogbeat. Simplify sending logs with Logit.io's data source configurations.
+description: Send your Windows application/access/error logs to Logit.io via Winlogbeat.
 stackTypes: logs
 sslPortType: beats-ssl
 ---
@@ -15,12 +15,14 @@ logs to one or more destinations, including Logstash.
 
 <Steps>
   ### Install Integration
+
   <InstallIntegration/>
+
   ### Install Winlogbeat
 
- <InstallWindowsBeat
+  <InstallWindowsBeat
     beatname = "winlogbeat"
-    version = "8.12.2"
+    version = "8.15.2"
   />
 
   ### Update your configuration file
@@ -39,9 +41,9 @@ logs to one or more destinations, including Logstash.
   Start-Service winlogbeat
   ```
 
-  ### Check Logit.io for your logs
+  ### Launch Logs to View Your Data
 
-  <LaunchStack utmMedium="logs" utmCampaign="windows" source="windows" />
+  <LaunchVisualizer type="logs" />
 
   ### How to diagnose no data in Stack
 
