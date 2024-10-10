@@ -84,44 +84,12 @@ Configure a Fortigate firewall to ship logs via Filebeat to your Logit.io stacks
 
   <StartFilebeat />
   
-  ### Launch Logit.io to view your logs
-  <LaunchStack utmMedium="logs" utmCampaign="fortigate" source="fortigate" />
+  ### Launch Logs to View Your Data
+
+  <LaunchVisualizer type="logs" />
 
   ### How to diagnose no data in Stack
 
   <DiagnoseNoData />
 
 </Steps>
-
-## Fortigate Overview
-
-FortiGate firewalls provide advanced network security features for enterprise environments, protecting against 
-cyber threats and unauthorized access. To effectively monitor and analyze network activity, it is essential to 
-have a reliable and efficient log management solution. Filebeat, a popular open-source shipping tool, is widely 
-used to send logs from FortiGate firewalls to various destinations, including Elasticsearch, Logstash, and Kibana, 
-due to its reliability and minimal memory footprint.
-
-Filebeat, which is written in Go, combines key features from Logstash-Forwarder and Lumberjack to generate, parse, 
-tail, and forward common logs within the logging pipeline to be indexed within Elasticsearch. Filebeat is the most 
-popular way to send logs to ELK, out of the entire collection of open-source shipping tools, including Auditbeat, 
-Metricbeat, and Heartbeat. Earlier versions of Filebeat only allowed users to send events to Logstash and Elasticsearch, 
-but recent updates to the shipper have made it compatible with [Redis](/integrations/log-management/applications/redis) & 
-[Kafka](/integrations/log-management/message-queues/kafka).
-
-Sending logs from FortiGate firewalls to Filebeat is a simple process that involves configuring the firewall to forward 
-logs to a syslog server. Once the logs are received by the syslog server, Filebeat can be used to collect and forward 
-log data to Elasticsearch or other destinations.
-
-Filebeat provides a filebeat.yml wizard that helps users avoid complex logging concerns, such as large registry files 
-and frequent errors encountered when handling deleted or renamed log files. Users can also consider our Hosted ELK 
-service to simplify tracking numerous pipelines using this shipper.
-
-In summary, Filebeat is an essential tool for efficiently managing log data from FortiGate firewalls. Its reliability, 
-minimal memory footprint, and compatibility with various destinations make it a popular choice for many organizations. 
-To ensure effective log management and analysis, users should consider configuring FortiGate firewalls to forward logs 
-to Filebeat and taking advantage of the shipper's advanced features.
-
-
-If you need any further assistance with migrating your log data to ELK we're here to help you get started. 
-Feel free to get in contact with our support team by sending us a message via <IntercomButton text="live chat" /> 
-& we'll be happy to assist.
