@@ -17,18 +17,14 @@ guide on how to easily ship NodeJS logs to your hosted Logstash and OpenSearch.
   <InstallIntegration/>
   ### Introduction
 
-  The example code used in this guide has been setup using Node.js v14.17.0 (64-bit). 
-  Node Package Manager (npm) can be used to install the required `winston` (3.3.3) 
-  and `winston-logstash` (0.4.0) packages.
+  The example code used in this guide has been setup using Node.js v20.18.0 (64-bit). 
+  Node Package Manager (npm) can be used to install the required `winston` (3.15.0) 
+  and `winston-logstash` (1.2.1) packages.
 
   These will allow us to send log data from our Node.js application, to 
-  [Logstash](/integrations/log-management/shippers/logstash) using the example code 
-  used in this guide has been setup using Node.js v8.11.3 (64-bit). Node Package Manager 
-  (npm) can be used to install the required winston (2.4.1) and winston-logstash (0.4.0) packages. 
-  These will allow us to send log data from our Node.js application, to 
-  [TCP](/integrations/log-management/protocols/tcp) with SSL enabled. 
+  your Logit.io stack. 
             
-  The official winston documentation can be found [here](https://github.com/winstonjs/winston).
+  For additional information, the official winston documentation can be found [here](https://github.com/winstonjs/winston).
 
   ### Installing
 
@@ -40,11 +36,12 @@ guide on how to easily ship NodeJS logs to your hosted Logstash and OpenSearch.
   for creating an 'express' application to help get you up-and-running 
   [here](https://code.visualstudio.com/docs/nodejs/nodejs-tutorial#_an-express-application).
 
-  Inside your project directory, open a terminal of your choice and type the following:
+  Inside your project directory, open a terminal of your choice and type the following (this will install
+  the latest version of winston and winston-logstash):
 
   ```cmd copy
-  npm install winston@3.3.3
-  npm install winston-logstash@1.2.1
+  npm install winston
+  npm install winston-logstash
   ```
 
   ### Sending Logs
@@ -54,14 +51,20 @@ guide on how to easily ship NodeJS logs to your hosted Logstash and OpenSearch.
   ```javascript copy showLineNumbers /'@logstash.sslPort:strip_quotes'/ /@logstash.host/
   const winston = require('winston');
   require('winston-logstash');
-  
-  winston.add(winston.transports.Logstash,
-  {
-    port: '@logstash.sslPort:strip_quotes',
-    host: '@logstash.host',
-    ssl_enable: true,
-    max_connect_retries: -1,
-  });  
+
+  const logger = winston.createLogger({
+    transports: [
+      new winston.transports.Logstash({
+        port: <your-ssl-port>,
+        host: '<your-logstash-host>',
+        ssl_enable: true,
+        max_connect_retries: -1,
+      })
+    ]
+  });
+
+  // Example usage
+  logger.info('Hello, this is a log message!');
   ```
   
   You can then send logs using a winston log method:
