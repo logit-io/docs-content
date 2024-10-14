@@ -21,10 +21,10 @@ guide on how to easily ship NodeJS logs to your hosted Logstash and OpenSearch.
   Node Package Manager (npm) can be used to install the required `winston` (3.15.0) 
   and `winston-logstash` (1.2.1) packages.
 
-  These will allow us to send log data from our Node.js application, to 
+  These will allow us to send log data from your Node.js application, to 
   your Logit.io stack. 
             
-  For additional information, the official winston documentation can be found [here](https://github.com/winstonjs/winston).
+  For additional information, the official Winston documentation can be found [here](https://github.com/winstonjs/winston).
 
   ### Installing
 
@@ -37,7 +37,7 @@ guide on how to easily ship NodeJS logs to your hosted Logstash and OpenSearch.
   [here](https://code.visualstudio.com/docs/nodejs/nodejs-tutorial#_an-express-application).
 
   Inside your project directory, open a terminal of your choice and type the following (this will install
-  the latest version of winston and winston-logstash):
+  the latest version of Winston and winston-logstash):
 
   ```cmd copy
   npm install winston
@@ -46,7 +46,7 @@ guide on how to easily ship NodeJS logs to your hosted Logstash and OpenSearch.
 
   ### Sending Logs
 
-  To setup winston, add the following code to your application before sending logs:
+  To setup Winston, add the following code to your application before sending logs:
          
   ```javascript copy showLineNumbers /'@logstash.sslPort:strip_quotes'/ /@logstash.host/
   const winston = require('winston');
@@ -55,8 +55,8 @@ guide on how to easily ship NodeJS logs to your hosted Logstash and OpenSearch.
   const logger = winston.createLogger({
     transports: [
       new winston.transports.Logstash({
-        port: <your-ssl-port>,
-        host: '<your-logstash-host>',
+        port: '@logstash.sslPort:strip_quotes',
+        host: '@logstash.host',
         ssl_enable: true,
         max_connect_retries: -1,
       })
@@ -67,7 +67,7 @@ guide on how to easily ship NodeJS logs to your hosted Logstash and OpenSearch.
   logger.info('Hello, this is a log message!');
   ```
   
-  You can then send logs using a winston log method:
+  You can then send logs using a Winston log method:
   
   ```javascript copy
   winston.error('This is a test error log message', { custom: 'my custom field', Environment: 'local' }); 
