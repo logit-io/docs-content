@@ -8,15 +8,16 @@ stackTypes: logs
 sslPortType: beats-ssl
 ---
 
-Filebeat is an open source shipping agent that lets you ship logs 
-from local files to one or more destinations, including Logstash.
-
 <Steps>
   ### Install Integration
+
   <InstallIntegration/>
+
   ### GCP Workspace
 
-  Google Workspace encompasses a suite of cloud-based computing tools, productivity applications, and collaborative solutions developed and offered by Google. Sending logs from Google Workspace to Logit.io can be achieved through the utilization of Filebeat and the Google Reports API.
+  Google Workspace encompasses a suite of cloud-based computing tools, productivity applications, and collaborative solutions 
+  developed and offered by Google. Sending logs from Google Workspace to Logit.io can be achieved through the utilization 
+  of Filebeat and the Google Reports API.
 
   1. **Set Up a Service Account:**
     - Follow the [official Google Workspace tutorial](https://support.google.com/workspacemigrate/answer/10839762?sjid=10874551070185788155-EU#zippy=%2Cstep-use-google-cloud-to-turn-on-apis) for IAM-based service account setup.
@@ -124,40 +125,3 @@ from local files to one or more destinations, including Logstash.
 
   <DiagnoseNoData />
 </Steps>
-
-## GCP Workspace Logging Overview
-
-Google Workspace offers an array of APIs that seamlessly integrate with essential features, enhancing collaboration and productivity. Here's a focused overview:
-
-- **People API:**
-  - Empowers seamless access and management of contact information within Google Workspace.
-
-- **Contacts API:**
-  - Ensures a unified and up-to-date directory across the organization by facilitating the retrieval and updating of contact details.
-
-- **Google Workspace Migrate API:**
-  - Streamlines the migration of data for a smooth transition to Google Workspace, ensuring a secure and efficient process.
-
-- **Gmail API:**
-  - Provides programmatic access to Gmail features, allowing integration of Gmail functionalities into applications.
-
-- **Google Calendar API:**
-  - Enables seamless integration and management of calendar events, offering a comprehensive solution for schedule management.
-
-- **Google Drive API:**
-  - Empowers applications to access and manipulate files stored in Google Drive, facilitating seamless collaboration and file management.
-
-- **Groups Migration API:**
-  - Simplifies the migration of groups and memberships within Google Groups, ensuring a smooth transition.
-
-- **Groups Settings API:**
-  - Allows for the programmable management of group settings, providing control over group configurations.
-
-- **Google Sheets API:**
-  - Facilitates the integration and manipulation of Google Sheets data, enabling the automation of spreadsheet-related tasks.
-
-- **Tasks API:**
-  - Allows developers to integrate task management features into applications, enabling efficient task management.
-
-If you need any further assistance with migrating your log data to ELK we're here to help you get started. Feel free to get in contact with our 
-support team by sending us a message via <IntercomButton text="live chat"/> & we'll be happy to assist.
