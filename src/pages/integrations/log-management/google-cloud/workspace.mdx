@@ -1,6 +1,6 @@
 ---
 title: Google Cloud Workspace Configuration
-subTitle: Ship Google Cloud Workspace Logs to Logstash
+subTitle: Ship Google Cloud Workspace Logs to Logit.io
 logo: googlecloud
 color: "#e63429"
 description: GCP Workspace allows you to send logs to your ELK stacks. Configure GCP Workspace to send logs to Logstash or Elasticsearch. 
@@ -54,8 +54,6 @@ from local files to one or more destinations, including Logstash.
   The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
         
   Copy the configuration file below and overwrite the contents of __filebeat.yml__.
-  
-  For version `7.16+` and above, use the configuration below:
 
   ```yml copy
   fields:
@@ -104,33 +102,6 @@ from local files to one or more destinations, including Logstash.
     - add_docker_metadata: ~
     - add_kubernetes_metadata: ~
   ```
-  
-  If you're running `Filebeat 7` add this code block to the end. Otherwise, you can leave it out.
-
-  ```yml copy
-  # ... For Filebeat 7 only ...
-
-  - if:
-      has_fields: ['gsuite']
-    then:
-    - rename:
-        fields:
-        - from: "source"
-          to: "gsuite_source"
-  - rename:
-      fields:
-      - from: "agent"
-        to: "filebeat_agent"
-      ignore_missing: true
-  - rename:
-      fields:
-      - from: "log.file.path"
-        to: "source"
-      ignore_missing: true
-  - add_id: ~
-
-  filebeat.registry.path: /var/lib/filebeat
-  ```
 
   __Validate your YAML__
 
@@ -145,8 +116,9 @@ from local files to one or more destinations, including Logstash.
 
   <StartFilebeat />
 
-  ### Check Logit.io for your logs
-  <LaunchStack utmMedium="logs" utmCampaign="filebeat" source="Google_Cloud_Workspace" />
+    ### Launch Logs to View You Data
+
+  <LaunchVisualizer type="logs" />
 
   ### How to diagnose no data in Stack
 
