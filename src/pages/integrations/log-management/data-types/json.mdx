@@ -1,6 +1,6 @@
 ---
 title: JSON
-subTitle: How to upload JSON logs or JSON log file to Logstash
+subTitle: How to upload JSON logs or JSON log file to Logit.io
 logo: json
 color: "#e99d00"
 description: Learn how to ship JSON logs to your Hosted Logstash instance using our example configurations. Simplify sending logs with Logit.io's source configurations.
@@ -11,7 +11,9 @@ Send JSON logs to Logit.io via Logstash.
 
 <Steps>
   ### Install Integration
+
   <InstallIntegration/>
+
   ### Send a single JSON log using curl
 
   ```cmd copy
@@ -58,39 +60,12 @@ Send JSON logs to Logit.io via Logstash.
 
   <LogstashFilterExampleJson />
 
-  ### Check Logit.io for your logs
+  ### Launch Logs to View Your Data
 
-  <LaunchStack utmMedium="logs" utmCampaign="json" source="json" />
+  <LaunchVisualizer type="logs" />
 
   ### How to diagnose no data in Stack
 
   <DiagnoseNoData />
 
 </Steps>
-
-### JSON Logging Overview
-
-JSON (also known as JavaScript Object Notation) is a lightweight syntax used for exchanging data. 
-You may have previously encountered the JSON format if you have ever used 
-[Serilog](/integrations/log-management/languages-and-libraries/serilog) for migrating log data from 
-Microsoft's [.Net](/integrations/log-management/languages-and-libraries/dotnet) or 
-[.Net Core](/integrations/log-management/languages-and-libraries/dotnet) frameworks.
-
-JSON has almost near-universal support as the vast majority of programming languages can support its Unicode encoding.
-
-JSON has become the preferred format for standardising structured log messages & 
-has taken over from the previously used XML format as the later syntax provides an often more 
-legible and compact format that can be queried as a database.
-
-An exception to this can be found when using the default logging framework 
-for [Apache](/integrations/log-management/applications/apache) & [NGINX](/integrations/log-management/applications/nginx) 
-as their logs are even more compact than JSON, but are still less suited to flexible parsing.
-
-Our log file viewer supports JSON logs & provides centralised log management built for easy 
-analysis, troubleshooting & testing within your production environment. Logit.io eliminates 
-the need to spend hours searching & tailing across distributed servers for separate JSON logs.
-
-If you need any more help with migrating your JSON logs to Logstash the Logit.io team 
-are here to help. Feel free to get in contact with our support team by 
-sending us a message via <IntercomButton text="live chat" /> & we'll be happy to help you start analysing your data.
-
