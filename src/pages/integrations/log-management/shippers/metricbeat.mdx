@@ -1,12 +1,13 @@
 ---
 title: Metricbeat
 pageTitle: Metricbeat Configuration
-subTitle: Ship Metrics with Metricbeat to Logstash
+subTitle: Ship Metrics with Metricbeat to Logit.io
 logo: metricbeat
 color: "#00bfb3"
 description: Use Logit.io's Metricbeat example configuration to easily forward and send your logs to Logstash and Elasticsearch.
 stackTypes: logs
 sslPortType: beats-ssl
+tags: Beats, Logs, Metrics, Metricbeat, Stats, System, Monitoring
 ---
 
 Metricbeat is an open-source shipping agent used to collect and ship 
@@ -15,10 +16,12 @@ via [Logstash](/integrations/log-management/shippers/logstash).
 
 <Steps>
   ### Install Integration
+
   <InstallIntegration/>
+
   ### Install Metricbeat
 
-  <InstallBeat beatname="metricbeat" />
+  <InstallMetricbeat />
 
   ### Copy Configuration File
 
@@ -30,12 +33,11 @@ via [Logstash](/integrations/log-management/shippers/logstash).
 
   ### Start Metricbeat
 
-  [Start or restart Metricbeat](https://www.elastic.co/guide/en/beats/metricbeat/master/metricbeat-starting.html) 
-  to apply the configuration changes.
+  <StartBeat beatname="metricbeat" />
 
-  ### Check Logit.io for your logs
+  ### Launch Logs to view your data
 
-  <LaunchStack utmMedium="logs" utmCampaign="metricbeat" source="metricbeat" />
+  <LaunchVisualizer type="logs" />
 
   ### Configure Modules (Optional)
 
@@ -45,65 +47,31 @@ via [Logstash](/integrations/log-management/shippers/logstash).
   There are a range of other modules which can be enabled for Metricbeat, please choose the module from 
   the list below if you wish to know more.
 
-  - [apache](/integrations/infrastructure-metrics/platforms/metricbeat-module-apache),
-  - [docker](/integrations/infrastructure-metrics/platforms/metricbeat-module-docker),
+  - [Apache](/integrations/infrastructure-metrics/platforms/metricbeat-module-apache),
+  - [Docker](/integrations/infrastructure-metrics/platforms/metricbeat-module-docker),
   - [golang](/integrations/infrastructure-metrics/languages-and-libraries/metricbeat-module-golang),
   - [haproxy](/integrations/infrastructure-metrics/platforms/metricbeat-module-haproxy),
   - [http](/integrations/infrastructure-metrics/protocols/metricbeat-module-http),
-  - [kafka](/integrations/infrastructure-metrics/platforms/metricbeat-module-kafka),
-  - [kubernetes](/integrations/infrastructure-metrics/platforms/metricbeat-module-kubernetes),
-  - [mongodb](/integrations/infrastructure-metrics/applications/mongodb-metrics),
+  - [Kafka](/integrations/infrastructure-metrics/platforms/metricbeat-module-kafka),
+  - [Kubernetes](/integrations/infrastructure-metrics/platforms/metricbeat-module-kubernetes),
+  - [MongoDB](/integrations/infrastructure-metrics/applications/mongodb-metrics),
   - [mysql](/integrations/infrastructure-metrics/applications/mysql-metrics),
   - [nginx](/integrations/infrastructure-metrics/platforms/metricbeat-module-nginx),
   - [rabbitmq](/integrations/infrastructure-metrics/message-queues/metricbeat-module-rabbitmq),
-  - [redis](/integrations/infrastructure-metrics/message-queues/metricbeat-module-redis),
-  - [centos](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-system-centos),
-  - [debian](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-system-debian),
-  - [macos](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-system-macos),
-  - [redhat](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-system-redhat),
-  - [ubuntu](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-system-ubuntu),
-  - [windows](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-system-windows),
+  - [Redis](/integrations/infrastructure-metrics/message-queues/metricbeat-module-redis),
+  - [CentOS](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-system-centos),
+  - [Debian](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-system-debian),
+  - [MacOS](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-system-macos),
+  - [Redhat](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-system-redhat),
+  - [Ubuntu](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-system-ubuntu),
+  - [Windows](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-system-windows),
   - [uwsgi](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-uwsgi),
-  - [postgresql](/integrations/infrastructure-metrics/applications/postgresql-metrics),
-  - [zookeeper](/integrations/infrastructure-metrics/platforms/metricbeat-module-zookeeper),
-  - [puppet](/integrations/infrastructure-metrics/applications/puppet)
+  - [PostgreSQL](/integrations/infrastructure-metrics/applications/postgresql-metrics),
+  - [Zookeeper](/integrations/infrastructure-metrics/platforms/metricbeat-module-zookeeper),
+  - [Puppet](/integrations/infrastructure-metrics/applications/puppet)
 
   ### How to diagnose no data in Stack
 
   <DiagnoseNoData />
 
-  ### Metricbeat System dashboard
-
-  The Metricbeat System module comes with predefined Kibana dashboards. To view your dashboards for any of your Logit.io stacks, launch Logs and choose Dashboards.
-
-  ![Kibana dashboard preview](@/images/integrations/metricbeats/metricbeat_system_module.png)
-
 </Steps>
-
-### Metricbeat Overview
-
-Metricbeat is a lightweight metrics shipper built using the Libbeat framework. It's origins started from the 
-now deprecated Topbeat & it is used for collecting service and system log metrics to be parsed in Logstash 
-and used across the rest of the ELK Stack.
-
-Metricbeat makes sending data for server monitoring simpler by aggregating system metrics from a number of 
-popular tools including [NGINX](/integrations/log-management/applications/nginx), 
-[MySQL](/integrations/log-management/applications/mysql), 
-[Apache](/integrations/log-management/applications/apache) & HAProxy. While Metricbeat 
-can push log data directly to the Elastic Stack some users may wish to use a buffering service 
-such as Redis or [Kafka](/integrations/log-management/message-queues/kafka). 
-Metricbeat does much more than simply collect metrics as it can be used to tap 
-into a variety of systems and execute a range of enhancements to the log file before shipping the metrics to ELK.
-
-The shipper when paired with Kibana can be used to report on CPU, memory and load metrics. When used in a containerised 
-environment with Docker it can be used as a solution for 
-[container monitoring](https://logit.io/solutions/monitoring/container-monitoring/) on the Logit.io platform.
-      
-Our platform provides a complete hosted ELK solution allowing you to get the best out of Metricbeat in a single 
-centralised platform for log and metric analysis. We believe that monitoring metrics plays a crucial role in maintaining 
-the health & security of your applications
-
-[Discover more about our Metrics-As-A-Service Solution](https://logit.io/platform/metrics/metrics-as-a-service).
-      
-If you need any further assistance with sending data through Metricbeat to Logstash we're here to help. Feel free to 
-reach out by contacting our support team <IntercomButton text="via live chat" /> & we'll be happy to assist.

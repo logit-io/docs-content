@@ -5,6 +5,7 @@ logo: aws-cloudwatch
 color: "#759c3e"
 stackTypes: logs
 description: Push logs from Amazon Cloudwatch to logit.io via the API using the instructions below and begin analysing your data with ELK
+tags: Lambda, Logs, AWS, Amazon, AWS Lambda, Serverless Computing, Aws, Cloudwatch
 ---
 
 <Steps>
@@ -33,7 +34,7 @@ From your Amazon Console browse to the <a target="_blank" href="http://console.a
 
 Choose Author from scratch, enter a name and ensure the runtime version is Node.js 16.x, then Create function.
 
-[Create function by selecting Author from scratch](@/images/integrations/aws-cloudwatch/aws-lambda-function-small.png)
+![Create function by selecting Author from scratch](@/images/integrations/aws-cloudwatch/aws-lambda-function-small.png)
 
 Replace the index.js example code
 
@@ -162,7 +163,7 @@ You can find this below or by choosing `Settings > Stack API Keys`.
 
 Your Api Key: @apikey
 
-[Add your Logit API key to Environment variables page in AWS](@/images/integrations/aws-cloudwatch/aws-cloudwatch-api-key.png)
+![Add your Logit API key to Environment variables page in AWS](@/images/integrations/aws-cloudwatch/aws-cloudwatch-api-key.png)
 
 Save and Deploy the function.
 
@@ -170,7 +171,7 @@ Save and Deploy the function.
 
 From the Lambda designer choose to Add Trigger and select the required CloudWatch Log Group.
 
-[Add trigger in Designer](@/images/integrations/aws-cloudwatch/aws-lambda-trigger.png)
+![Add trigger in Designer](@/images/integrations/aws-cloudwatch/aws-lambda-trigger.png)
 
 The CloudWatch designer should now look similar to the image above. Any logs 
 that arrive in Cloudwatch will now be forwarded to your Stack via the API.

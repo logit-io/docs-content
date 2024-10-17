@@ -7,6 +7,7 @@ color: "#00bfb3"
 description: Filebeat allows you to send logs to your ELK stacks. Configure Filebeat to send logs to Logstash or Elasticsearch. 
 stackTypes: logs
 sslPortType: beats-ssl
+tags: Beats, Logs, Filebeat, File, Files, Text, Log Files
 ---
 
 Filebeat is an open source shipping agent that lets you ship 
@@ -254,33 +255,12 @@ logs from local files to one or more destinations, including Logstash.
 
   <StartFilebeat />
 
-  ### Check Logit.io for your logs
-  <LaunchStack utmMedium="logs" utmCampaign="filebeat" source="filebeat" />
+  ### Launch Logs to View Data
 
-  ### How to diagnose no data in Stack
+  <LaunchVisualizer type="logs" />
+
+  ### How to diagnose no data in your stack
 
   <DiagnoseNoData />
 
 </Steps>
-
-### Filebeat Logging Overview
-Filebeat is the most popular way to send logs to ELK due to its reliability & minimal memory footprint. 
-It is the leading Beat out of the entire collection of open-source shipping tools, 
-including [Auditbeat](/integrations/log-management/shippers/auditbeat), [Metricbeat](/integrations/log-management/shippers/metricbeat) & [Heartbeat](/integrations/log-management/shippers/heartbeat). 
-
-Filebeat's origins begin from combining key features from Logstash-Forwarder & Lumberjack & is written in Go. 
-Within the logging pipeline, Filebeat can generate, parse, tail & forward common logs to be indexed within Elasticsearch. 
-The harvester is often compared to Logstash but it is not a suitable replacement & instead should be used in tandem for most use cases.
-
-Earlier versions of Filebeat suffered from a very limited scope & only allowed the user to send events to 
-Logstash & Elasticsearch. More recent versions of the shipper have been updated to be compatible with 
-[Redis](/integrations/log-management/applications/redis) & [Kafka](/integrations/log-management/message-queues/kafka).  
-      
-A misconfigured Filebeat setup can lead to many complex logging concerns that this filebeat.yml wizard aims to solve. 
-Just a couple of examples of these include excessively large registry files & file handlers that error frequently 
-when encountering deleted or renamed log files. Tracking numerous pipelines using this shipper can become tedious 
-for self hosted Elastic Stacks so you may wish to consider our [Hosted ELK](https://logit.io) service as a solution to this.
-      
-If you need any further assistance with migrating your log data to ELK we're here to help you get started. 
-Feel free to get in contact with our support team by sending us a message via 
-<IntercomButton text="live chat" /> & we'll be happy to assist.
