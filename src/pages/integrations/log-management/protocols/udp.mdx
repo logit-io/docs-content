@@ -5,7 +5,7 @@ logo: udp
 color: "#2b7014"
 description: Learn how to send UDP logs to your Logstash instance using our configuration examples - Ship over 100 log data types easily with Logit.io
 stackTypes: logs
-portType: tcp
+portType: udp
 tags: Logs, UDP, Network, Protocol, Udp
 ---
 
@@ -22,31 +22,13 @@ tags: Logs, UDP, Network, Protocol, Udp
 
   <SendDataToUDP />
 
-  ### Check Logit.io for your logs
+  ### Launch Logs to View Your Data
 
-  <LaunchStack utmMedium="logs" utmCampaign="udp" source="udp" />
+  <LaunchVisualizer type="logs" />
 
   ### How to diagnose no data in Stack
 
   <DiagnoseNoData />
 
 </Steps>
-
-### UDP Logging Overview
-
-UDP (or User Datagram Protocol) is a communication transport protocol used across the Internet for a range of transmission types, including 
-video playback or DNS lookups.
-
-As this protocol doesn't require a “handshake”, it makes initial data transfer a lot faster but also creates a gateway that could be easily 
-exploited.
-
-Because of the lack of handshake, there are no guarantees that your data will be delivered successfully and won't be duplicated.
-Users that require error correction facilities may prefer to use  <a href="/integrations/log-management/protocols/tcp" target="_blank">TCP</a> 
-instead of UDP to remedy the concerns cited above.
-
-Our UDP log file analyser can be used to view, manage and centralise your log messages as well as deliver metrics for detailed and dynamically 
-updating Kibana visualisations.
-
-If you need any assistance with analysing your UDP log data we're here to help. Feel free to reach out by contacting the Logit.io support team 
-<IntercomButton text="via live chat" /> & we'll be happy to help you start analysing your data.
 
