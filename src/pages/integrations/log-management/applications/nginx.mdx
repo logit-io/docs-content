@@ -1,7 +1,7 @@
 ---
 title: NGINX
-pageTitle: NGINX Logstash Configuration
-subTitle: Ship logs from NGINX to Logstash
+pageTitle: NGINX Configuration
+subTitle: Ship logs from NGINX to Logit.io
 logo: nginx
 color: "#00aa4e"
 description: Use Filebeat to send NGINX logs to your ELK stacks. Configure Filebeat to send NGINX logs to Logstash or Elasticsearch.
@@ -14,7 +14,9 @@ Configure Filebeat to ship logs from a NGINX web server to Logstash and Elastics
 
 <Steps>
   ### Install Integration
+
   <InstallIntegration/>
+
   ### Install Filebeat
 
   <InstallFilebeat />
@@ -22,9 +24,9 @@ Configure Filebeat to ship logs from a NGINX web server to Logstash and Elastics
   ### Enable the NGINX module
   <Tabs items={["Windows", "Linux", "macOS", "DEB", "RPM"]}>
     <Tab>
-      There are several built in filebeat modules you can use. You will need to enable the nginx module:
+      You will need to enable the nginx module:
 
-      ```cmd copy
+      ```ps copy
       .\filebeat.exe modules list
       .\filebeat.exe modules enable nginx
       ```
@@ -38,14 +40,14 @@ Configure Filebeat to ship logs from a NGINX web server to Logstash and Elastics
 
       ```yml copy
       # Module: nginx
-      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-nginx.html
+      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.15/filebeat-module-nginx.html
 
       - module: nginx
         # Access logs
         access:
           enabled: true
 
-          # Set custom paths for the log files. If left empty,
+          # Set var.paths for the log files. If left empty,
           # Filebeat will choose the paths depending on your OS.
           #var.paths:
 
@@ -53,7 +55,7 @@ Configure Filebeat to ship logs from a NGINX web server to Logstash and Elastics
         error:
           enabled: true
 
-          # Set custom paths for the log files. If left empty,
+          # Set var.paths for the error log files. If left empty,
           # Filebeat will choose the paths depending on your OS.
           #var.paths:
 
@@ -61,13 +63,13 @@ Configure Filebeat to ship logs from a NGINX web server to Logstash and Elastics
         ingress_controller:
           enabled: true
 
-          # Set custom paths for the log files. If left empty,
+          # Set var.paths for the log files. If left empty,
           # Filebeat will choose the paths depending on your OS.
           #var.paths:
       ```
     </Tab>
     <Tab>
-      There are several built in filebeat modules you can use. You will need to enable the nginx module:
+      You will need to enable the nginx module:
     
       ```cmd copy
       sudo filebeat modules list
@@ -83,14 +85,14 @@ Configure Filebeat to ship logs from a NGINX web server to Logstash and Elastics
 
       ```yml copy
       # Module: nginx
-      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-nginx.html
+      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.15/filebeat-module-nginx.html
 
       - module: nginx
         # Access logs
         access:
           enabled: true
 
-          # Set custom paths for the log files. If left empty,
+          # Set var.paths for the log files. If left empty,
           # Filebeat will choose the paths depending on your OS.
           #var.paths:
 
@@ -98,7 +100,7 @@ Configure Filebeat to ship logs from a NGINX web server to Logstash and Elastics
         error:
           enabled: true
 
-          # Set custom paths for the log files. If left empty,
+          # Set var.paths for the log files. If left empty,
           # Filebeat will choose the paths depending on your OS.
           #var.paths:
 
@@ -106,13 +108,13 @@ Configure Filebeat to ship logs from a NGINX web server to Logstash and Elastics
         ingress_controller:
           enabled: true
 
-          # Set custom paths for the log files. If left empty,
+          # Set var.paths for the log files. If left empty,
           # Filebeat will choose the paths depending on your OS.
           #var.paths:
       ```
     </Tab>
     <Tab>
-      There are several built in filebeat modules you can use. You will need to enable the nginx module:
+      You will need to enable the nginx module:
 
       ```cmd copy
       ./filebeat modules list
@@ -128,14 +130,14 @@ Configure Filebeat to ship logs from a NGINX web server to Logstash and Elastics
 
       ```yml copy
       # Module: nginx
-      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-nginx.html
+      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.15/filebeat-module-nginx.html
 
       - module: nginx
         # Access logs
         access:
           enabled: true
 
-          # Set custom paths for the log files. If left empty,
+          # Set var.paths for the log files. If left empty,
           # Filebeat will choose the paths depending on your OS.
           #var.paths:
 
@@ -143,7 +145,7 @@ Configure Filebeat to ship logs from a NGINX web server to Logstash and Elastics
         error:
           enabled: true
 
-          # Set custom paths for the log files. If left empty,
+          # Set var.paths for the log files. If left empty,
           # Filebeat will choose the paths depending on your OS.
           #var.paths:
 
@@ -151,13 +153,13 @@ Configure Filebeat to ship logs from a NGINX web server to Logstash and Elastics
         ingress_controller:
           enabled: true
 
-          # Set custom paths for the log files. If left empty,
+          # Set var.paths for the log files. If left empty,
           # Filebeat will choose the paths depending on your OS.
           #var.paths:
       ```
     </Tab>
     <Tab>
-      There are several built in filebeat modules you can use. You will need to enable the nginx module:
+      You will need to enable the nginx module:
 
       ```cmd copy
       sudo filebeat modules list
@@ -173,14 +175,14 @@ Configure Filebeat to ship logs from a NGINX web server to Logstash and Elastics
 
       ```yml copy
       # Module: nginx
-      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-nginx.html
+      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.15/filebeat-module-nginx.html
 
       - module: nginx
         # Access logs
         access:
           enabled: true
 
-          # Set custom paths for the log files. If left empty,
+          # Set var.paths for the log files. If left empty,
           # Filebeat will choose the paths depending on your OS.
           #var.paths:
 
@@ -188,7 +190,7 @@ Configure Filebeat to ship logs from a NGINX web server to Logstash and Elastics
         error:
           enabled: true
 
-          # Set custom paths for the log files. If left empty,
+          # Set var.paths for the log files. If left empty,
           # Filebeat will choose the paths depending on your OS.
           #var.paths:
 
@@ -196,7 +198,7 @@ Configure Filebeat to ship logs from a NGINX web server to Logstash and Elastics
         ingress_controller:
           enabled: true
 
-          # Set custom paths for the log files. If left empty,
+          # Set var.paths for the log files. If left empty,
           # Filebeat will choose the paths depending on your OS.
           #var.paths:
       ```
@@ -219,14 +221,14 @@ Configure Filebeat to ship logs from a NGINX web server to Logstash and Elastics
 
       ```yml copy
       # Module: nginx
-      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-nginx.html
+      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.15/filebeat-module-nginx.html
 
       - module: nginx
         # Access logs
         access:
           enabled: true
 
-          # Set custom paths for the log files. If left empty,
+          # Set var.paths for the log files. If left empty,
           # Filebeat will choose the paths depending on your OS.
           #var.paths:
 
@@ -234,7 +236,7 @@ Configure Filebeat to ship logs from a NGINX web server to Logstash and Elastics
         error:
           enabled: true
 
-          # Set custom paths for the log files. If left empty,
+          # Set var.paths for the log files. If left empty,
           # Filebeat will choose the paths depending on your OS.
           #var.paths:
 
@@ -242,7 +244,7 @@ Configure Filebeat to ship logs from a NGINX web server to Logstash and Elastics
         ingress_controller:
           enabled: true
 
-          # Set custom paths for the log files. If left empty,
+          # Set var.paths for the log files. If left empty,
           # Filebeat will choose the paths depending on your OS.
           #var.paths:
       ```
@@ -261,47 +263,12 @@ Configure Filebeat to ship logs from a NGINX web server to Logstash and Elastics
 
   <StartFilebeat />
 
-  ### Check Logit.io for your logs
-  <LaunchStack utmMedium="logs" utmCampaign="nginx" source="nginx" />
+  ### Launch Logs to View Your Data
+
+  <LaunchVisualizer type="logs" />
 
   ### How to diagnose no data in Stack
 
   <DiagnoseNoData />
 
 </Steps>
-
-## Custom Kibana Dashboards
-
-The NGINX module comes with custom Kibana dashboards. 
-To view your dashboards for any of your Logit.io stacks, launch Logs and choose Dashboards.
-        
-![Custom Kibana Dashboard Preview](@/images/integrations/filebeat/nginx1.png)
-
-![Custom Kibana Dashboard Preview](@/images/integrations/filebeat/nginx2.png)
-
-![Custom Kibana Dashboard Preview](@/images/integrations/filebeat/nginx4.png)
-
-## NGINX Logs Overview
-
-NGINX is an open-source HTTP server and reverse proxy that was created by Igor Sysoev & released in 2004. 
-It has gone on to power many of the web's highest traffic sites (including Netflix, Google & Wordpress) as 
-it is a highly reliable server for enabling businesses to scale their operations.
-          
-Viewing NGINX log files can allow you to see spikes in 5XX/4XX status codes affecting the performance of 
-your applications, and allow your Dev teams to drill down into the data to resolve errors. Analysing these 
-at scale can rapidly drain your resources if your teams need to configure separate parsing, configuration, 
-visualisation and reporting tools for a single large NGINX instance.
-
-
-Many NGINX log analyzers can slow down the process of troubleshooting & increase time to resolution 
-unnecessarily as they often struggle to process large amounts of log data. The Logit.io log management 
-platform is built on ELK and can easily process large amounts of NGINX server data for root cause analysis. 
-
-
-Our platform is built to scale with your infrastructure, once data is migrated to your ELK Stack you'll be 
-able to benefit from automatic parsing with Logstash and visualise your NGINX metrics in Kibana. Alert on 
-errors and notify your teams of spikes in real-time with our integrated alerting features that can send 
-notifications to a variety of sources including Jira, Opsgenie, Slack, PagerDuty & Webhooks.
-
-In case you need any further assistance with sending your NGINX data to Logstash & Elasticsearch we're here 
-to help. Just get in touch with our support team via live chat & we'll be happy to assist.
