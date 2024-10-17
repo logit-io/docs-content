@@ -1,17 +1,18 @@
 ---
 title: Winlogbeat
 pageTitle: Winlogbeat Configuration
-subTitle: Ship logs with Winlogbeat
+subTitle: Ship logs to Logit.io via Winlogbeat
 logo: winlogbeat
 color: "#00bfb3"
-description: Winlogbeat is a Windows specific event-log shipping agent. It can be used to collect and send event logs to one or more destinations.
+description: Winlogbeat is a Windows-specific event log-shipping agent.
 stackTypes: logs
 sslPortType: beats-ssl
 tags: Beats, Logs, Windows, Microsoft, System, Event Log, Logging, Winlogbeat
 ---
 
-Winlogbeat is a Windows specific event-log shipping agent installed as a Windows service. It can be used to collect and send 
-event logs to one or more destinations, including Logstash.
+Winlogbeat is a Windows specific event-log shipping agent installed 
+as a Windows service. It can be used to collect and send event 
+logs to one or more destinations, including Logstash.
 
 <Steps>
   ### Install Integration
@@ -21,83 +22,16 @@ event logs to one or more destinations, including Logstash.
 
   <InstallWindowsBeat
     beatname = "winlogbeat"
-    version = "8.12.2"
+    version = "8.15.2"
   />
 
   ### Update Your Configuration File
-
-  <Tabs items={["Windows"]}>
-    <Tab>
-    The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
-
-    __Note__: Please make sure the 'hosts' field in the Logstash outputs section is correctly populated. If you are logged into 
-    your Logit.io account the 'hosts' field should have been pre-populated with the correct values.
-    
-    Copy the configuration file below (making the above changes as necessary) and overwrite the contents of ___winlogbeat.yml___. 
-    (If you used the installer program to install winlogbeat the ___winlogbeat.yml___ file may not exist so you'll need to create 
-    it and add the details below).
-
-
-    ```yaml copy
-    ###################### Logit.io Winlogbeat Configuration ########################
-    # ============================== Winlogbeat specific options ==============================
-    winlogbeat.event_logs:
-    - name: Application
-      ignore_older: 72h
-
-    - name: System
-
-    - name: Security
-
-    - name: Microsoft-Windows-Sysmon/Operational
-      tags: [sysmon]
-    
-    - name: Windows PowerShell
-      event_id: 400, 403, 600, 800
-
-    - name: Microsoft-Windows-PowerShell/Operational
-      event_id: 4103, 4104, 4105, 4106
-
-    - name: ForwardedEvents
-      tags: [forwarded]    
-
-    fields:
-      type: wineventlog
-
-    fields_under_root: true  
-
-    # ================================== Outputs ===================================
-    # ------------------------------ Logstash Output -------------------------------
-    output.logstash:
-      hosts: ["{{logstash.host}}:{{logstash.sslPort}}"]
-      loadbalance: true
-      ssl.enabled: true
-
-      pipeline: "winlogbeat-%{[agent.version]}-routing"
-
-    # ================================= Processors =================================
-    processors:
-      - add_host_metadata:
-          when.not.contains.tags: forwarded
-      - add_cloud_metadata: ~
-    ```
-
-    </Tab>
-  </Tabs>
+  
+  <WinlogBeatConfigFile />
 
   ### Validate Configuration
 
-  Let's check the configuration file is syntactically correct. In powershell (in the directory where Winlogbeat is installed) run the following command:
-  
-  <Tabs items={["Windows"]}>
-    <Tab>
-    
-    ```ps1 copy
-    .\winlogbeat.exe test config -c .\winlogbeat.yml -e
-    ```
-
-    </Tab>
-  </Tabs>
+  <ValidateWinlogBeat beatname="winlogbeat" />
 
   ### Start winlogbeat
 
@@ -107,26 +41,15 @@ event logs to one or more destinations, including Logstash.
   Start-Service winlogbeat
   ```
 
-  ### Check Logit.io for your logs
-  <LaunchStack utmMedium="logs" utmCampaign="winlogbeat" source="winlogbeat" />
+  ### Launch Logs to View Your Data
+  
+  <LaunchVisualizer type="logs" />
 
   ### How to diagnose no data in Stack
 
   <DiagnoseNoData />
 
 </Steps>
-
-### Winlogbeat Installation Instructions Overview
-
-Winlogbeat is a logging agent maintained by Elastic for the purposes of collecting Windows event logs. It is part of the beats family 
-that makes up the Elastic Stack. Winlogbeat can read events from any event log channel using the Windows OS.
-
-Windows log data once centralised in the ELK stack can be monitored for anomaly detection & other security-related incidents including 
-unauthorised access and backdoor installations. These logs can also deliver metrics to Kibana allowing you to create visualisations & 
-[security](https://logit.io/about-us/security) reports easily.
-
-If you need any further assistance with migrating your Winlogbeat logs to Logstash we're here to help you get started. Feel free to reach out by 
-contacting our support team by visiting our dedicated Help Centre or via <IntercomButton text="live chat" /> & we'll be happy to assist.
 
 
 
