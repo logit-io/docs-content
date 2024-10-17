@@ -1,39 +1,35 @@
 ---
 title: Node.js
-pageTitle: Winston Logstash Config for Node.js
-subTitle: Ship logs from your Node.js application to Logstash
+pageTitle: Node.js Logging with Winston
+subTitle: Ship logs from your Node.js application to Logit.io
 logo: nodejs
 color: "#82bb26"
 stackTypes: logs
-description: Send your nodejs application/access/error logs to logit.io via Logstash using the instructions below and begin searching your data
+description: Send your node.js application logs to Logit.io via Logstash using the instructions below and begin searching your data
 sslPortType: tcp-ssl
 tags: Logs, NodeJS, Node.js, JavaScript, Node, Nodejs
 ---
 
-Get started quickly with NodeJS logging using our configuration 
-guide on how to easily ship NodeJS logs to your hosted Logstash and OpenSearch.
+Get started quickly with Node.js logging using our configuration 
+guide on how to easily ship Node.js logs to your hosted Logstash and OpenSearch.
 
 <Steps>
   ### Install Integration
+
   <InstallIntegration/>
+
   ### Introduction
 
-  The example code used in this guide has been setup using Node.js v14.17.0 (64-bit). 
-  Node Package Manager (npm) can be used to install the required `winston` (3.3.3) 
-  and `winston-logstash` (0.4.0) packages.
+  The example code used in this guide has been setup using Node.js v20.18.0 (64-bit). 
+  Node Package Manager (npm) can be used to install the required `winston` (3.15.0) 
+  and `winston-logstash` (1.2.1) packages.
 
-  These will allow us to send log data from our Node.js application, to 
-  [Logstash](/integrations/log-management/shippers/logstash) using the example code 
-  used in this guide has been setup using Node.js v8.11.3 (64-bit). Node Package Manager 
-  (npm) can be used to install the required winston (2.4.1) and winston-logstash (0.4.0) packages. 
-  These will allow us to send log data from our Node.js application, to 
-  [TCP](/integrations/log-management/protocols/tcp) with SSL enabled. 
-            
-  The official winston documentation can be found [here](https://github.com/winstonjs/winston).
+  These will allow you to send log data from your Node.js application, to 
+  your Logit.io stack. 
 
   ### Installing
 
-  First, ensure that you have downloaded and installed Node.js (32 or 64 bit). You can get 
+  First, ensure that you have downloaded and installed Node.js. You can get 
   it from the official website, [here](https://nodejs.org/en/download/). This includes various 
   options to install including using an installer file (for Windows or Mac).
 
@@ -41,81 +37,58 @@ guide on how to easily ship NodeJS logs to your hosted Logstash and OpenSearch.
   for creating an 'express' application to help get you up-and-running 
   [here](https://code.visualstudio.com/docs/nodejs/nodejs-tutorial#_an-express-application).
 
-  Inside your project directory, open a terminal of your choice and type the following:
+  Inside your project directory, open a terminal of your choice and type the following (this will install
+  the latest version of Winston and winston-logstash):
 
   ```cmd copy
-  npm install winston@3.3.3
-  npm install winston-logstash@1.2.1
+  npm install winston
+  npm install winston-logstash
   ```
 
   ### Sending Logs
 
-  To setup winston, add the following code to your application before sending logs:
+  To setup Winston, add the following code to your application before sending logs:
          
   ```javascript copy showLineNumbers /'@logstash.sslPort:strip_quotes'/ /@logstash.host/
+
   const winston = require('winston');
-  require('winston-logstash');
-  
-  winston.add(winston.transports.Logstash,
-  {
-    port: '@logstash.sslPort:strip_quotes',
-    host: '@logstash.host',
-    ssl_enable: true,
-    max_connect_retries: -1,
-  });  
+  const LogstashTransport = require("winston-logstash/lib/winston-logstash-latest");
+
+  const logger = winston.createLogger({
+    transports: [
+      new LogstashTransport({
+        port: '@logstash.sslPort:strip_quotes',
+        host: '@logstash.host',
+        ssl_enable: true,
+        max_connect_retries: -1,
+      })
+    ]
+  });
   ```
   
-  You can then send logs using a winston log method:
+  You can then send logs using a Winston log method:
   
   ```javascript copy
-  winston.error('This is a test error log message', { custom: 'my custom field', Environment: 'local' }); 
+  logger.info('Hello, this is a log message!');
   ```
-  
-  The first parameter is the log `message` field. The second parameter allows you to specify additional fields, or modify default fields.
-  
-  You can send different levels of log records by using different winston log methods. This example uses the error method to send error log records. 
+    
+  You can send different levels of log records by using different Winston log methods.
   Other log record levels and their corresponding winston methods include:
   
   ```javascript copy showLineNumbers
   winston.log("This is a standard log message");
-  winston.info("This is an info log message");
-  winston.warn("This is a warning log message");        
+  winston.error("This is an error log message");
+  winston.warn("This is a warning log message");
   ```
 
-  ### Check Logit.io for your logs
+  For additional information, the official Winston documentation can be found [here](https://github.com/winstonjs/winston).
 
-  <LaunchStack utmMedium="logs" utmCampaign="nodejs" source="nodejs" />
+  ### Launch Logs to View Your Data
+
+  <LaunchVisualizer type="logs"/>
 
   ### How to diagnose no data in Stack
 
   <DiagnoseNoData />
 
 </Steps>
-
-## Node.JS Logging Overview
-
-Node.js is an open-source server-side platform built using JavaScript & was 
-developed in 2009 by Ryan Dahl. As Node.js uses an event-driven, I/O model 
-it is highly suited to powering real-time applications including live chat & 
-chatbots, automatically refreshing feeds for social media, and additionally, 
-it is increasingly used for sending web push notifications. It is most commonly 
-run on Linux & Windows operating systems. 
-        
-Winston is the most popular logging library for Node.js as it makes logging 
-more flexible & can be configured to multiple levels.  
-
-Winston is well known for its robust feature set & easy installation which we 
-have detailed in this configuration guide. Morgan is commonly used in association 
-with Winston and operates as an HTTP request logger middleware for Node.js.
-
-Parsing, transforming & analysing emergency, critical & error Node.js logs can 
-be hard to perform at scale from the default logging format. Priority messages 
-can easily get lost in the noise of other logging formats (such as Info & Notice) 
-and are not alerted on to be resolved by your wider DevOps team. 
-
-Logit.io provides a complete Node.js log analyser by default as part of our log 
-management platform, this includes alerting, collection & visualisations enhancing 
-your text logs to provide data-driven insights & real-time log tailing.
-
-If you need any more assistance with migrating your Node.js data to Logstash we're 
-here to help. Just get in contact with our support team <IntercomButton text="via live chat" /> and we'll be happy to assist.
