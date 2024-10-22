@@ -1,8 +1,13 @@
 ---
 title: Fluent Bit
-metaTitle: Learn How to Integrate and Configure Fluent Bit to Send Logs
-subTitle: Ship Fluent Bit events and metrics
+<<<<<<< HEAD
+subTitle: Ship Fluent Bit events to Logit.io
 logo: fluentbit
+=======
+meetaTitle: Learn How to Integrate and Configure Fluent Bit to Send Logs
+subTitle: Ship Fluent Bit events and metrics
+logo: fluentd
+>>>>>>> master
 color: "#2e62a4"
 description: Fluent Bit allows you to send logs to your ELK stacks. Configure Fluent Bit to send logs to Logstash. Get started using our sample fluent bit configuration.
 stackTypes: logs
