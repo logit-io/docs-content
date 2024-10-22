@@ -16,11 +16,7 @@ Send Python logs to your Logit.io Stack.
 <Steps>
 
   <Callout type="info">
-    This sample app was created and tested with
-
-    `Python 3.9.13 (tags/v3.9.13:6de2ca5, May 17 2022, 16:36:42)`
-
-    `pip 22.0.4`
+    This sample app was created and tested with `Python 3.11.2` and `pip 24.2` and `python-logstash-async 3.3.0`
   </Callout>
 
   ### Install
@@ -31,10 +27,10 @@ Send Python logs to your Logit.io Stack.
   Create a virtual environment for your project to manage dependencies, this is done by entering the following command.
 
   <Tabs items={["Windows", "Linux/macOs/DEB/RPM"]}>
-    
+
     <Tab>
-      ```bash copy
-      python -m venv venv
+      ```ps1 copy
+      python -m venv venv ^
       venv\Scripts\activate
       ```
     </Tab>
@@ -48,29 +44,27 @@ Send Python logs to your Logit.io Stack.
 
   </Tabs>
 
-  We now need to install the necessary logging and logstash handler packages using pip:
+  We now need to install the necessary logging and Logstash handler packages using pip:
 
   - `python-logstash-async`: Provides a handler for sending logs to Logstash
 
   The main advantage of using an asynchronous handler is that it sends logs to Logstash without blocking the main application thread. 
-  We install it with the following command.
+  We install it with the following command:
 
   ```bash copy
   pip install python-logstash-async
   ```
 
-  Create two new files in the folder and call them `app.py` and `config.py`. There should now be a 
-  two files in the `python_logs_example` folder and a folder called `venv`.
+  Create two new files in the folder and call them `app.py` and `config.py`. There should now be 
+  two files (and a folder called `venv`) in the `python_logs_example` folder.
 
   ### Configuring the App
 
-  Copy and Paste the code below into `config.py`.
-
-  <MissingOtelDetailsCallout />
+  Copy and Paste the code below into `config.py`:
 
   <SendLogsViaPython />
 
-  Copy and Paste the code below into `app.py`
+  Copy and Paste the code below into `app.py`:
 
   ```python copy showLineNumbers 
   import logging
@@ -145,10 +139,3 @@ Send Python logs to your Logit.io Stack.
   <DiagnoseNoData />
 
 </Steps>
-
-## More Help
-
-If you need any further assistance with migrating your Python 
-[application logs](https://logit.io/platform/logging/logging-as-a-service/application-logging/) 
-to Logit.io we're here to help you get started. Just get in contact with our 
-support team <IntercomButton text="via live chat" /> and we'll be happy to assist.
