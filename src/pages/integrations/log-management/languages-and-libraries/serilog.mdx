@@ -14,67 +14,77 @@ Send Serilog application logs to your Hosted ELK Logstash instance.
 
 <Steps>
   ### Install Integration
+
   <InstallIntegration/>
-### Installing Serilog
 
-You will need to add the `Serilog` and `Serilog.Sinks.Network` packages. 
+  ### Installing Serilog
 
-```ps copy
-Install-Package Serilog
-Install-Package Serilog.Sinks.Network
-Install-Package Serilog.Settings.AppSettings
-```
+  <Callout type="info">
+    This guide is based on an application created using an empty .NET Core MVC Web app template targeting .NET 8 in Visual Studio 2022 (VS).
+    This guide was tested with the following versions of the packages: 
+    Serilog.AspNetCore `8.0.3`, Serilog.Sinks.Network `2.0.2.68`, and Serilog.Extensions.Hosting `8.0.0`.
+  </Callout>
+  
+  You will need to add the `Serilog` and `Serilog.Sinks.Network` NuGet packages via the command line 
+  or the VS menu option :`Tools -> NuGet Package Manager -> Manage NuGet Packages for Solution`. 
 
-### Configuring Serilog
+  Powershell commands to install the required packages are as follows which can be entered in the Terminal window in VS:
+  ```ps copy
+  Install-Package Serilog.AspNetCore
+  Install-Package Serilog.Sinks.Network
+  Install-Package Serilog.Extensions.Hosting
+  ```
 
-Add the following app settings to your `app.config` or `web.config`.
+  ### Configuring Serilog
 
-```xml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
-<configuration>
-  <appSettings>
-    <!-- Level of logging -->
-    <add key="serilog:minimum-level" value="Verbose" />
-    <!-- Use the TCP Network sink -->
-    <add key="serilog:using:TCPSink" value="Serilog.Sinks.Network" />
-    <!-- Your logstash configuration -->
-    <add key="serilog:write-to:TCPSink.uri" value="tls://@logstash.host:@logstash.sslPort" />            
-  </appSettings>
-</configuration>
-```
+  Add the following app settings to your `app.config` or `web.config`.
 
-The `serilog:write-to:TCPSink.uri` value must be in the format "protocol://domain:port".
+  ```xml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+  <configuration>
+    <appSettings>
+      <!-- Level of logging -->
+      <add key="serilog:minimum-level" value="Verbose" />
+      <!-- Use the TCP Network sink -->
+      <add key="serilog:using:TCPSink" value="Serilog.Sinks.Network" />
+      <!-- Your logstash configuration -->
+      <add key="serilog:write-to:TCPSink.uri" value="tls://@logstash.host:@logstash.sslPort" />            
+    </appSettings>
+  </configuration>
+  ```
 
-<Callout type="warning">
-  If your Stack is missing a TCP-SSL input then you can send your logs using TCP or UDP instead, but this is not recommended.
-  <IntercomButton text="Talk to support" /> if you need assistance adding a TCP-SSL input to your Stack.
-</Callout>
+  The `serilog:write-to:TCPSink.uri` value must be in the format "protocol://domain:port".
 
-### Using Serilog
+  <Callout type="warning">
+    If your Stack is missing a TCP-SSL input then you can send your logs using TCP or UDP instead, but this is not recommended.
+    <IntercomButton text="Talk to support" /> if you need assistance adding a TCP-SSL input to your Stack.
+  </Callout>
 
-Create a statically accessible Logger configured from AppSettings.
-        
-```c# copy showLineNumbers
-Log.Logger = new LoggerConfiguration()
-  .ReadFrom.AppSettings()
-  .CreateLogger();
-```
+  ### Using Serilog
 
-You can now log from anywhere in your application.
+  Create a statically accessible Logger configured from AppSettings.
+          
+  ```c# copy showLineNumbers
+  Log.Logger = new LoggerConfiguration()
+    .ReadFrom.AppSettings()
+    .CreateLogger();
+  ```
 
-```c# copy
-Log.Information("The global logger has been configured");
-```
+  You can now log from anywhere in your application.
 
-Serilog is a fully featured logging framework and has many other capabilities that are not detailed here, 
-please see the [Serilog Documentation](https://github.com/serilog/serilog/wiki/Getting-Started#setup) for more information.
+  ```c# copy
+  Log.Information("The global logger has been configured");
+  ```
 
-### Check Logit.io for your logs
+  Serilog is a fully featured logging framework and has many other capabilities that are not detailed here, 
+  please see the [Serilog Documentation](https://github.com/serilog/serilog/wiki/Getting-Started#setup) for more information.
 
-<LaunchStack utmMedium="logs" utmCampaign="serilog" source="serilog" />
+  ### Check Logit.io for your logs
 
-### How to diagnose no data in Stack
+  <LaunchStack utmMedium="logs" utmCampaign="serilog" source="serilog" />
 
-<DiagnoseNoData />
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
 
 </Steps>
 
