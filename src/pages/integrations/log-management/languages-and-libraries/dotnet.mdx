@@ -28,14 +28,12 @@ Use Serilog to send .NET logs to your Logit.io Stack.
   dotnet new mvc -n SerilogTestApp
   ```
 
-  You will need to use NuGet or the command line to install three Serilog packages: `Serilog.AspNetCore` and `Serilog.Sinks.Network` to send logs using TCP/TLS or UDP.
-  
-  `Serilog.Settings.Configuration` is needed to setup Serilog using settings from appsettings.json (instead of hardcoded settings).
+  You will need to use NuGet or the command line to install three Serilog packages: `Serilog.AspNetCore`, `Serilog.Extensions.Hosting` and `Serilog.Sinks.Network` to send logs using TCP/TLS or UDP.
   
   In Powershell:
   ```ps copy 
   dotnet add package Serilog.AspNetCore
-  dotnet add package Serilog.Settings.Configuration
+  dotnet add package Serilog.Extensions.Hosting
   dotnet add package Serilog.Sinks.Network
   ```
 
@@ -43,6 +41,7 @@ Use Serilog to send .NET logs to your Logit.io Stack.
   browse for the 3 packages mentioned above and install them in your new application.
 
   ### Configuring Serilog
+
   <ConfigureSerilog />
 
   ### Using Serilog

@@ -10,107 +10,127 @@ sslPortType: tcp-ssl
 tags: Logs, .NET, DotNet, Serilog, Logging Framework
 ---
 
-Send Serilog application logs to your Hosted ELK Logstash instance.
+import ConfigureSerilog from "@/components/integrations/partials/configure-serilog";
+
+Use Serilog to send .NET logs to your Logit.io Stack.
 
 <Steps>
   ### Install Integration
 
   <InstallIntegration/>
 
-  ### Installing Serilog
+  ### Install
 
-  <Callout type="info">
-    This guide is based on an application created using an empty .NET Core MVC Web app template targeting .NET 8 in Visual Studio 2022 (VS).
-    This guide was tested with the following versions of the packages: 
-    Serilog.AspNetCore `8.0.3`, Serilog.Sinks.Network `2.0.2.68`, and Serilog.Extensions.Hosting `8.0.0`.
-  </Callout>
-  
-  You will need to add the `Serilog` and `Serilog.Sinks.Network` NuGet packages via the command line 
-  or the VS menu option :`Tools -> NuGet Package Manager -> Manage NuGet Packages for Solution`. 
+  If using Visual Studio, create a new application using the ASP.NET Core Web App (Model-View-Controller) template.
 
-  Powershell commands to install the required packages are as follows which can be entered in the Terminal window in VS:
+  If using a terminal application e.g. Powershell run the following command (where 'SerilogTestApp' is the name of the application you want to create):
+
   ```ps copy
-  Install-Package Serilog.AspNetCore
-  Install-Package Serilog.Sinks.Network
-  Install-Package Serilog.Extensions.Hosting
+  dotnet new mvc -n SerilogTestApp
   ```
+
+  You will need to use NuGet or the command line to install three Serilog packages: `Serilog.AspNetCore`, `Serilog.Extensions.Hosting` and `Serilog.Sinks.Network` to send logs using TCP/TLS or UDP.
+  
+  In Powershell:
+  ```ps copy 
+  dotnet add package Serilog.AspNetCore
+  dotnet add package Serilog.Extensions.Hosting
+  dotnet add package Serilog.Sinks.Network
+  ```
+
+  If you are using Visual Studio, navigate to Tools -> NuGet Package Manager -> Manage NuGet packages for solution, 
+  browse for the 3 packages mentioned above and install them in your new application.
 
   ### Configuring Serilog
-
-  Add the following app settings to your `app.config` or `web.config`.
-
-  ```xml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
-  <configuration>
-    <appSettings>
-      <!-- Level of logging -->
-      <add key="serilog:minimum-level" value="Verbose" />
-      <!-- Use the TCP Network sink -->
-      <add key="serilog:using:TCPSink" value="Serilog.Sinks.Network" />
-      <!-- Your logstash configuration -->
-      <add key="serilog:write-to:TCPSink.uri" value="tls://@logstash.host:@logstash.sslPort" />            
-    </appSettings>
-  </configuration>
-  ```
-
-  The `serilog:write-to:TCPSink.uri` value must be in the format "protocol://domain:port".
-
-  <Callout type="warning">
-    If your Stack is missing a TCP-SSL input then you can send your logs using TCP or UDP instead, but this is not recommended.
-    <IntercomButton text="Talk to support" /> if you need assistance adding a TCP-SSL input to your Stack.
-  </Callout>
+  
+  <ConfigureSerilog />
 
   ### Using Serilog
 
-  Create a statically accessible Logger configured from AppSettings.
-          
-  ```c# copy showLineNumbers
-  Log.Logger = new LoggerConfiguration()
-    .ReadFrom.AppSettings()
-    .CreateLogger();
+  Inside `Program.cs`, add Serilog to the `WebApplication` build process. Below is the updated `Program.cs` code in full:
+        
+  ```csharp copy showLineNumbers
+  using Serilog;
+
+  var builder = WebApplication.CreateBuilder(args);
+
+  builder.Host.UseSerilog((hostContext, _, configuration) =>
+  {
+      configuration.ReadFrom.Configuration(hostContext.Configuration);
+  });
+
+  // Add services to the container.
+  builder.Services.AddControllersWithViews();
+
+  var app = builder.Build();
+
+  // Configure the HTTP request pipeline.
+  if (!app.Environment.IsDevelopment())
+  {
+      app.UseExceptionHandler("/Home/Error");
+      // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+      app.UseHsts();
+  }
+
+  app.UseHttpsRedirection();
+  app.UseStaticFiles();
+
+  app.UseRouting();
+
+  app.UseAuthorization();
+
+  app.MapControllerRoute(
+      name: "default",
+      pattern: "{controller=Home}/{action=Index}/{id?}");
+
+  app.Run();
   ```
+  
+  You can now log from anywhere in your application. For example, the following code will send a warning log to your stack when the application 
+  hits the Index action of the Home controller:
+  
+  ```csharp copy
+  using Microsoft.AspNetCore.Mvc;
+  using SerilogTestApp.Models;
+  using System.Diagnostics;
 
-  You can now log from anywhere in your application.
+  namespace SerilogTestApp.Controllers
+  {
+      public class HomeController(ILogger<HomeController> logger) : Controller
+      {
+          public IActionResult Index()
+          {
+              logger.LogWarning("This is something you need to be warned about!");
+              return View();
+          }
 
-  ```c# copy
-  Log.Information("The global logger has been configured");
-  ```
+          public IActionResult Privacy()
+          {
+              return View();
+          }
 
-  Serilog is a fully featured logging framework and has many other capabilities that are not detailed here, 
-  please see the [Serilog Documentation](https://github.com/serilog/serilog/wiki/Getting-Started#setup) for more information.
+          [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+          public IActionResult Error()
+          {
+              return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+          }
+      }
+  }
+  ``` 
 
-  ### Check Logit.io for your logs
+  ### Launch Logs to View Data
 
-  <LaunchStack utmMedium="logs" utmCampaign="serilog" source="serilog" />
+  Run the application and click on the button below to open the log management visualizer:
 
-  ### How to diagnose no data in Stack
+  <LaunchVisualizer type="logs" />
 
-  <DiagnoseNoData />
+  You should now see the above log stored in your stack.
 
 </Steps>
 
-## Serilog Logging Overview
+Serilog is a fully featured logging framework and has many other capabilities that are not detailed here.
+  
+Please see the [Serilog.AspNetCore Documentation](https://github.com/serilog/serilog-aspnetcore) for more information.
 
-Serilog is a popular logging library for [.NET](/integrations/log-management/languages-and-libraries/dotnet) and unlike many other logging libraries, 
-it has been built with a focus on presenting log data in a structured & organised format. 
-These [event log](https://logit.io/solutions/analysis/event-log-analyser/) messages & log 
-files are preserved in the [JSON](/integrations/log-management/data-types/json) format.
-
-Without needing to alter your code, Serilog uses sinks to send logs in a text-based format to a 
-centralised log management platform for further processing. If you can't or don't wish 
-to use Serilog for structured logging, alternatively you can use 
-either [NLog](/integrations/log-management/languages-and-libraries/nlog) or [log4net](/integrations/log-management/languages-and-libraries/log4net) for migrating your log data from .Net.
-
-For alerting & monitoring, many Serilog users use an email sink for writing 
-events to SMPT. This will quickly leave your inbox flooded when your application 
-encounters an issue. A far less troublesome alternative to this can be to use an 
-intuitive alerting and error monitoring platform that allows you to define alerts 
-with a higher level of customisation & outputs to Slack, Asana, or WebHooks.
-
-Logit.io provides alerting & monitoring as part of our platform that can be 
-customised to output events to many popular third party tools. Our platform 
-provides a completely managed Elastic Stack solution allowing you to get the 
-best out of your .Net logs and provides a Serilog log analyser across all plans.
-
-If you need any more help with shipping Serilog logs to Logstash our 
-team are here to help. Feel free to get in contact with our support 
-team <IntercomButton text="via live chat" /> and we'll be happy to assist.
+If you need any help with migrating your .NET Core logs to Logit.io we are here to help. 
+Feel free to <IntercomButton text="get in touch with our support team via Intercom" /> and we will be happy to assist.
