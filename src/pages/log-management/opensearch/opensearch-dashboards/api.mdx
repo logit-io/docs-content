@@ -19,7 +19,7 @@ Authentication.
 <Callout type="info">
     Basic Authentication is a simple authentication method in HTTP(S) where the client includes a username and password with each request. 
     The username and password is combined with a colon in-between as a string. You don't need to worry about how to create a basic authentication 
-    header as we have done it for you.
+    header as we have done it for you. 
 </Callout>
 
 Each request to a REST API Endpoint must include all of the necessary information for Opensearch Dashboards to fulfill the request. If all the necessary 
@@ -43,6 +43,7 @@ __Basic Authentication header__:
 ```bash
 curl -XGET "osd-xsrf:true" -H "Content-Type: application/json" 
 -H "Authorization: Basic {basic auth header}" {endpoint to call}
+@user.proxyAuthSettings.username
 ```
 
 __Proxy Username and Password__:
@@ -65,16 +66,19 @@ replace it.
 
 This first method uses the __Basic Auth Header__:
 
-```bash copy
+```bash copy /@proxyAuthSetting.basicAuthHeader/ /@logs_id/
 curl -XGET -H "osd-xsrf:true" -H "Content-Type: application/json" -H ^
-"Authorization: Basic {your-basic-auth-header}" https://kibana.logit.io/s/{your-logstack-id}/api/status
+"Authorization: Basic ^
+@proxyAuthSetting.basicAuthHeader" ^
+https://kibana.logit.io/s/@logs_id/api/status
 ```
 
 This second method uses the __proxy username and password__:
 
-```bash copy
+```bash copy /@proxyAuthSetting.username/ /@proxyAuthSetting.password/ /@logs_id/
 curl -XGET -H "osd-xsrf:true" -H "Content-Type: application/json" ^
--u "{your-proxy-username}:{your-proxy-password}" https://kibana.logit.io/s/{your-logstack-id}/api/status
+-u "@proxyAuthSetting.username:@proxyAuthSetting.password" ^
+https://kibana.logit.io/s/@logs_id/api/status
 ```
 
 Both curl requests call the same API Endpoint. This request returns detailed information about your Opensearch Dashboards instance’s health including the 
