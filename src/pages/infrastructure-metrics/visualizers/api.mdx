@@ -74,7 +74,7 @@ This second method uses the __proxy username and password__:
 ```bash copy /@proxyAuthSetting.username/ /@proxyAuthSetting.password/ /@metrics_id/
 curl -XGET -H "Content-Type: application/json" ^
 -u "@proxyAuthSetting.username:@proxyAuthSetting.password" ^
-https://grafana.logit.io/s/{your-metricstack-id}/api/health
+https://grafana.logit.io/s/@metrics_id/api/health
 ```
 
 Both curl requests call the same API Endpoint. This request returns detailed information about your Grafana instance’s health.
