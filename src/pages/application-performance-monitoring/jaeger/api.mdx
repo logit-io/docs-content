@@ -1,19 +1,19 @@
 ---
-title: Access Grafana features via REST API
-metaTitle: Learn How to Access Grafana features via REST API
-description: Read Logit.io’s help article to learn how to access Grafana features via REST API.
+title: Access Jaeger features via REST API
+metaTitle: Learn How to Access Jaeger features via REST API
+description: Read Logit.io’s help article to learn how to access Jaeger features via REST API.
 ---
 
-# Accessing Grafana features via REST API
+# Accessing Jaeger features via REST API
 
-You can use Basic Authentication to connect to the Logit.io Proxy and access Grafana without having to go 
+You can use Basic Authentication to connect to the Logit.io Proxy and access Jaeger without having to go 
 through the Logit.io Dashboard. This can improve your user experience and allow proper integration between your company, your applications 
 and the Logit.io service.
 
-You can, if you choose to, connect your application directly to Logit.io to do a range of things such as saving dashboards, creating users, 
-and updating data sources etc. or access Grafana straight from your computer. 
+You can, if you choose to, connect your application directly to Logit.io to do a range of things such as saving traces, retrieve traces saved 
+in the storage and service performance monitoring etc. or access Jaeger straight from your computer. 
 
-This article explains how to call REST API Endpoints to access Grafana using our Logit.io proxy and connect to it using Basic 
+This article explains how to call REST API Endpoints to access Jaeger using our Logit.io proxy and connect to it using Basic 
 Authentication.
 
 <Callout type="info">
@@ -22,10 +22,10 @@ Authentication.
     header as we have done it for you. 
 </Callout>
 
-Each request to a REST API Endpoint must include all of the necessary information for Grafana to fulfill the request. If all the necessary 
+Each request to a REST API Endpoint must include all of the necessary information for Jaeger to fulfill the request. If all the necessary 
 information is provided the API requests return JSON output.
 
-Use the following operations to interact with Grafana via the Logit.io Proxy.
+Use the following operations to interact with Jaeger via the Logit.io Proxy.
 
 * __GET__ - Fetches the information.
 * __POST__ - Adds new information.
@@ -34,7 +34,8 @@ Use the following operations to interact with Grafana via the Logit.io Proxy.
 * __DELETE__ - Removes the information.
 
 All the details that you require in order to connect to the Logit.io proxy are found on the Profile Settings page of the Logit.io Dashboard. 
-The Profile Settings page has a section called `Proxy Settings` where you will find everything that you need.
+The Profile Settings page has a section called `Proxy Settings` where you will find everything that you need. 
+Click [here](https://dashboard.logit.io/profile) to view you profile page.
 
 There are two ways that you can call the REST API using the Logit.io proxy. The call to our proxy needs to be in either of the following formats:
 
@@ -56,28 +57,28 @@ Below are two curl request examples that show how to connect to the Logit.io Pro
 If you need to access another of your stacks then you can simply find the Stack that you require, retrieve the stack Id from that stack and then 
 replace it. 
 
-<ProxyAuthPlaceholderWarning stackType="metrics" />
+<ProxyAuthPlaceholderWarning stackType="apm" />
 
-### Example of a curl request to access your Logit.io Grafana instance
+### Example of a curl request to access your Logit.io Jaeger instance
 
 This first method uses the __Basic Auth Header__:
 
-```bash copy /@proxyAuthSetting.basicAuthHeader/ /@metrics_id/
+```bash copy /@proxyAuthSetting.basicAuthHeader/ /@apm_id/
 curl -XGET -H "Content-Type: application/json" ^
 -H "Authorization: ^
 Basic @proxyAuthSetting.basicAuthHeader" ^
-https://grafana.logit.io/s/@metrics_id/api/health
+https://jaeger.logit.io/s/@apm_id/api/services
 ```
 
 This second method uses the __proxy username and password__:
 
-```bash copy /@proxyAuthSetting.username/ /@proxyAuthSetting.password/ /@metrics_id/
+```bash copy /@proxyAuthSetting.username/ /@proxyAuthSetting.password/ /@apm_id/
 curl -XGET -H "Content-Type: application/json" ^
 -u "@proxyAuthSetting.username:@proxyAuthSetting.password" ^
-https://grafana.logit.io/s/@metrics_id/api/health
+https://jaeger.logit.io/s/@apm_id/api/services
 ```
 
-Both curl requests call the same API Endpoint. This request returns detailed information about your Grafana instance’s health.
+Both curl requests call the same API Endpoint. This request returns a list of services that have reported traces to Jaeger
 
-There are many other Grafana features that can be accessed via REST API through the Logit.io Proxy. These features are explained in the 
-Grafana docs [here](https://grafana.com/docs/grafana/latest/developers/http_api/)
+There are many other Jaeger features that can be accessed via REST API through the Logit.io Proxy. These features are explained in the 
+Jaeger docs [here](https://www.jaegertracing.io/docs/1.23/apis)
