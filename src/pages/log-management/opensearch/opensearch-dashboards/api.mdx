@@ -52,8 +52,8 @@ replace it.
     This first method uses the __Basic Auth Header__:
 
     ```bash copy /@proxyAuthSetting.basicAuthHeader/ /@logs_id/
-    curl -XGET -H "osd-xsrf:true" -H "Content-Type: application/json" -H ^
-    "Authorization: Basic ^
+    curl -XGET -H "osd-xsrf:true" -H "Content-Type: application/json" ^
+	-H "Authorization: Basic ^
     @proxyAuthSetting.basicAuthHeader" ^
     https://kibana.logit.io/s/@logs_id/api/status
     ```
