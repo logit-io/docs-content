@@ -56,10 +56,7 @@ Below are two curl request examples that show how to connect to the Logit.io Pro
 If you need to access another of your stacks then you can simply find the Stack that you require, retrieve the stack Id from that stack and then 
 replace it. 
 
-<Callout type="warning">
-    You will need to update any placeholder variables with your
-    Stack and Proxy Auth details.
-</Callout>
+<ProxyAuthPlaceholderWarning stackType="logs" />
 
 ### Example of a curl request to access your Logit.io Opensearch Dashboards instance
 
@@ -85,3 +82,5 @@ resource usage, the server status, installed plugins, plugin statuses and metric
 
 There are many other Opensearch Dashboards features that can be accessed via REST API through the Logit.io Proxy. These features are explained in the 
 Elastic docs here [here](https://opensearch.org/docs/latest/api-reference/)
+
+ 
