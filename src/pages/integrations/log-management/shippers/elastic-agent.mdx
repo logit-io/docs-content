@@ -39,34 +39,34 @@ metrics, and diverse data types to one or more destinations, including Logstash.
   ###################### Logit.io Elastic Agent Configuration ########################
   # ============================== Elastic Agent inputs ==============================
   inputs:
-      - type: system/metrics
-      id: unique-system-metrics-input
-      data_stream.namespace: default
-      use_output: default
-      streams:
-          - metricsets:
-          - cpu
-          data_stream.dataset: system.cpu
-          - metricsets:
-          - memory
-          data_stream.dataset: system.memory
-          - metricsets:
-          - network
-          data_stream.dataset: system.network
-          - metricsets:
-          - filesystem
-          data_stream.dataset: system.filesystem
+    - type: system/metrics
+    id: unique-system-metrics-input
+    data_stream.namespace: default
+    use_output: default
+    streams:
+        - metricsets:
+        - cpu
+        data_stream.dataset: system.cpu
+        - metricsets:
+        - memory
+        data_stream.dataset: system.memory
+        - metricsets:
+        - network
+        data_stream.dataset: system.network
+        - metricsets:
+        - filesystem
+        data_stream.dataset: system.filesystem
 
-      #   Collecting log files
-      #   - type: filestream
-      #     id: your-input-id
-      #     streams:
-      #       # Must be unique
-      #       - id: your-filestream-stream-id
-      #         data_stream:
-      #           dataset: generic
-      #         paths:
-      #           - /var/log/*.log
+    #   Collecting log files
+    #   - type: filestream
+    #     id: your-input-id
+    #     streams:
+    #       # Must be unique
+    #       - id: your-filestream-stream-id
+    #         data_stream:
+    #           dataset: generic
+    #         paths:
+    #           - /var/log/*.log
 
   # ================================== Outputs ===================================
   # ------------------------------ Logstash Output -------------------------------
@@ -75,7 +75,8 @@ metrics, and diverse data types to one or more destinations, including Logstash.
       type: logstash
       hosts: ["@logstash.host:@logstash.sslPort"]
       loadbalance: true
-      ssl.enabled: true
+      ssl:
+        enabled: true
 
   # ================================== Logging Settings ===================================
   # Send all logging output to stderr, default is false
@@ -109,16 +110,13 @@ metrics, and diverse data types to one or more destinations, including Logstash.
     Read more about [Elastic Agent inputs](https://www.elastic.co/guide/en/fleet/current/elastic-agent-inputs-list.html) for the list of what's available
   </Callout>
 
-  ### Validate Configuration
-  <ValidateBeat beatname="elastic-agent" />
-
   ### Start Elastic Agent
 
   [Start or Restart elastic-agent](https://www.elastic.co/guide/en/fleet/7.17/install-standalone-elastic-agent.html#install-standalone-elastic-agent) to apply the configuration changes.
 
   ### Launch Logit.io to view your logs
 
-  <LaunchStack utmMedium="logs" utmCampaign="elasticagent" source="elasticagent" />
+  <LaunchVisualizer type="logs" />
 
   ### How to diagnose no data in Stack
 
