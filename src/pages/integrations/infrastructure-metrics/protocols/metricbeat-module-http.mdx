@@ -5,7 +5,7 @@ subTitle: Collect and ship HTTP endpoint server metrics to Logstash and Elastics
 logo: https
 color: "#30a743"
 description: How to send HTTP endpoint server metrics to your Hosted ELK Logstash instance. Configure Metricbeat to send HTTP endpoint server metrics to Elasticsearch.
-stackTypes: metrics
+stackTypes: logs
 sslPortType: beats-ssl
 tags: Metrics, Metricbeat, Stats, HTTP, API, Module, Http
 ---
@@ -17,10 +17,12 @@ endpoint server metrics and statistics to Logstash or Elasticsearch.
 
 <Steps>
   ### Install Integration
+
   <InstallIntegration/>
+
   ### Install Metricbeat
 
-  <InstallBeat beatname="metricbeat" />
+  <InstallMetricbeat />
 
   ### Copy Configuration File
 
@@ -49,25 +51,12 @@ endpoint server metrics and statistics to Logstash or Elasticsearch.
       #response.enabled: false
       #json.is_array: false
       #dedot.enabled: false
-
-    - module: http
-      #metricsets:
-      #  - server
-      host: "localhost"
-      port: "8080"
-      enabled: false
-      #paths:
-      #  - path: "/foo"
-      #    namespace: "foo"
-      #    fields: # added to the the response in root. overwrites existing fields
-      #      key: "value"
     ```
   </ConfigureMetricbeatModule>
 
   ### Start Metricbeat
 
-  [Start or restart Metricbeat](https://www.elastic.co/guide/en/beats/metricbeat/master/metricbeat-starting.html) 
-  to apply the configuration changes.
+  <StartBeat beatname="metricbeat" />
 
   ### Check Logit.io for your logs
 
@@ -78,23 +67,3 @@ endpoint server metrics and statistics to Logstash or Elasticsearch.
   <DiagnoseNoData />
 
 </Steps>
-
-### HTTP Metricbeat Module Overview
-
-The Metricbeat Module for [HTTP](/integrations/log-management/protocols/http). HTTP is a meticulously designed solution for monitoring 
-services by collecting metrics via HTTP endpoints. Those already acquainted with [Metricbeat's](/integrations/log-management/shippers/metricbeat) 
-broad capabilities in data collection will find its application to HTTP monitoring both intuitive and exceptionally versatile.
-
-HTTP, the foundation of data communication for the World Wide Web, facilitates the transfer of data across web servers and clients. 
-The Metricbeat Module for HTTP leverages this protocol to fetch metrics from specified endpoints, enabling the monitoring of a wide 
-array of services and applications through their HTTP interfaces. This module supports both GET and POST requests, allowing for the 
-retrieval of metrics in various formats such as JSON, XML, or plain text.
-
-This module is invaluable for developers, system administrators, and DevOps professionals who require a flexible solution to monitor 
-the health, performance, and availability of services exposed via HTTP. Our platform extends robust support for the Metricbeat Module 
-for HTTP, offering centralized management of metrics for simplified analysis and active monitoring. This support effectively mitigates 
-the challenges associated with manually collecting and analyzing metrics from various HTTP endpoints.
-
-Should you require assistance with configuring the Metricbeat Module for HTTP or have questions about monitoring your services via HTTP, 
-the Logit.io team is prepared to assist. We encourage you to visit our Help Centre or contact our support team via 
-<IntercomButton text="via live chat" /> & we'll be happy to assist.
