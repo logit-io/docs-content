@@ -45,7 +45,7 @@ Send your OSSEC logs to logit.io via logstash using the instructions below and b
 
   For version `7.16+` and above, use the configuration below:
 
-  ```
+  ```yml copy
   ###################### Logit.io Filebeat Configuration ########################
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
@@ -58,7 +58,7 @@ Send your OSSEC logs to logit.io via logstash using the instructions below and b
     #- C:\Windows\System32\winevt\Logs\*
 
     fields:
-    type: ossec
+      type: ossec
   # ============================== Filebeat modules ==============================
   filebeat.config.modules:
     path: ${path.config}/modules.d/*.yml
@@ -83,7 +83,7 @@ Send your OSSEC logs to logit.io via logstash using the instructions below and b
 
   For versions `7.15.x` and below
 
-  ```
+  ```yml copy
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
   - type: log
@@ -91,14 +91,14 @@ Send your OSSEC logs to logit.io via logstash using the instructions below and b
           
   If you're running `Filebeat 7` add this code block to the end. Otherwise, you can leave it out.
 
-  ```
+  ```yml copy
   # ... For Filebeat 7 only ...
   filebeat.registry.path: /var/lib/filebeat
   ```
 
   If you're running `Filebeat 6` add this code block to the end. Otherwise, you can leave it out.
 
-  ```
+  ```yml copy
   # ... For Filebeat 6 only ...
   registry_file: /var/lib/filebeat/registry
   ```

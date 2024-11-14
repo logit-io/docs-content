@@ -40,21 +40,21 @@ Use Filebeat to ship access and error logs from Apache to your Logit.io Stack.
 
   ```yml copy
   - module: apache
-      # Access logs
-      access:
+    # Access logs
+    access:
       enabled: true
 
-      # Set custom paths for the log files. If left empty,
-      # Filebeat will choose the paths depending on your OS.
-      # var.paths: ["/custom/path/to/logs"]
+    # Set custom paths for the log files. If left empty,
+    # Filebeat will choose the paths depending on your OS.
+    # var.paths: ["/custom/path/to/logs"]
 
-      # Error logs
-      error:
+    # Error logs
+    error:
       enabled: true
 
-      # Set custom paths for the log files. If left empty,
-      # Filebeat will choose the paths depending on your OS.
-      # var.paths: ["/custom/path/to/logs"]
+    # Set custom paths for the log files. If left empty,
+    # Filebeat will choose the paths depending on your OS.
+    # var.paths: ["/custom/path/to/logs"]
   ```
   ### Check Logit.io for your logs
   <LaunchStack utmMedium="logs" utmCampaign="apache" source="apache" />
