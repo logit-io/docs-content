@@ -35,13 +35,13 @@ Send Traefik access logs to your Hosted ELK Logstash instance.
 
         Copy the snippet below and replace the contents of the traefik.yml module file:
 
-        ```cmd copy
+        ```yml copy
         # Module: traefik
         # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-traefik.html
 
         - module: traefik
-        # Access logs
-        access:
+          # Access logs
+          access:
             enabled: true
 
             # Set custom paths for the log files. If left empty,
@@ -62,7 +62,7 @@ Send Traefik access logs to your Hosted ELK Logstash instance.
 
           Copy the snippet below and replace the contents of the traefik.yml module file:
 
-          ```cmd copy
+          ```yml copy
           # Module: traefik
           # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-traefik.html
 
@@ -89,7 +89,7 @@ Send Traefik access logs to your Hosted ELK Logstash instance.
 
           Copy the snippet below and replace the contents of the traefik.yml module file:
 
-          ```cmd copy
+          ```yml copy
           # Module: traefik
           # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-traefik.html
 
