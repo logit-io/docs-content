@@ -37,16 +37,16 @@ Configure Filebeat to ship logs from Debian Systems to Logstash and Elasticsearc
       # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12.2/filebeat-module-system.html
 
       - module: system
-      # Syslog
-      syslog:
+        # Syslog
+        syslog:
           enabled: true
 
           # Set custom paths for the log files. If left empty,
           # Filebeat will choose the paths depending on your OS.
           #var.paths:
 
-      # Authorization logs
-      auth:
+        # Authorization logs
+        auth:
           enabled: true
 
           # Set custom paths for the log files. If left empty,
@@ -69,7 +69,7 @@ Configure Filebeat to ship logs from Debian Systems to Logstash and Elasticsearc
       </Callout>
 
       Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
-    
+  
       ```yml copy
       ###################### Logit.io Filebeat Configuration ########################
       # ============================== Filebeat inputs ==============================
