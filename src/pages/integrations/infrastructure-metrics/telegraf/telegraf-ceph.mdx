@@ -23,7 +23,7 @@ Configure Telegraf to ship Ceph metrics to your Logit.io stacks via Logstash.
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   # Collects performance metrics from the MON, OSD, MDS and RGW nodes
   # in a Ceph storage cluster.
   [[inputs.ceph]]

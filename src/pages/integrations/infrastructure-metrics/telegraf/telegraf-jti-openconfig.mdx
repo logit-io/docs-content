@@ -23,7 +23,7 @@ Configure Telegraf to ship JTI OpenConfig metrics to your Logit.io stacks via Lo
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   # Subscribe and receive OpenConfig Telemetry data using JTI
   [[inputs.jti_openconfig_telemetry]]
     ## List of device addresses to collect telemetry from

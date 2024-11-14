@@ -24,7 +24,7 @@ Configure Telegraf to ship etcd metrics to your Logit.io stacks via Logstash.
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   # Read metrics from one or many prometheus clients
   [[inputs.prometheus]]
     ## An array of urls to scrape metrics from.

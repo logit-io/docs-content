@@ -22,7 +22,7 @@ Configure Telegraf to ship Unbound metrics to your Logit.io stacks via Logstash.
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   # A plugin to collect stats from the Unbound DNS resolver
   [[inputs.unbound]]
     ## Address of server to connect to, read from unbound conf default, optionally ':port'

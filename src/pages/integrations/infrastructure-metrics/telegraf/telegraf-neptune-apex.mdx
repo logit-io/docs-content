@@ -22,7 +22,7 @@ Configure Telegraf to ship Neptune Apex metrics to your Logit.io stacks via Logs
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   # Neptune Apex data collector
   [[inputs.neptune_apex]]
     ## The Neptune Apex plugin reads the publicly available status.xml data from a local Apex.

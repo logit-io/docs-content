@@ -23,7 +23,7 @@ Configure Telegraf to ship Aerospike metrics to your Logit.io stacks via Logstas
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   # Read stats from aerospike server(s)
   [[inputs.aerospike]]
     ## Aerospike servers to connect to (with port)
