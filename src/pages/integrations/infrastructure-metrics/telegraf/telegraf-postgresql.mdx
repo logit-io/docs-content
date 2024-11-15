@@ -23,7 +23,7 @@ Configure Telegraf to ship PostgreSQL metrics to your Logit.io stacks via Logsta
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   # Read metrics from one or many postgresql servers
   [[inputs.postgresql]]
     ## Specify address via a url matching:

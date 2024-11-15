@@ -41,36 +41,36 @@ Send your OpenVAS reports to logit.io via logstash using the instructions below 
 
   <Callout type="warning">For use with version 7.x Filebeats.</Callout>
 
-  ```cmd copy
+  ```yml copy
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
 
   - type: log
-      paths:
-      - <INSERT_PATH_TO_OPENVAS_REPORT>*.csv
-      
-      fields:
+    paths:
+    - <INSERT_PATH_TO_OPENVAS_REPORT>*.csv
+    
+    fields:
       type: openvas
-      
-      fields_under_root: true
-      encoding: utf-8
-      ignore_older: 3h
-      
-      multiline:
-      pattern: '^(?:[0-9]{1,3}\.){3}[0-9]{1,3}'
-      negate: true
-      match: after
+    
+    fields_under_root: true
+    encoding: utf-8
+    ignore_older: 3h
+    
+    multiline:
+    pattern: '^(?:[0-9]{1,3}\.){3}[0-9]{1,3}'
+    negate: true
+    match: after
 
-      filebeat.registry.path: /var/lib/filebeat
+    filebeat.registry.path: /var/lib/filebeat
 
   # ================================== Outputs ===================================
   ```
   <ConfigureOutput />
 
-  ```cmd copy
+  ```yml copy
   # ================================= Processors =================================
-          processors:
-            - add_host_metadata:
+  processors:
+    - add_host_metadata:
   ```
 
   ### Start filebeat

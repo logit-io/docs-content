@@ -24,7 +24,7 @@ Configure Telegraf to ship Apache Aurora Server metrics to your Logit.io stacks 
 
 The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-```yaml copy
+```toml copy
 # Gather ActiveMQ metrics
 [[inputs.activemq]]
   # Read Apache status information (mod_status)

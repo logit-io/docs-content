@@ -23,7 +23,7 @@ Configure Telegraf to ship RabbitMQ metrics to your Logit.io stacks via Logstash
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   # Reads metrics from RabbitMQ servers via the Management Plugin
   [[inputs.rabbitmq]]
     ## Management Plugin url. (default: http://localhost:15672)

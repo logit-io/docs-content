@@ -23,7 +23,7 @@ Configure Telegraf to ship PHP-FPM metrics to your Logit.io stacks via Logstash.
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   # Read metrics of phpfpm, via HTTP status page or socket
   [[inputs.phpfpm]]
     ## An array of addresses to gather stats about. Specify an ip or hostname

@@ -37,38 +37,38 @@ instructions below and begin searching your data.
 
   For version `7.16+` and above, use the configuration below:
 
-  ```cmd copy
+  ```yml copy
   ###################### Logit.io Filebeat Configuration ########################
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
   - type: filestream
-      enabled: true
-      id: my_unique_id
-      paths:
-      # Update the path to your logs if required:
-      - /var/log/vault_audit.log
-      fields:
+    enabled: true
+    id: my_unique_id
+    paths:
+    # Update the path to your logs if required:
+    - /var/log/vault_audit.log
+    fields:
       type: hashicorp
   # ============================== Filebeat modules ==============================
   filebeat.config.modules:
-      path: ${path.config}/modules.d/*.yml
-      reload.enabled: false
-      #reload.period: 10s
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+    #reload.period: 10s
 
   # ================================== Outputs ===================================
   # ------------------------------ Logstash Output -------------------------------
   output.logstash:
-      hosts: ["@logstash.host:@logstash.sslPort"]
-      loadbalance: true
-      ssl.enabled: true
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
 
   # ================================= Processors =================================
   processors:
-      - add_host_metadata:
-          when.not.contains.tags: forwarded
-      - add_cloud_metadata: ~
-      - add_docker_metadata: ~
-      - add_kubernetes_metadata: ~
+    - add_host_metadata:
+        when.not.contains.tags: forwarded
+    - add_cloud_metadata: ~
+    - add_docker_metadata: ~
+    - add_kubernetes_metadata: ~
   ```
 
   For versions `7.15.x` and below

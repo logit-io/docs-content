@@ -23,7 +23,7 @@ Configure Telegraf to ship Zookeeper metrics to your Logit.io stacks via Logstas
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   # Reads 'mntr' stats from one or many zookeeper servers
   [[inputs.zookeeper]]
     ## An array of address to gather stats about. Specify an ip or hostname

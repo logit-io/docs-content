@@ -96,16 +96,16 @@ Configure Filebeat to ship logs from HAProxy to Logstash and Elasticsearch.
       # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-haproxy.html
 
       - module: haproxy
-      # All logs
-      log:
+        # All logs
+        log:
           enabled: true
 
           # Set which input to use between syslog (default) or file.
-          #var.input:
+          # var.input:
 
           # Set custom paths for the log files. If left empty,
           # Filebeat will choose the paths depending on your OS.
-          #var.paths:
+          # var.paths:
       ```
       Additional module configuration can be done using the per module config files located in the modules.d folder, for haproxy we want to configure the haproxy module to read from file, uncomment and edit the `var.input` line to say
 
@@ -131,16 +131,16 @@ Configure Filebeat to ship logs from HAProxy to Logstash and Elasticsearch.
       # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-haproxy.html
 
       - module: haproxy
-      # All logs
-      log:
+        # All logs
+        log:
           enabled: true
 
           # Set which input to use between syslog (default) or file.
-          #var.input:
+          # var.input:
 
           # Set custom paths for the log files. If left empty,
           # Filebeat will choose the paths depending on your OS.
-          #var.paths:
+          # var.paths:
       ```
       Additional module configuration can be done using the per module config files located in the modules.d folder, for haproxy we want to configure the haproxy module to read from file, uncomment and edit the `var.input` line to say
 
@@ -161,21 +161,21 @@ Configure Filebeat to ship logs from HAProxy to Logstash and Elasticsearch.
       
       Copy the snippet below and replace the contents of the haproxy.yml module file:
 
-      ```cmd copy
+      ```yml copy
       # Module: haproxy
       # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-haproxy.html
 
       - module: haproxy
-      # All logs
-      log:
+        # All logs
+        log:
           enabled: true
 
           # Set which input to use between syslog (default) or file.
-          #var.input:
+          # var.input:
 
           # Set custom paths for the log files. If left empty,
           # Filebeat will choose the paths depending on your OS.
-          #var.paths:
+          # var.paths:
       ```
       Additional module configuration can be done using the per module config files located in the modules.d folder, for haproxy we want to configure the haproxy module to read from file, uncomment and edit the `var.input` line to say
 

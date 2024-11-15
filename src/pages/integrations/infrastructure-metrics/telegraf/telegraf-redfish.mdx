@@ -22,7 +22,7 @@ Configure Telegraf to ship Redfish metrics to your Logit.io stacks via Logstash.
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   # Read CPU, Fans, Powersupply and Voltage metrics of hardware server through redfish APIs
   [[inputs.redfish]]
     ## Redfish API Base URL.

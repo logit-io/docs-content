@@ -41,34 +41,34 @@ Learn how to send RabbitMQ application logs to your Logstash instance - Ship ove
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
       - type: filestream
-          enabled: true
-          paths:
-          - /var/log/rabbitmq/*.log
-          fields:
-          type: rabbitmq
-          multiline.pattern: ^\=
-          multiline.match: before
+        enabled: true
+        paths:
+        - /var/log/rabbitmq/*.log
+        fields:
+            type: rabbitmq
+            multiline.pattern: ^\=
+            multiline.match: before
       
       # ============================== Filebeat modules ==============================
       filebeat.config.modules:
-          path: ${path.config}/modules.d/*.yml
-          reload.enabled: false
-          #reload.period: 10s
+        path: ${path.config}/modules.d/*.yml
+        reload.enabled: false
+        #reload.period: 10s
 
       # ================================== Outputs ===================================
       # ------------------------------ Logstash Output -------------------------------
       output.logstash:
-          hosts: ["@logstash.host:@logstash.sslPort"]
-          loadbalance: true
-          ssl.enabled: true
+        hosts: ["@logstash.host:@logstash.sslPort"]
+        loadbalance: true
+        ssl.enabled: true
 
       # ================================= Processors =================================
       processors:
-          - add_host_metadata:
-              when.not.contains.tags: forwarded
-          - add_cloud_metadata: ~
-          - add_docker_metadata: ~
-          - add_kubernetes_metadata: ~
+        - add_host_metadata:
+            when.not.contains.tags: forwarded
+        - add_cloud_metadata: ~
+        - add_docker_metadata: ~
+        - add_kubernetes_metadata: ~
       ```
     </Tab>
     <Tab>
@@ -88,34 +88,34 @@ Learn how to send RabbitMQ application logs to your Logstash instance - Ship ove
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
       - type: filestream
-          enabled: true
-          paths:
-          - /var/log/rabbitmq/*.log
-          fields:
-          type: rabbitmq
-          multiline.pattern: ^\=
-          multiline.match: before
+        enabled: true
+        paths:
+        - /var/log/rabbitmq/*.log
+        fields:
+            type: rabbitmq
+            multiline.pattern: ^\=
+            multiline.match: before
       
       # ============================== Filebeat modules ==============================
       filebeat.config.modules:
-          path: ${path.config}/modules.d/*.yml
-          reload.enabled: false
-          #reload.period: 10s
+        path: ${path.config}/modules.d/*.yml
+        reload.enabled: false
+        #reload.period: 10s
 
       # ================================== Outputs ===================================
       # ------------------------------ Logstash Output -------------------------------
       output.logstash:
-          hosts: ["@logstash.host:@logstash.sslPort"]
-          loadbalance: true
-          ssl.enabled: true
+        hosts: ["@logstash.host:@logstash.sslPort"]
+        loadbalance: true
+        ssl.enabled: true
 
       # ================================= Processors =================================
       processors:
-          - add_host_metadata:
-              when.not.contains.tags: forwarded
-          - add_cloud_metadata: ~
-          - add_docker_metadata: ~
-          - add_kubernetes_metadata: ~
+        - add_host_metadata:
+            when.not.contains.tags: forwarded
+        - add_cloud_metadata: ~
+        - add_docker_metadata: ~
+        - add_kubernetes_metadata: ~
       ```
     </Tab>
     <Tab>
@@ -135,34 +135,34 @@ Learn how to send RabbitMQ application logs to your Logstash instance - Ship ove
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
       - type: filestream
-          enabled: true
-          paths:
-          - /var/log/rabbitmq/*.log
-          fields:
-          type: rabbitmq
-          multiline.pattern: ^\=
-          multiline.match: before
+        enabled: true
+        paths:
+        - /var/log/rabbitmq/*.log
+        fields:
+            type: rabbitmq
+            multiline.pattern: ^\=
+            multiline.match: before
 
       # ============================== Filebeat modules ==============================
       filebeat.config.modules:
-          path: ${path.config}/modules.d/*.yml
-          reload.enabled: false
-          #reload.period: 10s
+        path: ${path.config}/modules.d/*.yml
+        reload.enabled: false
+        #reload.period: 10s
 
       # ================================== Outputs ===================================
       # ------------------------------ Logstash Output -------------------------------
       output.logstash:
-          hosts: ["@logstash.host:@logstash.sslPort"]
-          loadbalance: true
-          ssl.enabled: true
+        hosts: ["@logstash.host:@logstash.sslPort"]
+        loadbalance: true
+        ssl.enabled: true
 
       # ================================= Processors =================================
       processors:
-          - add_host_metadata:
-              when.not.contains.tags: forwarded
-          - add_cloud_metadata: ~
-          - add_docker_metadata: ~
-          - add_kubernetes_metadata: ~
+        - add_host_metadata:
+            when.not.contains.tags: forwarded
+        - add_cloud_metadata: ~
+        - add_docker_metadata: ~
+        - add_kubernetes_metadata: ~
       ```
     </Tab>
     <Tab>
@@ -182,34 +182,34 @@ Learn how to send RabbitMQ application logs to your Logstash instance - Ship ove
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
       - type: filestream
-          enabled: true
-          paths:
-          - /var/log/rabbitmq/*.log
-          fields:
-          type: rabbitmq
-          multiline.pattern: ^\=
-          multiline.match: before
+        enabled: true
+        paths:
+        - /var/log/rabbitmq/*.log
+        fields:
+            type: rabbitmq
+            multiline.pattern: ^\=
+            multiline.match: before
 
       # ============================== Filebeat modules ==============================
       filebeat.config.modules:
-          path: ${path.config}/modules.d/*.yml
-          reload.enabled: false
-          #reload.period: 10s
+        path: ${path.config}/modules.d/*.yml
+        reload.enabled: false
+        #reload.period: 10s
 
       # ================================== Outputs ===================================
       # ------------------------------ Logstash Output -------------------------------
       output.logstash:
-          hosts: ["@logstash.host:@logstash.sslPort"]
-          loadbalance: true
-          ssl.enabled: true
+        hosts: ["@logstash.host:@logstash.sslPort"]
+        loadbalance: true
+        ssl.enabled: true
 
       # ================================= Processors =================================
       processors:
-          - add_host_metadata:
-              when.not.contains.tags: forwarded
-          - add_cloud_metadata: ~
-          - add_docker_metadata: ~
-          - add_kubernetes_metadata: ~
+        - add_host_metadata:
+            when.not.contains.tags: forwarded
+        - add_cloud_metadata: ~
+        - add_docker_metadata: ~
+        - add_kubernetes_metadata: ~
       ```
     </Tab>
     <Tab>
@@ -229,34 +229,34 @@ Learn how to send RabbitMQ application logs to your Logstash instance - Ship ove
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
       - type: filestream
-          enabled: true
-          paths:
-          - /var/log/rabbitmq/*.log
-          fields:
-          type: rabbitmq
-          multiline.pattern: ^\=
-          multiline.match: before
+        enabled: true
+        paths:
+        - /var/log/rabbitmq/*.log
+        fields:
+            type: rabbitmq
+            multiline.pattern: ^\=
+            multiline.match: before
 
       # ============================== Filebeat modules ==============================
       filebeat.config.modules:
-          path: ${path.config}/modules.d/*.yml
-          reload.enabled: false
-          #reload.period: 10s
+        path: ${path.config}/modules.d/*.yml
+        reload.enabled: false
+        #reload.period: 10s
 
       # ================================== Outputs ===================================
       # ------------------------------ Logstash Output -------------------------------
       output.logstash:
-          hosts: ["@logstash.host:@logstash.sslPort"]
-          loadbalance: true
-          ssl.enabled: true
+        hosts: ["@logstash.host:@logstash.sslPort"]
+        loadbalance: true
+        ssl.enabled: true
 
       # ================================= Processors =================================
       processors:
-          - add_host_metadata:
-              when.not.contains.tags: forwarded
-          - add_cloud_metadata: ~
-          - add_docker_metadata: ~
-          - add_kubernetes_metadata: ~
+        - add_host_metadata:
+            when.not.contains.tags: forwarded
+        - add_cloud_metadata: ~
+        - add_docker_metadata: ~
+        - add_kubernetes_metadata: ~
       ```
     </Tab>
   </Tabs>
@@ -269,14 +269,13 @@ Learn how to send RabbitMQ application logs to your Logstash instance - Ship ove
   filebeat.inputs:
 
   - type: log
-      enabled: true
-      paths:
-      - /var/log/rabbitmq/*.log
-      fields:
-      type: rabbitmq
-      multiline.pattern: ^\=
-      multiline.match: before
-      
+    enabled: true
+    paths:
+    - /var/log/rabbitmq/*.log
+    fields:
+        type: rabbitmq
+        multiline.pattern: ^\=
+        multiline.match: before
   ```
 
   ### Validate configuration

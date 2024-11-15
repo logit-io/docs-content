@@ -24,7 +24,7 @@ Configure Telegraf to ship Elasticsearch metrics to your Logit.io stacks via Log
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   [[inputs.elasticsearch]]
     ## specify a list of one or more Elasticsearch servers
     ## you can add username and password to your url to use basic authentication:

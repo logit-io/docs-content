@@ -24,7 +24,7 @@ Configure Telegraf to ship Apache Mesos metrics to your Logit.io stacks via Logs
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   -# Read metrics from one or many vCenters
   [[inputs.vsphere]]
     ## List of vCenter URLs to be monitored. These three lines must be uncommented

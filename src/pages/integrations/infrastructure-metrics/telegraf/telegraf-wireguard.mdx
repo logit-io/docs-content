@@ -23,7 +23,7 @@ Configure Telegraf to ship Wireguard metrics to your Logit.io stacks via Logstas
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   # Collect Wireguard server interface and peer statistics
   [[inputs.wireguard]]
     ## Optional list of Wireguard device/interface names to query.

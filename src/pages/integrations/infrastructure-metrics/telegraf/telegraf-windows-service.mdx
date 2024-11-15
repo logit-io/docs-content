@@ -23,7 +23,7 @@ Configure Telegraf to ship Windows Services metrics to your Logit.io stacks via 
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   # Input plugin to report Windows services info.
   # This plugin ONLY supports Windows
   [[inputs.win_services]]

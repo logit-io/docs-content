@@ -38,18 +38,17 @@ tags: ESET, Firewall, SIEM, Cybersecurity, Security, Network Security, Eset
   ```yml copy
   # ============================== Filebeat inputs ===============================
   filebeat.inputs:
-
   - type: udp
-      max_message_size: 10MiB
-      host: "0.0.0.0:514"
-      enabled: true
-
-      fields:
-          type: eset
-      fields_under_root: true
-      encoding: utf-8
-      ignore_older: 12h
-
+    max_message_size: 10MiB
+    host: "0.0.0.0:514"
+    enabled: true
+  
+    fields:
+        type: eset
+    fields_under_root: true
+    encoding: utf-8
+    ignore_older: 12h
+  
   # ================================== Outputs ===================================
   output.logstash:
       hosts: ["@logstash.host:@logstash.sslPort"]

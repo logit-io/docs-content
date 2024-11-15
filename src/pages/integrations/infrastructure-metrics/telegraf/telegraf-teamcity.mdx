@@ -23,7 +23,7 @@ Configure Telegraf to ship TeamCity Server metrics to your Logit.io stacks via L
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   [[inputs.prometheus]]
 
   urls = ["https://<teamcity_server_url>/app/metrics"]

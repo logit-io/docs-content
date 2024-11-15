@@ -23,7 +23,7 @@ Configure Telegraf to ship Fail2ban metrics to your Logit.io stacks via Logstash
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   # Read metrics from fail2ban.
   [[inputs.fail2ban]]
     ## Use sudo to run fail2ban-client

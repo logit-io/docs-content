@@ -39,16 +39,16 @@ Configure Filebeat to ship logs from Centos Systems to Logstash and Elasticsearc
   # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12.2/filebeat-module-system.html
 
   - module: system
-  # Syslog
-  syslog:
+    # Syslog
+    syslog:
       enabled: true
 
       # Set custom paths for the log files. If left empty,
       # Filebeat will choose the paths depending on your OS.
       #var.paths:
 
-  # Authorization logs
-  auth:
+    # Authorization logs
+    auth:
       enabled: true
 
       # Set custom paths for the log files. If left empty,
@@ -92,9 +92,9 @@ Configure Filebeat to ship logs from Centos Systems to Logstash and Elasticsearc
   # ================================== Outputs ===================================
   # ------------------------------ Logstash Output -------------------------------
   output.logstash:
-      hosts: ["@logstash.host:@logstash.sslPort"]
-      loadbalance: true
-      ssl.enabled: true
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
 
   # ================================= Processors =================================
   processors:
