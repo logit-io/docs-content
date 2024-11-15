@@ -38,9 +38,9 @@ Configure Filebeat using the pre-defined examples below to start sending and ana
     paths:
     - /path/to/log/activemq/data/activemq.log*
     fields:
-        type: activemq
-        multiline.pattern: ^\=
-        multiline.match: before
+      type: activemq
+      multiline.pattern: ^\=
+      multiline.match: before
   ```
   
   If you're running Filebeat 8.1+ `filebeat.inputs` needs to be `filestream` instead of `logs`:
@@ -53,9 +53,9 @@ Configure Filebeat using the pre-defined examples below to start sending and ana
     paths:
     - /path/to/log/activemq/data/activemq.log*
     fields:
-        type: activemq
-        multiline.pattern: ^\=
-        multiline.match: before
+      type: activemq
+      multiline.pattern: ^\=
+      multiline.match: before
   ```
 
   ### Enable the input
