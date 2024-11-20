@@ -39,16 +39,16 @@ logs to logit.io through logstash, initiating the data search process.
   ###################### Logit.io Filebeat Configuration ########################
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
-  - type: filestream
-    enabled: true
-    id: my_unique_id
-    paths:
-      # REQUIRED CHANGE TO YOUR LOGS PATH
-      - /var/log/*.log
-      #- C:\Windows\System32\winevt\Logs\*
+    - type: filestream
+      enabled: true
+      id: my_unique_id
+      paths:
+        # REQUIRED CHANGE TO YOUR LOGS PATH
+        - /var/log/*.log
+        #- C:\Windows\System32\winevt\Logs\*
 
-    fields:
-      type: apachestorm
+      fields:
+        type: apachestorm
     
   # ============================== Filebeat modules ==============================
   filebeat.config.modules:
@@ -77,7 +77,7 @@ logs to logit.io through logstash, initiating the data search process.
   ```yml copy
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
-  - type: log
+    - type: log
   ```   
 
   If you're running `Filebeat 7` add this code block to the end. Otherwise, you can leave it out.

@@ -64,38 +64,38 @@ tags: Beats, Logs, GCP Workspace, Google Cloud, Files, Text, Filebeat, Cloud Log
 
   # ============================== Filebeat modules ==============================
   filebeat.modules:
-  - module: google_workspace
-  saml:
-    enabled: true
-    var.jwt_file: "./credentials_file.json"
-    var.delegated_account: "user@example.com"
-  user_accounts:
-    enabled: true
-    var.jwt_file: "./credentials_file.json"
-    var.delegated_account: "user@example.com"
-  login:
-    enabled: true
-    var.jwt_file: "./credentials_file.json"
-    var.delegated_account: "user@example.com"
-  admin:
-    enabled: true
-    var.jwt_file: "./credentials_file.json"
-    var.delegated_account: "user@example.com"
-  drive:
-    enabled: true
-    var.jwt_file: "./credentials_file.json"
-    var.delegated_account: "user@example.com"
-  groups:
-    enabled: true
-    var.jwt_file: "./credentials_file.json"
-    var.delegated_account: "user@example.com"
+    - module: google_workspace
+      saml:
+        enabled: true
+        var.jwt_file: "./credentials_file.json"
+        var.delegated_account: "user@example.com"
+      user_accounts:
+        enabled: true
+        var.jwt_file: "./credentials_file.json"
+        var.delegated_account: "user@example.com"
+      login:
+        enabled: true
+        var.jwt_file: "./credentials_file.json"
+        var.delegated_account: "user@example.com"
+      admin:
+        enabled: true
+        var.jwt_file: "./credentials_file.json"
+        var.delegated_account: "user@example.com"
+      drive:
+        enabled: true
+        var.jwt_file: "./credentials_file.json"
+        var.delegated_account: "user@example.com"
+      groups:
+        enabled: true
+        var.jwt_file: "./credentials_file.json"
+        var.delegated_account: "user@example.com"
 
   # ================================== Outputs ===================================
   # ------------------------------ Logstash Output -------------------------------
   output.logstash:
-      hosts: ["@logstash.host:@logstash.sslPort"]
-      loadbalance: true
-      ssl.enabled: true
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
 
   # ================================= Processors =================================
   processors:

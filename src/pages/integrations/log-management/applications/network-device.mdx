@@ -35,12 +35,12 @@ Send your network device logs to logit.io via logstash using the instructions be
   # ============================== Filebeat inputs ===============================
   filebeat.inputs:
 
-  - type: tcp
-    max_message_size: 10MiB
-    host: "0.0.0.0:6515"
-    enabled: true
+    - type: tcp
+      max_message_size: 10MiB
+      host: "0.0.0.0:6515"
+      enabled: true
 
-    fields:
+      fields:
         type: networkdevice
         fields_under_root: true
         encoding: utf-8

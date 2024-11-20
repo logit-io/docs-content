@@ -72,14 +72,14 @@ Configure Filebeat to ship logs from Red Hat Systems to Logstash and Elasticsear
   ###################### Logit.io Filebeat Configuration ########################
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
-  - type: filestream
-    enabled: true
-    id: my_unique_id
-    paths:
-      # REQUIRED CHANGE TO YOUR LOGS PATH
-      - /var/log/*.log
-    fields:
-      type: logfile
+    - type: filestream
+      enabled: true
+      id: my_unique_id
+      paths:
+        # REQUIRED CHANGE TO YOUR LOGS PATH
+        - /var/log/*.log
+      fields:
+        type: logfile
       
   # ============================== Filebeat modules ==============================
   filebeat.config.modules:

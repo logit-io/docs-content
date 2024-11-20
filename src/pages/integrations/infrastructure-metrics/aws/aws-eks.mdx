@@ -104,20 +104,20 @@ Kubernetes Service (EKS) Metrics to one or more destinations, including Logstash
 
   ```yml copy
   env:
-  - name: LOGSTASH_HOST
-    value: "guid-ls.logit.io"
-  - name: BEATS_PORT
-    value: "00000"
+    - name: LOGSTASH_HOST
+      value: "guid-ls.logit.io"
+    - name: BEATS_PORT
+      value: "00000"
   ```
 
   After updating the code should look as below.
 
   ```yml copy
   env:
-  - name: LOGSTASH_HOST
-    value: ["@logstash.host"]
-  - name: BEATS_PORT
-    value: ["@logstash.sslPort"]
+    - name: LOGSTASH_HOST
+      value: ["@logstash.host"]
+    - name: BEATS_PORT
+      value: ["@logstash.sslPort"]
   ```
 
   Exit and save the file.

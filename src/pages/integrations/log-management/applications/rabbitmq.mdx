@@ -40,11 +40,11 @@ Learn how to send RabbitMQ application logs to your Logstash instance - Ship ove
       ###################### Logit.io Filebeat Configuration ########################
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
-      - type: filestream
-        enabled: true
-        paths:
-        - /var/log/rabbitmq/*.log
-        fields:
+        - type: filestream
+          enabled: true
+          paths:
+            - /var/log/rabbitmq/*.log
+          fields:
             type: rabbitmq
             multiline.pattern: ^\=
             multiline.match: before
@@ -87,11 +87,11 @@ Learn how to send RabbitMQ application logs to your Logstash instance - Ship ove
       ###################### Logit.io Filebeat Configuration ########################
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
-      - type: filestream
-        enabled: true
-        paths:
-        - /var/log/rabbitmq/*.log
-        fields:
+        - type: filestream
+          enabled: true
+          paths:
+            - /var/log/rabbitmq/*.log
+          fields:
             type: rabbitmq
             multiline.pattern: ^\=
             multiline.match: before
@@ -134,11 +134,11 @@ Learn how to send RabbitMQ application logs to your Logstash instance - Ship ove
       ###################### Logit.io Filebeat Configuration ########################
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
-      - type: filestream
-        enabled: true
-        paths:
-        - /var/log/rabbitmq/*.log
-        fields:
+        - type: filestream
+          enabled: true
+          paths:
+            - /var/log/rabbitmq/*.log
+          fields:
             type: rabbitmq
             multiline.pattern: ^\=
             multiline.match: before
@@ -181,11 +181,11 @@ Learn how to send RabbitMQ application logs to your Logstash instance - Ship ove
       ###################### Logit.io Filebeat Configuration ########################
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
-      - type: filestream
-        enabled: true
-        paths:
-        - /var/log/rabbitmq/*.log
-        fields:
+        - type: filestream
+          enabled: true
+          paths:
+            - /var/log/rabbitmq/*.log
+          fields:
             type: rabbitmq
             multiline.pattern: ^\=
             multiline.match: before
@@ -228,11 +228,11 @@ Learn how to send RabbitMQ application logs to your Logstash instance - Ship ove
       ###################### Logit.io Filebeat Configuration ########################
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
-      - type: filestream
-        enabled: true
-        paths:
-        - /var/log/rabbitmq/*.log
-        fields:
+        - type: filestream
+          enabled: true
+          paths:
+            - /var/log/rabbitmq/*.log
+          fields:
             type: rabbitmq
             multiline.pattern: ^\=
             multiline.match: before
@@ -268,14 +268,14 @@ Learn how to send RabbitMQ application logs to your Logstash instance - Ship ove
   ```yml copy showLineNumbers
   filebeat.inputs:
 
-  - type: log
-    enabled: true
-    paths:
-    - /var/log/rabbitmq/*.log
-    fields:
-        type: rabbitmq
-        multiline.pattern: ^\=
-        multiline.match: before
+    - type: log
+      enabled: true
+      paths:
+      - /var/log/rabbitmq/*.log
+      fields:
+          type: rabbitmq
+          multiline.pattern: ^\=
+          multiline.match: before
   ```
 
   ### Validate configuration

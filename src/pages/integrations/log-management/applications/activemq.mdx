@@ -36,7 +36,7 @@ Configure Filebeat using the pre-defined examples below to start sending and ana
   - type: log
     enabled: true
     paths:
-    - /path/to/log/activemq/data/activemq.log*
+      - /path/to/log/activemq/data/activemq.log*
     fields:
       type: activemq
       multiline.pattern: ^\=
@@ -51,7 +51,7 @@ Configure Filebeat using the pre-defined examples below to start sending and ana
   - type: filestream
     enabled: true
     paths:
-    - /path/to/log/activemq/data/activemq.log*
+      - /path/to/log/activemq/data/activemq.log*
     fields:
       type: activemq
       multiline.pattern: ^\=

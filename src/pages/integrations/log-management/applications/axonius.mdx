@@ -41,16 +41,16 @@ Send your Axonius logs to logit.io via logstash using the instructions below and
   # ============================== Filebeat inputs ===============================
   filebeat.inputs:
 
-  - type: udp
-    max_message_size: 10MiB
-    host: "0.0.0.0:514"
-    enabled: true
+    - type: udp
+      max_message_size: 10MiB
+      host: "0.0.0.0:514"
+      enabled: true
 
-    fields:
+      fields:
         type: axonius
-    fields_under_root: true
-    encoding: utf-8
-    ignore_older: 12h
+      fields_under_root: true
+      encoding: utf-8
+      ignore_older: 12h
 
   # ================================== Outputs ===================================
   output.logstash:

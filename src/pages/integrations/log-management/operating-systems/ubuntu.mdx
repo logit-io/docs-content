@@ -91,10 +91,10 @@ Configure Filebeat to ship logs from Ubuntu Systems to Logstash and Elasticsearc
   
   Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
 
-  ```yml copy
-  ###################### Logit.io Filebeat Configuration ########################
-  # ============================== Filebeat inputs ==============================
-  filebeat.inputs:
+```yml copy
+###################### Logit.io Filebeat Configuration ########################
+# ============================== Filebeat inputs ==============================
+filebeat.inputs:
   - type: filestream
     enabled: true
     id: my_unique_id
@@ -104,27 +104,27 @@ Configure Filebeat to ship logs from Ubuntu Systems to Logstash and Elasticsearc
     fields:
       type: logfile  
 
-  # ============================== Filebeat modules ==============================
-  filebeat.config.modules:
-    path: ${path.config}/modules.d/*.yml
-    reload.enabled: false
-    #reload.period: 10s
+# ============================== Filebeat modules ==============================
+filebeat.config.modules:
+  path: ${path.config}/modules.d/*.yml
+  reload.enabled: false
+  #reload.period: 10s
 
-  # ================================== Outputs ===================================
-  # ------------------------------ Logstash Output -------------------------------
-  output.logstash:
-      hosts: ["@logstash.host:@logstash.sslPort"]
-      loadbalance: true
-      ssl.enabled: true
+# ================================== Outputs ===================================
+# ------------------------------ Logstash Output -------------------------------
+output.logstash:
+  hosts: ["@logstash.host:@logstash.sslPort"]
+  loadbalance: true
+  ssl.enabled: true
 
-  # ================================= Processors =================================
-  processors:
-    - add_host_metadata:
-        when.not.contains.tags: forwarded
-    - add_cloud_metadata: ~
-    - add_docker_metadata: ~
-    - add_kubernetes_metadata: ~
-  ```
+# ================================= Processors =================================
+processors:
+  - add_host_metadata:
+      when.not.contains.tags: forwarded
+  - add_cloud_metadata: ~
+  - add_docker_metadata: ~
+  - add_kubernetes_metadata: ~
+```
 
   ### Validate Configuration
 
