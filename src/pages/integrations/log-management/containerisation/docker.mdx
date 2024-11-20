@@ -28,19 +28,16 @@ examples below to start sending and analysing your Docker application logs.
     ```yaml copy
     # ============================== Filebeat inputs ===============================
     filebeat.inputs:
-
-    - type: container
-
-      enabled: true
-
-      paths:
-      - 'var/lib/docker/containers/*/*.log'
+      - type: container
+        enabled: true
+        paths:
+          - /var/lib/docker/containers/*/*.log
 
     # ================================== Outputs ===================================
     output.logstash:
-        hosts: ["@logstash.host:@logstash.sslPort"]
-        loadbalance: true
-        ssl.enabled: true
+      hosts: ["@logstash.host:@logstash.sslPort"]
+      loadbalance: true
+      ssl.enabled: true
     ```
   </FilebeatContainer>
 

@@ -74,14 +74,14 @@ Configure Filebeat to ship logs from Debian Systems to Logstash and Elasticsearc
       ###################### Logit.io Filebeat Configuration ########################
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
-      - type: filestream
-        enabled: true
-        id: my_unique_id
-        paths:
-          # REQUIRED CHANGE TO YOUR LOGS PATH
-          - /var/log/*.log
-        fields:
-          type: logfile  
+        - type: filestream
+          enabled: true
+          id: my_unique_id
+          paths:
+            # REQUIRED CHANGE TO YOUR LOGS PATH
+            - /var/log/*.log
+          fields:
+            type: logfile  
 
       # ============================== Filebeat modules ==============================
       filebeat.config.modules:
@@ -92,9 +92,9 @@ Configure Filebeat to ship logs from Debian Systems to Logstash and Elasticsearc
       # ================================== Outputs ===================================
       # ------------------------------ Logstash Output -------------------------------
       output.logstash:
-          hosts: ["@logstash.host:logstash.sslPort"]
-          loadbalance: true
-          ssl.enabled: true
+        hosts: ["@logstash.host:logstash.sslPort"]
+        loadbalance: true
+        ssl.enabled: true
 
       # ================================= Processors =================================
       processors:

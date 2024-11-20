@@ -24,13 +24,13 @@ timeframe:
   hours: 2
 spike_height: 3
 spike_type: "up"
-- query:
-   query_string:
-      query: "router.status: [500 TO 599]"
+query:
+  query_string:
+    query: "router.status: [500 TO 599]"
 alert:
-- "email"
+  - "email"
 email:
-- "example@logit.io"
+  - "example@logit.io"
 ```
 
 ## Additional Options
