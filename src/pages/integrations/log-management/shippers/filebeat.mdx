@@ -36,7 +36,7 @@ logs from local files to one or more destinations, including Logstash.
       (this file can be found in the location where you installed Filebeat in the previous step. If it is missing create a 
       new file with that name and populate it with the configuration details below).
 
-      ```yml copy /@logstash.host/ /@logstash.sslPort/
+      ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
       ###################### Logit.io Filebeat Configuration ########################
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
@@ -79,7 +79,7 @@ logs from local files to one or more destinations, including Logstash.
       
       Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
       
-  ```yml copy
+  ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
   ###################### Logit.io Filebeat Configuration ########################
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
@@ -123,7 +123,7 @@ logs from local files to one or more destinations, including Logstash.
       
       Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
     
-  ```yml copy
+  ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
   ###################### Logit.io Filebeat Configuration ########################
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
@@ -145,7 +145,7 @@ logs from local files to one or more destinations, including Logstash.
   # ================================== Outputs ===================================
   # ------------------------------ Logstash Output -------------------------------
   output.logstash:
-    hosts: ["@logstash.host:logstash.sslPort"]
+    hosts: ["@logstash.host:@logstash.sslPort"]
     loadbalance: true
     ssl.enabled: true
 
@@ -167,7 +167,7 @@ logs from local files to one or more destinations, including Logstash.
       
       Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
     
-  ```yml copy
+  ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
   ###################### Logit.io Filebeat Configuration ########################
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
@@ -189,7 +189,7 @@ logs from local files to one or more destinations, including Logstash.
   # ================================== Outputs ===================================
   # ------------------------------ Logstash Output -------------------------------
   output.logstash:
-    hosts: ["@logstash.host:logstash.sslPort"]
+    hosts: ["@logstash.host:@logstash.sslPort"]
     loadbalance: true
     ssl.enabled: true
 
@@ -211,7 +211,7 @@ logs from local files to one or more destinations, including Logstash.
       
       Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
     
-  ```yml copy
+  ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
   ###################### Logit.io Filebeat Configuration ########################
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:

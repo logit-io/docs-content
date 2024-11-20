@@ -36,7 +36,7 @@ logs from AWS Beanstalk to one or more destinations, including Logstash.
 
   Copy the configuration file below and overwrite the contents of your 
         
-  ```yaml copy
+  ```yaml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
   files:
     "/etc/filebeat/filebeat.yml":
       mode: "000755"

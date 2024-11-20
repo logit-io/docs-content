@@ -35,8 +35,8 @@ control over both ends of the authentication process.
 For example, you can use Filebeat to send a log message that includes the API key:
 
 ```yml copy
-filebeat.prospectors:
-  - type: log
+filebeat.inputs:
+  - type: filestream
     enabled: true
     paths:
       - /var/log/nginx/access.log

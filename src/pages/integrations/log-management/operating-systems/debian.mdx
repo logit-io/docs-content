@@ -70,7 +70,7 @@ Configure Filebeat to ship logs from Debian Systems to Logstash and Elasticsearc
 
       Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
   
-      ```yml copy
+```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
       ###################### Logit.io Filebeat Configuration ########################
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
@@ -92,7 +92,7 @@ Configure Filebeat to ship logs from Debian Systems to Logstash and Elasticsearc
       # ================================== Outputs ===================================
       # ------------------------------ Logstash Output -------------------------------
       output.logstash:
-        hosts: ["@logstash.host:logstash.sslPort"]
+        hosts: ["@logstash.host:@logstash.sslPort"]
         loadbalance: true
         ssl.enabled: true
 

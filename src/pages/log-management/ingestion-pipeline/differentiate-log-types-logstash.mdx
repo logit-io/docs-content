@@ -25,7 +25,9 @@ by editing the Beat configuration file and setting the type to be named differen
 For the example, below we are editing the Filebeat configuration
 file to separate our logs into different types.
 
-```yml copy
+```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+####################### Logit.io Filebeat Configuration ########################
+# ============================== Filebeat inputs ==============================
 filebeat.inputs:
   - type: logType1
     enabled: true
@@ -37,6 +39,20 @@ filebeat.inputs:
     paths:
       - /var/another_folder_of_logs/*.log
     fields_under_root: true
+
+# ============================== Filebeat modules ==============================
+filebeat.config.modules:
+  path: ${path.config}/modules.d/*.yml
+  reload.enabled: false
+  #reload.period: 10s
+
+# ================================== Outputs ===================================
+# ------------------------------ Logstash Output -------------------------------
+output.logstash:
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
+
 ```
 
 In the above example we have two folders that contain logs.

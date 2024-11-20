@@ -174,7 +174,7 @@ Filebeat is an open source shipping agent that lets you ship logs from local fil
       discovers and handles input data.  
     </Callout>
     
-  ```yml copy
+```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
   ###################### Logit.io Filebeat Configuration ########################
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
@@ -220,7 +220,7 @@ Filebeat is an open source shipping agent that lets you ship logs from local fil
         discovers and handles input data.  
       </Callout>
     
-  ```yml copy
+```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
   ###################### Logit.io Filebeat Configuration ########################
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
@@ -242,7 +242,7 @@ Filebeat is an open source shipping agent that lets you ship logs from local fil
   # ================================== Outputs ===================================
   # ------------------------------ Logstash Output -------------------------------
   output.logstash:
-      hosts: ["@logstash.host:logstash.sslPort"]
+      hosts: ["@logstash.host:@logstash.sslPort"]
       loadbalance: true
       ssl.enabled: true
 
@@ -266,7 +266,7 @@ Filebeat is an open source shipping agent that lets you ship logs from local fil
         discovers and handles input data.  
       </Callout>
     
-  ```yml copy
+```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
   ###################### Logit.io Filebeat Configuration ########################
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
@@ -288,7 +288,7 @@ Filebeat is an open source shipping agent that lets you ship logs from local fil
   # ================================== Outputs ===================================
   # ------------------------------ Logstash Output -------------------------------
   output.logstash:
-      hosts: ["@logstash.host:logstash.sslPort"]
+      hosts: ["@logstash.host:@logstash.sslPort"]
       loadbalance: true
       ssl.enabled: true
 
@@ -312,7 +312,7 @@ Filebeat is an open source shipping agent that lets you ship logs from local fil
         discovers and handles input data.  
       </Callout>
     
-  ```yml copy
+```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
   ###################### Logit.io Filebeat Configuration ########################
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:

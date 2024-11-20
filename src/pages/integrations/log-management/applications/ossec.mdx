@@ -45,7 +45,7 @@ Send your OSSEC logs to logit.io via logstash using the instructions below and b
 
   For version `7.16+` and above, use the configuration below:
 
-  ```yml copy
+  ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
   ###################### Logit.io Filebeat Configuration ########################
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
@@ -79,28 +79,6 @@ Send your OSSEC logs to logit.io via logstash using the instructions below and b
     - add_cloud_metadata: ~
     - add_docker_metadata: ~
     - add_kubernetes_metadata: ~
-  ```
-
-  For versions `7.15.x` and below
-
-  ```yml copy
-  # ============================== Filebeat inputs ==============================
-  filebeat.inputs:
-    - type: log
-  ```   
-          
-  If you're running `Filebeat 7` add this code block to the end. Otherwise, you can leave it out.
-
-  ```yml copy
-  # ... For Filebeat 7 only ...
-  filebeat.registry.path: /var/lib/filebeat
-  ```
-
-  If you're running `Filebeat 6` add this code block to the end. Otherwise, you can leave it out.
-
-  ```yml copy
-  # ... For Filebeat 6 only ...
-  registry_file: /var/lib/filebeat/registry
   ```
 
   __Validate your YAML__

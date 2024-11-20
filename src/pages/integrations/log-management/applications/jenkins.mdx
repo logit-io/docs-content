@@ -24,18 +24,15 @@ the instructions below and begin searching your data.
   Copy and use the Filebeat configuration below.
 
   Remember to update your Jenkins log file path if it is in a diffeerent location to the below configuration.
-  <Callout type="warning">
-      For use with version 7.x Filebeats.
-  </Callout>
 
-  ```yml copy
+  ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+  ###################### Logit.io Filebeat Configuration ########################
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
-
-    - type: log
+    - type: filestream
       paths:
         - /var/log/jenkins/jenkins.log
-        - /var/<JENKINS-DIRECTORY>/jobs/*/builds/lastFailedBuild/log
+        #- /var/<JENKINS-DIRECTORY>/jobs/*/builds/lastFailedBuild/log
       fields:
         type: jenkins
       
@@ -48,10 +45,28 @@ the instructions below and begin searching your data.
         negate: true
         match: after
 
-  # ================================== Outputs ===================================
-  ```
-  <ConfigureOutput/>
+  # ============================== Filebeat modules ==============================
+  filebeat.config.modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+    #reload.period: 10s
 
+  # ================================== Outputs ===================================
+  # ------------------------------ Logstash Output -------------------------------
+  output.logstash:
+      hosts: ["@logstash.host:@logstash.sslPort"]
+      loadbalance: true
+      ssl.enabled: true
+
+  # ================================= Processors =================================
+  processors:
+    - add_host_metadata:
+        when.not.contains.tags: forwarded
+    - add_cloud_metadata: ~
+    - add_docker_metadata: ~
+    - add_kubernetes_metadata: ~      
+  ```
+  
   ### Start filebeat
   
   <StartFilebeat />

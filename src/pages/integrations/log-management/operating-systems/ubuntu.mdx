@@ -91,8 +91,8 @@ Configure Filebeat to ship logs from Ubuntu Systems to Logstash and Elasticsearc
   
   Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
 
-```yml copy
-###################### Logit.io Filebeat Configuration ########################
+```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+####################### Logit.io Filebeat Configuration ########################
 # ============================== Filebeat inputs ==============================
 filebeat.inputs:
   - type: filestream

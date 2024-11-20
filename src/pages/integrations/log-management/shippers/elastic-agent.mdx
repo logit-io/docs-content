@@ -37,8 +37,8 @@ metrics, and diverse data types to one or more destinations, including Logstash.
 
   For version `7.17+` and above, use the configuration below:
 
-```yml copy
-###################### Logit.io Elastic Agent Configuration ########################
+```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+####################### Logit.io Elastic Agent Configuration ########################
 # ============================== Elastic Agent inputs ==============================
 inputs:
   - type: system/metrics

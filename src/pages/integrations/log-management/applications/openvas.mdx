@@ -1,5 +1,5 @@
 ---
-title: OPENVAS
+title: OpenVAS
 metaTitle: Learn How to Integrate and Configure Filebeat to Send OPENVAS Logs
 subTitle: Ship your OpenVAS reports to Logit.io via Logstash
 logo: openvas
@@ -39,15 +39,13 @@ Send your OpenVAS reports to logit.io via logstash using the instructions below 
 
   Update the file path placeholder with the file path of the folder where you'll be keeping your OpenVAS reports.
 
-  <Callout type="warning">For use with version 7.x Filebeats.</Callout>
-
-  ```yml copy
+  ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/ /INSERT_PATH_TO_OPENVAS_REPORT/
+  ####################### Logit.io Filebeat Configuration ########################
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
-
-    - type: log
+    - type: filestream
       paths:
-        - <INSERT_PATH_TO_OPENVAS_REPORT>*.csv
+        - INSERT_PATH_TO_OPENVAS_REPORT*.csv
       
       fields:
         type: openvas
@@ -63,16 +61,19 @@ Send your OpenVAS reports to logit.io via logstash using the instructions below 
 
       filebeat.registry.path: /var/lib/filebeat
 
+  # ============================== Filebeat modules ==============================
+  filebeat.config.modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+    #reload.period: 10s
+
   # ================================== Outputs ===================================
+  # ------------------------------ Logstash Output -------------------------------
+  output.logstash:
+      hosts: ["@logstash.host:@logstash.sslPort"]
+      loadbalance: true
+      ssl.enabled: true
   ```
-  <ConfigureOutput />
-
-  ```yml copy
-  # ================================= Processors =================================
-  processors:
-    - add_host_metadata:
-  ```
-
   ### Start filebeat
 
   <StartFilebeat />

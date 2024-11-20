@@ -37,7 +37,7 @@ Configure Filebeat to ship Cisco logs to Logstash and Elasticsearch.
       
       Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step. If it is missing create a new file with that name and populate it with the configuration details below).
 
-      ```yml copy
+      ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
       ###################### Logit.io Filebeat Configuration ########################
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
@@ -46,15 +46,15 @@ Configure Filebeat to ship Cisco logs to Logstash and Elasticsearch.
       # you can use different inputs for various configurations.
       # Below are the input specific configurations.
 
-        - type: tcp
-          enabled: true
-          host: "0.0.0.0:514"
-          fields: 
-            type: cisco-asa
-        
-        fields_under_root: true
-        encoding: utf-8
-        ignore_older: 3h
+      - type: tcp
+        enabled: true
+        host: "0.0.0.0:514"
+        fields: 
+          type: cisco-asa
+      
+      fields_under_root: true
+      encoding: utf-8
+      ignore_older: 3h
       
       # ============================== Filebeat modules ==============================
       filebeat.config.modules:
@@ -87,7 +87,7 @@ Configure Filebeat to ship Cisco logs to Logstash and Elasticsearch.
       
       Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
 
-      ```yml copy
+      ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
       ###################### Logit.io Filebeat Configuration ########################
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
@@ -130,7 +130,7 @@ Configure Filebeat to ship Cisco logs to Logstash and Elasticsearch.
       
       Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
 
-      ```yml copy
+      ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
       ###################### Logit.io Filebeat Configuration ########################
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
@@ -173,7 +173,7 @@ Configure Filebeat to ship Cisco logs to Logstash and Elasticsearch.
       
       Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
 
-      ```yml copy
+      ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
       ###################### Logit.io Filebeat Configuration ########################
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
@@ -216,7 +216,7 @@ Configure Filebeat to ship Cisco logs to Logstash and Elasticsearch.
       
       Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
 
-      ```yml copy
+      ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
       ###################### Logit.io Filebeat Configuration ########################
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:

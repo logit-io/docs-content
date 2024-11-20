@@ -70,7 +70,7 @@ Elastic Kubernetes Service (EKS) container Logs to one or more destinations, inc
 
   After updating the code should look as below.
 
-  ```yml copy
+  ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
   env:
     - name: LOGSTASH_HOST
       value: ["@logstash.host"]

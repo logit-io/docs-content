@@ -70,15 +70,12 @@ Follow our Avast tutorial to get started shipping logs from Avast to Logstash fo
 
   Copy and use the Filebeat configuration below.
 
-  <Callout type="warning">
-    For use with version 7.x Filebeats.
-  </Callout>
-
-  ```yml copy
+  ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+  ####################### Logit.io Filebeat Configuration ########################
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
 
-    - type: log
+    - type: filestream
       paths:
         - C:\ProgramData\Avast Software\Avast\report\FileSystemShield.txt
       fields:
@@ -92,7 +89,7 @@ Follow our Avast tutorial to get started shipping logs from Avast to Logstash fo
           negate: true 
           match: after
 
-    - type: log
+    - type: filestream
       paths:
         - C:\ProgramData\Avast Software\Avast\report\Full Virus Scan.txt
       fields:
@@ -106,7 +103,7 @@ Follow our Avast tutorial to get started shipping logs from Avast to Logstash fo
           match: after
           ignore_older: 3h
 
-    - type: log
+    - type: filestream
       paths:
         - C:\ProgramData\Avast Software\Avast\report\aswBoot.txt
       fields:
@@ -120,7 +117,7 @@ Follow our Avast tutorial to get started shipping logs from Avast to Logstash fo
           match: after
           ignore_older: 3h
 
-    - type: log
+    - type: filestream
       paths:
         - C:\ProgramData\Avast Software\Avast\report\WebShield.txt
       fields:
@@ -137,8 +134,10 @@ Follow our Avast tutorial to get started shipping logs from Avast to Logstash fo
   filebeat.registry.path: 'C:\ProgramData\Filebeat'
 
   # ================================== Outputs ===================================
-  ```
-  <ConfigureOutput />
+  output.logstash:
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
 
   ```yml copy
   # ================================= Processors =================================
