@@ -24,9 +24,9 @@ threshold: 100
 timeframe:
   minutes: 10
 filter:
-- query:
-    query_string:
-      query: "message: heartbeat*"
+  - query:
+      query_string:
+        query: "message: heartbeat*"
 use_count_query: true
 doc_type: _doc
 alert: 

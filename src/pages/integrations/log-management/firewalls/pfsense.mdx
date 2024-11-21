@@ -42,40 +42,27 @@ Configure a pfSense firewall to ship logs via Filebeat to your Logit.io stacks v
 
   Copy the configuration file below and overwrite the contents of the Filebeat configuration file typically located at `/etc/filebeat/filebeat.yml`
 
-  ```yml copy
+    ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+    ####################### Logit.io Filebeat Configuration ########################
     # ============================== Filebeat inputs ===============================
     filebeat.inputs:
-    - type: udp
-    max_message_size: 10MiB
-    host: "0.0.0.0:514"
-    enabled: true
-    
-    fields:
-        type: pfsense
-    fields_under_root: true
-    encoding: utf-8
-    ignore_older: 12h
-    
+      - type: udp
+        max_message_size: 10MiB
+        host: "0.0.0.0:514"
+        enabled: true
+
+        fields:
+          type: pfsense
+        fields_under_root: true
+        encoding: utf-8
+        ignore_older: 12h
+
     # ================================== Outputs ===================================
     output.logstash:
-        hosts: ["@logstash.host:@logstash.sslPort"]
-        loadbalance: true
-        ssl.enabled: true
-  ```
-
-  If you're running __Filebeat 7__, add this code block to the end. Otherwise, you can leave it out.
-
-  ```yaml copy
-  # ... For Filebeat 7 only ...
-  filebeat.registry.path: /var/lib/filebeat
-  ```
-
-  If you're running __Filebeat 6__, add this code block to the end.
-
-  ```yaml copy
-  # ... For Filebeat 6 only ...
-  registry_file: /var/lib/filebeat/registry
-  ```
+      hosts: ["@logstash.host:@logstash.sslPort"]
+      loadbalance: true
+      ssl.enabled: true
+    ```
 
   _It's a good idea to run the configuration file through a YAML validator to rule out indentation errors, clean up extra characters, and check if your YAML 
   file is valid. [Yamllint.com](https://yamllint.com) is a great choice._

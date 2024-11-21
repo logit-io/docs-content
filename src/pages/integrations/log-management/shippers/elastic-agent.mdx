@@ -37,53 +37,53 @@ metrics, and diverse data types to one or more destinations, including Logstash.
 
   For version `7.17+` and above, use the configuration below:
 
-  ```yml copy
-  ###################### Logit.io Elastic Agent Configuration ########################
-  # ============================== Elastic Agent inputs ==============================
-  inputs:
-    - type: system/metrics
-      id: unique-system-metrics-input
-      data_stream.namespace: default
-      use_output: default
-      streams:
-        - metricsets:
-            - cpu
-          data_stream.dataset: system.cpu
-        - metricsets:
-            - memory
-          data_stream.dataset: system.memory
-        - metricsets:
-            - network
-          data_stream.dataset: system.network
-        - metricsets:
-            - filesystem
-          data_stream.dataset: system.filesystem
+```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+####################### Logit.io Elastic Agent Configuration ########################
+# ============================== Elastic Agent inputs ==============================
+inputs:
+  - type: system/metrics
+    id: unique-system-metrics-input
+    data_stream.namespace: default
+    use_output: default
+    streams:
+      - metricsets:
+          - cpu
+        data_stream.dataset: system.cpu
+      - metricsets:
+          - memory
+        data_stream.dataset: system.memory
+      - metricsets:
+          - network
+        data_stream.dataset: system.network
+      - metricsets:
+          - filesystem
+        data_stream.dataset: system.filesystem
 
-      # Collecting log files
-      # - type: filestream
-      #   id: your-input-id
-      #   streams:
-      #     # Must be unique
-      #     - id: your-filestream-stream-id
-      #       data_stream:
-      #         dataset: generic
-      #       paths:
-      #         - /var/log/*.log
+    # Collecting log files
+    # - type: filestream
+    #   id: your-input-id
+    #   streams:
+    #     # Must be unique
+    #     - id: your-filestream-stream-id
+    #       data_stream:
+    #         dataset: generic
+    #       paths:
+    #         - /var/log/*.log
 
-  # ================================== Outputs ===================================
-  # ------------------------------ Logstash Output -------------------------------
-  outputs:
-    default:
-      type: logstash
-      hosts: ["@logstash.host:@logstash.sslPort"]
-      loadbalance: true
-      ssl:
-        enabled: true
+# ================================== Outputs ===================================
+# ------------------------------ Logstash Output -------------------------------
+outputs:
+  default:
+    type: logstash
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl:
+      enabled: true
 
-  # ================================== Logging Settings ===================================
-  # Send all logging output to stderr, default is false
-  agent.logging.to_stderr: true
-  ```
+# ================================== Logging Settings ===================================
+# Send all logging output to stderr, default is false
+agent.logging.to_stderr: true
+```
 
   __Validate your YAML__
 

@@ -37,7 +37,40 @@ Configure Zeek to ship logs via Filebeat to your Logit.io stacks via Logstash.
 
   ### Configure Filebeat.yml
 
-  <FilebeatFilestream type="zeek" path="/var/log/bro/current/dns.log\n  - /var/log/bro/current/dpd.log\n  - /var/log/bro/current/http.log\n  - /var/log/bro/current/rdp.log\n  - /var/log/bro/current/smb.log\n  - /var/log/bro/current/ssh.log\n  - /var/log/bro/current/ssl.log\n  - /var/log/bro/current/conn.log\n  - /var/log/bro/current/notice.log" />
+The configuration file below is pre-configured to send data to your Logit.io Stack.
+        
+Copy the configuration file below and overwrite the contents of the Filebeat 
+configuration file typically located at `/etc/filebeat/filebeat.yml`
+
+```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+####################### Logit.io Filebeat Configuration ########################
+# ============================== Filebeat inputs ===============================
+filebeat.inputs:
+- type: filestream
+  enabled: true
+  paths:
+  - "/var/log/bro/current/dns.log"
+  - "/var/log/bro/current/dpd.log"
+  - "/var/log/bro/current/http.log"
+  - "/var/log/bro/current/rdp.log"
+  - "/var/log/bro/current/smb.log"
+  - "/var/log/bro/current/ssh.log"
+  - "/var/log/bro/current/ssl.log"
+  - "/var/log/bro/current/conn.log"
+  - "/var/log/bro/current/notice.log"
+
+  fields:
+    type: "zeek"
+  fields_under_root: true
+  encoding: utf-8
+  ignore_older: 12h
+
+# ================================== Outputs ===================================
+output.logstash:
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
+```
 
   ### Validate configuration
 

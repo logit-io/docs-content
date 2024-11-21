@@ -36,15 +36,15 @@ Learn how to send RabbitMQ application logs to your Logstash instance - Ship ove
       Copy the configuration file below (making the above changes as necessary) and overwrite 
       the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step. If it is missing create a new file with that name and populate it with the configuration details below).
 
-      ```yml copy showLineNumbers
+      ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
       ###################### Logit.io Filebeat Configuration ########################
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
-      - type: filestream
-        enabled: true
-        paths:
-        - /var/log/rabbitmq/*.log
-        fields:
+        - type: filestream
+          enabled: true
+          paths:
+            - /var/log/rabbitmq/*.log
+          fields:
             type: rabbitmq
             multiline.pattern: ^\=
             multiline.match: before
@@ -83,15 +83,15 @@ Learn how to send RabbitMQ application logs to your Logstash instance - Ship ove
       Copy the configuration file below (making the above changes as necessary) and overwrite the 
       contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
 
-      ```yml copy showLineNumbers
+      ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
       ###################### Logit.io Filebeat Configuration ########################
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
-      - type: filestream
-        enabled: true
-        paths:
-        - /var/log/rabbitmq/*.log
-        fields:
+        - type: filestream
+          enabled: true
+          paths:
+            - /var/log/rabbitmq/*.log
+          fields:
             type: rabbitmq
             multiline.pattern: ^\=
             multiline.match: before
@@ -130,15 +130,15 @@ Learn how to send RabbitMQ application logs to your Logstash instance - Ship ove
       Copy the configuration file below (making the above changes as necessary) and overwrite 
       the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
 
-      ```yml copy showLineNumbers
+      ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
       ###################### Logit.io Filebeat Configuration ########################
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
-      - type: filestream
-        enabled: true
-        paths:
-        - /var/log/rabbitmq/*.log
-        fields:
+        - type: filestream
+          enabled: true
+          paths:
+            - /var/log/rabbitmq/*.log
+          fields:
             type: rabbitmq
             multiline.pattern: ^\=
             multiline.match: before
@@ -177,15 +177,15 @@ Learn how to send RabbitMQ application logs to your Logstash instance - Ship ove
       Copy the configuration file below (making the above changes as necessary) and overwrite the 
       contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
 
-      ```yml copy showLineNumbers
+      ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
       ###################### Logit.io Filebeat Configuration ########################
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
-      - type: filestream
-        enabled: true
-        paths:
-        - /var/log/rabbitmq/*.log
-        fields:
+        - type: filestream
+          enabled: true
+          paths:
+            - /var/log/rabbitmq/*.log
+          fields:
             type: rabbitmq
             multiline.pattern: ^\=
             multiline.match: before
@@ -224,15 +224,15 @@ Learn how to send RabbitMQ application logs to your Logstash instance - Ship ove
       Copy the configuration file below (making the above changes as necessary) and overwrite the 
       contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
 
-      ```yml copy showLineNumbers
+      ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
       ###################### Logit.io Filebeat Configuration ########################
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
-      - type: filestream
-        enabled: true
-        paths:
-        - /var/log/rabbitmq/*.log
-        fields:
+        - type: filestream
+          enabled: true
+          paths:
+            - /var/log/rabbitmq/*.log
+          fields:
             type: rabbitmq
             multiline.pattern: ^\=
             multiline.match: before
@@ -260,23 +260,6 @@ Learn how to send RabbitMQ application logs to your Logstash instance - Ship ove
       ```
     </Tab>
   </Tabs>
-
-  ### Earlier Filebeat Versions than 8.1
-
-  If you're running an earlier version of Filebeat than 8.1 `filebeat.inputs` needs to be `log` instead of `filestream`:
-
-  ```yml copy showLineNumbers
-  filebeat.inputs:
-
-  - type: log
-    enabled: true
-    paths:
-    - /var/log/rabbitmq/*.log
-    fields:
-        type: rabbitmq
-        multiline.pattern: ^\=
-        multiline.match: before
-  ```
 
   ### Validate configuration
 

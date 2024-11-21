@@ -37,33 +37,33 @@ Filebeat using the pre-defined examples below to start sending and analysing you
       ###################### Logit.io Filebeat Configuration ########################
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
-      - type: kafka
-        hosts:
-          - name-of-your-broker:your-broker-port
-        # - localhost:9092        (Example)
-        topics: ["name-of-your-topic", "name-of-another-topic"]
-        group_id: "filebeat"
-      
+        - type: kafka
+          hosts:
+            - name-of-your-broker:your-broker-port
+          # - localhost:9092        (Example)
+          topics: ["name-of-your-topic", "name-of-another-topic"]
+          group_id: "filebeat"
+
       # ============================== Filebeat modules ==============================
       filebeat.config.modules:
-          path: ${path.config}/modules.d/*.yml
-          reload.enabled: false
-          #reload.period: 10s
+        path: ${path.config}/modules.d/*.yml
+        reload.enabled: false
+        #reload.period: 10s
 
       # ================================== Outputs ===================================
       # ------------------------------ Logstash Output -------------------------------
       output.logstash:
-          hosts: ["@logstash.host:@logstash.sslPort"]
-          loadbalance: true
-          ssl.enabled: true
+        hosts: ["@logstash.host:@logstash.sslPort"]
+        loadbalance: true
+        ssl.enabled: true
 
       # ================================= Processors =================================
       processors:
-          - add_host_metadata:
-              when.not.contains.tags: forwarded
-          - add_cloud_metadata: ~
-          - add_docker_metadata: ~
-          - add_kubernetes_metadata: ~
+        - add_host_metadata:
+            when.not.contains.tags: forwarded
+        - add_cloud_metadata: ~
+        - add_docker_metadata: ~
+        - add_kubernetes_metadata: ~
       ```
     </Tab>
     <Tab>
@@ -80,33 +80,33 @@ Filebeat using the pre-defined examples below to start sending and analysing you
       ###################### Logit.io Filebeat Configuration ########################
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
-      - type: kafka
-        hosts:
-          - name-of-your-broker:your-broker-port
-        # - localhost:9092        (Example)
-        topics: ["name-of-your-topic", "name-of-another-topic"]
-        group_id: "filebeat"
-      
+        - type: kafka
+          hosts:
+            - name-of-your-broker:your-broker-port
+          # - localhost:9092        (Example)
+          topics: ["name-of-your-topic", "name-of-another-topic"]
+          group_id: "filebeat"
+
       # ============================== Filebeat modules ==============================
       filebeat.config.modules:
-          path: ${path.config}/modules.d/*.yml
-          reload.enabled: false
-          #reload.period: 10s
+        path: ${path.config}/modules.d/*.yml
+        reload.enabled: false
+        #reload.period: 10s
 
       # ================================== Outputs ===================================
       # ------------------------------ Logstash Output -------------------------------
       output.logstash:
-          hosts: ["@logstash.host:@logstash.sslPort"]
-          loadbalance: true
-          ssl.enabled: true
+        hosts: ["@logstash.host:@logstash.sslPort"]
+        loadbalance: true
+        ssl.enabled: true
 
       # ================================= Processors =================================
       processors:
-          - add_host_metadata:
-              when.not.contains.tags: forwarded
-          - add_cloud_metadata: ~
-          - add_docker_metadata: ~
-          - add_kubernetes_metadata: ~
+        - add_host_metadata:
+            when.not.contains.tags: forwarded
+        - add_cloud_metadata: ~
+        - add_docker_metadata: ~
+        - add_kubernetes_metadata: ~
       ```
     </Tab>
     <Tab>
@@ -123,33 +123,33 @@ Filebeat using the pre-defined examples below to start sending and analysing you
       ###################### Logit.io Filebeat Configuration ########################
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
-      - type: kafka
-        hosts:
-          - name-of-your-broker:your-broker-port
-        # - localhost:9092        (Example)
-        topics: ["name-of-your-topic", "name-of-another-topic"]
-        group_id: "filebeat"
+        - type: kafka
+          hosts:
+            - name-of-your-broker:your-broker-port
+          # - localhost:9092        (Example)
+          topics: ["name-of-your-topic", "name-of-another-topic"]
+          group_id: "filebeat"
 
       # ============================== Filebeat modules ==============================
       filebeat.config.modules:
-          path: ${path.config}/modules.d/*.yml
-          reload.enabled: false
-          #reload.period: 10s
+        path: ${path.config}/modules.d/*.yml
+        reload.enabled: false
+        #reload.period: 10s
 
       # ================================== Outputs ===================================
       # ------------------------------ Logstash Output -------------------------------
       output.logstash:
-          hosts: ["@logstash.host:@logstash.sslPort"]
-          loadbalance: true
-          ssl.enabled: true
+        hosts: ["@logstash.host:@logstash.sslPort"]
+        loadbalance: true
+        ssl.enabled: true
 
       # ================================= Processors =================================
       processors:
-          - add_host_metadata:
-              when.not.contains.tags: forwarded
-          - add_cloud_metadata: ~
-          - add_docker_metadata: ~
-          - add_kubernetes_metadata: ~
+        - add_host_metadata:
+            when.not.contains.tags: forwarded
+        - add_cloud_metadata: ~
+        - add_docker_metadata: ~
+        - add_kubernetes_metadata: ~
       ```
     </Tab>
     <Tab>
@@ -166,33 +166,33 @@ Filebeat using the pre-defined examples below to start sending and analysing you
       ###################### Logit.io Filebeat Configuration ########################
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
-      - type: kafka
-        hosts:
-          - name-of-your-broker:your-broker-port
-        # - localhost:9092        (Example)
-        topics: ["name-of-your-topic", "name-of-another-topic"]
-        group_id: "filebeat"
+        - type: kafka
+          hosts:
+            - name-of-your-broker:your-broker-port
+          # - localhost:9092        (Example)
+          topics: ["name-of-your-topic", "name-of-another-topic"]
+          group_id: "filebeat"
 
       # ============================== Filebeat modules ==============================
       filebeat.config.modules:
-          path: ${path.config}/modules.d/*.yml
-          reload.enabled: false
-          #reload.period: 10s
+        path: ${path.config}/modules.d/*.yml
+        reload.enabled: false
+        #reload.period: 10s
 
       # ================================== Outputs ===================================
       # ------------------------------ Logstash Output -------------------------------
       output.logstash:
-          hosts: ["@logstash.host:@logstash.sslPort"]
-          loadbalance: true
-          ssl.enabled: true
+        hosts: ["@logstash.host:@logstash.sslPort"]
+        loadbalance: true
+        ssl.enabled: true
 
       # ================================= Processors =================================
       processors:
-          - add_host_metadata:
-              when.not.contains.tags: forwarded
-          - add_cloud_metadata: ~
-          - add_docker_metadata: ~
-          - add_kubernetes_metadata: ~
+        - add_host_metadata:
+            when.not.contains.tags: forwarded
+        - add_cloud_metadata: ~
+        - add_docker_metadata: ~
+        - add_kubernetes_metadata: ~
       ```
     </Tab>
     <Tab>
@@ -209,33 +209,33 @@ Filebeat using the pre-defined examples below to start sending and analysing you
       ###################### Logit.io Filebeat Configuration ########################
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
-      - type: kafka
-        hosts:
-          - name-of-your-broker:your-broker-port
-        # - localhost:9092        (Example)
-        topics: ["name-of-your-topic", "name-of-another-topic"]
-        group_id: "filebeat"
+        - type: kafka
+          hosts:
+            - name-of-your-broker:your-broker-port
+          # - localhost:9092        (Example)
+          topics: ["name-of-your-topic", "name-of-another-topic"]
+          group_id: "filebeat"
 
       # ============================== Filebeat modules ==============================
       filebeat.config.modules:
-          path: ${path.config}/modules.d/*.yml
-          reload.enabled: false
-          #reload.period: 10s
+        path: ${path.config}/modules.d/*.yml
+        reload.enabled: false
+        #reload.period: 10s
 
       # ================================== Outputs ===================================
       # ------------------------------ Logstash Output -------------------------------
       output.logstash:
-          hosts: ["@logstash.host:@logstash.sslPort"]
-          loadbalance: true
-          ssl.enabled: true
+        hosts: ["@logstash.host:@logstash.sslPort"]
+        loadbalance: true
+        ssl.enabled: true
 
       # ================================= Processors =================================
       processors:
-          - add_host_metadata:
-              when.not.contains.tags: forwarded
-          - add_cloud_metadata: ~
-          - add_docker_metadata: ~
-          - add_kubernetes_metadata: ~
+        - add_host_metadata:
+            when.not.contains.tags: forwarded
+        - add_cloud_metadata: ~
+        - add_docker_metadata: ~
+        - add_kubernetes_metadata: ~
       ```
     </Tab>
   </Tabs>

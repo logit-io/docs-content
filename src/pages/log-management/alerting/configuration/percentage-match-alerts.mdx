@@ -23,20 +23,20 @@ name: "Percentage match example"
 type: percentage_match
 index: "*-*"
 filter:
-- query:
-  query_string:
-    query: "agent.hostname:azure"      
+  - query:
+      query_string:
+        query: "agent.hostname:azure"
 match_bucket_filter:
-- query_string:
-  query: "router.status: [500 TO 599]"    
+  - query_string:
+      query: "router.status: [500 TO 599]"
 doc_type: _doc
 max_percentage: 20
-buffer_time:  
+buffer_time:
   minutes: 3
 alert:
-- "email"
+  - "email"
 email:
-- "example@logit.io"
+  - "example@logit.io"
 ```
 
 ## Additional Options

@@ -17,11 +17,11 @@ name: "Any match alert example"
 type: any
 index: "*-*"
 filter:
-- query:
-   query_string:
-      query: "agent.hostname:azure AND status: [500 TO 599]"      
+  - query:
+      query_string:
+        query: "agent.hostname:azure AND status: [500 TO 599]"
 alert:
-- "email"
+  - "email"
 email:
-- "example@logit.io"
+  - "example@logit.io"
 ```

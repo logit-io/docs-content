@@ -24,7 +24,7 @@ Configure Filebeat using the pre-defined examples below to start sending and ana
 
   __deb/rpm__ `/etc/filebeat/filebeat.yml`
 
-  ### Add ActiveMQ Log Location
+  ### Update your filebeat.yml file
 
   Filebeat does not currently have a module to process the ActiveMQ application logs.
           
@@ -32,64 +32,40 @@ Configure Filebeat using the pre-defined examples below to start sending and ana
   
   Add the following to the end of the log input example, before the `filebeat.config.modules` section.
 
-  ```YML copy
-  - type: log
-    enabled: true
-    paths:
-    - /path/to/log/activemq/data/activemq.log*
-    fields:
-      type: activemq
-      multiline.pattern: ^\=
-      multiline.match: before
-  ```
-  
-  If you're running Filebeat 8.1+ `filebeat.inputs` needs to be `filestream` instead of `logs`:
-
-  ```yml copy
+  ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+  ###################### Logit.io Filebeat Configuration ########################
+  # ============================== Filebeat inputs ==============================
   filebeat.inputs:
+    - type: filestream
+      enabled: true
+      paths:
+        - /path/to/log/activemq/data/activemq.log*
+      fields:
+        type: activemq
+        multiline.pattern: ^\=
+        multiline.match: before   
 
-  - type: filestream
-    enabled: true
-    paths:
-    - /path/to/log/activemq/data/activemq.log*
-    fields:
-      type: activemq
-      multiline.pattern: ^\=
-      multiline.match: before
+  # ============================== Filebeat modules ==============================
+  filebeat.config.modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+    #reload.period: 10s
+
+  # ================================== Outputs ===================================
+  # ------------------------------ Logstash Output -------------------------------
+  output.logstash:
+      hosts: ["@logstash.host:@logstash.sslPort"]
+      loadbalance: true
+      ssl.enabled: true
+
+  # ================================= Processors =================================
+  processors:
+    - add_host_metadata:
+        when.not.contains.tags: forwarded
+    - add_cloud_metadata: ~
+    - add_docker_metadata: ~
+    - add_kubernetes_metadata: ~
   ```
-
-  ### Enable the input
-
-  We need to ensure that any inputs we are using are enabled
-
-  ```yml copy
-  filebeat.inputs:
-
-  - type: log
-    enabled: false
-  ```     
-
-  Enable the filebeat input, so it should look like the following
-
-  ```yml copy
-  filebeat.inputs:
-
-  - type: log
-    enabled: true
-  ```
-
-  ### Configure Output
-
-  We will be shipping to Logstash so that we have the option to run filters before the data is indexed.
-          
-  Comment out the elasticsearch output block.
-
-  ```yml copy
-  ## Comment out elasticsearch output
-  #output.elasticsearch:
-  #  hosts: ["localhost:9200"]
-  ```
-  <ConfigureOutput />
 
   ### Validate Configuration
 

@@ -114,10 +114,17 @@ before shipping them to one or more destinations, including Logstash. This is us
           
   Comment out the elasticsearch output block.
 
-  ```yml copy
+  ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
   ## Comment out elasticsearch output
   #output.elasticsearch:
   #  hosts: ["localhost:9200"]
+
+# ================================== Outputs ===================================
+# ------------------------------ Logstash Output -------------------------------
+output.logstash:
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
   ```
   <ConfigureOutput />
 

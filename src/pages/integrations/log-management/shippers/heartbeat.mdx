@@ -45,32 +45,32 @@ The results can then be shipped to one or more destinations, including Logstash.
   ```yaml copy
   # Configure monitors inline
   heartbeat.monitors:
-  - type: http
-    # Set enabled to true (or delete the following line) to enable this monitor
-    enabled: true
-    # ID used to uniquely identify this monitor in Elasticsearch even if the config changes
-    id: my-monitor
-    # Human readable display name for this service in Uptime UI and elsewhere
-    name: My Monitor
-    # List of URLs to query
-    urls: ["https://logit.io"]
-    # Configure task schedule
-    schedule: '@every 10s'
+    - type: http
+      # Set enabled to true (or delete the following line) to enable this monitor
+      enabled: true
+      # ID used to uniquely identify this monitor in Elasticsearch even if the config changes
+      id: my-monitor
+      # Human readable display name for this service in Uptime UI and elsewhere
+      name: My Monitor
+      # List of URLs to query
+      urls: ["https://logit.io"]
+      # Configure task schedule
+      schedule: '@every 10s'
 
   # Other examples for icmp, tcp and http
   # heartbeat.monitors:
-  # - type: icmp
-  #   schedule: '@every 5s'
-  #   hosts: ["myhost"]
-  # - type: tcp
-  #   schedule: '@every 5s'
-  #   hosts: ["myhost:7"]  # default TCP Echo Protocol
-  #   check.send: "Check"
-  #   check.receive: "Check"
-  # - type: http
-  #   schedule: '@every 5s'
-  #   urls: ["http://localhost:80/service/status"]
-  #   check.response.status: 200
+  #   - type: icmp
+  #     schedule: '@every 5s'
+  #     hosts: ["myhost"]
+  #   - type: tcp
+  #     schedule: '@every 5s'
+  #     hosts: ["myhost:7"]  # default TCP Echo Protocol
+  #     check.send: "Check"
+  #     check.receive: "Check"
+  #   - type: http
+  #     schedule: '@every 5s'
+  #     urls: ["http://localhost:80/service/status"]
+  #     check.response.status: 200
   # heartbeat.scheduler:
   #   limit: 10
   ```

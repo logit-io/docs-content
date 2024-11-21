@@ -45,14 +45,13 @@ filter:
 # (Required)
 # The alert used when a match is found
 alert:
-- "email"
+  - "email"
 
 # (required, email specific)
 # a list of email addresses to send alerts to
 
 email:
-
-- "me@logit.io"
+  - "me@logit.io"
 ```
 
 ## How to use the code
@@ -80,10 +79,9 @@ separate line followed by the email address. For example -
 # a list of email addresses to send alerts to
 
 email:
-
-- "me@logit.io"
-- "you@logit.io"
-- "them@logit.io"
+  - "me@logit.io"
+  - "you@logit.io"
+  - "them@logit.io"
 ```
 
 ### Test your alert
