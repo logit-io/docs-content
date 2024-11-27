@@ -1,0 +1,61 @@
+{
+  "typescript.tsc.autoDetect": "off",
+  "task.allowAutomaticTasks": "on",
+  "typescript.tsserver.experimental.enableProjectDiagnostics": true,
+  "problems.defaultViewMode": "table",
+  "problems.sortOrder": "severity",
+  "eslint.validate": ["typescript", "typescriptreact"],
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit"
+  },
+  "[mdx]": {
+    "editor.formatOnSave": false,
+    "editor.tabSize": 2
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2
+  },
+  "[svg]": {
+    "editor.defaultFormatter": "jock.svg"
+  },
+  "colorize.include": [".ts", ".tsx"],
+  "colorize.languages": [
+    "css",
+    "sass",
+    "scss",
+    "less",
+    "postcss",
+    "sss",
+    "stylus",
+    "xml",
+    "svg",
+    "javascriptreact",
+    "javascript",
+    "typescriptreact",
+    "typescript",
+    "mdx"
+  ],
+  "reactTsScss.autoComplete": true,
+  "reactTsScss.definition": true,
+  "reactTsScss.peekProperties": true,
+  "reactTsScss.cssAutoComplete": true,
+  "reactTsScss.cssDefinitions": true,
+  "reactTsScss.diagnostics": true,
+  "reactTsScss.baseDir": "src",
+  "reactTsScss.cssSyntaxColor": true,
+  "reactTsScss.tsCleanUpDefs": true,
+  "reactTsScss.cleanUpDefs": [
+    "*.module.css",
+    "*.module.scss",
+    "*.module.sass",
+    "*.module.less",
+    "*.module.styl"
+  ],
+  "reactTsScss.references": true,
+  "reactTsScss.codelens": false
+}
