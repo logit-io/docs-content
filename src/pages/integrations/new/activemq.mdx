@@ -1,0 +1,148 @@
+---
+title: ActiveMQ
+metaTitle: Learn How to Integrate and Configure Filebeat to Send ActiveMQ Logs
+subTitle: Collect and Ship ActiveMQ application logs to Logstash and Elasticsearch
+logo: activemq
+color: "#d10066"
+description: Use Filebeat to send ActiveMQ application logs to your hosted ELK stacks. Get started using our Filebeat ActiveMQ example configurations.
+stackTypes: logs
+sslPortType: beats-ssl
+tags: logs, ActiveMQ, Queue, Message, JMS, Messaging, Activemq, App
+---
+
+Filebeat is a lightweight shipper that enables you to send your ActiveMQ message queue logs to Logstash and Elasticsearch. 
+Configure Filebeat using the pre-defined examples below to start sending and analysing your ActiveMQ message queue logs.
+
+<Steps>
+  ### Install Integration
+  <InstallIntegration/>
+  ### Install Filebeat
+
+  <InstallFilebeat items={["DEB", "RPM"]} />
+
+  ### Locate Configuration File
+
+  __deb/rpm__ `/etc/filebeat/filebeat.yml`
+
+  ### Update your filebeat.yml file
+
+  Filebeat does not currently have a module to process the ActiveMQ application logs.
+          
+  Therefore we need to add the ActiveMQ application log location to the filebeat inputs. 
+  
+  Add the following to the end of the log input example, before the `filebeat.config.modules` section.
+
+  ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+  ###################### Logit.io Filebeat Configuration ########################
+  # ============================== Filebeat inputs ==============================
+  filebeat.inputs:
+    - type: filestream
+      enabled: true
+      paths:
+        - /path/to/log/activemq/data/activemq.log*
+      fields:
+        type: activemq
+        multiline.pattern: ^\=
+        multiline.match: before   
+
+  # ============================== Filebeat modules ==============================
+  filebeat.config.modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+    #reload.period: 10s
+
+  # ================================== Outputs ===================================
+  # ------------------------------ Logstash Output -------------------------------
+  output.logstash:
+      hosts: ["@logstash.host:@logstash.sslPort"]
+      loadbalance: true
+      ssl.enabled: true
+
+  # ================================= Processors =================================
+  processors:
+    - add_host_metadata:
+        when.not.contains.tags: forwarded
+    - add_cloud_metadata: ~
+    - add_docker_metadata: ~
+    - add_kubernetes_metadata: ~
+  ```
+
+  ### Validate Configuration
+
+  <ValidateBeat beatname="filebeat" />
+  
+  ### Start Filebeat
+
+  <StartFilebeat />
+
+  ### Launch Logit.io to view your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="activemq" source="activemq" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+  
+</Steps>
+<Steps>
+  ## Metrics
+  ### Install Integration
+  <InstallIntegration/>
+
+### Install Telegraf
+
+<InstallTelegraf />
+
+### Configure the Telegraf input plugin
+
+The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+
+```toml copy
+# Gather ActiveMQ metrics
+[[inputs.activemq]]
+  ## ActiveMQ WebConsole URL
+  url = "http://127.0.0.1:8161"
+
+  ## Required ActiveMQ Endpoint
+  ##   deprecated in 1.11; use the url option
+  # server = "192.168.50.10"
+  # port = 8161
+
+  ## Credentials for basic HTTP authentication
+  # username = "admin"
+  # password = "admin"
+
+  ## Required ActiveMQ webadmin root path
+  # webadmin = "admin"
+
+  ## Maximum time to receive response.
+  # response_timeout = "5s"
+
+  ## Optional TLS Config
+  # tls_ca = "/etc/telegraf/ca.pem"
+  # tls_cert = "/etc/telegraf/cert.pem"
+  # tls_key = "/etc/telegraf/key.pem"
+  ## Use TLS but skip chain & host verification
+  # insecure_skip_verify = false
+```
+
+<Callout type="info">
+  Read more about how to configure data scraping and configuration options for [ActiveMQ](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/activemq)
+</Callout>
+
+### Configure The Output plugin
+
+<TelegrafOutputPlugin />
+
+### Start Telegraf
+
+<StartTelegraf />
+
+### View your metrics
+<LaunchStack source="ActiveMQ_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-ActiveMQ-metrics" />
+
+### How to diagnose no data in Stack
+
+<DiagnoseNoData />
+
+</Steps>
