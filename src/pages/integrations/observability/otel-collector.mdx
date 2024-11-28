@@ -90,8 +90,7 @@ The OpenTelemetry Collector allows you to send logs, metrics and traces to your 
     otlp:
       auth:
         authenticator: basicauth/apm
-      endpoint: "@opentelemetry.endpointAddress:strip_quotes:@opentelemetry.port:stri\
-        p_quotes"
+      endpoint: "@opentelemetry.endpointAddress:strip_quotes:@opentelemetry.port:strip_quotes"
     logging:
       verbosity: detailed
   service:
