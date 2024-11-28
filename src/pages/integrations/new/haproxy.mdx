@@ -5,9 +5,9 @@ subTitle: Ship logs from HAProxy to Logstash
 logo: haproxy
 color: "#009edb"
 description: Use Filebeat to send HAProxy application, access or error logs to your ELK stacks. Configure Filebeat to send HAProxy logs to logstash or Elasticsearch. 
-stackTypes: logs
+stackTypes: logs, metrics
 sslPortType: beats-ssl
-tags: Logs, HAProxy, Proxy, Load Balancer, Ingress, HTTP, Web Server, Web Traffic, Haproxy
+tags: Logs, HAProxy, Proxy, Load Balancer, Ingress, HTTP, Web Server, Web Traffic, Haproxy, Telegraf, Metrics, Telemetry, OpenTelemetry, Health, Instrumentation
 ---
 
 Configure Filebeat to ship logs from HAProxy to Logstash and Elasticsearch.
@@ -253,6 +253,69 @@ Configure Filebeat to ship logs from HAProxy to Logstash and Elasticsearch.
   ### HAProxy dashboard
 
   ![Predefined kibana dashboard screenshot](@/images/integrations/filebeat/haproxy.png)
+</Steps>
+
+<Steps>
+  ## Metrics
+  ### Install Integration
+  <InstallIntegration/>
+
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+
+  ```toml copy
+  # Read metrics of HAProxy, via stats socket or http endpoints
+  [[inputs.haproxy]]
+    ## List of stats endpoints. Metrics can be collected from both http and socket
+    ## endpoints. Examples of valid endpoints:
+    ##   - http://myhaproxy.com:1936/haproxy?stats
+    ##   - https://myhaproxy.com:8000/stats
+    ##   - socket:/run/haproxy/admin.sock
+    ##   - /run/haproxy/*.sock
+    ##   - tcp://127.0.0.1:1936
+    ##
+    ## Server addresses not starting with 'http://', 'https://', 'tcp://' will be
+    ## treated as possible sockets. When specifying local socket, glob patterns are
+    ## supported.
+    servers = ["http://myhaproxy.com:1936/haproxy?stats"]
+
+    ## By default, some of the fields are renamed from what haproxy calls them.
+    ## Setting this option to true results in the plugin keeping the original
+    ## field names.
+    # keep_field_names = false
+
+    ## Optional TLS Config
+    # tls_ca = "/etc/telegraf/ca.pem"
+    # tls_cert = "/etc/telegraf/cert.pem"
+    # tls_key = "/etc/telegraf/key.pem"
+    ## Use TLS but skip chain & host verification
+    # insecure_skip_verify = false
+  ```
+
+  <Callout type="info">
+    Read more about how to configure data scraping and configuration options for [HAproxy](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/haproxy/README.md)
+  </Callout>
+
+  ### Configure The Output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack source="HAproxy_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-HAproxy-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
 </Steps>
 
 ### HAProxy Logs Overview
