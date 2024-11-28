@@ -1,13 +1,13 @@
 ---
-title: PostgreSQL
+title: PostgreSQL Logs And Metrics
 metaTitle: Learn How to Integrate and Configure Filebeat to Send PostgreSQL Logs
 subTitle: Collect and ship PostgreSQL logs to Logstash and Elasticsearch
 logo: postgresqlelephant
 color: "#336791"
 description: How to send PostgreSQL logs to your Hosted ELK Logstash instance. Configure Filebeat to send PostgreSQL logs to Logstash or Elasticsearch. 
-stackTypes: logs
+stackTypes: logs, metrics
 sslPortType: beats-ssl
-tags: Logs, Database, DB, PostgreSQL, RDBMS, SQL, Postgresql
+tags: Logs, Database, DB, PostgreSQL, RDBMS, SQL, Postgresql, Telegraf, Metrics, Telemetry, OpenTelemetry, Health, Instrumentation, Monitoring, Database Management
 ---
 
 Filebeat is a lightweight shipper that enables you to send your PostgreSQL 
@@ -15,6 +15,7 @@ application logs to Logstash and Elasticsearch. Configure Filebeat using the
 pre-defined examples below to start sending and analysing your PostgreSQL application logs.
 
 <Steps>
+  ## Logs
   ### Install Integration
   <InstallIntegration/>
   ### Install Filebeat
@@ -185,6 +186,84 @@ pre-defined examples below to start sending and analysing your PostgreSQL applic
   The PostgreSQL module comes with predefined Kibana dashboards. To view your dashboards for any of your Logit.io stacks, launch Logs and choose Dashboards.
           
   ![Predefined kibana dashboard screenshot](@/images/integrations/filebeat/postgresql.png)
+</Steps>
+
+<Steps>
+  ## Metrics
+  ### Install Integration
+  <InstallIntegration/>
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+
+  ```toml copy
+  # Read metrics from one or many postgresql servers
+  [[inputs.postgresql]]
+    ## Specify address via a url matching:
+    ##   postgres://[pqgotest[:password]]@localhost[/dbname]?sslmode=[disable|verify-ca|verify-full]&statement_timeout=...
+    ## or a simple string:
+    ##   host=localhost user=pqgotest password=... sslmode=... dbname=app_production
+    ## Users can pass the path to the socket as the host value to use a socket
+    ## connection (e.g. `/var/run/postgresql`).
+    ##
+    ## All connection parameters are optional.
+    ##
+    ## Without the dbname parameter, the driver will default to a database
+    ## with the same name as the user. This dbname is just for instantiating a
+    ## connection with the server and doesn't restrict the databases we are trying
+    ## to grab metrics for.
+    ##
+    address = "host=localhost user=postgres sslmode=disable"
+
+    ## A custom name for the database that will be used as the "server" tag in the
+    ## measurement output. If not specified, a default one generated from
+    ## the connection address is used.
+    # outputaddress = "db01"
+
+    ## connection configuration.
+    ## maxlifetime - specify the maximum lifetime of a connection.
+    ## default is forever (0s)
+    ##
+    ## Note that this does not interrupt queries, the lifetime will not be enforced
+    ## whilst a query is running
+    # max_lifetime = "0s"
+
+    ## A  list of databases to explicitly ignore.  If not specified, metrics for all
+    ## databases are gathered.  Do NOT use with the 'databases' option.
+    # ignored_databases = ["postgres", "template0", "template1"]
+
+    ## A list of databases to pull metrics about. If not specified, metrics for all
+    ## databases are gathered.  Do NOT use with the 'ignored_databases' option.
+    # databases = ["app_production", "testing"]
+
+    ## Whether to use prepared statements when connecting to the database.
+    ## This should be set to false when connecting through a PgBouncer instance
+    ## with pool_mode set to transaction.
+    prepared_statements = true
+  ```
+  <Callout type="info">
+    Read more about how to configure data scraping and configuration options for [PostgreSQL](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/postgresql)
+  </Callout>
+
+  ### Configure the output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack source="PostgreSQL_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-PostgreSQL-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
 </Steps>
 
 ### PostgreSQL Logging Overview
