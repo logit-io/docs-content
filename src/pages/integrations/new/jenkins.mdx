@@ -1,18 +1,88 @@
 ---
-title: Jenkins Metrics
-metaTitle: Integrate and Configure Telegraf to send Jenkins Metrics
-subTitle: Ship your Jenkins Metrics via Telegraf to your Logit.io Stack
+title: Jenkins Logs And Metrics
+metaTitle: Learn How to Integrate and Configure Filebeat to Send Jenkins Logs
+subTitle: Ship Jenkins logs to Logstash
 logo: jenkins
 color: "#4d4d4d"
-description: Use our example to configure Telegraf to ship Jenkins metrics to your Logit.io stacks. Configure Telegraf to send Jenkins metrics to Logstash or Elastic.
-stackTypes: metrics
+description: Send your Jenkins logs to logit.io via Logstash using the instructions below and begin searching your data
+stackTypes: logs, metrics
 sslPortType: beats-ssl
-tags: Telegraf, Metrics, Telemetry, OpenTelemetry, Health, Instrumentation, Jenkins, Continuous Integration, CI/CD, Telegraf, Jenkins
+tags: Automation, Deployment, CI/CD, Jenkins, Jenkins, Telegraf, Metrics, Telemetry, OpenTelemetry, Health, Instrumentation, Continuous Integration
 ---
 
-Configure Telegraf to ship Jenkins metrics to your Logit.io stacks via Logstash.
+Send your Jenkins logs to logit.io via Logstash using 
+the instructions below and begin searching your data.
 
 <Steps>
+  ##Logs
+  ### Install Integration
+  <InstallIntegration/>
+  ### Install Filebeat
+
+  <InstallFilebeat />
+
+  ### Configure Filebeat
+
+  Copy and use the Filebeat configuration below.
+
+  Remember to update your Jenkins log file path if it is in a diffeerent location to the below configuration.
+
+  ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+  ###################### Logit.io Filebeat Configuration ########################
+  # ============================== Filebeat inputs ==============================
+  filebeat.inputs:
+    - type: filestream
+      paths:
+        - /var/log/jenkins/jenkins.log
+        #- /var/<JENKINS-DIRECTORY>/jobs/*/builds/lastFailedBuild/log
+      fields:
+        type: jenkins
+      
+      fields_under_root: true
+      encoding: utf-8
+      ignore_older: 3h
+      
+      multiline:
+        pattern: '^[A-Z]{1}[a-z]{2} {1,2}[0-9]{1,2}, [0-9]{4} {1,2}[0-9]{1,2}:[0-9]{2}:[0-9]{2}'
+        negate: true
+        match: after
+
+  # ============================== Filebeat modules ==============================
+  filebeat.config.modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+    #reload.period: 10s
+
+  # ================================== Outputs ===================================
+  # ------------------------------ Logstash Output -------------------------------
+  output.logstash:
+      hosts: ["@logstash.host:@logstash.sslPort"]
+      loadbalance: true
+      ssl.enabled: true
+
+  # ================================= Processors =================================
+  processors:
+    - add_host_metadata:
+        when.not.contains.tags: forwarded
+    - add_cloud_metadata: ~
+    - add_docker_metadata: ~
+    - add_kubernetes_metadata: ~      
+  ```
+  
+  ### Start filebeat
+  
+  <StartFilebeat />
+
+  ### Launch Logit.io to view your logs
+  <LaunchStack utmMedium="logs" utmCampaign="jenkins" source="jenkins" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>
+
+<Steps>
+  ## Metrics
   ### Install Integration
   <InstallIntegration/>
 
@@ -94,26 +164,3 @@ Configure Telegraf to ship Jenkins metrics to your Logit.io stacks via Logstash.
   <DiagnoseNoData />
 
 </Steps>
-
-### Telegraf Jenkins metrics Overview
-
-Jenkins is a robust continuous integration/continuous delivery (CI/CD) tool that's vital for streamlining and automating software development 
-rocesses. To maximize its capabilities, effective Jenkins monitoring and analysis are paramount. This is where Telegraf, the open-source server 
-monitoring agent, comes into play. Telegraf is ideal for collecting Jenkins metrics and data across various sources, including the Jenkins 
-server, operating systems, and databases.
-
-Telegraf's diverse range of plugins allows for comprehensive Jenkins monitoring. It collects a broad scope of Jenkins metrics, such as build 
-times, job statuses, and queue lengths. These metrics are invaluable in gaining insight into Jenkins server health and performance, enabling 
-organizations to enhance their CI/CD pipeline management.
-
-Prometheus, an advanced open-source monitoring and alerting toolkit, is the go-to choice for storing and analyzing the collected Jenkins metrics. 
-With its flexible query language and data visualization capabilities, Prometheus facilitates deep insights into Jenkins CI/CD pipelines. 
-Configuring Telegraf to convert Jenkins metrics into the Prometheus format, and setting up Prometheus to scrape these metrics from the Telegraf 
-server, ensures seamless integration.
-
-By using Telegraf for Jenkins monitoring and shipping those metrics to Prometheus, businesses establish a reliable and efficient CI/CD metrics 
-management solution. This process empowers them to closely monitor Jenkins performance, optimize their software delivery pipelines, and make 
-informed, data-driven decisions to guarantee optimal system health and performance.
-
-If you need any further assistance with shipping your log data to Logit.io we're here to help you get started. Feel free to get in contact with 
-our support team by sending us a message via <IntercomButton text="live chat" /> & we'll be happy to assist.
