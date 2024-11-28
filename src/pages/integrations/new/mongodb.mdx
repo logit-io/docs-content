@@ -1,18 +1,19 @@
 ---
-title: MongoDB
+title: MongoDB Logs And Metrics
 metaTitle: Learn How to Integrate and Configure Filebeat to Send MongoDB Logs
 subTitle: Ship MongoDB logs to Logstash
 logo: mongodb
 color: "#00684a"
 description: Discover the process of transmitting MongoDB logs to your Logstash instance through our illustrative configuration examples.
-stackTypes: logs
+stackTypes: logs, metrics
 sslPortType: beats-ssl
-tags: Logs, MongoDB, Database, NoSQL, DB, Mongodb
+tags: Logs, MongoDB, Database, NoSQL, DB, Mongodb, Telegraf, Metrics, Telemetry, OpenTelemetry, Health, Instrumentation
 ---
 
 Discover the process of transmitting MongoDB logs to your Logstash instance through our illustrative configuration examples.
 
 <Steps>
+  ## Logs
   ### Install Integration
   <InstallIntegration/>
   ### Install Filebeat
@@ -172,6 +173,87 @@ Discover the process of transmitting MongoDB logs to your Logstash instance thro
   ### How to diagnose no data in Stack
 
   <DiagnoseNoData />
+</Steps>
+
+<Steps>
+  ## Metrics
+  ### Install Integration
+  <InstallIntegration/>
+
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+
+  ```toml copy
+  # Read metrics from one or many MongoDB servers
+  [[inputs.mongodb]]
+    ## An array of URLs of the form:
+    ##   "mongodb://" [user ":" pass "@"] host [ ":" port]
+    ## For example:
+    ##   mongodb://user:auth_key@10.10.3.30:27017,
+    ##   mongodb://10.10.3.33:18832,
+    ##
+    ## If connecting to a cluster, users must include the "?connect=direct" in
+    ## the URL to ensure that the connection goes directly to the specified node
+    ## and not have all connections passed to the master node.
+    servers = ["mongodb://127.0.0.1:27017/?connect=direct"]
+
+    ## When true, collect cluster status.
+    ## Note that the query that counts jumbo chunks triggers a COLLSCAN, which
+    ## may have an impact on performance.
+      gather_cluster_status = true
+
+    ## When true, collect per database stats
+      gather_perdb_stats = true
+
+    ## When true, collect per collection stats
+      gather_col_stats = true
+
+    ## When true, collect usage statistics for each collection
+    ## (insert, update, queries, remove, getmore, commands etc...).
+    # gather_top_stat = false
+
+    ## List of db where collections stats are collected
+    ## If empty, all db are concerned
+    # col_stats_dbs = ["local"]
+
+    ## Optional TLS Config
+    # tls_ca = "/etc/telegraf/ca.pem"
+    # tls_cert = "/etc/telegraf/cert.pem"
+    # tls_key = "/etc/telegraf/key.pem"
+    ## Use TLS but skip chain & host verification
+    # insecure_skip_verify = false
+
+    ## Specifies plugin behavior regarding disconnected servers
+    ## Available choices :
+    ##   - error: telegraf will return an error on startup if one the servers is unreachable
+    ##   - skip: telegraf will skip unreachable servers on both startup and gather
+    # disconnected_servers_behavior = "error"
+  ```
+
+  <Callout type="info">
+    Read more about how to configure data scraping and configuration options for [MongoDB](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/mongodb)
+  </Callout>
+
+  ### Configure The Output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack source="MongoDB_Server_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-MongoDB-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
 </Steps>
 
 ### MongoDB dashboard
