@@ -5,15 +5,16 @@ subTitle: Ship Redis Application logs to Logstash
 logo: redis
 color: "#c40d00"
 description: Find the process of sending Redis application logs to your Logstash instance easier through using our provided configuration examples.
-stackTypes: logs
+stackTypes: logs, metrics
 sslPortType: beats-ssl
-tags: Logs, Redis, NoSQL, In-Memory Database, App
+tags: Logs, Redis, NoSQL, In-Memory Database, App, Telegraf, Metrics, Telemetry, OpenTelemetry, Health, Instrumentation, Database, Monitoring
 ---
 
 Find the process of sending Redis application logs to your Logstash 
 instance easier through using our provided configuration examples.
 
 <Steps>
+  ## Logs
   ### Install Integration
   <InstallIntegration/>
   ### Install Filebeat
@@ -237,6 +238,52 @@ instance easier through using our provided configuration examples.
   ### How to diagnose no data in Stack
 
   <DiagnoseNoData />
+</Steps>
+
+<Steps>
+  ## Metrics
+  ### Install Integration
+  <InstallIntegration/>
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+
+  ```toml copy
+  -- Read Redis's basic status information
+  [[inputs.redis]]
+  -- specify servers via a url matching:
+  -- [protocol://][:password]@address[:port]
+  --  e.g. tcp://localhost:6379 or tcp://:password@192.168.99.100
+  -- If no servers are specified, then localhost is used as the host.
+  -- If no port is specified, 6379 is used
+    servers = [<protocol>://][:<password>]@<address>[:<port>]
+  ```
+
+  Replacing the values for protocol, password, address and port as needed.
+
+  <Callout type="info">
+    Read more about how to configure data scraping and configuration options for [Redis](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/redis/README.md)
+  </Callout>
+
+  ### Configure the output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack source="Redis_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-HAproxy-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
 </Steps>
 
 ### Redis Dashboard
