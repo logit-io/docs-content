@@ -1,12 +1,12 @@
 ---
-title: Fail2ban
+title: Fail2ban Logs And Metrics
 metaTitle: Learn How to Integrate and Configure Filebeat to Send Fail2ban Logs
 subTitle: Ship your Fail2ban logs using Filebeat to your Logit.io Stack
 color: "#e63429"
 description: Use our example to configure Filebeat to ship Fail2ban logs to your Logit.io stacks. Configure Filebeat to send Fail2ban logs to Logstash or Elastic.
 stackTypes: logs
 sslPortType: beats-ssl
-tags: Fail2ban, OSSEC, Security, Monitoring, Threat Detection, Beats, Logs, Filebeat, File, Text, Log Files
+tags: Fail2ban, OSSEC, Security, Monitoring, Threat Detection, Beats, Logs, Filebeat, File, Text, Log Files, Telegraf, Metrics, Telemetry, OpenTelemetry, Health, Instrumentation
 ---
 
 Configure Fail2ban to ship logs via Filebeat to your Logit.io stacks via Logstash.
@@ -20,32 +20,32 @@ Configure Fail2ban to ship logs via Filebeat to your Logit.io stacks via Logstas
 
   ### Configure Filebeat.yml
 
-The configuration file below is pre-configured to send data to your Logit.io Stack.
-        
-Copy the configuration file below and overwrite the contents of the Filebeat 
-configuration file typically located at `/etc/filebeat/filebeat.yml`
+  The configuration file below is pre-configured to send data to your Logit.io Stack.
+          
+  Copy the configuration file below and overwrite the contents of the Filebeat 
+  configuration file typically located at `/etc/filebeat/filebeat.yml`
 
-```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
-####################### Logit.io Filebeat Configuration #########################
-# ============================== Filebeat inputs ===============================
-filebeat.inputs:
-- type: filestream
-  enabled: true
-  paths:
-  - "/var/log/fail2ban.log"
-  
-  fields:
-    type: "fail2ban"
-  fields_under_root: true
-  encoding: utf-8
-  ignore_older: 12h
+  ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+  ####################### Logit.io Filebeat Configuration #########################
+  # ============================== Filebeat inputs ===============================
+  filebeat.inputs:
+  - type: filestream
+    enabled: true
+    paths:
+    - "/var/log/fail2ban.log"
+    
+    fields:
+      type: "fail2ban"
+    fields_under_root: true
+    encoding: utf-8
+    ignore_older: 12h
 
-# ================================== Outputs ===================================
-output.logstash:
-    hosts: ["@logstash.host:@logstash.sslPort"]
-    loadbalance: true
-    ssl.enabled: true
-```
+  # ================================== Outputs ===================================
+  output.logstash:
+      hosts: ["@logstash.host:@logstash.sslPort"]
+      loadbalance: true
+      ssl.enabled: true
+  ```
 
   ### Validate Configuration
 
@@ -62,6 +62,46 @@ output.logstash:
   ### How to diagnose no data in Stack
 
   <DiagnoseNoData />
+</Steps>
+
+<Steps>
+  ### Install Integration
+  <InstallIntegration/>
+
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+
+  ```toml copy
+  # Read metrics from fail2ban.
+  [[inputs.fail2ban]]
+    ## Use sudo to run fail2ban-client
+    use_sudo = false
+  ```
+
+  <Callout type="info">
+    Read more about how to configure data scraping and configuration options for [Fail2ban](https://github.com/influxdata/telegraf/tree/release-1.18/plugins/inputs/fail2ban)
+  </Callout>
+
+  ### Configure The Output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack source="Fail2ban_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-Fail2ban-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
 </Steps>
 
 ## Fail2ban Overview
