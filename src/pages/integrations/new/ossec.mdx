@@ -49,16 +49,16 @@ Send your OSSEC logs to logit.io via logstash using the instructions below and b
   ###################### Logit.io Filebeat Configuration ########################
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
-    - type: filestream
-      enabled: true
-      id: my_unique_id
-      paths:
-        # REQUIRED CHANGE TO YOUR LOGS PATH
-        - /var/log/*.log
-        #- C:\Windows\System32\winevt\Logs\*
+  - type: filestream
+    enabled: true
+    id: my_unique_id
+    paths:
+      # REQUIRED CHANGE TO YOUR LOGS PATH
+      - /var/log/*.log
+      #- C:\Windows\System32\winevt\Logs\*
 
-      fields:
-        type: ossec
+    fields:
+      type: ossec
   # ============================== Filebeat modules ==============================
   filebeat.config.modules:
     path: ${path.config}/modules.d/*.yml

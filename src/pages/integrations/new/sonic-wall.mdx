@@ -55,23 +55,22 @@ configuration file typically located at `/etc/filebeat/filebeat.yml`
 ####################### Logit.io Filebeat Configuration ########################
 # ============================== Filebeat inputs ===============================
 filebeat.inputs:
-
 - type: udp
   max_message_size: 10MiB
   host: "0.0.0.0:514"
   enabled: true
 
   fields:
-      type: "sonicwall"
+    type: "sonicwall"
   fields_under_root: true
   encoding: utf-8
   ignore_older: 12h
 
 # ================================== Outputs ===================================
 output.logstash:
-    hosts: ["@logstash.host:@logstash.sslPort"]
-    loadbalance: true
-    ssl.enabled: true
+  hosts: ["@logstash.host:@logstash.sslPort"]
+  loadbalance: true
+  ssl.enabled: true
 ```
 
   ### Validate configuration

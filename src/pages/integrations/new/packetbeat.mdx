@@ -25,17 +25,17 @@ before shipping them to one or more destinations, including Logstash. This is us
   ### Locate the configuration file
 
   <Tabs items={["DEB/RPM", "macOS/Windows"]}>
-        <Tab>
-        ```ps1 copy
-        /etc/packetbeat/packetbeat.yml 
-        ```
-        </Tab>
-        <Tab>
-        ```ps1 copy
-        <EXTRACTED_ARCHIVE>/packetbeat.yml
-        ```
-        </Tab>
-    </Tabs>
+    <Tab>
+    ```ps1 copy
+    /etc/packetbeat/packetbeat.yml 
+    ```
+    </Tab>
+    <Tab>
+    ```ps1 copy
+    <EXTRACTED_ARCHIVE>/packetbeat.yml
+    ```
+    </Tab>
+  </Tabs>
 
   ### Configure Packetbeat
 
@@ -122,9 +122,9 @@ before shipping them to one or more destinations, including Logstash. This is us
 # ================================== Outputs ===================================
 # ------------------------------ Logstash Output -------------------------------
 output.logstash:
-    hosts: ["@logstash.host:@logstash.sslPort"]
-    loadbalance: true
-    ssl.enabled: true
+  hosts: ["@logstash.host:@logstash.sslPort"]
+  loadbalance: true
+  ssl.enabled: true
   ```
   <ConfigureOutput />
 

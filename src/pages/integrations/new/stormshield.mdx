@@ -35,16 +35,16 @@ Ship your Stormshield logs to Logit.io via Logstash.
     ####################### Logit.io Filebeat Configuration ########################
     # ============================== Filebeat inputs ===============================
     filebeat.inputs:
-      - type: tcp
-        max_message_size: 10MiB
-        host: "0.0.0.0:6515"
-        enabled: true
+    - type: tcp
+      max_message_size: 10MiB
+      host: "0.0.0.0:6515"
+      enabled: true
 
-        fields:
-          type: stormshield
-        fields_under_root: true
-        encoding: utf-8
-        ignore_older: 12h
+      fields:
+        type: stormshield
+      fields_under_root: true
+      encoding: utf-8
+      ignore_older: 12h
     
     # ================================== Outputs ===================================
     output.logstash:

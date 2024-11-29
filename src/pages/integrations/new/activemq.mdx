@@ -37,14 +37,14 @@ Configure Filebeat using the pre-defined examples below to start sending and ana
   ###################### Logit.io Filebeat Configuration ########################
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
-    - type: filestream
-      enabled: true
-      paths:
-        - /path/to/log/activemq/data/activemq.log*
-      fields:
-        type: activemq
-        multiline.pattern: ^\=
-        multiline.match: before   
+  - type: filestream
+    enabled: true
+    paths:
+      - /path/to/log/activemq/data/activemq.log*
+    fields:
+      type: activemq
+      multiline.pattern: ^\=
+      multiline.match: before
 
   # ============================== Filebeat modules ==============================
   filebeat.config.modules:
@@ -55,9 +55,9 @@ Configure Filebeat using the pre-defined examples below to start sending and ana
   # ================================== Outputs ===================================
   # ------------------------------ Logstash Output -------------------------------
   output.logstash:
-      hosts: ["@logstash.host:@logstash.sslPort"]
-      loadbalance: true
-      ssl.enabled: true
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
 
   # ================================= Processors =================================
   processors:

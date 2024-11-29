@@ -90,7 +90,7 @@ Configure Filebeat to ship logs from MySQL to Logstash and Elasticsearch.
       # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-mysql.html
 
       - module: mysql
-      # Error logs
+        # Error logs
         error:
           enabled: true
 
@@ -98,7 +98,7 @@ Configure Filebeat to ship logs from MySQL to Logstash and Elasticsearch.
         # Filebeat will choose the paths depending on your OS.
         #var.paths:
 
-      # Slow logs
+        # Slow logs
         slowlog:
           enabled: true
 
@@ -132,7 +132,7 @@ Configure Filebeat to ship logs from MySQL to Logstash and Elasticsearch.
       # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-mysql.html
 
       - module: mysql
-      # Error logs
+        # Error logs
         error:
           enabled: true
 

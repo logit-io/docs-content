@@ -45,7 +45,7 @@ Configure Filebeat to ship logs from Red Hat Systems to Logstash and Elasticsear
       # Filebeat will choose the paths depending on your OS.
       #var.paths:
 
-  # Authorization logs
+    # Authorization logs
     auth:
       enabled: true
 
@@ -72,14 +72,14 @@ Configure Filebeat to ship logs from Red Hat Systems to Logstash and Elasticsear
   ###################### Logit.io Filebeat Configuration ########################
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
-    - type: filestream
-      enabled: true
-      id: my_unique_id
-      paths:
-        # REQUIRED CHANGE TO YOUR LOGS PATH
-        - /var/log/*.log
-      fields:
-        type: logfile
+  - type: filestream
+    enabled: true
+    id: my_unique_id
+    paths:
+      # REQUIRED CHANGE TO YOUR LOGS PATH
+      - /var/log/*.log
+    fields:
+      type: logfile
       
   # ============================== Filebeat modules ==============================
   filebeat.config.modules:
@@ -90,9 +90,9 @@ Configure Filebeat to ship logs from Red Hat Systems to Logstash and Elasticsear
   # ================================== Outputs ===================================
   # ------------------------------ Logstash Output -------------------------------
   output.logstash:
-      hosts: ["@logstash.host:@logstash.sslPort"]
-      loadbalance: true
-      ssl.enabled: true
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
 
   # ================================= Processors =================================
   processors:

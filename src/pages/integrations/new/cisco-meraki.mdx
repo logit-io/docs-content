@@ -32,16 +32,16 @@ examples below to start sending and analysing your Meraki logs.
   ### Locate the configuration file
 
   <Tabs items={["DEB/RPM", "macOS/Windows"]}>
-        <Tab>
-        ```ps1 copy
-        /etc/filebeat/filebeat.yml 
-        ```
-        </Tab>
-        <Tab>
-        ```ps1 copy
-        <EXTRACTED_ARCHIVE>/filebeat.yml
-        ```
-        </Tab>
+      <Tab>
+      ```ps1 copy
+      /etc/filebeat/filebeat.yml 
+      ```
+      </Tab>
+      <Tab>
+      ```ps1 copy
+      <EXTRACTED_ARCHIVE>/filebeat.yml
+      ```
+      </Tab>
     </Tabs>
 
   ### Configure Filebeat.yml
@@ -55,16 +55,16 @@ examples below to start sending and analysing your Meraki logs.
     ####################### Logit.io Filebeat Configuration ########################
     # ============================== Filebeat inputs ===============================
     filebeat.inputs:
-      - type: udp
-        max_message_size: 10MiB
-        host: "0.0.0.0:514"
-        enabled: true
+    - type: udp
+      max_message_size: 10MiB
+      host: "0.0.0.0:514"
+      enabled: true
 
-        fields:
-          type: ciscomeraki
-        fields_under_root: true
-        encoding: utf-8
-        ignore_older: 12h
+      fields:
+        type: ciscomeraki
+      fields_under_root: true
+      encoding: utf-8
+      ignore_older: 12h
 
     # ================================== Outputs ===================================
     output.logstash:

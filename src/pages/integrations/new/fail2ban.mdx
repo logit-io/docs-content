@@ -12,6 +12,7 @@ tags: Fail2ban, OSSEC, Security, Monitoring, Threat Detection, Beats, Logs, File
 Configure Fail2ban to ship logs via Filebeat to your Logit.io stacks via Logstash.
 
 <Steps>
+  ## Logs
   ### Install Integration
   <InstallIntegration/>
   ### Install Filebeat
@@ -42,9 +43,9 @@ Configure Fail2ban to ship logs via Filebeat to your Logit.io stacks via Logstas
 
   # ================================== Outputs ===================================
   output.logstash:
-      hosts: ["@logstash.host:@logstash.sslPort"]
-      loadbalance: true
-      ssl.enabled: true
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
   ```
 
   ### Validate Configuration
@@ -65,6 +66,7 @@ Configure Fail2ban to ship logs via Filebeat to your Logit.io stacks via Logstas
 </Steps>
 
 <Steps>
+  ## Metrics
   ### Install Integration
   <InstallIntegration/>
 

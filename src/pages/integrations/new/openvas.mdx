@@ -43,23 +43,23 @@ Send your OpenVAS reports to logit.io via logstash using the instructions below 
   ####################### Logit.io Filebeat Configuration ########################
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
-    - type: filestream
-      paths:
-        - INSERT_PATH_TO_OPENVAS_REPORT*.csv
-      
-      fields:
-        type: openvas
-      
-      fields_under_root: true
-      encoding: utf-8
-      ignore_older: 3h
-      
-      multiline:
-        pattern: '^(?:[0-9]{1,3}\.){3}[0-9]{1,3}'
-        negate: true
-        match: after
+  - type: filestream
+    paths:
+      - INSERT_PATH_TO_OPENVAS_REPORT*.csv
+    
+    fields:
+      type: openvas
+    
+    fields_under_root: true
+    encoding: utf-8
+    ignore_older: 3h
+    
+    multiline:
+      pattern: '^(?:[0-9]{1,3}\.){3}[0-9]{1,3}'
+      negate: true
+      match: after
 
-      filebeat.registry.path: /var/lib/filebeat
+    filebeat.registry.path: /var/lib/filebeat
 
   # ============================== Filebeat modules ==============================
   filebeat.config.modules:
@@ -70,9 +70,9 @@ Send your OpenVAS reports to logit.io via logstash using the instructions below 
   # ================================== Outputs ===================================
   # ------------------------------ Logstash Output -------------------------------
   output.logstash:
-      hosts: ["@logstash.host:@logstash.sslPort"]
-      loadbalance: true
-      ssl.enabled: true
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
   ```
   ### Start filebeat
 

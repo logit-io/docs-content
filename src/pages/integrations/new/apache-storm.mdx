@@ -37,16 +37,16 @@ logs to logit.io through logstash, initiating the data search process.
   ###################### Logit.io Filebeat Configuration ########################
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
-    - type: filestream
-      enabled: true
-      id: my_unique_id
-      paths:
-        # REQUIRED CHANGE TO YOUR LOGS PATH
-        - /var/log/*.log
-        #- C:\Windows\System32\winevt\Logs\*
+  - type: filestream
+    enabled: true
+    id: my_unique_id
+    paths:
+      # REQUIRED CHANGE TO YOUR LOGS PATH
+      - /var/log/*.log
+      #- C:\Windows\System32\winevt\Logs\*
 
-      fields:
-        type: apachestorm
+    fields:
+      type: apachestorm
     
   # ============================== Filebeat modules ==============================
   filebeat.config.modules:
@@ -57,9 +57,9 @@ logs to logit.io through logstash, initiating the data search process.
   # ================================== Outputs ===================================
   # ------------------------------ Logstash Output -------------------------------
   output.logstash:
-      hosts: ["@logstash.host:@logstash.sslPort"]
-      loadbalance: true
-      ssl.enabled: true
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
 
   # ================================= Processors =================================
   processors:

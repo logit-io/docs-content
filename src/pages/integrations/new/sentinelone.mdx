@@ -34,7 +34,6 @@ configuration file typically located at `/etc/filebeat/filebeat.yml`
 ####################### Logit.io Filebeat Configuration #########################
 # ============================== Filebeat inputs ===============================
 filebeat.inputs:
-
 - type: tcp
   max_message_size: 10MiB
   host: "0.0.0.0:6515"
@@ -48,9 +47,9 @@ filebeat.inputs:
 
 # ================================== Outputs ===================================
 output.logstash:
-    hosts: ["@logstash.host:@logstash.sslPort"]
-    loadbalance: true
-    ssl.enabled: true
+  hosts: ["@logstash.host:@logstash.sslPort"]
+  loadbalance: true
+  ssl.enabled: true
 ```
 
   ### Start Filebeat

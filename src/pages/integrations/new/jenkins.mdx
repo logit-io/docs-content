@@ -31,21 +31,21 @@ the instructions below and begin searching your data.
   ###################### Logit.io Filebeat Configuration ########################
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
-    - type: filestream
-      paths:
-        - /var/log/jenkins/jenkins.log
-        #- /var/<JENKINS-DIRECTORY>/jobs/*/builds/lastFailedBuild/log
-      fields:
-        type: jenkins
-      
-      fields_under_root: true
-      encoding: utf-8
-      ignore_older: 3h
-      
-      multiline:
-        pattern: '^[A-Z]{1}[a-z]{2} {1,2}[0-9]{1,2}, [0-9]{4} {1,2}[0-9]{1,2}:[0-9]{2}:[0-9]{2}'
-        negate: true
-        match: after
+  - type: filestream
+    paths:
+      - /var/log/jenkins/jenkins.log
+      #- /var/<JENKINS-DIRECTORY>/jobs/*/builds/lastFailedBuild/log
+    fields:
+      type: jenkins
+    
+    fields_under_root: true
+    encoding: utf-8
+    ignore_older: 3h
+    
+    multiline:
+      pattern: '^[A-Z]{1}[a-z]{2} {1,2}[0-9]{1,2}, [0-9]{4} {1,2}[0-9]{1,2}:[0-9]{2}:[0-9]{2}'
+      negate: true
+      match: after
 
   # ============================== Filebeat modules ==============================
   filebeat.config.modules:
@@ -56,9 +56,9 @@ the instructions below and begin searching your data.
   # ================================== Outputs ===================================
   # ------------------------------ Logstash Output -------------------------------
   output.logstash:
-      hosts: ["@logstash.host:@logstash.sslPort"]
-      loadbalance: true
-      ssl.enabled: true
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
 
   # ================================= Processors =================================
   processors:

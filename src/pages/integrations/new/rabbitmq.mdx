@@ -41,14 +41,14 @@ Learn how to send RabbitMQ application logs to your Logstash instance - Ship ove
       ###################### Logit.io Filebeat Configuration ########################
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
-        - type: filestream
-          enabled: true
-          paths:
-            - /var/log/rabbitmq/*.log
-          fields:
-            type: rabbitmq
-            multiline.pattern: ^\=
-            multiline.match: before
+      - type: filestream
+        enabled: true
+        paths:
+          - /var/log/rabbitmq/*.log
+        fields:
+          type: rabbitmq
+          multiline.pattern: ^\=
+          multiline.match: before
       
       # ============================== Filebeat modules ==============================
       filebeat.config.modules:
@@ -88,14 +88,14 @@ Learn how to send RabbitMQ application logs to your Logstash instance - Ship ove
       ###################### Logit.io Filebeat Configuration ########################
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
-        - type: filestream
-          enabled: true
-          paths:
-            - /var/log/rabbitmq/*.log
-          fields:
-            type: rabbitmq
-            multiline.pattern: ^\=
-            multiline.match: before
+      - type: filestream
+        enabled: true
+        paths:
+          - /var/log/rabbitmq/*.log
+        fields:
+          type: rabbitmq
+          multiline.pattern: ^\=
+          multiline.match: before
       
       # ============================== Filebeat modules ==============================
       filebeat.config.modules:
@@ -135,14 +135,14 @@ Learn how to send RabbitMQ application logs to your Logstash instance - Ship ove
       ###################### Logit.io Filebeat Configuration ########################
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
-        - type: filestream
-          enabled: true
-          paths:
-            - /var/log/rabbitmq/*.log
-          fields:
-            type: rabbitmq
-            multiline.pattern: ^\=
-            multiline.match: before
+      - type: filestream
+        enabled: true
+        paths:
+          - /var/log/rabbitmq/*.log
+        fields:
+          type: rabbitmq
+          multiline.pattern: ^\=
+          multiline.match: before
 
       # ============================== Filebeat modules ==============================
       filebeat.config.modules:
@@ -182,14 +182,14 @@ Learn how to send RabbitMQ application logs to your Logstash instance - Ship ove
       ###################### Logit.io Filebeat Configuration ########################
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
-        - type: filestream
-          enabled: true
-          paths:
-            - /var/log/rabbitmq/*.log
-          fields:
-            type: rabbitmq
-            multiline.pattern: ^\=
-            multiline.match: before
+      - type: filestream
+        enabled: true
+        paths:
+          - /var/log/rabbitmq/*.log
+        fields:
+          type: rabbitmq
+          multiline.pattern: ^\=
+          multiline.match: before
 
       # ============================== Filebeat modules ==============================
       filebeat.config.modules:
@@ -229,14 +229,14 @@ Learn how to send RabbitMQ application logs to your Logstash instance - Ship ove
       ###################### Logit.io Filebeat Configuration ########################
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
-        - type: filestream
-          enabled: true
-          paths:
-            - /var/log/rabbitmq/*.log
-          fields:
-            type: rabbitmq
-            multiline.pattern: ^\=
-            multiline.match: before
+      - type: filestream
+        enabled: true
+        paths:
+          - /var/log/rabbitmq/*.log
+        fields:
+          type: rabbitmq
+          multiline.pattern: ^\=
+          multiline.match: before
 
       # ============================== Filebeat modules ==============================
       filebeat.config.modules:

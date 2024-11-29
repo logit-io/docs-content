@@ -38,33 +38,33 @@ logs from AWS Beanstalk to one or more destinations, including Logstash.
         
   ```yaml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
   files:
-    "/etc/filebeat/filebeat.yml":
-      mode: "000755"
-      owner: root
-      group: root
-      content: |
-        filebeat.inputs:
-          - input_type: filestream
-            enabled: true
-            paths:
-              # REQUIRED: Change the path to your logs
-              - /var/log/*.log
-            fields:
-              type: logfile
-        output.logstash:
-          hosts: ["@logstash.host:@logstash.sslPort"]
-          loadbalance: true
-          ssl.enabled: true
+  "/etc/filebeat/filebeat.yml":
+    mode: "000755"
+    owner: root
+    group: root
+    content: |
+      filebeat.inputs:
+      - input_type: filestream
+        enabled: true
+        paths:
+        # REQUIRED: Change the path to your logs
+        - /var/log/*.log
+        fields:
+          type: logfile
+      output.logstash:
+        hosts: ["@logstash.host:@logstash.sslPort"]
+        loadbalance: true
+        ssl.enabled: true
 
   commands:
-    1_command:
-      command: "curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-8.11.3-x86_64.rpm"
-      cwd: /home/ec2-user
-    2_command:
-      command: "rpm -ivh --replacepkgs filebeat-8.11.3-x86_64.rpm"
-      cwd: /home/ec2-user
-    3_command:
-      command: "/etc/init.d/filebeat start"
+  1_command:
+    command: "curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-8.11.3-x86_64.rpm"
+    cwd: /home/ec2-user
+  2_command:
+    command: "rpm -ivh --replacepkgs filebeat-8.11.3-x86_64.rpm"
+    cwd: /home/ec2-user
+  3_command:
+    command: "/etc/init.d/filebeat start"
   ```
 
   __Validate your YAML__

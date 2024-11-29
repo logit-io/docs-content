@@ -70,9 +70,9 @@ filebeat.inputs:
 
 # ================================== Outputs ===================================
 output.logstash:
-    hosts: ["@logstash.host:@logstash.sslPort"]
-    loadbalance: true
-    ssl.enabled: true
+  hosts: ["@logstash.host:@logstash.sslPort"]
+  loadbalance: true
+  ssl.enabled: true
 ```
 
   ### Validate Configuration

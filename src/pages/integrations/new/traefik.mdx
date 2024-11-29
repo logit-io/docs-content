@@ -52,56 +52,56 @@ Send Traefik access logs to your Hosted ELK Logstash instance.
       <Tab>
         There are several built in filebeat modules you can use. You will need to enable the traefik module:
 
-          ```cmd copy
-          sudo filebeat modules list
-          sudo filebeat modules enable traefik
-          ```
-          In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
-          
-          ___Filesets are disabled by default___.
+        ```cmd copy
+        sudo filebeat modules list
+        sudo filebeat modules enable traefik
+        ```
+        In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
+        
+        ___Filesets are disabled by default___.
 
-          Copy the snippet below and replace the contents of the traefik.yml module file:
+        Copy the snippet below and replace the contents of the traefik.yml module file:
 
-          ```yml copy
-          # Module: traefik
-          # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-traefik.html
+        ```yml copy
+        # Module: traefik
+        # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-traefik.html
 
-          - module: traefik
-            # Access logs
-            access:
-              enabled: true
+        - module: traefik
+          # Access logs
+          access:
+            enabled: true
 
-              # Set custom paths for the log files. If left empty,
-              # Filebeat will choose the paths depending on your OS.
-              #var.paths:
-          ```
+            # Set custom paths for the log files. If left empty,
+            # Filebeat will choose the paths depending on your OS.
+            #var.paths:
+        ```
       </Tab>
       <Tab>
         There are several built in filebeat modules you can use. You will need to enable the traefik module:
 
-          ```cmd copy
-          ./filebeat modules list
-          ./filebeat modules enable traefik
-          ```
-          In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
-          
-          ___Filesets are disabled by default___.
+        ```cmd copy
+        ./filebeat modules list
+        ./filebeat modules enable traefik
+        ```
+        In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
+        
+        ___Filesets are disabled by default___.
 
-          Copy the snippet below and replace the contents of the traefik.yml module file:
+        Copy the snippet below and replace the contents of the traefik.yml module file:
 
-          ```yml copy
-          # Module: traefik
-          # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-traefik.html
+        ```yml copy
+        # Module: traefik
+        # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-traefik.html
 
-          - module: traefik
-            # Access logs
-            access:
-              enabled: true
+        - module: traefik
+          # Access logs
+          access:
+            enabled: true
 
-              # Set custom paths for the log files. If left empty,
-              # Filebeat will choose the paths depending on your OS.
-              #var.paths:
-          ```
+            # Set custom paths for the log files. If left empty,
+            # Filebeat will choose the paths depending on your OS.
+            #var.paths:
+        ```
       </Tab>
       <Tab>
         There are several built in filebeat modules you can use. You will need to enable the traefik module:
@@ -116,13 +116,13 @@ Send Traefik access logs to your Hosted ELK Logstash instance.
 
         Copy the snippet below and replace the contents of the traefik.yml module file:
 
-        ```cmd copy
+        ```yml copy
         # Module: traefik
         # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-traefik.html
 
         - module: traefik
-        # Access logs
-        access:
+          # Access logs
+          access:
             enabled: true
 
             # Set custom paths for the log files. If left empty,
@@ -143,13 +143,13 @@ Send Traefik access logs to your Hosted ELK Logstash instance.
         
         Copy the snippet below and replace the contents of the traefik.yml module file:
 
-        ```cmd copy
+        ```yml copy
         # Module: traefik
         # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-traefik.html
 
         - module: traefik
-        # Access logs
-        access:
+          # Access logs
+          access:
             enabled: true
 
             # Set custom paths for the log files. If left empty,

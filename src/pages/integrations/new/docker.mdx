@@ -33,10 +33,10 @@ configuration file typically located at `/etc/filebeat/filebeat.yml`
 ####################### Logit.io Filebeat Configuration #########################
 # ============================== Filebeat inputs ===============================
 filebeat.inputs:
-  - type: container
-    enabled: true
-    paths:
-      - /var/lib/docker/containers/*/*.log
+- type: container
+  enabled: true
+  paths:
+    - /var/lib/docker/containers/*/*.log
 
 # ================================== Outputs ===================================
 output.logstash:
