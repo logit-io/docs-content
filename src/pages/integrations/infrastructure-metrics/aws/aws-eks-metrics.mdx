@@ -1,5 +1,6 @@
 ---
 title: AWS EKS Metrics
+metaTitle: Integrate and Configure VMAgent to Send AWS EKS Metrics
 subTitle: Ship AWS-EKS metrics using VictoriaMetrics VMAgent
 logo: aws
 color: "#ff9900"
@@ -86,7 +87,7 @@ remoteWriteUrls: []
 
 To:
 
-```yaml copy
+```yaml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
 # WARN: need to specify at least one remote write url or one multi tenant url
 remoteWriteUrls: ["https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"]
 # remoteWriteUrls:

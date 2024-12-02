@@ -1,5 +1,6 @@
 ---
 title: MySQL Server Metrics
+metaTitle: Integrate and Configure Telegraf to send MySQL Server Metrics
 subTitle: Ship your MySQL Server Metrics via Telegraf to your Logit.io Stack
 logo: mysql
 color: "#4d4d4d"
@@ -22,7 +23,7 @@ Configure Telegraf to ship MySQL Server metrics to your Logit.io stacks via Logs
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   # Read metrics from one or many mysql servers
   [[inputs.mysql]]
     ## specify servers via a url matching:

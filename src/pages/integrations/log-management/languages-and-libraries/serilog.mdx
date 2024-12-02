@@ -1,7 +1,7 @@
 ---
 title: Serilog
 metaTitle: Learn How to Integrate and Configure Serilog to Send Logs
-subTitle: Ship logs from your Serilog to Logstash
+subTitle: Ship logs to Logit.io via Logstash
 logo: serilog
 color: "#e63429"
 description: Learn how to ship Serilog application logs to your Hosted ELK Logstash instance using our configuration examples.
@@ -10,97 +10,127 @@ sslPortType: tcp-ssl
 tags: Logs, .NET, DotNet, Serilog, Logging Framework
 ---
 
-Send Serilog application logs to your Hosted ELK Logstash instance.
+import ConfigureSerilog from "@/components/integrations/partials/configure-serilog";
+
+Use Serilog to send .NET logs to your Logit.io Stack.
 
 <Steps>
   ### Install Integration
+
   <InstallIntegration/>
-### Installing Serilog
 
-You will need to add the `Serilog` and `Serilog.Sinks.Network` packages. 
+  ### Install
 
-```ps copy
-Install-Package Serilog
-Install-Package Serilog.Sinks.Network
-Install-Package Serilog.Settings.AppSettings
-```
+  If using Visual Studio, create a new application using the ASP.NET Core Web App (Model-View-Controller) template.
 
-### Configuring Serilog
+  If using a terminal application e.g. Powershell run the following command (where 'SerilogTestApp' is the name of the application you want to create):
 
-Add the following app settings to your `app.config` or `web.config`.
+  ```ps copy
+  dotnet new mvc -n SerilogTestApp
+  ```
 
-```xml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
-<configuration>
-  <appSettings>
-    <!-- Level of logging -->
-    <add key="serilog:minimum-level" value="Verbose" />
-    <!-- Use the TCP Network sink -->
-    <add key="serilog:using:TCPSink" value="Serilog.Sinks.Network" />
-    <!-- Your logstash configuration -->
-    <add key="serilog:write-to:TCPSink.uri" value="tls://@logstash.host:@logstash.sslPort" />            
-  </appSettings>
-</configuration>
-```
+  You will need to use NuGet or the command line to install three Serilog packages: `Serilog.AspNetCore`, `Serilog.Extensions.Hosting` and `Serilog.Sinks.Network` to send logs using TCP/TLS or UDP.
+  
+  In Powershell:
+  ```ps copy 
+  dotnet add package Serilog.AspNetCore
+  dotnet add package Serilog.Extensions.Hosting
+  dotnet add package Serilog.Sinks.Network
+  ```
 
-The `serilog:write-to:TCPSink.uri` value must be in the format "protocol://domain:port".
+  If you are using Visual Studio, navigate to Tools -> NuGet Package Manager -> Manage NuGet packages for solution, 
+  browse for the 3 packages mentioned above and install them in your new application.
 
-<Callout type="warning">
-  If your Stack is missing a TCP-SSL input then you can send your logs using TCP or UDP instead, but this is not recommended.
-  <IntercomButton text="Talk to support" /> if you need assistance adding a TCP-SSL input to your Stack.
-</Callout>
+  ### Configuring Serilog
+  
+  <ConfigureSerilog />
 
-### Using Serilog
+  ### Using Serilog
 
-Create a statically accessible Logger configured from AppSettings.
+  Inside `Program.cs`, add Serilog to the `WebApplication` build process. Below is the updated `Program.cs` code in full:
         
-```c# copy showLineNumbers
-Log.Logger = new LoggerConfiguration()
-  .ReadFrom.AppSettings()
-  .CreateLogger();
-```
+  ```csharp copy showLineNumbers
+  using Serilog;
 
-You can now log from anywhere in your application.
+  var builder = WebApplication.CreateBuilder(args);
 
-```c# copy
-Log.Information("The global logger has been configured");
-```
+  builder.Host.UseSerilog((hostContext, _, configuration) =>
+  {
+      configuration.ReadFrom.Configuration(hostContext.Configuration);
+  });
 
-Serilog is a fully featured logging framework and has many other capabilities that are not detailed here, 
-please see the [Serilog Documentation](https://github.com/serilog/serilog/wiki/Getting-Started#setup) for more information.
+  // Add services to the container.
+  builder.Services.AddControllersWithViews();
 
-### Check Logit.io for your logs
+  var app = builder.Build();
 
-<LaunchStack utmMedium="logs" utmCampaign="serilog" source="serilog" />
+  // Configure the HTTP request pipeline.
+  if (!app.Environment.IsDevelopment())
+  {
+      app.UseExceptionHandler("/Home/Error");
+      // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+      app.UseHsts();
+  }
 
-### How to diagnose no data in Stack
+  app.UseHttpsRedirection();
+  app.UseStaticFiles();
 
-<DiagnoseNoData />
+  app.UseRouting();
+
+  app.UseAuthorization();
+
+  app.MapControllerRoute(
+      name: "default",
+      pattern: "{controller=Home}/{action=Index}/{id?}");
+
+  app.Run();
+  ```
+  
+  You can now log from anywhere in your application. For example, the following code will send a warning log to your stack when the application 
+  hits the Index action of the Home controller:
+  
+  ```csharp copy
+  using Microsoft.AspNetCore.Mvc;
+  using SerilogTestApp.Models;
+  using System.Diagnostics;
+
+  namespace SerilogTestApp.Controllers
+  {
+      public class HomeController(ILogger<HomeController> logger) : Controller
+      {
+          public IActionResult Index()
+          {
+              logger.LogWarning("This is something you need to be warned about!");
+              return View();
+          }
+
+          public IActionResult Privacy()
+          {
+              return View();
+          }
+
+          [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+          public IActionResult Error()
+          {
+              return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+          }
+      }
+  }
+  ``` 
+
+  ### Launch Logs to View Data
+
+  Run the application and click on the button below to open the log management visualizer:
+
+  <LaunchVisualizer type="logs" />
+
+  You should now see the above log stored in your stack.
 
 </Steps>
 
-## Serilog Logging Overview
+Serilog is a fully featured logging framework and has many other capabilities that are not detailed here.
+  
+Please see the [Serilog.AspNetCore Documentation](https://github.com/serilog/serilog-aspnetcore) for more information.
 
-Serilog is a popular logging library for [.NET](/integrations/log-management/languages-and-libraries/dotnet) and unlike many other logging libraries, 
-it has been built with a focus on presenting log data in a structured & organised format. 
-These [event log](https://logit.io/solutions/analysis/event-log-analyser/) messages & log 
-files are preserved in the [JSON](/integrations/log-management/data-types/json) format.
-
-Without needing to alter your code, Serilog uses sinks to send logs in a text-based format to a 
-centralised log management platform for further processing. If you can't or don't wish 
-to use Serilog for structured logging, alternatively you can use 
-either [NLog](/integrations/log-management/languages-and-libraries/nlog) or [log4net](/integrations/log-management/languages-and-libraries/log4net) for migrating your log data from .Net.
-
-For alerting & monitoring, many Serilog users use an email sink for writing 
-events to SMPT. This will quickly leave your inbox flooded when your application 
-encounters an issue. A far less troublesome alternative to this can be to use an 
-intuitive alerting and error monitoring platform that allows you to define alerts 
-with a higher level of customisation & outputs to Slack, Asana, or WebHooks.
-
-Logit.io provides alerting & monitoring as part of our platform that can be 
-customised to output events to many popular third party tools. Our platform 
-provides a completely managed Elastic Stack solution allowing you to get the 
-best out of your .Net logs and provides a Serilog log analyser across all plans.
-
-If you need any more help with shipping Serilog logs to Logstash our 
-team are here to help. Feel free to get in contact with our support 
-team <IntercomButton text="via live chat" /> and we'll be happy to assist.
+If you need any help with migrating your .NET Core logs to Logit.io we are here to help. 
+Feel free to <IntercomButton text="get in touch with our support team via Intercom" /> and we will be happy to assist.

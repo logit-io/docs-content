@@ -1,5 +1,6 @@
 ---
 title: Apache Aurora Server Metrics
+metaTitle: Integrate and Configure Telegraf to send Apache Aurora Server Metrics
 subTitle: Ship your Apache Aurora Server Metrics via Telegraf to your Logit.io Stack
 logo: aurora
 color: "#4d4d4d"
@@ -23,7 +24,7 @@ Configure Telegraf to ship Apache Aurora Server metrics to your Logit.io stacks 
 
 The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-```yaml copy
+```toml copy
 # Gather ActiveMQ metrics
 [[inputs.activemq]]
   # Read Apache status information (mod_status)

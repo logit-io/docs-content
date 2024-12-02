@@ -1,5 +1,6 @@
 ---
 title: Tengine Metrics
+metaTitle: Integrate and Configure Telegraf to send Tengine Metrics
 subTitle: Ship your Tengine Metrics via Telegraf to your Logit.io Stack
 logo: nginx
 color: "#4d4d4d"
@@ -22,7 +23,7 @@ Configure Telegraf to ship Tengine metrics to your Logit.io stacks via Logstash.
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   # Read Tengine's basic status information (ngx_http_reqstat_module)
   [[inputs.tengine]]
     ## An array of Tengine reqstat module URI to gather stats.

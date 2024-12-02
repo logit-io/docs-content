@@ -1,5 +1,6 @@
 ---
 title: Apache Tomcat Metrics
+metaTitle: Integrate and Configure Telegraf to send Apache Tomcat Metrics
 subTitle: Ship your Apache Tomcat Metrics via Telegraf to your Logit.io Stack
 logo: apachetomcat
 color: "#4d4d4d"
@@ -23,7 +24,7 @@ Configure Telegraf to ship Apache Tomcat metrics to your Logit.io stacks via Log
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   # Gather metrics from the Tomcat server status page.
   [[inputs.tomcat]]
     ## URL of the Tomcat server status

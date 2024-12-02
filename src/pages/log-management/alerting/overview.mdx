@@ -52,14 +52,14 @@ type: frequency
 index: logstash-*
 num_events: 50
 timeframe:
-    hours: 4
+  hours: 4
 filter:
-- term:
-    some_field: "some_value"
+  - term:
+      some_field: "some_value"
 alert:
-- "email"
+  - "email"
 email:
-- "elastalert@example.com"
+  - "elastalert@example.com"
 ```
 
 Here is a repository with example alert YAML files that will help you create your own alert rules:
@@ -126,9 +126,9 @@ num_events: 30
 timeframe:
   seconds: 30
 alert:
-- "email"
+  - "email"
 email:
-- "test@example.com"
+  - "test@example.com"
 ```
 
 If you see `X matches, 0 alerts sent`, this may have occurred for several reasons. 

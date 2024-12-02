@@ -15,207 +15,134 @@ Configure Filebeat to ship logs from Ubuntu Systems to Logstash and Elasticsearc
 
 <Steps>
   ### Install Integration
+
   <InstallIntegration/>
+
   ### Install Filebeat
 
-  <InstallFilebeat items={["DEB"]} />
+  To get started you will need to install filebeat. To do this you have two main options:
+
+  - Choose the AMD / Intel file (x86_64) or
+  - Choose the ARM file (aarch64)
+          
+  You can tell if you have a PC with an ARM CPU architecture by opening the Terminal 
+  application and running the `arch` command. If it displays ___arm64___ you have ARM architecture.
+
+  <Callout type="info">
+    To successfully install filebeat you will need to have root access. 
+  </Callout>
+          
+  ___If you have an x86_64 system___ download and install filebeat using the following commands:
+
+  ```cmd copy
+  curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-8.15.2-amd64.deb
+  sudo dpkg -i filebeat-8.15.2-amd64.deb
+  ```
+
+  ___If you have an aarch64 system___ download and install filebeat using the following commands:
+
+  ```cmd copy
+  curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-8.15.2-arm64.deb
+  sudo dpkg -i filebeat-8.15.2-arm64.deb
+  ```
 
   ### Enable The System Module
 
-  <Tabs items={["Linux", "DEB"]}>
-    <Tab>
-      There are several built in filebeat modules you can use. You will need to enable the system module.
+  There are several built in filebeat modules you can use. You will need to enable the system module.
 
-      Change directory to the location where filebeat was extracted and run the following commands:
+  Change directory to the location where filebeat was extracted and run the following commands:
 
-      ```bash copy
-      sudo filebeat modules list
-      sudo filebeat modules enable system
-      ```
-      Navigate to the `modules.d` folder, copy the snippet below and replace the contents of the system.yml module file:
+  ```bash copy
+  sudo filebeat modules list
+  sudo filebeat modules enable system
+  ```
 
-      ```yml copy showLineNumbers
-      # Module: system
-      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12.2/filebeat-module-system.html
+  Navigate to the `modules.d` folder, copy the snippet below and replace the contents of the system.yml module file:
 
-      - module: system
-      # Syslog
-      syslog:
-          enabled: true
+  ```yml copy showLineNumbers
+  # Module: system
+  # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.15.2/filebeat-module-system.html
 
-          # Set custom paths for the log files. If left empty,
-          # Filebeat will choose the paths depending on your OS.
-          #var.paths:
+  - module: system
+    # Syslog
+    syslog:
+      enabled: true
 
-      # Authorization logs
-      auth:
-          enabled: true
+      # Set custom paths for the log files. If left empty,
+      # Filebeat will choose the paths depending on your OS.
+      #var.paths:
 
-          # Set custom paths for the log files. If left empty,
-          # Filebeat will choose the paths depending on your OS.
-          #var.paths:
-      ```
-    </Tab>
-    <Tab>
-      There are several built in filebeat modules you can use. You will need to enable the system module.
+    # Authorization logs
+    auth:
+      enabled: true
 
-      Change directory to the location where filebeat was extracted and run the following commands:
-
-      ```bash copy
-      sudo filebeat modules list
-      sudo filebeat modules enable system
-      ```
-
-      Navigate to the `modules.d` folder, copy the snippet below and replace the contents of the system.yml module file:
-
-      ```yml copy showLineNumbers
-      # Module: system
-      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12.2/filebeat-module-system.html
-
-      - module: system
-      # Syslog
-      syslog:
-          enabled: true
-
-          # Set custom paths for the log files. If left empty,
-          # Filebeat will choose the paths depending on your OS.
-          #var.paths:
-
-      # Authorization logs
-      auth:
-          enabled: true
-
-          # Set custom paths for the log files. If left empty,
-          # Filebeat will choose the paths depending on your OS.
-          #var.paths:
-      ```
-    </Tab>
-  </Tabs>
+      # Set custom paths for the log files. If left empty,
+      # Filebeat will choose the paths depending on your OS.
+      #var.paths:
+  ```
 
   ### Update Your Configuration File
 
-  <Tabs items={["Linux", "DEB"]}>
-    <Tab>
-    The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+  The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
 
-      __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ field in the Logstash outputs section are correctly populated.
-      If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
-      The ___'paths'___ field will need to be set to the location of the logs you want to send to your Stack.
-      
-      Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
+  __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ field in the Logstash outputs section are correctly populated.
+  If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
+  The ___'paths'___ field will need to be set to the location of the logs you want to send to your Stack.
+  
+  Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
 
-      ```yml copy
-      ###################### Logit.io Filebeat Configuration ########################
-      # ============================== Filebeat inputs ==============================
-      filebeat.inputs:
-      - type: filestream
-        enabled: true
-        id: my_unique_id
-        paths:
-          # REQUIRED CHANGE TO YOUR LOGS PATH
-          - /var/log/*.log
-        fields:
-          type: logfile
-          
-      # ============================== Filebeat modules ==============================
-      filebeat.config.modules:
-        path: ${path.config}/modules.d/*.yml
-        reload.enabled: false
-        #reload.period: 10s
+```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+####################### Logit.io Filebeat Configuration ########################
+# ============================== Filebeat inputs ==============================
+filebeat.inputs:
+  - type: filestream
+    enabled: true
+    id: my_unique_id
+    paths:
+      # REQUIRED CHANGE TO YOUR LOGS PATH
+      - /var/log/*.log
+    fields:
+      type: logfile  
 
-      # ================================== Outputs ===================================
-      # ------------------------------ Logstash Output -------------------------------
-      output.logstash:
-          hosts: ["@logstash.host:@logstash.sslPort"]
-          loadbalance: true
-          ssl.enabled: true
+# ============================== Filebeat modules ==============================
+filebeat.config.modules:
+  path: ${path.config}/modules.d/*.yml
+  reload.enabled: false
+  #reload.period: 10s
 
-      # ================================= Processors =================================
-      processors:
-        - add_host_metadata:
-            when.not.contains.tags: forwarded
-        - add_cloud_metadata: ~
-        - add_docker_metadata: ~
-        - add_kubernetes_metadata: ~
-      ```
-    </Tab>
-    <Tab>
-      The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+# ================================== Outputs ===================================
+# ------------------------------ Logstash Output -------------------------------
+output.logstash:
+  hosts: ["@logstash.host:@logstash.sslPort"]
+  loadbalance: true
+  ssl.enabled: true
 
-      __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ field in the Logstash outputs section are correctly populated.
-      If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
-      The ___'paths'___ field will need to be set to the location of the logs you want to send to your Stack.
-      
-      Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
-
-      ```yml copy
-      ###################### Logit.io Filebeat Configuration ########################
-      # ============================== Filebeat inputs ==============================
-      filebeat.inputs:
-      - type: filestream
-        enabled: true
-        id: my_unique_id
-        paths:
-          # REQUIRED CHANGE TO YOUR LOGS PATH
-          - /var/log/*.log
-        fields:
-          type: logfile  
-
-      # ============================== Filebeat modules ==============================
-      filebeat.config.modules:
-        path: ${path.config}/modules.d/*.yml
-        reload.enabled: false
-        #reload.period: 10s
-
-      # ================================== Outputs ===================================
-      # ------------------------------ Logstash Output -------------------------------
-      output.logstash:
-          hosts: ["@logstash.host:@logstash.sslPort"]
-          loadbalance: true
-          ssl.enabled: true
-
-      # ================================= Processors =================================
-      processors:
-        - add_host_metadata:
-            when.not.contains.tags: forwarded
-        - add_cloud_metadata: ~
-        - add_docker_metadata: ~
-        - add_kubernetes_metadata: ~
-      ```
-    </Tab>
-  </Tabs>
+# ================================= Processors =================================
+processors:
+  - add_host_metadata:
+      when.not.contains.tags: forwarded
+  - add_cloud_metadata: ~
+  - add_docker_metadata: ~
+  - add_kubernetes_metadata: ~
+```
 
   ### Validate Configuration
 
-  <ValidateBeat beatname="filebeat" include={["Linux", "DEB"]} />
+  ```cmd copy
+  sudo filebeat test config -c /etc/filebeat/filebeat.yml
+  ```
 
   ### Start Filebeat
-  <Tabs items={["Linux", "DEB"]}>
-    <Tab>
-      To start Filebeat, run:
+  
+  To start Filebeat, run:
 
-      ```bash copy
-      sudo chown root filebeat.yml 
-      sudo chown root modules.d/{modulename}.yml 
-      sudo ./filebeat -e
-      ```
-
-      You'll be running filebeat as root, so you need to __change ownership of the configuration file__ and any 
-      configurations enabled in the modules.d directory, or run filebeat with __--strict.perms=false__ as shown above. 
-
-      Read more about how to [change ownership](https://www.elastic.co/guide/en/beats/libbeat/master/config-file-permissions.html).
-    </Tab>
-    <Tab>
-      To start Filebeat, run:
-
-      ```bash copy
-      sudo service filebeat start
-      ```
-    </Tab>
-  </Tabs>
+  ```bash copy
+  sudo service filebeat start
+  ```
 
   ### Check Logit.io for your logs
-  <LaunchStack utmMedium="logs" utmCampaign="ubunutu" source="ubuntu" />
+
+  <LaunchVisualizer type="logs" />
 
   ### How to diagnose no data in Stack
 
@@ -226,20 +153,3 @@ Configure Filebeat to ship logs from Ubuntu Systems to Logstash and Elasticsearc
   <LogstashPipeline />
 
 </Steps>
-
-### Ubuntu Logs Overview
-
-Ubuntu is an open-source Debian-based operating system. Ubuntu is known for being more user friendly for non-developers than the comparable Unix & Linux operating 
-systems due to its graphical user interface, it is also known for its high level of customizations supported in comparison to Unix & Linux.
-
-Event log data for Ubuntu captures event messages from the Linux kernel, server logs, and applications. This data holds key insights into performance issues 
-affecting your devices. As well as event Logs, Ubuntu supports service logs, [application logs](https://logit.io/platform/logging/logging-as-a-service/application-logging/) 
-& system Logs.
-
-Our Ubuntu log analyser enables you to compile & monitor all four types of Ubuntu log data across hundreds of systems, allowing you to quickly identify errors and event 
-[security](https://logit.io/about-us/security) issues across your systems and applications. These can range from identifying ransomware & malware all the way through 
-to optimising your overall IT operations.
-
-If you need any further assistance with migrating your data from Ubuntu to Logstash & Elasticsearch we're here to help you get started. Feel free to reach out by 
-contacting our support team by visiting ourdedicated Help Centre or via <IntercomButton text="live chat" /> & we'll be happy to assist. 
-

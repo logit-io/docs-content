@@ -1,5 +1,6 @@
 ---
 title: Nvidia SMI Metrics
+metaTitle: Integrate and Configure Telegraf to send Nvidia SMI Metrics
 subTitle: Ship your Nvidia SMI Metrics via Telegraf to your Logit.io Stack
 logo: nvidia
 color: "#4d4d4d"
@@ -22,7 +23,7 @@ Configure Telegraf to ship Nvidia SMI Metrics to your Logit.io stacks via Logsta
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   # Pulls statistics from nvidia GPUs attached to the host
   [[inputs.nvidia_smi]]
     ## Optional: path to nvidia-smi binary, defaults "/usr/bin/nvidia-smi"

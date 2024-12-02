@@ -24,25 +24,26 @@ examples below to start sending and analysing your Docker application logs.
 
   ### Configure Filebeat
 
-  <FilebeatContainer>
-    ```yaml copy
-    # ============================== Filebeat inputs ===============================
-    filebeat.inputs:
+The configuration file below is pre-configured to send data to your Logit.io Stack.
+        
+Copy the configuration file below and overwrite the contents of the Filebeat 
+configuration file typically located at `/etc/filebeat/filebeat.yml`
 
-    - type: container
+```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+####################### Logit.io Filebeat Configuration #########################
+# ============================== Filebeat inputs ===============================
+filebeat.inputs:
+  - type: container
+    enabled: true
+    paths:
+      - /var/lib/docker/containers/*/*.log
 
-      enabled: true
-
-      paths:
-      - 'var/lib/docker/containers/*/*.log'
-
-    # ================================== Outputs ===================================
-    output.logstash:
-        hosts: ["@logstash.host:@logstash.sslPort"]
-        loadbalance: true
-        ssl.enabled: true
-    ```
-  </FilebeatContainer>
+# ================================== Outputs ===================================
+output.logstash:
+  hosts: ["@logstash.host:@logstash.sslPort"]
+  loadbalance: true
+  ssl.enabled: true
+```
 
   ### Validate configuration
 

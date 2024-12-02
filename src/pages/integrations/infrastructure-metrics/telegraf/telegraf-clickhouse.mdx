@@ -1,5 +1,6 @@
 ---
 title: ClickHouse Metrics
+metaTitle: Integrate and Configure Telegraf to send ClickHouse Metrics
 subTitle: Ship your ClickHouse Metrics via Telegraf to your Logit.io Stack
 color: "#4d4d4d"
 description: Use our example to configure Telegraf to ship ClickHouse metrics to your Logit.io stacks. Configure Telegraf to send ClickHouse metrics to Logstash or Elastic.
@@ -22,7 +23,7 @@ Configure Telegraf to ship ClickHouse metrics to your Logit.io stacks via Logsta
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   # Read metrics from one or many ClickHouse servers
   [[inputs.clickhouse]]
     ## Username for authorization on ClickHouse server

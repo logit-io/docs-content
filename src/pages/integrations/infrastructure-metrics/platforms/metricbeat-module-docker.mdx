@@ -1,10 +1,11 @@
 ---
 title: Docker Metrics
+metaTitle: Integrate and Configure Metricbeat to send Docker Metrics
 subTitle: Collect and ship Docker container service metrics to Logstash and Elasticsearch
 logo: docker
 color: "#008bb6"
 description: How to send Docker container metrics to your Hosted ELK Logstash instance. Configure Metricbeat to send Docker container metrics to Logstash or Elasticsearch. 
-stackTypes: metrics
+stackTypes: logs
 sslPortType: beats-ssl
 tags: Metrics, Metricbeat, Stats, Docker, Container, Containerization, Module
 ---
@@ -51,20 +52,20 @@ service metrics and statistics to Logstash or Elasticsearch.
   
   ```yml copy showLineNumbers
   metricbeat.modules:
-  - module: docker
-    metricsets:
-      - "container"
-      - "cpu"
-      - "diskio"
-      - "event"
-      - "healthcheck"
-      - "info"
-      #- "image"
-      - "memory"
-      - "network"
-    hosts: ["unix:///var/run/docker.sock"]
-    period: 10s
-    enabled: true
+    - module: docker
+      metricsets:
+        - "container"
+        - "cpu"
+        - "diskio"
+        - "event"
+        - "healthcheck"
+        - "info"
+        #- "image"
+        - "memory"
+        - "network"
+      hosts: ["unix:///var/run/docker.sock"]
+      period: 10s
+      enabled: true
   ```
 
   ### Start Metricbeat

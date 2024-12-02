@@ -7,27 +7,21 @@ color: "#3a7b84"
 description: How to send file uploads of your logs to your Managed ELK Logstash instance. Simplify sending log data with Logit.io's data source configuration examples.
 stackTypes: logs
 sslPortType: tcp-ssl
-tags: Logs, File, Raw Data, Netcat, Data Upload
+tags: Logs, File, Raw Data, Netcat, ncat, Data Upload
 ---
 
 <Steps>
   ### Install Integration
+
   <InstallIntegration/>
-  ### Sample Data
-
-  Lets start with some sample data:
-
-  ```cmd copy
-  echo "Message sent to Logit.io using TCP" >> tmp.log
-  ```
-
+  
   ### Send data to TCP input
 
   <SendDataToTCP />
 
-  ### Check Logit.io for your logs
+  ### Launch Logs to View Your Data
 
-  <LaunchStack utmMedium="logs" utmCampaign="upload" source="upload" />
+  <LaunchVisualizer type="logs" />
 
   ### How to diagnose no data in Stack
 

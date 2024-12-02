@@ -43,7 +43,7 @@ timeframe:
   seconds: 30
 
 alert:
-- "email"
+  - "email"
 ```
 
 ### Rule types & their required fields
@@ -91,9 +91,9 @@ Below is the most common types of alerting used, which is email, Jira and slack.
 
 ```yaml copy
 alert:
-- email
-- jira
-- slack
+  - email
+  - jira
+  - slack
 ```
 ### Email
 
@@ -102,7 +102,7 @@ the example below of sending an email alert with a 'To' and 'From' field.
 
 ```yaml copy
 alert:
- - email
+  - email
 from_addr: "no-reply@example.com"
 email: "customer@example.com"
 ```
@@ -112,12 +112,12 @@ but with different 'To' and 'From' fields:
 
 ```yaml copy
 alert:
- - email:
-     from_addr: "no-reply@example.com"
-     email: "custom@example.com"
- - email:
-     from_addr: "elastalert@example.com"
-     email: "devs@example.com"
+  - email:
+      from_addr: "no-reply@example.com"
+      email: "custom@example.com"
+  - email:
+      from_addr: "elastalert@example.com"
+      email: "devs@example.com"
 ```
 
 From both of these examples, you must ensure that the spacing is correct 
@@ -138,7 +138,7 @@ options **jira_server**, **jira_project**, **jira_issuetype** and
 
 ```yaml copy
 alert:
-- "jira"
+  - "jira"
 
 # The hostname of the JIRA server.
 jira_server: "XXXXjira.atlassian.net"

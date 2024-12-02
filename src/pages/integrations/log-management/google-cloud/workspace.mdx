@@ -1,5 +1,6 @@
 ---
 title: Google Cloud Workspace Configuration
+metaTitle: Integrate and Configure Google Cloud Workspace Configuration to Send Logs
 subTitle: Ship Google Cloud Workspace Logs to Logit.io
 logo: googlecloud
 color: "#e63429"
@@ -57,47 +58,47 @@ tags: Beats, Logs, GCP Workspace, Google Cloud, Files, Text, Filebeat, Cloud Log
         
   Copy the configuration file below and overwrite the contents of __filebeat.yml__.
 
-  ```yml copy
-  fields:
-    type: google_workspace
-
+  ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+  ####################### Logit.io Filebeat Configuration ########################
   # ============================== Filebeat modules ==============================
   filebeat.modules:
-  - module: google_workspace
-  saml:
-    enabled: true
-    var.jwt_file: "./credentials_file.json"
-    var.delegated_account: "user@example.com"
-  user_accounts:
-    enabled: true
-    var.jwt_file: "./credentials_file.json"
-    var.delegated_account: "user@example.com"
-  login:
-    enabled: true
-    var.jwt_file: "./credentials_file.json"
-    var.delegated_account: "user@example.com"
-  admin:
-    enabled: true
-    var.jwt_file: "./credentials_file.json"
-    var.delegated_account: "user@example.com"
-  drive:
-    enabled: true
-    var.jwt_file: "./credentials_file.json"
-    var.delegated_account: "user@example.com"
-  groups:
-    enabled: true
-    var.jwt_file: "./credentials_file.json"
-    var.delegated_account: "user@example.com"
-
+    - module: google_workspace
+      saml:
+        enabled: true
+        var.jwt_file: "./credentials_file.json"
+        var.delegated_account: "user@example.com"
+      user_accounts:
+        enabled: true
+        var.jwt_file: "./credentials_file.json"
+        var.delegated_account: "user@example.com"
+      login:
+        enabled: true
+        var.jwt_file: "./credentials_file.json"
+        var.delegated_account: "user@example.com"
+      admin:
+        enabled: true
+        var.jwt_file: "./credentials_file.json"
+        var.delegated_account: "user@example.com"
+      drive:
+        enabled: true
+        var.jwt_file: "./credentials_file.json"
+        var.delegated_account: "user@example.com"
+      groups:
+        enabled: true
+        var.jwt_file: "./credentials_file.json"
+        var.delegated_account: "user@example.com"
   # ================================== Outputs ===================================
   # ------------------------------ Logstash Output -------------------------------
   output.logstash:
-      hosts: ["@logstash.host:@logstash.sslPort"]
-      loadbalance: true
-      ssl.enabled: true
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
 
   # ================================= Processors =================================
   processors:
+    - add_fields:
+        fields:
+          type: google_workspace  
     - add_host_metadata:
         when.not.contains.tags: forwarded
     - add_cloud_metadata: ~

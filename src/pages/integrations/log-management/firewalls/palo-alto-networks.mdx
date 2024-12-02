@@ -1,5 +1,6 @@
 ---
 title: Palo Alto Networks
+metaTitle: Integrate and Configure Palo Alto Networks to Send Logs
 pageTitle: Palo Alto Networks Firewall
 subTitle: Ship your Palo Alto firewall logs using Filebeat to your Logit.io Stack
 logo: paloalto
@@ -54,41 +55,27 @@ Configure a Palo Alto firewall to ship logs via Filebeat to your Logit.io stacks
 
   Copy the configuration file below and overwrite the contents of the Filebeat configuration file typically located at `/etc/filebeat/filebeat.yml`
 
-  ```yml copy
-  # ============================== Filebeat inputs ===============================
-  filebeat.inputs:
+    ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+    ####################### Logit.io Filebeat Configuration ########################
+    # ============================== Filebeat inputs ===============================
+    filebeat.inputs:
+      - type: udp
+        max_message_size: 10MiB
+        host: "0.0.0.0:514"
+        enabled: true
 
-  - type: udp
-      max_message_size: 10MiB
-      host: "0.0.0.0:514"
-      enabled: true
-
-      fields:
+        fields:
           type: paloalto
-      fields_under_root: true
-      encoding: utf-8
-      ignore_older: 12h
+        fields_under_root: true
+        encoding: utf-8
+        ignore_older: 12h
 
-  # ================================== Outputs ===================================
-  output.logstash:
+    # ================================== Outputs ===================================
+    output.logstash:
       hosts: ["@logstash.host:@logstash.sslPort"]
       loadbalance: true
       ssl.enabled: true
-  ```
-
-  If you're running __Filebeat 7__, add this code block to the end. Otherwise, you can leave it out.
-
-  ```yaml copy
-  # ... For Filebeat 7 only ...
-  filebeat.registry.path: /var/lib/filebeat
-  ```
-
-  If you're running __Filebeat 6__, add this code block to the end.
-
-  ```yaml copy
-  # ... For Filebeat 6 only ...
-  registry_file: /var/lib/filebeat/registry
-  ```
+    ```
 
   _It's a good idea to run the configuration file through a YAML validator to rule out indentation errors, clean up extra characters, and check if your YAML 
   file is valid. [Yamllint.com](https://yamllint.com) is a great choice._

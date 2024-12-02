@@ -67,18 +67,18 @@ Configure Filebeat to ship logs from macOS Systems to Logstash and Elasticsearch
     discovers and handles input data.  
   </Callout>
 
-  ```yml copy
+```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
   ###################### Logit.io Filebeat Configuration ########################
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
-  - type: filestream
-    enabled: true
-    id: my_unique_id
-    paths:
-      # REQUIRED CHANGE TO YOUR LOGS PATH
-      - /var/log/*.log
-    fields:
-      type: logfile    
+    - type: filestream
+      enabled: true
+      id: my_unique_id
+      paths:
+        # REQUIRED CHANGE TO YOUR LOGS PATH
+        - /var/log/*.log
+      fields:
+        type: logfile    
 
   # ============================== Filebeat modules ==============================
   filebeat.config.modules:
@@ -89,9 +89,9 @@ Configure Filebeat to ship logs from macOS Systems to Logstash and Elasticsearch
   # ================================== Outputs ===================================
   # ------------------------------ Logstash Output -------------------------------
   output.logstash:
-      hosts: ["@logstash.host:logstash.sslPort"]
-      loadbalance: true
-      ssl.enabled: true
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
 
   # ================================= Processors =================================
   processors:

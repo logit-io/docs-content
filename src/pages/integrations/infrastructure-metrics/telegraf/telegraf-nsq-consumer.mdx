@@ -1,5 +1,6 @@
 ---
 title: NSQ Consumer Metrics
+metaTitle: Integrate and Configure Telegraf to send NSQ Consumer Metrics
 subTitle: Ship your NSQ Consumer Metrics via Telegraf to your Logit.io Stack
 color: "#4d4d4d"
 description: Use our example to configure Telegraf to ship NSQ Consumer metrics to Logit.io. Configure Telegraf to send NSQ Consumer metrics to Logstash or Elastic.
@@ -21,7 +22,7 @@ Configure Telegraf to ship NSQ Consumer metrics to your Logit.io stacks via Logs
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   # Read metrics from NSQD topic(s)
   [[inputs.nsq_consumer]]
     ## Server option still works but is deprecated, we just prepend it to the nsqd array.

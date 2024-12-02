@@ -1,5 +1,6 @@
 ---
 title: Mailchimp Metrics
+metaTitle: Integrate and Configure Telegraf to send Mailchimp Metrics
 subTitle: Ship your Mailchimp Metrics via Telegraf to your Logit.io Stack
 logo: mailchimp
 color: "#4d4d4d"
@@ -23,7 +24,7 @@ Configure Telegraf to ship Mailchimp metrics to your Logit.io stacks via Logstas
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   # Gathers metrics from the /3.0/reports MailChimp API
   [[inputs.mailchimp]]
     ## MailChimp API key

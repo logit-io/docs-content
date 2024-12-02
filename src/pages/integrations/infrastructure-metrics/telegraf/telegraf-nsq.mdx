@@ -22,7 +22,7 @@ Configure Telegraf to ship NSQ metrics to your Logit.io stacks via Logstash.
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   # Read NSQ topic and channel statistics.
   [[inputs.nsq]]
     ## An array of NSQD HTTP API endpoints

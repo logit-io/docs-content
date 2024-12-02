@@ -1,5 +1,6 @@
 ---
 title: Argo CD Metrics
+metaTitle: Integrate and Configure Telegraf to send Argo CD Metrics
 subTitle: Ship your Argo CD Metrics via Telegraf to your Logit.io Stack
 color: "#4d4d4d"
 description: Use our example to configure Telegraf to ship Argo CD metrics to your Logit.io stacks. Configure Telegraf to send Argo CD metrics to Logstash or Elastic.
@@ -26,7 +27,7 @@ Configure Telegraf to ship Argo CD metrics to your Logit.io stacks via Logstash.
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   # Read metrics from one or many prometheus clients
   [[inputs.prometheus]]
     ## An array of urls to scrape metrics from.

@@ -1,5 +1,6 @@
 ---
 title: Apache Solr Metrics
+metaTitle: Integrate and Configure Telegraf to send Apache Solr Metrics
 subTitle: Ship your Apache Solr Metrics via Telegraf to your Logit.io Stack
 logo: solr
 color: "#4d4d4d"
@@ -22,7 +23,7 @@ Configure Telegraf to ship Apache Solr metrics to your Logit.io stacks via Logst
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   # Read stats from one or more Solr servers or cores
   [[inputs.solr]]
     ## specify a list of one or more Solr servers

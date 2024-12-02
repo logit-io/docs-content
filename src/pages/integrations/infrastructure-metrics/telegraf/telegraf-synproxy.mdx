@@ -1,5 +1,6 @@
 ---
 title: Synproxy Metrics
+metaTitle: Integrate and Configure Telegraf to send Synproxy Metrics
 subTitle: Ship your Synproxy Metrics via Telegraf to your Logit.io Stack
 logo: ubuntu
 color: "#4d4d4d"
@@ -22,7 +23,7 @@ Configure Telegraf to ship Synproxy metrics to your Logit.io stacks via Logstash
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   # Get synproxy counter statistics from procfs
   # This plugin ONLY supports Linux
   [[inputs.synproxy]]

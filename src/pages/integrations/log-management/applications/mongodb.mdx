@@ -34,13 +34,13 @@ Discover the process of transmitting MongoDB logs to your Logstash instance thro
 
       Copy the snippet below and replace the contents of the mongodb.yml module file:
 
-      ```
+      ```yml copy
       # Module: mongodb
       # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-mongodb.html
 
       - module: mongodb
       # All logs
-      log:
+        log:
           enabled: true
 
           # Set custom paths for the log files. If left empty,
@@ -60,13 +60,13 @@ Discover the process of transmitting MongoDB logs to your Logstash instance thro
 
       Copy the snippet below and replace the contents of the mongodb.yml module file:
 
-      ```
+      ```yml copy
       # Module: mongodb
       # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-mongodb.html
 
       - module: mongodb
       # All logs
-      log:
+        log:
           enabled: true
 
           # Set custom paths for the log files. If left empty,
@@ -86,13 +86,13 @@ Discover the process of transmitting MongoDB logs to your Logstash instance thro
 
       Copy the snippet below and replace the contents of the mongodb.yml module file:
 
-      ```
+      ```yml copy
       # Module: mongodb
       # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-mongodb.html
 
       - module: mongodb
       # All logs
-      log:
+        log:
           enabled: true
 
           # Set custom paths for the log files. If left empty,
@@ -112,18 +112,18 @@ Discover the process of transmitting MongoDB logs to your Logstash instance thro
 
       Copy the snippet below and replace the contents of the mongodb.yml module file:
 
-      ```
+      ```yml copy
       # Module: mongodb
       # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-mongodb.html
 
       - module: mongodb
       # All logs
-      log:
+        log:
           enabled: true
 
-          # Set custom paths for the log files. If left empty,
-          # Filebeat will choose the paths depending on your OS.
-          #var.paths:
+        # Set custom paths for the log files. If left empty,
+        # Filebeat will choose the paths depending on your OS.
+        #var.paths:
       ```
     </Tab>
     <Tab>
@@ -138,18 +138,18 @@ Discover the process of transmitting MongoDB logs to your Logstash instance thro
       
       Copy the snippet below and replace the contents of the mongodb.yml module file:
 
-      ```
+      ```yml copy
       # Module: mongodb
       # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-mongodb.html
 
       - module: mongodb
       # All logs
-      log:
+        log:
           enabled: true
 
-          # Set custom paths for the log files. If left empty,
-          # Filebeat will choose the paths depending on your OS.
-          #var.paths:
+        # Set custom paths for the log files. If left empty,
+        # Filebeat will choose the paths depending on your OS.
+        #var.paths:
       ```
     </Tab>
   </Tabs>

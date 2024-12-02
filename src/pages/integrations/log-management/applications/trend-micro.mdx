@@ -44,42 +44,28 @@ Ship your Trend Micro Security logs to Logit.io via Logstash.
     The configuration file below is pre-configured to send data to your Logit.io Stack.
         
     Copy the configuration file below and overwrite the contents of the Filebeat configuration file typically located at `/etc/filebeat/filebeat.yml`
-    
-    ```cmd copy
+
+    ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+    ####################### Logit.io Filebeat Configuration ########################
     # ============================== Filebeat inputs ===============================
     filebeat.inputs:
 
     - type: tcp
-        max_message_size: 10MiB
-        host: "0.0.0.0:6515"
-        enabled: true
+      max_message_size: 10MiB
+      host: "0.0.0.0:6515"
+      enabled: true
 
-        fields:
-            type: trendmicro
-        fields_under_root: true
-        encoding: utf-8
-        ignore_older: 12h
+      fields:
+        type: trendmicro
+      fields_under_root: true
+      encoding: utf-8
+      ignore_older: 12h
     
     # ================================== Outputs ===================================
     output.logstash:
-        hosts: ["@logstash.host:@logstash.sslPort"]
-        loadbalance: true
-        ssl.enabled: true
-
-    ```
-    
-    If you're running __Filebeat 7__, add this code block to the end. Otherwise, you can leave it out.
-
-    ```cmd copy
-    # ... For Filebeat 7 only ...
-    filebeat.registry.path: /var/lib/filebeat
-    ```
-
-    If you're running __Filebeat 6__, add this code block to the end.
-
-    ```cmd copy
-    # ... For Filebeat 6 only ...
-    registry_file: /var/lib/filebeat/registry
+      hosts: ["@logstash.host:@logstash.sslPort"]
+      loadbalance: true
+      ssl.enabled: true
     ```
 
     __Validate your YAML__

@@ -1,5 +1,6 @@
 ---
 title: Suricata Metrics
+metaTitle: Integrate and Configure Telegraf to send Suricata Metrics
 subTitle: Ship your Suricata Metrics via Telegraf to your Logit.io Stack
 color: "#4d4d4d"
 description: Use our example to configure Telegraf to ship Suricata metrics to your Logit.io stacks. Configure Telegraf to send Suricata metrics to Logstash or Elastic.
@@ -21,7 +22,7 @@ Configure Telegraf to ship Suricata metrics to your Logit.io stacks via Logstash
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   # Suricata stats and alerts plugin
   [[inputs.suricata]]
     ## Source

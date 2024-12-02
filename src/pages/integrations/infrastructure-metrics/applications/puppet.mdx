@@ -124,11 +124,11 @@ and ship Puppet metrics to Logstash or Elasticsearch.
   
   Comment out the elasticsearch output block:
 
-  ```yml copy
-  ## Comment out elasticsearch output
-  #output.elasticsearch:
-  #  hosts: ["localhost:9200"]
-  ```
+    ```yml copy
+    ## Comment out elasticsearch output
+    #output.elasticsearch:
+    #  hosts: ["localhost:9200"]
+    ```
 
   <ConfigureOutput />
 
@@ -151,20 +151,20 @@ and ship Puppet metrics to Logstash or Elasticsearch.
       jmx.mappings:
         - mbean: 'java.lang:type=Memory'
           attributes:
-          - attr: HeapMemoryUsage
-            field: memory.heap_usage
-          - attr: NonHeapMemoryUsage
-            field: memory.non_heap_usage
-        - mbean: 'Catalina:name=*,type=ThreadPool'
+            - attr: HeapMemoryUsage
+              field: memory.heap_usage
+            - attr: NonHeapMemoryUsage
+              field: memory.non_heap_usage
+          - mbean: 'Catalina:name=*,type=ThreadPool'
           attributes:
-          - attr: port
-            field: catalina.port
-          - attr: maxConnections
-            field: catalina.maxConnections
-        - mbean: 'java.lang:type=Runtime'
+            - attr: port
+              field: catalina.port
+            - attr: maxConnections
+              field: catalina.maxConnections
+          - mbean: 'java.lang:type=Runtime'
           attributes:
-          - attr: Uptime
-            field: uptime
+            - attr: Uptime
+              field: uptime
     ```
   </ConfigureMetricbeatModule>
 

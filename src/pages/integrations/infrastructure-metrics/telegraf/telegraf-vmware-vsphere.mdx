@@ -1,5 +1,6 @@
 ---
 title: Vmware Vsphere Metrics
+metaTitle: Integrate and Configure Telegraf to send Vmware Vsphere Metrics
 subTitle: Ship your Vmware Vsphere Metrics via Telegraf to your Logit.io Stack
 logo: vmware
 color: "#4d4d4d"
@@ -22,7 +23,7 @@ Configure Telegraf to ship Vmware Vsphere metrics to your Logit.io stacks via Lo
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   -# Read metrics from one or many vCenters
   [[inputs.vsphere]]
     ## List of vCenter URLs to be monitored. These three lines must be uncommented

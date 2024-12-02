@@ -1,5 +1,6 @@
 ---
 title: Beanstalkd Metrics
+metaTitle: Integrate and Configure Telegraf to send Beanstalkd Metrics
 subTitle: Ship your Beanstalkd Metrics via Telegraf to your Logit.io Stack
 color: "#4d4d4d"
 description: Use our example to configure Telegraf to ship Beanstalkd metrics to your Logit.io stacks. Configure Telegraf to send Beanstalkd metrics to Logstash or Elastic.
@@ -22,7 +23,7 @@ Configure Telegraf to ship Beanstalkd metrics to your Logit.io stacks via Logsta
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   # Collects Beanstalkd server and tubes stats
   [[inputs.beanstalkd]]
     ## Server to collect data from

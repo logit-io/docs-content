@@ -1,5 +1,6 @@
 ---
 title: OpenTelemetry Collector
+metaTitle: Integrate and Configure the OpenTelemetry Collector to Send Data
 subTitle: OpenTelemetry (OTEL) Collector for Logs, Metrics and Traces
 logo: opentelemetry
 color: "#2e62a4"
@@ -58,56 +59,60 @@ The OpenTelemetry Collector allows you to send logs, metrics and traces to your 
   extensions:
     basicauth/apm:
       client_auth:
-        username: '@opentelemetry.username:strip_quotes'
-        password: '@opentelemetry.password:strip_quotes'
+        username: "@opentelemetry.username:strip_quotes"
+        password: "@opentelemetry.password:strip_quotes"
     basicauth/logs:
       client_auth:
-        username: '@elasticsearch.username:strip_quotes'
-        password: '@elasticsearch.password:strip_quotes'
-
+        username: "@elasticsearch.username:strip_quotes"
+        password: "@elasticsearch.password:strip_quotes"
   receivers:
     otlp:
       protocols:
         http:
           cors:
             allowed_origins:
-              - "http://*"
-              - "https://*"
+              - http://*
+              - https://*
           endpoint: 0.0.0.0:4318
         grpc:
           endpoint: 0.0.0.0:4317
-
   exporters:
     opensearch:
       logs_index: otel-logs
       http:
-        endpoint: "https://@logs_id-es.logit.io"
+        endpoint: https://@logs_id-es.logit.io
         auth:
           authenticator: basicauth/logs
     prometheusremotewrite:
-      endpoint: "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+      endpoint: https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write
       resource_to_telemetry_conversion:
-        enabled: true # Convert resource attributes to metric labels
+        enabled: true
     otlp:
       auth:
         authenticator: basicauth/apm
-        # use the grpc port
-      endpoint: '@opentelemetry.endpointAddress:strip_quotes':'@opentelemetry.port:strip_quotes'
+      endpoint: "@opentelemetry.endpointAddress:strip_quotes:@opentelemetry.port:strip_quotes"
     logging:
       verbosity: detailed
-
   service:
-    extensions: [basicauth/apm, basicauth/logs]
+    extensions:
+      - basicauth/apm
+      - basicauth/logs
     pipelines:
       traces:
-        receivers: [otlp]
-        exporters: [otlp]
+        receivers:
+          - otlp
+        exporters:
+          - otlp
       logs:
-        receivers: [otlp]
-        exporters: [opensearch]
+        receivers:
+          - otlp
+        exporters:
+          - opensearch
       metrics:
-        receivers: [otlp]
-        exporters: [prometheusremotewrite]
+        receivers:
+          - otlp
+        exporters:
+          - prometheusremotewrite
   ```
 
   ### Run the OpenTelemetry Demo App (Optional)

@@ -1,5 +1,6 @@
 ---
 title: YouTube Metrics
+metaTitle: Integrate and Configure Telegraf to send YouTube Metrics
 subTitle: Ship your YouTube Metrics via Telegraf to your Logit.io Stack
 logo: youtube
 color: "#4d4d4d"
@@ -22,7 +23,7 @@ Configure Telegraf to ship YouTube metrics to your Logit.io stacks via Logstash.
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   [[inputs.youtube]]
   ## List of channels to monitor.
   channels = [

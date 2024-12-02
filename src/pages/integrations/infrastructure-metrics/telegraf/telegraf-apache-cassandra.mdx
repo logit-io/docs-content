@@ -1,5 +1,6 @@
 ---
 title: Apache Cassandra Metrics
+metaTitle: Integrate and Configure Telegraf to send Apache Cassandra Metrics
 subTitle: Ship your Apache Cassandra Metrics via Telegraf to your Logit.io Stack
 logo: cassandra
 color: "#4d4d4d"
@@ -22,7 +23,7 @@ Configure Telegraf to ship Apache Cassandra metrics to your Logit.io stacks via 
 
 The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-```yaml copy
+```toml copy
 # Read Cassandra metrics through Jolokia
 [[inputs.cassandra]]
   context = "/jolokia/read"

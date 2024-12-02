@@ -41,13 +41,17 @@ Restart rsyslog and confirm it's reconnected and still sending data and reportin
 With older configurations (typically v1.3 or below) you may have specified a `certificate_authority` 
 and will need to update the intermediate.crt on your system, see below and example:
 
-```yml copy
-output.logstash:
-  hosts: ["YOUR-LOGSTASH-ENDPOINT:YOUR-BEATS-SSL-PORT"]
+```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+  # ================================== Outputs ===================================
+  # ------------------------------ Logstash Output -------------------------------
+  output.logstash:
+      hosts: ["@logstash.host:@logstash.sslPort"]
+      loadbalance: true
+      ssl.enabled: true    
+      tls:
+        certificate_authorities: ['/etc/pki/tls/certs/root.logit.io.crt']
+        enabled: true
 
-  tls:
-    certificate_authorities: ['/etc/pki/tls/certs/root.logit.io.crt']
-    enabled: true
 ```
 
 Please [download](https://cdn.logit.io/root.logit.io.crt?_gl=1*1wwfhtn*_ga*NzE2MTk2MzcxLjE3MTAyNDM2MTA.*_ga_W546BZYLYM*MTcxODI4NzM3MS4xMTIuMS4xNzE4MjkwMTk2LjYwLjAuMA..) the 
@@ -57,9 +61,12 @@ Newer configurations that do not specify a certificate_authority are unlikely to
 require configuration changes, however you may need to add our intermediate to 
 your certificate store as per your OS defaults, see below for an example which requires no action:
 
-```yml copy
-output.logstash:
-  hosts: ["YOUR-LOGSTASH-ENDPOINT:YOUR-BEATS-SSL-PORT"]
-  ssl.enabled: true
+```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+  # ================================== Outputs ===================================
+  # ------------------------------ Logstash Output -------------------------------
+  output.logstash:
+      hosts: ["@logstash.host:@logstash.sslPort"]
+      loadbalance: true
+      ssl.enabled: true  
 ```
 

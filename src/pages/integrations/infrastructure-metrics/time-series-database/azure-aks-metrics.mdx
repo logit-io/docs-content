@@ -1,5 +1,6 @@
 ---
 title: Azure AKS Metrics
+metaTitle: Integrate and Configure VMagent to send Azure AKS Metrics
 subTitle: Ship Azure AKS metrics using VictoriaMetrics vmagent
 logo: AKS
 color: "#834c9a"
@@ -65,7 +66,7 @@ metrics from various sources and store them in VictoriaMetrics.
 
   To:
 
-  ```yml copy
+  ```yml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
   # WARN: need to specify at least one remote write url or one multi tenant url
   remoteWriteUrls: ["https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"]
   # remoteWriteUrls:

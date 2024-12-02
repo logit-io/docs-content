@@ -1,5 +1,6 @@
 ---
 title: Hashicorp Vault
+metaTitle: Integrate and Configure Filebeat to Send Hashicorp Vault Logs
 subTitle: Ship HashiCorp Vault logs to Logstash
 logo: hashicorpvault
 color: "#FFD815"
@@ -34,62 +35,38 @@ instructions below and begin searching your data.
           
   Copy the configuration file below and overwrite the contents of __filebeat.yml__.
 
-  For version `7.16+` and above, use the configuration below:
-
-  ```cmd copy
+  ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
   ###################### Logit.io Filebeat Configuration ########################
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
-  - type: filestream
+    - type: filestream
       enabled: true
       id: my_unique_id
       paths:
       # Update the path to your logs if required:
-      - /var/log/vault_audit.log
+        - /var/log/vault_audit.log
       fields:
-      type: hashicorp
+        type: hashicorp
   # ============================== Filebeat modules ==============================
   filebeat.config.modules:
-      path: ${path.config}/modules.d/*.yml
-      reload.enabled: false
-      #reload.period: 10s
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+    #reload.period: 10s
 
   # ================================== Outputs ===================================
   # ------------------------------ Logstash Output -------------------------------
   output.logstash:
-      hosts: ["@logstash.host:@logstash.sslPort"]
-      loadbalance: true
-      ssl.enabled: true
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
 
   # ================================= Processors =================================
   processors:
-      - add_host_metadata:
-          when.not.contains.tags: forwarded
-      - add_cloud_metadata: ~
-      - add_docker_metadata: ~
-      - add_kubernetes_metadata: ~
-  ```
-
-  For versions `7.15.x` and below
-
-  ```cmd copy
-  # ============================== Filebeat inputs ==============================
-  filebeat.inputs:
-  - type: log
-  ```   
-
-  If you're running `Filebeat 7` add this code block to the end. Otherwise, you can leave it out.
-
-  ```cmd copy
-  # ... For Filebeat 7 only ...
-  filebeat.registry.path: /var/lib/filebeat
-  ```
-
-  If you're running `Filebeat 6` add this code block to the end. Otherwise, you can leave it out.
-
-  ```cmd copy
-  # ... For Filebeat 6 only ...
-  registry_file: /var/lib/filebeat/registry
+    - add_host_metadata:
+        when.not.contains.tags: forwarded
+    - add_cloud_metadata: ~
+    - add_docker_metadata: ~
+    - add_kubernetes_metadata: ~
   ```
 
   __Validate your YAML__

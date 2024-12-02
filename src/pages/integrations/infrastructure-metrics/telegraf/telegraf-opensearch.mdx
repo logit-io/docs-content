@@ -1,5 +1,6 @@
 ---
 title: OpenSearch Metrics
+metaTitle: Integrate and Configure Telegraf to send OpenSearch Metrics
 subTitle: Ship your OpenSearch Metrics via Telegraf to your Logit.io Stack
 logo: opensearch
 color: "#4d4d4d"
@@ -22,7 +23,7 @@ Configure Telegraf to ship OpenSearch metrics to your Logit.io stacks via Logsta
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   # Derive metrics from aggregating OpenSearch query results
   [[inputs.opensearch_query]]
     ## OpenSearch cluster endpoint(s). Multiple urls can be specified as part

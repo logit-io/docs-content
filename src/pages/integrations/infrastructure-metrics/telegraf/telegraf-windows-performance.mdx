@@ -1,5 +1,6 @@
 ---
 title: Windows Performance Metrics
+metaTitle: Integrate and Configure Telegraf to send Windows Performance Metrics
 subTitle: Ship your Windows Performance Metrics via Telegraf to your Logit.io Stack
 logo: windows
 color: "#4d4d4d"
@@ -22,7 +23,7 @@ Configure Telegraf to ship Windows Performance metrics to your Logit.io stacks v
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```yaml copy
+  ```toml copy
   ###############################################################################
   # Windows Performance Counters plugin.
   # These are the recommended method of monitoring system metrics on windows,

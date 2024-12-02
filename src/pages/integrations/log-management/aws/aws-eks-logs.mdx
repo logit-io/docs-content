@@ -1,5 +1,6 @@
 ---
 title: AWS Elastic Kubernetes Service Logs
+metaTitle: Integrate and Configure AWS to Send aws EKS Logs
 subTitle: Ship AWS EKS Logs to Logstash
 logo: aws
 color: "#ff9900"
@@ -61,20 +62,20 @@ Elastic Kubernetes Service (EKS) container Logs to one or more destinations, inc
 
   ```yml copy
   env:
-  - name: LOGSTASH_HOST
-    value: "guid-ls.logit.io"
-  - name: BEATS_PORT
-    value: "00000"
+    - name: LOGSTASH_HOST
+      value: "guid-ls.logit.io"
+    - name: BEATS_PORT
+      value: "00000"
   ```
 
   After updating the code should look as below.
 
-  ```yml copy
+  ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
   env:
-  - name: LOGSTASH_HOST
-    value: ["@logstash.host"]
-  - name: BEATS_PORT
-    value: ["@logstash.sslPort"]
+    - name: LOGSTASH_HOST
+      value: ["@logstash.host"]
+    - name: BEATS_PORT
+      value: ["@logstash.sslPort"]
   ```
 
   Exit and save the file.

@@ -55,41 +55,41 @@ The OpenTelemetry Collector allows you to send traces to your Logit.io stacks.
 
   Copy the configuration file below (making the above changes if necessary) and overwrite the contents of otelcol-config.yml (this file can be found in the otelcollector folder where you installed the OpenTelemetry Collector demo application e.g. opentelemetry-demo/src/otelcollector/otelcol-config.yml).
 
-    ```yaml copy
+  ```yaml copy
+  ---
+  extensions:
+    basicauth/apm:
+      client_auth:
+        username: '@opentelemetry.username:strip_quotes'
+        password: '@opentelemetry.password:strip_quotes'
+  receivers:
+    otlp:
+      protocols:
+        http:
+          cors:
+            allowed_origins:
+              - http://*
+              - https://*
+          endpoint: 0.0.0.0:4318
+        grpc:
+          endpoint: 0.0.0.0:4317
+  exporters:
+    otlp:
+      auth:
+        authenticator: basicauth/apm
+      endpoint: '@opentelemetry.endpointAddress:strip_quotes':'@opentelemetry.grpcPort:strip_quotes'
+    logging:
+      verbosity: detailed
+  service:
     extensions:
-      basicauth/apm:
-        client_auth:
-          username: '@opentelemetry.username:strip_quotes'
-          password: '@opentelemetry.password:strip_quotes'
-
-    receivers:
-      otlp:
-        protocols:
-          http:
-            cors:
-              allowed_origins:
-                - "http://*"
-                - "https://*"
-            endpoint: 0.0.0.0:4318
-          grpc:
-            endpoint: 0.0.0.0:4317
-
-    exporters:
-      otlp:
-        auth:
-          authenticator: basicauth/apm
-          # use the grpc port
-        endpoint: '@opentelemetry.endpointAddress:strip_quotes':'@opentelemetry.grpcPort:strip_quotes'
-      logging:
-        verbosity: detailed
-
-    service:
-      extensions: [basicauth/apm]
-      pipelines:
-        traces:
-          receivers: [otlp]
-          exporters: [otlp]
-    ```
+      - basicauth/apm
+    pipelines:
+      traces:
+        receivers:
+          - otlp
+        exporters:
+          - otlp
+  ```
 
   ### Run the OpenTelemetry Demo App (Optional)
 

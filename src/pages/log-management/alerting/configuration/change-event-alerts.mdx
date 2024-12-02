@@ -25,13 +25,13 @@ query_key: username
 timeframe:
   days: 1
 filter:
-- query:
-    query_string:
-      query: "type: login"
+  - query:
+      query_string:
+        query: "type: login"
 alert:
-- "email"
+  - "email"
 email:
-- "example@logit.io"
+  - "example@logit.io"
 ```
 
 ### Additional Options

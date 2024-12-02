@@ -70,80 +70,79 @@ Follow our Avast tutorial to get started shipping logs from Avast to Logstash fo
 
   Copy and use the Filebeat configuration below.
 
-  <Callout type="warning">
-    For use with version 7.x Filebeats.
-  </Callout>
-
-  ```yml copy
+  ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+  ####################### Logit.io Filebeat Configuration ########################
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
 
-  - type: log
+    - type: filestream
       paths:
-      - C:\ProgramData\Avast Software\Avast\report\FileSystemShield.txt
+        - C:\ProgramData\Avast Software\Avast\report\FileSystemShield.txt
       fields:
-      type: avast
-      fields_under_root: true
-      encoding: utf-8
-      ignore_older: 3h
-      multiline:
-      type: pattern 
-      pattern: '(\d\d/\d\d/\d\d\d\d)' 
-      negate: true 
-      match: after
+        type: avast
+        fields_under_root: true
+        encoding: utf-8
+        ignore_older: 3h
+        multiline:
+          type: pattern 
+          pattern: '(\d\d/\d\d/\d\d\d\d)' 
+          negate: true 
+          match: after
 
-  - type: log
+    - type: filestream
       paths:
-      - C:\ProgramData\Avast Software\Avast\report\Full Virus Scan.txt
+        - C:\ProgramData\Avast Software\Avast\report\Full Virus Scan.txt
       fields:
-      type: avast
-      fields_under_root: true
-      encoding: utf-8
-      ignore_older: 3h
-      multiline:
-      pattern: '^\* Avast Scan Report'
-      negate: true
-      match: after
-      ignore_older: 3h
+        type: avast
+        fields_under_root: true
+        encoding: utf-8
+        ignore_older: 3h
+        multiline:
+          pattern: '^\* Avast Scan Report'
+          negate: true
+          match: after
+          ignore_older: 3h
 
-  - type: log
+    - type: filestream
       paths:
-      - C:\ProgramData\Avast Software\Avast\report\aswBoot.txt
+        - C:\ProgramData\Avast Software\Avast\report\aswBoot.txt
       fields:
-      type: avast
-      fields_under_root: true
-      encoding: utf-8
-      ignore_older: 3h
-      multiline:
-      pattern: '^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}\nScan of'
-      negate: true
-      match: after
-      ignore_older: 3h
+        type: avast
+        fields_under_root: true
+        encoding: utf-8
+        ignore_older: 3h
+        multiline:
+          pattern: '^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}\nScan of'
+          negate: true
+          match: after
+          ignore_older: 3h
 
-  - type: log
+    - type: filestream
       paths:
-      - C:\ProgramData\Avast Software\Avast\report\WebShield.txt
+        - C:\ProgramData\Avast Software\Avast\report\WebShield.txt
       fields:
-      type: avast
-      fields_under_root: true
-      encoding: utf-8
-      ignore_older: 3h
-      multiline:
-      pattern: '^\*\n\* Avast Real-time Shield Scan Report'
-      negate: true
-      match: after
-      ignore_older: 3h
+        type: avast
+        fields_under_root: true
+        encoding: utf-8
+        ignore_older: 3h
+        multiline:
+          pattern: '^\*\n\* Avast Real-time Shield Scan Report'
+          negate: true
+          match: after
+          ignore_older: 3h
 
   filebeat.registry.path: 'C:\ProgramData\Filebeat'
 
   # ================================== Outputs ===================================
-  ```
-  <ConfigureOutput />
+  output.logstash:
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
 
   ```yml copy
   # ================================= Processors =================================
-          processors:
-            - add_host_metadata:
+  processors:
+    - add_host_metadata:
   ```
 
   ### Start filebeat
