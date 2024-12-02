@@ -27,15 +27,15 @@ TODO: Add description
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```toml copy
-  [[inputs.prometheus]]
+```toml copy
+[[inputs.prometheus]]
 
-  urls = ["https://<teamcity_server_url>/app/metrics"]
+  urls = ["https://<teamcity_server_url>/app/metrics?experimental=true"]
 
   ## optional basic auth credentials
-  username = “<your-username>”
-  password = “<your-password>”
-  ```
+  username = "<your-username>"
+  password = "<your-password>"
+```
 
   ### Configure the output plugin
 
