@@ -15,15 +15,7 @@
   "infrastructure-metrics": "Infrastructure Metrics",
   "application-performance-monitoring": "Application Performance Monitoring",
   "opentelemetry": "OpenTelemetry",
-  "integrations": {
-    "title": "Integrations",
-    "order": [
-      "logs-and-metrics",
-      "application-performance-monitoring",
-      "observability",
-      "legacy"
-    ]
-  },
+  "integrations": "Integrations",
   "account-administration": "Account Administration",
   "under-review": {
     "display": "hidden"

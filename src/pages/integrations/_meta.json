@@ -1,0 +1,9 @@
+{
+  "title": "Integrations",
+  "order": [
+    "logs-and-metrics",
+    "application-performance-monitoring",
+    "observability",
+    "legacy"
+  ]
+}
