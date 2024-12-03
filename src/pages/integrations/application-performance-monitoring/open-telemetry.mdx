@@ -55,7 +55,7 @@ The OpenTelemetry Collector allows you to send traces to your Logit.io stacks.
 
   Copy the configuration file below (making the above changes if necessary) and overwrite the contents of otelcol-config.yml (this file can be found in the otelcollector folder where you installed the OpenTelemetry Collector demo application e.g. opentelemetry-demo/src/otelcollector/otelcol-config.yml).
 
-```yaml copy
+```yaml copy showLineNumbers /@opentelemetry.username:strip_quotes/ /@opentelemetry.password:strip_quotes/ /@opentelemetry.endpointAddress:strip_quotes/ /@opentelemetry.grpcPort:strip_quotes/
 ---
 extensions:
   basicauth/apm:
