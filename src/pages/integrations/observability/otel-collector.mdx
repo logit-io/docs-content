@@ -55,16 +55,16 @@ The OpenTelemetry Collector allows you to send logs, metrics and traces to your 
 
   Copy the configuration file below (making the above changes if necessary) and overwrite the contents of otelcol-config.yml (this file can be found in the otelcollector folder where you installed the OpenTelemetry Collector demo application e.g. opentelemetry-demo/src/otelcollector/otelcol-config.yml).
 
-  ```yaml copy
+    ```yaml copy showLineNumbers /@opentelemetry.username:strip_quotes/ /@opentelemetry.password:strip_quotes/ /@elasticsearch.username:strip_quotes/ /@elasticsearch.password:strip_quotes/ /@logs_id-es.logit.io/ /@metricsUsername/ /@metricsPassword/ /metrics_id-vm.logit.io/ /@vmAgentPort/ /@opentelemetry.endpointAddress:strip_quotes/ /@opentelemetry.grpcPort:strip_quotes/
   extensions:
     basicauth/apm:
       client_auth:
-        username: "@opentelemetry.username:strip_quotes"
-        password: "@opentelemetry.password:strip_quotes"
+        username: '@opentelemetry.username:strip_quotes'
+        password: '@opentelemetry.password:strip_quotes'
     basicauth/logs:
       client_auth:
-        username: "@elasticsearch.username:strip_quotes"
-        password: "@elasticsearch.password:strip_quotes"
+        username: '@elasticsearch.username:strip_quotes'
+        password: '@elasticsearch.password:strip_quotes'
   receivers:
     otlp:
       protocols:
@@ -84,13 +84,13 @@ The OpenTelemetry Collector allows you to send logs, metrics and traces to your 
         auth:
           authenticator: basicauth/logs
     prometheusremotewrite:
-      endpoint: https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write
+      endpoint: 'https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write'
       resource_to_telemetry_conversion:
         enabled: true
     otlp:
       auth:
         authenticator: basicauth/apm
-      endpoint: "@opentelemetry.endpointAddress:strip_quotes:@opentelemetry.port:strip_quotes"
+      endpoint: '@opentelemetry.endpointAddress:strip_quotes:@opentelemetry.grpcPort:strip_quotes'
     logging:
       verbosity: detailed
   service:
