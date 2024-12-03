@@ -1,14 +1,14 @@
 ---
 title: .NET (Core / 5+)
-metaTitle: Learn How to Integrate and Configure .NET to Send Logs
-pageTitle: .NET Serilog Configuration
-subTitle: Ship logs from ASP.NET to Logit.io with Serilog
+metaTitle: Learn How to Integrate and Configure .NET to Send Logs and Traces
+pageTitle: .NET Configuration
+subTitle: Ship logs and traces from ASP.NET to Logit.io
 logo: aspnetcore
 color: "#5c2d91"
-stackTypes: logs
+stackTypes: logs, apm
 description: Learn how to ship your dotnet application/access/error logs to Logstash with our example configurations.
 sslPortType: tcp-ssl
-tags: Logs, Microsoft, .NET, Dotnet, Mono, ASP, Application Logs, Microsoft Core, Dotnet Core, ASP, Application Logs, Dotnetcore
+tags: Logs, Microsoft, .NET, Dotnet, Mono, ASP, Application Logs, Microsoft Core, Dotnet Core, ASP, Application Logs, Dotnetcore, APM, Core, Application Performance Monitoring, Apm, Grpc, Https
 ---
 
 import ConfigureSerilog from "@/components/integrations/partials/configure-serilog";
@@ -130,10 +130,42 @@ TODO: Add description
   You should now see the above log stored in your stack.
 
 </Steps>
-
-Serilog is a fully featured logging framework and has many other capabilities that are not detailed here.
+<Steps>
+  ## APM
+  ### Install Integration
+  <InstallIntegration/>
   
-Please see the [Serilog.AspNetCore Documentation](https://github.com/serilog/serilog-aspnetcore) for more information.
+  ### Install
 
-If you need any help with migrating your .NET Core logs to Logit.io we are here to help. 
+  <InstallOtel />
+
+  ### Configuring AppSettings
+
+  <Tabs items={["HTTPS", "gRPC"]}>
+  
+  <Tab>
+    <ConfigureOtel protocol="https" port="@opentelemetry.httpsPort" />
+  </Tab>
+
+  <Tab>
+    <ConfigureOtel protocol="grpc" port="@opentelemetry.grpcPort" />
+  </Tab>
+
+  </Tabs>
+
+  ### Using OpenTelemetry
+
+  <UsingOtel />
+
+  ### Launch Logit.io to view your traces
+
+  <LaunchVisualizer type="apm" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+If you need any help with migrating your .NET Core data to Logit.io we are here to help. 
 Feel free to <IntercomButton text="get in touch with our support team via Intercom" /> and we will be happy to assist.

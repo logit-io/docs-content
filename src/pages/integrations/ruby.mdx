@@ -1,15 +1,15 @@
 ---
 title: Ruby
-metaTitle: Learn How to Integrate and Configure Ruby to Send Logs
-pageTitle: Ruby to Logstash Example
-subTitle: Ship logs from Ruby to Logstash
+metaTitle: Learn How to Integrate and Configure Ruby to Send Logs and Traces
+pageTitle: Ruby to Logit.io Example
+subTitle: Ship logs and Traces from Ruby to Logit.io
 logo: ruby
 color: "#c02607"
-stackTypes: logs
-description: Get started quickly with Ruby logging using our configuration guide on how to send Ruby logs to your Hosted ELK Logstash.
+stackTypes: logs, apm
+description: Get started quickly with Ruby logging and OpenTelemtry using our configuration guide on how to send Ruby data to Logit.io
 sslPortType: tcp-ssl
 portType: tcp
-tags: Logs, Ruby, Rails, Ruby on Rails, Logstash-Logger, IRB, Scripting, Web Development
+tags: Logs, Ruby, Rails, Ruby on Rails, Logstash-Logger, IRB, Scripting, Web Development, Web Framework, Apm, Grpc, Http
 ---
 
 TODO: Add description
@@ -35,32 +35,146 @@ TODO: Add description
 
 </Steps>
 
-## Ruby Logging Overview
+<Steps>
+  ## APM
 
-Ruby is an open sources object oriented programming language created in 
-the mid 90s by Yukihiro Matsumoto. It is used by some of the web's most 
-popular sites including Shopify, Twitch, Twitter, Airbnb and Github.
+  <Callout type="info">
+    This sample app was created and tested with
+    `ruby 3.3.4 (2024-07-09 revision be1089c8ec) [x64-mingw-ucrt]`
+  </Callout>
 
-Ruby is well known for being easily comprehensible and has a syntax 
-comparable to that of C and Java, it is also equally suited for frontend 
-and backend development. Ruby also supports the majority of 
-operating systems including Linux, Windows & Mac.
+  ### Install Integration
+  <InstallIntegration/>
 
-Ruby log events and errors can often be seen in two common locations, 
-inline with the program's execution and in separate log files in an output such as /var/log/ruby.log
+  ### Install
 
-Ruby log levels include the following five statuses listed in 
-decreasing priority order; `FATAL`, `ERROR`, `WARN`, `INFO` and `DEBUG`.
+  Create a new directory for your project and call the new directory `opentelemetry_example`.
 
-For live debugging, being able to see your errors in the program's 
-execution is useful but for longer term log management an external 
-solution is required for efficient processing, parsing and reporting.
+  Open a Terminal window or Command Prompt and navigate into the new `opentelemetry_example` directory. 
+  Then enter the following command.
 
-Thanks to our [ELK as a Service platform](https://logit.io/platform/features/hosted-elk/elk-as-a-service), 
-Logit.io makes parsing and managing your logs from Ruby easy and also 
-provides actionable insights that can be used by your entire engineering 
-and development team. Our platform is able to centralise all of your logs 
-across numerous programming languages, tools, and cloud services that you use daily.
+  ```bash copy
+  bundle init
+  ```
+
+  You will now see a `Gem` file has been created inside the folder.
+
+  Create two new files in the folder and call them `app.rb` and `config.rb`. There should now be a 
+  total of three files in the `opentelemetry_example` folder.
+
+  ### Configuring the App
+
+  Open the `Gem` file and paste in the following code, overwriting the existing content.
+
+  ```json copy 
+  # frozen_string_literal: true
+
+  source 'http://www.rubygems.org'
+
+  # gem "rails"
+
+  gem 'opentelemetry-sdk'
+  gem 'opentelemetry-exporter-otlp'
+  gem 'opentelemetry-instrumentation-all'
+  ```
+
+  Install the `Gems` with the following command in Terminal or the Command prompt.
+
+  ```bash copy
+  bundle install
+  ```
+
+  ### Using OpenTelemetry
+
+  Copy and Paste the code below into `config.rb`.
+
+  <MissingOtelDetailsCallout />
+
+  ```ruby copy filename="config.rb" /@opentelemetry.password/  /@opentelemetry.username/ /@opentelemetry.httpsPort/ /@opentelemetry.endpointAddress/
+  # config.rb
+
+  # Define variables
+  OTLP_ENDPOINT_URL = "https://@opentelemetry.endpointAddress"
+  PORT = "@opentelemetry.httpsPort"
+  OTLP_USERNAME = "@opentelemetry.username"
+  OTLP_PASSWORD = "@opentelemetry.password"
+  ```
+
+  Finally copy and paste the code below into `app.rb`
+
+  ```ruby copy filename="app.rb"
+  # app.rb
+
+  require_relative 'config'
+
+  require "sinatra"
+  require 'opentelemetry/sdk'
+  require 'opentelemetry/exporter/otlp'
+  require 'base64'
+
+  # Configuration Parameters
+  ENV['OTEL_EXPORTER_OTLP_ENDPOINT'] = "#{OTLP_ENDPOINT_URL}:#{PORT}"
+  ENV['OTEL_EXPORTER_OTLP_HEADERS'] = "Authorization = Basic " + Base64.strict_encode64("#{OTLP_USERNAME}:#{OTLP_PASSWORD}")
+  ENV['OTEL_SERVICE_NAME'] = "LogitTestApp"
+
+  # Configure the OpenTelemetry SDK with OTLP Exporter
+  OpenTelemetry::SDK.configure do |c|
+    c.use_all() # Enable all available instrumentation
+  end
+
+  # Endpoint to be called to add traces
+  get "/" do
+  tracer = OpenTelemetry.tracer_provider.tracer('LogitTestService')
+  
+  # Start the first span
+  tracer.in_span('Logit Span Test') do |span|
+    span.set_attribute('First Message', 'This is a test!')
+    span.set_attribute('Second Message', 'Message sent at ' + Time.now.utc.strftime('%Y-%m-%dT%H:%M:%S'))
+
+    # Start the second span within the context of the first span
+    tracer.in_span('Logit Span Test 2') do |child_span|
+      child_span.set_attribute('First Message', 'This is another test!')
+      child_span.set_attribute('Second Message', 'Message sent at ' + Time.now.utc.strftime('%Y-%m-%dT%H:%M:%S'))
+    end
+  end
+    
+
+  end
+
+  # Message when starting app
+  puts "Starting Logit Test App"
+  ```
+
+  ### Run the Ruby App
+
+  Run the Ruby app with the following command in Terminal or the Command Prompt window.
+
+  ```bash copy
+  ruby app.rb
+  ```
+
+  You will see feedback from the app so that you know that is running, make a note of the
+  endpoint that it is listening on.
+
+  ![Ruby Endpoint](@/images/integrations/ruby/ruby-endpoint.png)
+
+  Open a new Terminal or Command Prompt window and make a curl request to the listening endpoint
+
+  ```cmd copy
+  curl http://127.0.0.1:4567
+  ```
+
+  Traces will now have been sent to your Stack.
+
+  ### Launch Logit.io to view your traces
+
+  <LaunchVisualizer type="apm" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
 
 If you need any more assistance in analysing your Ruby logs we're here 
 to help. Feel free to get in touch by 
