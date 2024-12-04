@@ -11,8 +11,6 @@ sslPortType: beats-ssl
 tags: Logs, Python, Django, Flask, Scripting, Web Development
 ---
 
-import ConfigurePythonLogstash from "@/components/integrations/partials/configure-python-logstash";
-
 TODO: Add description
 
 <Steps>
@@ -39,7 +37,48 @@ TODO: Add description
 
   ### Sending Logs
 
-  <ConfigurePythonLogstash />
+  Add your imports to the top of your file (the file you wish to include logging on): 
+
+  ```python copy showLineNumbers
+  import logging
+  from logstash_async.handler import AsynchronousLogstashHandler
+  from logstash_async.handler import LogstashFormatter
+  ```
+
+  Add this code somewhere inside the same file, for example:
+
+  ```python copy showLineNumbers /"@logstash.sslPort:strip_quotes"/ /@logstash.host/
+  def main():
+
+      # Create the logger and set it's logging level
+      logger = logging.getLogger("logstash")
+      logger.setLevel(logging.DEBUG)        
+      
+      # Create the handler
+      handler = AsynchronousLogstashHandler(
+          host='@logstash.host', 
+          port="@logstash.sslPort:strip_quotes",
+          ssl_enable=True, 
+          ssl_verify=False,
+          transport='logstash_async.transport.BeatsTransport',
+          database_path='')
+
+      # Here you can specify additional formatting on your log record/message
+      formatter = LogstashFormatter()
+      handler.setFormatter(formatter)
+      
+      # Assign handler to the logger
+      logger.addHandler(handler)
+      
+      # Send log records to Logstash 
+      logger.error('django-logstash-async: django error message.')
+      logger.info('django-logstash-async: django info message.')
+      logger.warning('django-logstash-async: django warning message.')
+      logger.debug('django-logstash-async: django debug message.')
+
+  if __name__ == '__main__':
+      main()
+  ```
 
   ### Launch Logs to View Data
 
