@@ -34,10 +34,16 @@ TODO: Add description
 
   ### Insert Stack Details
 
-  <InsertStackDetails>
-    Open the manifest and around line 57 you should see the environment variables 
-    controlling the logging destination. You need to update them to point to your stack.
-  </InsertStackDetails>
+  Open the manifest and around line 57 you should see the environment variables 
+  controlling the logging destination. You need to update them to point to your stack.
+
+  ```yml copy
+  env:
+  - name: LOGSTASH_HOST
+    value: "@logstash.host"
+  - name: BEATS_PORT
+    value: "@logstash.sslPort"
+  ```
 
   ### Deploy
 

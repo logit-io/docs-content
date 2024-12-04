@@ -36,14 +36,19 @@ TODO: Add description
 
   ### Insert stack details
 
-  <InsertStackDetails>
-
   Now you have the manifest you're going to want to add your Stack details. Open the file in a text editor.
 
   Locate the environment variables controlling the logging destination and enter your Stacks Logstash input information. 
 
   You need to change the environment variables around lines 54.
-  </InsertStackDetails>
+
+  ```yml copy
+  env:
+  - name: LOGSTASH_HOST
+    value: "@logstash.host"
+  - name: BEATS_PORT
+    value: "@logstash.sslPort"
+  ```
 
   ### Deploy Filebeat pod
 
@@ -125,14 +130,19 @@ TODO: Add description
 
   ### Insert stack details
 
-  <InsertStackDetails>
-
   Now you have the manifest you're going to want to add your Stack details. Open the file in a text editor.
 
   Locate the environment variables controlling the logging destination and enter your Stacks Logstash input information. 
 
   You need to change the environment variables around lines 54.
-  </InsertStackDetails>
+
+  ```yml copy
+  env:
+  - name: LOGSTASH_HOST
+    value: "@logstash.host"
+  - name: BEATS_PORT
+    value: "@logstash.sslPort"
+  ```
 
   This is because Kubernetes runs a Metricbeat instance on each node in the cluster and also an additional single instance of Metricbeat to retrieve metrics for the cluster itself.
 
