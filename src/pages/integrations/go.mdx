@@ -233,11 +233,33 @@ Use OpenTelemetry to easily send Go traces to your Logit.io Stack.
   <Tabs items={["HTTPS", "gRPC"]}>
   
     <Tab>
-      <GoOtlpExporterSettings protocol="https" port="@opentelemetry.httpsPort" />
+      ```go copy showLineNumbers /@opentelemetry.endpointAddress/ /@opentelemetry.base64encodedAuthString/ /@opentelemetry.username/ /@opentelemetry.password/
+      // config.go
+      package config
+
+      var (
+          Endpoint = "@opentelemetry.endpointAddress"
+          Port = "@opentelemetry.httpsPort"
+          Protocol = "https"
+          Username = "@opentelemetry.username"
+          Password = "@opentelemetry.password"
+      )
+      ```
     </Tab>
 
     <Tab>
-      <GoOtlpExporterSettings protocol="grpc" port="@opentelemetry.grpcPort" />
+      ```go copy showLineNumbers /@opentelemetry.endpointAddress/ /@opentelemetry.base64encodedAuthString/ /@opentelemetry.username/ /@opentelemetry.password/
+      // config.go
+      package config
+
+      var (
+          Endpoint = "@opentelemetry.endpointAddress"
+          Port = "@opentelemetry.grpcPort"
+          Protocol = "grpc"
+          Username = "@opentelemetry.username"
+          Password = "@opentelemetry.password"
+      )
+      ```
     </Tab>
 
   </Tabs>
