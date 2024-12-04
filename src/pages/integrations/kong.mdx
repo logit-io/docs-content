@@ -47,7 +47,7 @@ To configure the plugin to work on a Route, use:
 curl -X POST http://kong:8001/routes/{route_id}/plugins \
     --data "name=tcp-log"  \
     --data "config.host=@logstash.host" \
-    --data "config.port=@.logstashsslPort" \
+    --data "config.port=@logstash.sslPort" \
     --data "config.tls=true"        
 ```
 
