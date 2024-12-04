@@ -22,11 +22,52 @@ Use OpenTelemetry to easily send C++ traces to your Logit.io Stack.
   <Tabs items={["HTTPS", "gRPC"]}>
   
   <Tab>
-    <CppOtlpExporterSettings protocol="https" />
+    You can get help Getting Started with OpenTelemetry for C++ by referring to the 
+    [official documentation](https://opentelemetry.io/docs/instrumentation/cpp/getting-started/). 
+    You need to configure the OTLP exporter to ensure the trace data reaches your Logit.io Stack.
+
+    OTLP HTTP Exporter settings:
+
+    ```cpp copy showLineNumbers /@opentelemetry.endpointAddress/ /@opentelemetry.httpsPort/ /@opentelemetry.base64encodedAuthString/
+    #include "opentelemetry/exporters/otlp/otlp_https_exporter_factory.h"
+    #include "opentelemetry/exporters/otlp/otlp_https_exporter_options.h"
+
+    namespace otlp = opentelemetry::exporter::otlp;
+
+    otlp::OtlpHttpExporterOptions opts;
+    opts.url = "https://@opentelemetry.endpointAddress:@opentelemetry.httpsPort";
+    opts.http_headers = "Authorization=Basic @opentelemetry.base64encodedAuthString";
+
+    auto exporter = otlp::OtlpHttpExporterFactory::Create(opts);
+    ```
+
+    For more information about exporter configuration with C++ please refer to the 
+    [documentation](https://opentelemetry.io/docs/instrumentation/cpp/exporters/).
   </Tab>
 
   <Tab>
-    <CppOtlpExporterSettings protocol="grpc" />
+    You can get help Getting Started with OpenTelemetry for C++ by referring to the 
+    [official documentation](https://opentelemetry.io/docs/instrumentation/cpp/getting-started/). 
+    You need to configure the OTLP exporter to ensure the trace data reaches your Logit.io Stack.
+
+    OTLP gRPC Exporter settings:
+
+    ```cpp copy showLineNumbers /@opentelemetry.endpointAddress/ /@opentelemetry.grpcPort/ /@opentelemetry.base64encodedAuthString/
+    #include "opentelemetry/exporters/otlp/otlp_grpc_exporter_factory.h"
+    #include "opentelemetry/exporters/otlp/otlp_grpc_exporter_options.h"
+
+    namespace otlp = opentelemetry::exporter::otlp;
+
+    otlp::OtlpGrpcExporterOptions opts;
+    opts.endpoint = "https://@opentelemetry.endpointAddress:@opentelemetry.grpcPort";
+    opts.metadata.insert(std::pair<std::string, std::string>(
+        "authorization", "Basic @opentelemetry.base64encodedAuthString"));
+
+    auto exporter = otlp::OtlpGrpcExporterFactory::Create(opts);
+    ```
+
+    For more information about exporter configuration with C++ please refer to the 
+    [documentation](https://opentelemetry.io/docs/instrumentation/cpp/exporters/).
   </Tab>
 
   </Tabs>
