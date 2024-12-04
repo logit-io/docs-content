@@ -35,7 +35,16 @@ TODO: Add description
 
   Add the following to your fluentd configuration.
 
-  <FluentDConfig />
+  ```cmd copy
+  <match>
+      @type logit
+      stack_id @logs_id
+      port @logstash.sslPort      
+      buffer_type file
+      buffer_path /tmp/
+      flush_interval 2s
+  </match>
+  ```
 
   Ensure the `match` clause is correct for the events you wish to send to Logit.io. Buffering is optional but recommended.
 
