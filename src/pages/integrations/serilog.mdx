@@ -10,8 +10,6 @@ sslPortType: tcp-ssl
 tags: Logs, .NET, DotNet, Serilog, Logging Framework
 ---
 
-import ConfigureSerilog from "@/components/integrations/partials/configure-serilog";
-
 TODO: Add description
 
 <Steps>
@@ -47,7 +45,21 @@ TODO: Add description
 
   ### Configuring Serilog
   
-  <ConfigureSerilog />
+  Add Serilog settings to your `appsettings.json` file:       
+
+  ```json copy showLineNumbers
+  "Serilog": {
+  "Using": [ "Serilog.Sinks.Network" ],
+  "MinimumLevel": "Debug",
+  "WriteTo": [
+    {
+      "Name": "TCPSink",
+      "Args": { "uri": "tls://@logstash.host:@logstash.sslPort" }
+    }
+  ],
+  "Enrich": [ "FromLogContext" ]
+  }
+  ```
 
   ### Using Serilog
 

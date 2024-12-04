@@ -11,8 +11,6 @@ sslPortType: tcp-ssl
 tags: Logs, Microsoft, .NET, Dotnet, Mono, ASP, Application Logs, Microsoft Core, Dotnet Core, ASP, Application Logs, Dotnetcore, APM, Core, Application Performance Monitoring, Apm, Grpc, Https
 ---
 
-import ConfigureSerilog from "@/components/integrations/partials/configure-serilog";
-
 TODO: Add description
 
 <Steps>
@@ -46,7 +44,21 @@ TODO: Add description
 
   ### Configuring Serilog
 
-  <ConfigureSerilog />
+  Add Serilog settings to your `appsettings.json` file:       
+
+  ```json copy showLineNumbers
+  "Serilog": {
+  "Using": [ "Serilog.Sinks.Network" ],
+  "MinimumLevel": "Debug",
+  "WriteTo": [
+    {
+    "Name": "TCPSink",
+    "Args": { "uri": "tls://@logstash.host:@logstash.sslPort" }
+    }
+  ],
+  "Enrich": [ "FromLogContext" ]
+  }
+  ```
 
   ### Using Serilog
 
