@@ -11,9 +11,6 @@ sslPortType: tcp-ssl
 tags: Logs, Cloud Foundry, Cloudfoundry, VMware, VMware Tanzu, BOSH, Pivotal, Log Drain, Cloud Logs
 ---
 
-import SetupLogDrain from "@/components/integrations/partials/cloudfoundry/setup-log-drain";
-import BindService from "@/components/integrations/partials/cloudfoundry/bind-service";
-
 TODO: Add description
 
 <Steps>
@@ -23,14 +20,24 @@ TODO: Add description
   guide below and start sending logs to Logstash & Elasticsearch.
   
   ### Install Integration
+
   <InstallIntegration/>
+
   ### Setup Log Drain
 
-  <SetupLogDrain />
+  Create the log drain service in Cloud Foundry.
+
+  ```cmd copy
+  cf cups logit-ssl-drain -l syslog-tls://@logstash.host:@logstash.sslPort
+  ```
 
   ### Bind the Service
 
-  <BindService />
+  Create the log drain service in Cloud Foundry.
+
+  ```cmd copy
+  cf bind-service YOUR-CF-APP-NAME logit-ssl-drain
+  ```
 
   ### Restage/Push the Service
 

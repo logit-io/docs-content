@@ -133,11 +133,65 @@ TODO: Add description
 
   ### Add TCP-TLS Logging
 
-  <AddTcpTlsLoggingForRubyOnRails />
+  The following code needs to be added to the `home` method in `pages_controller`, this code does the actual logging:
+        
+  ```rb copy showLineNumbers /@logstash.host/ /"@logstash.sslPort:strip_quotes"/
+  tcp_logger = LogStashLogger.new(
+    type: :tcp, 
+    host: '@logstash.host', 
+    port: "@logstash.sslPort:strip_quotes",
+    ssl_enable: true)
 
-  ### Add TCP Logging
+  file_logger = LogStashLogger.new(
+    type: :file, 
+    path: 'log/logstashtest.log', 
+    sync: true)
 
-  <AddTcpLoggingForRubyOnRails />
+  file_logger.error message
+  tcp_logger.error message
+  ```
+
+  The host value in the example above should be the Logstash endpoint and 
+  the port is the Port Number of the Stack where the logging data is required 
+  to be sent to. They are found in the Logstash Inputs area of Logstash.
+
+  This code sets up an instance of the logstash server logger and also a 
+  logstash file logger (which writes to a file called `logstashtest.log`). 
+  The `message` variable, which is set earlier in the code, is sent to 
+  both the server and the file as an error message.
+      
+  Below is the full code for the `pages_controller` with the TCP-TLS logging now added:
+      
+  ```rb copy showLineNumbers /@logstash.host/ /"@logstash.sslPort:strip_quotes"/
+  require 'logstash-logger'
+
+  class PagesController < ApplicationController
+      def home
+          message = "Logging test!"
+          @greeting = message
+                  
+          tcp_logger = LogStashLogger.new(
+            type: :tcp,
+            host: '@logstash.host', 
+            port: "@logstash.sslPort:strip_quotes",
+            ssl_enable: true
+          )
+
+          file_logger = LogStashLogger.new(
+            type: :file,
+            path: 'log/logstashtest.log',
+            sync: true)
+          
+          file_logger.error message
+          tcp_logger.error message
+      end
+  end
+  ```
+
+  The user needs to start the server (`$ rails server`) and navigate to 
+  `http://localhost:3000`, a log is written to the `logstashtest.log` file 
+  and the stack on the server (which can be viewed using Kibana). The 
+  `logstashtest.log` file is found in the `sample_app\log` folder.
 
   ### Check Logit.io for your logs
 

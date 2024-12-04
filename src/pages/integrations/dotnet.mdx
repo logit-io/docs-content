@@ -144,11 +144,29 @@ TODO: Add description
   <Tabs items={["HTTPS", "gRPC"]}>
   
   <Tab>
-    <ConfigureOtel protocol="https" port="@opentelemetry.httpsPort" />
+    ```json copy filename="appsettings.json" /@opentelemetry.protocol/ /@opentelemetry.port/ /@opentelemetry.endpointAddress/
+    "OpenTelemetry": {
+    "ServiceName": "Open Telemetry Tracing - Test App",
+    "OTLP_ENDPOINT_URL": "https://@opentelemetry.endpointAddress",
+    "Protocol": "https",
+    "Port": "@opentelemetry.httpsPort",
+    "Username": "@opentelemetry.username",
+    "Password": "@opentelemetry.password"
+    }
+    ```
   </Tab>
 
   <Tab>
-    <ConfigureOtel protocol="grpc" port="@opentelemetry.grpcPort" />
+    ```json copy filename="appsettings.json" /@opentelemetry.protocol/ /@opentelemetry.port/ /@opentelemetry.endpointAddress/
+    "OpenTelemetry": {
+    "ServiceName": "Open Telemetry Tracing - Test App",
+    "OTLP_ENDPOINT_URL": "https://@opentelemetry.endpointAddress",
+    "Protocol": "grpc",
+    "Port": "@opentelemetry.grpcPort",
+    "Username": "@opentelemetry.username",
+    "Password": "@opentelemetry.password"
+    }
+    ```
   </Tab>
 
   </Tabs>
