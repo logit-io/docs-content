@@ -33,7 +33,36 @@ You can either configure the TCP Log plugin to work with a Kong Service, Route o
         
 To configure the plugin to work on a Service, use:
 
-<InstallKong />
+```cmd copy
+curl -X POST http://kong:8001/services/{service}/plugins \
+    --data "name=tcp-log"  \
+    --data "config.host=@logstash.host" \
+    --data "config.port=@logstash.sslPort" \
+    --data "config.tls=true"        
+```
+
+To configure the plugin to work on a Route, use:
+
+```cmd copy
+curl -X POST http://kong:8001/routes/{route_id}/plugins \
+    --data "name=tcp-log"  \
+    --data "config.host=@logstash.host" \
+    --data "config.port=@.logstashsslPort" \
+    --data "config.tls=true"        
+```
+
+To configure the plugin to work on a Consumer, use:
+
+```cmd copy
+curl -X POST http://kong:8001/plugins \
+    --data "name=tcp-log" \
+    --data "consumer_id={consumer_id}"  \
+    --data "config.host=@logstash.host"" \
+    --data "config.port=@logstash.sslPort" \
+    --data "config.tls=true"            
+```
+
+If running the curl request in Powershell replace the backslashes with backticks.
 
 ### Sending Logs
 
