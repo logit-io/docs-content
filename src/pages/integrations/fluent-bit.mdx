@@ -27,14 +27,32 @@ TODO: Add description
 
   Example command line configuration to send CPU metrics from Fluent Bit running in a Docker container to logstash:
 
-  <FluentBitCommandlineExample />
+  ```bash copy
+  docker run -it fluent/fluent-bit:3.1.9 /fluent-bit/bin/fluent-bit -i cpu -o tcp://@logstash.host:@logstash.sslPort -p format=json_lines -p tls=on -p json_date_format=iso8601 -p json_date_key=@timestamp
+  ```
 
   ### Example Output Config
 
   If you are using a configuration file (e.g. `fluent-bit.conf`), rather than specifying in the command line, 
   you can specify the output below to send data to your Logit.io stack:
 
-  <FluentBitExampleOutputConfig />
+  ```bash copy
+  [OUTPUT]
+      Name http
+      Match *
+      Host @logstash.host
+      Port @logstash.sslPort
+      tls On
+      Format json_lines
+      json_date_format iso8601
+      json_date_key @timestamp
+  ```
+  and run the Docker container with the following command which will mount the 
+  configuration file to the container and then run Fluent Bit with the configuration file:
+
+  ```bash copy
+  docker run -v /path/to/your/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf -it fluent/fluent-bit:3.1.9 /fluent-bit/bin/fluent-bit -c /fluent-bit/etc/fluent-bit.conf
+  ```
 
   ### Launch Logs to View Your Data
 
