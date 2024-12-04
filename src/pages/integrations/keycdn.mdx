@@ -10,8 +10,6 @@ portType: syslog
 tags: Logs, KeyCDN, CDN, Content Delivery Network, Keycdn
 ---
 
-import ConfigureKeyCdn from "@/components/integrations/partials/configure-key-cdn";
-
 TODO: Add description
 
 <Steps>
@@ -27,7 +25,11 @@ TODO: Add description
 
   Enter the following settings:
 
-  <ConfigureKeyCdn />  
+  ```yml copy
+  - Status: "enabled"
+  - Destination Server: "@logstash.host:strip_quotes"
+  - Destination Port: "@logstash.port:strip_quotes"
+  ```
   
   ![Edit log settings](@/images/integrations/keycdn/step-1.png)
 
