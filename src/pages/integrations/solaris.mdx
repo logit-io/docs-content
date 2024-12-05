@@ -37,7 +37,7 @@ TODO: Add description
 
   `/etc/rsyslog.conf`
 
-  ```yaml copy /@logstash.host:strip_quotes'/ /@logstash.sslPort/
+  ```yaml copy /@logstash.host:strip_quotes/ /@logstash.sslPort/
   $DefaultNetstreamDriverCAFile /etc/rsyslog.d/keys/ca.d/root.logit.io.crt
   $ModLoad lmnsd_gtls
   $ActionSendStreamDriver gtls
