@@ -37,7 +37,16 @@ TODO: Add description
 
   `/etc/rsyslog.conf`
 
-  <RsyslogConfig />
+  ```yaml copy /@logstash.host:strip_quotes'/ /@logstash.sslPort/
+  $DefaultNetstreamDriverCAFile /etc/rsyslog.d/keys/ca.d/root.logit.io.crt
+  $ModLoad lmnsd_gtls
+  $ActionSendStreamDriver gtls
+  $ActionSendStreamDriverMode 1
+  $ActionSendStreamDriverAuthMode x509/name
+  $ActionSendStreamDriverPermittedPeer *.logit.io
+
+  *.* @@'@logstash.host:strip_quotes':@logstash.sslPort
+  ```
 
   Notes
     - If possible run the latest minor versions of rsyslog v7 or v8. There are many TLS bugs in past versions.
