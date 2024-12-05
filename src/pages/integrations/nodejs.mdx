@@ -242,11 +242,29 @@ TODO: Add description
 
   <Tabs items={["HTTPS", "gRPC"]}>  
     <Tab>
-      <NodejsConfigSettings protocol="http" port="@opentelemetry.httpsPort" />
+      ```js copy showLineNumbers /@opentelemetry.endpointAddress/ /@opentelemetry.base64encodedAuthString/ /@opentelemetry.username/ /@opentelemetry.password/
+      // config.js
+      module.exports = {
+        endpoint: "@opentelemetry.endpointAddress",
+        port: "@opentelemetry.httpsPort",
+        protocol: "http",
+        username: '@opentelemetry.username',
+        password: '@opentelemetry.password',
+      };
+      ```
     </Tab>
 
     <Tab>
-      <NodejsConfigSettings protocol="grpc" port="@opentelemetry.grpcPort" />
+      ```js copy showLineNumbers /@opentelemetry.endpointAddress/ /@opentelemetry.base64encodedAuthString/ /@opentelemetry.username/ /@opentelemetry.password/
+      // config.js
+      module.exports = {
+        endpoint: "@opentelemetry.endpointAddress",
+        port: "@opentelemetry.grpcPort",
+        protocol: "grpc",
+        username: '@opentelemetry.username',
+        password: '@opentelemetry.password',
+      };
+      ```
     </Tab>
 
   </Tabs>
