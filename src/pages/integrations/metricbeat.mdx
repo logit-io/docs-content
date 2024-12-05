@@ -187,7 +187,43 @@ via [Logstash](/integrations/log-management/shippers/logstash).
 
   ### Copy Configuration File
 
-  <MetricbeatOutput />
+  The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+        
+  Copy the configuration file below and overwrite the contents of __metricbeat.yml__. 
+
+  ```yaml copy /@logstash.host/ /@logstash.sslPort/
+  ###################### Logit.io Metricbeat Configuration #######################
+  # =========================== Modules configuration ============================
+
+  metricbeat.config.modules:
+    # Glob pattern for configuration loading
+    path: ${path.config}/modules.d/*.yml
+
+    # Set to true to enable config reloading
+    reload.enabled: false
+
+    # Period on which files under path should be checked for changes
+    #reload.period: 10s
+  # ======================= Elasticsearch template setting =======================
+  setup.template.settings:
+    index.number_of_shards: 1
+    index.codec: best_compression
+    #_source.enabled: false
+
+  # ================================== Outputs ===================================
+  # ------------------------------ Logstash Output -------------------------------
+  output.logstash:
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
+
+  # ================================= Processors =================================
+  processors:
+    - add_host_metadata: ~
+    - add_cloud_metadata: ~
+    - add_docker_metadata: ~
+    - add_kubernetes_metadata: ~
+  ```
 
   ### Validate Configuration
 
