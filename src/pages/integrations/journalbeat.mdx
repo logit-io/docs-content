@@ -70,16 +70,23 @@ journalbeat.inputs:
 
 ### Configure Output
 
-  <Output>
-    We'll be shipping to Logstash so that we have the option to run filters before the data is indexed.  
-    Comment out the elasticsearch output block.
+We'll be shipping to Logstash so that we have the option to run filters before the data is indexed.  
+Comment out the elasticsearch output block.
 
-    ```yaml copy
-    ## Comment out elasticsearch output
-    #output.elasticsearch:
-    #  hosts: ["localhost:9200"]
-    ```
-  </Output>
+```yaml copy
+## Comment out elasticsearch output
+#output.elasticsearch:
+#  hosts: ["localhost:9200"]
+```
+
+Uncomment and change the logstash output to match below:
+
+```yaml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+output.logstash:
+  hosts: ["@logstash.host:@logstash.sslPort"]
+  loadbalance: true
+  ssl.enabled: true
+```
 
 ### Validate Configuration
 
