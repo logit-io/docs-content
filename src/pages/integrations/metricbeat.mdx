@@ -231,7 +231,53 @@ via [Logstash](/integrations/log-management/shippers/logstash).
 
   ### Start Metricbeat
 
-  <StartBeat beatname="metricbeat" />
+  <Tabs items={["Windows", "Linux", "macOS", "DEB", "RPM"]}>
+    <Tab>
+      To start Metricbeat, run in Powershell:
+
+        ```ps1 copy
+        Start-Service metricbeat
+        ```
+    </Tab>
+    <Tab>
+      To start Metricbeat, run:
+
+      ```bash copy
+      sudo chown root metricbeat.yml 
+      sudo chown root modules.d/*.yml
+      sudo ./metricbeat -e
+      ```
+
+      You'll be running Metricbeat as root, so you need to __change ownership of the configuration file__ and any configurations enabled in the modules.d directory, or run Metricbeat with __--strict.perms=false__ as shown above. 
+      Read more about how to [change ownership](https://www.elastic.co/guide/en/beats/libbeat/master/config-file-permissions.html).
+    </Tab>
+    <Tab>
+      To start Metricbeat, run:
+
+      ```bash copy
+      sudo chown root metricbeat.yml 
+      sudo chown root modules.d/{modulename}.yml 
+      sudo ./metricbeat -e
+      ```
+
+      You'll be running Metricbeat as root, so you need to __change ownership of the configuration file__ and any configurations enabled in the modules.d directory, or run Metricbeat with __--strict.perms=false__ as shown above. 
+      Read more about how to [change ownership](https://www.elastic.co/guide/en/beats/libbeat/master/config-file-permissions.html).
+    </Tab>
+    <Tab>
+      To start Metricbeat, run:
+
+      ```bash copy
+      sudo service metricbeat start
+      ```
+    </Tab>
+    <Tab>
+      To start Metricbeat, run:
+
+      ```bash copy
+      sudo service metricbeat start
+      ```
+    </Tab>
+  </Tabs>
 
   ### Launch Logs to view your data
 
