@@ -20,10 +20,28 @@ TODO: Add description
   Get started quickly with Ruby logging using our configuration guide on how to easily ship Ruby logs to your hosted ELK Logstash.
   
   ### Install Integration
+
   <InstallIntegration/>
+  
   ### Simple Ruby Logging
 
-  <SendLogsViaRuby />
+  ```ruby copy showLineNumbers /@logstash.host/ /"@logstash.sslPort:strip_quotes"/
+  gem install logstash-logger
+  irb
+  require 'logstash-logger'
+
+  tcp_logger = LogStashLogger.new(
+    type: :tcp,
+    host: '@logstash.host',
+    port: "@logstash.sslPort:strip_quotes",
+    ssl_enable: true
+  )
+
+  tcp_logger.error "This is logged as an error"
+  tcp_logger.info "This is logged as info"
+  tcp_logger.debug "This is logged as debug"
+  tcp_logger.warn "This is logged as a warning"
+  ```
 
   ### Check Logit.io for your logs
 
