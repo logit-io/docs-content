@@ -40,7 +40,16 @@ TODO: Add description
 
   ### RSyslog
 
-  <RsyslogConfig />
+  ```yaml copy /"@logstash.host:strip_quotes"/ /@logstash.sslPort/
+  $DefaultNetstreamDriverCAFile /etc/rsyslog.d/keys/ca.d/root.logit.io.crt
+  $ModLoad lmnsd_gtls
+  $ActionSendStreamDriver gtls
+  $ActionSendStreamDriverMode 1
+  $ActionSendStreamDriverAuthMode x509/name
+  $ActionSendStreamDriverPermittedPeer *.logit.io
+
+  *.* @@"@logstash.host:strip_quotes":@logstash.sslPort
+  ```
 
   <Callout type="info">
     * On many distros, also install the rsyslog-gnutls package (including CentOS, Fedora, Debian, and Ubuntu)
