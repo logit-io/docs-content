@@ -65,7 +65,13 @@ TODO: Add description
 
   Copy and Paste the code below into `config.py`:
 
-  <SendLogsViaPython />
+  ```python copy showLineNumbers /@logstash.host/ /"@logstash.sslPort:strip_quotes"/
+  # config.py
+
+  HOST = "@logstash.host"
+  PORT = "@logstash.sslPort:strip_quotes"
+  SSL_ENABLE = True
+  ```
 
   Copy and Paste the code below into `app.py`:
 
