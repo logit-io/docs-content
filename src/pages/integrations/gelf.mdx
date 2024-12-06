@@ -21,7 +21,14 @@ TODO: Add description
   <InstallIntegration/>
   ### Send data to GELF input
 
-  <SendDataToGelf />
+
+  Note: You need a UDP Logstash input on your Stack to be able to send GELF logs.
+
+  Sending the log to logstash with netcat:
+
+  ```cmd copy
+  echo '{"test_version": "1.1","test_host":"example.org","short_message":"A short message that helps you identify what is going on","test_level":1,"user_id":9001,"some_info":"foo","some_env_var":"bar"}' | gzip | nc -u -w 1 @logstash.host @logstash.port
+  ```
 
   ### View data
 
