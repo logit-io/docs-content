@@ -21,7 +21,17 @@ TODO: Add description
   <InstallIntegration/>
   ### Install the SentinelOne certificate
 
-  <InstallCertFilebeat label="SentinelOne" type="SentinelOne" />
+  SentinelOne sends data in an encrypted format. 
+
+  You need to install the SentinelOne certificate on your Filebeat server.
+
+  ```ps1 copy
+  sudo mkdir /etc/SentinelOne/certificates
+  sudo openssl req -newkey rsa:2048 -nodes \
+  -keyout /etc/filebeat/certificates/SentinelOne.key -x509 \
+  -days 365 \
+  -out /etc/filebeat/certificates/SentinelOne.crt
+  ```
 
   ### Install Filebeat
 

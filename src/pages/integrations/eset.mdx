@@ -29,7 +29,17 @@ TODO: Add description
 
   ### Install the ESET certificate
 
-  <InstallCertFilebeat label="ESET" type="eset" />
+  ESET sends data in an encrypted format. 
+
+  You need to install the ESET certificate on your Filebeat server.
+
+  ```ps1 copy
+  sudo mkdir /etc/eset/certificates
+  sudo openssl req -newkey rsa:2048 -nodes \
+  -keyout /etc/filebeat/certificates/eset.key -x509 \
+  -days 365 \
+  -out /etc/filebeat/certificates/eset.crt
+  ```
 
   ### Install Filebeat
 
