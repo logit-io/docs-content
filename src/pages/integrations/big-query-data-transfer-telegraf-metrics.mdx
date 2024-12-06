@@ -1,0 +1,74 @@
+---
+title: Google BigQuery Data Transfer Metrics
+metaTitle: Configure Telegraf to Send Google BigQuery Data Transfer Metrics
+subTitle: Ship your Google BigQuery Data Transfer Metrics via Telegraf to your Logit.io Stack
+logo: GoogleBigquery
+color: "#3c76d7"
+description: Configure Telegraf to ship Google BigQuery BI Engine metrics to your Logit.io stacks. Use our Telegraf Google BigQuery BI Engine metrics example configuration.
+stackTypes: metrics
+tags: Telegraf, metrics, telemetry, opentelemetry, instrumentation, Google BigQuery Data Transfer, Big, Query
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Metrics
+
+  Configure Telegraf to ship Google BigQuery Data Transfer metrics to your Logit.io stacks via Logstash.
+  
+  ### Install Integration
+  <InstallIntegration/>
+  ### Set Credentials in GCP
+
+  <SetGCPCredentials intro="Google BigQuery Data Transfer Service, a specialized offering within Google Cloud, provides automated data movement from SaaS applications to Google BigQuery. 
+  Promoting secure and seamless data transfer, it plays a pivotal role in today's data-centric, cloud-based ecosystems."/>
+
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  <TelegrafStackDriverInput metric_type="bigquerydatatransfer.googleapis.com"/>
+
+  ### Configure the output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack stackType="metrics" source="Google_BigQuery_Data_Transfer_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-GoogleBigQueryDataTransfer-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>
+
+## Telegraf Google AI Platform metrics Overview
+
+For effective tracking and intelligent scrutiny of Google BigQuery Data Transfer metrics across distributed 
+systems, the necessity for a powerful and proficient metrics management solution, such as Telegraf, is of utmost importance. 
+Telegraf, being an open-source server agent, is esteemed for its competence in collecting and reporting metrics from 
+diverse sources, including active BigQuery Data Transfer instances, databases, and relevant applications.
+
+Telegraf hosts an all-encompassing assortment of input plugins, enabling users to garner varied metrics like 
+query numbers, latency, error frequencies, and beyond. These metrics are vital to fathom the performance of 
+Google BigQuery Data Transfer. For the storage and examination of these accumulated metrics, organizations 
+can leverage Prometheus, an open-source monitoring and alerting toolkit, greatly valued for its flexible 
+query language and potent data visualization abilities.
+
+The process of transmitting Google BigQuery Data Transfer metrics from Telegraf to Prometheus comprises configuring 
+Telegraf to display metrics in Prometheus's format and then instructing Prometheus to scrape these metrics from the 
+Telegraf server.
+
+Once the metrics are successfully assimilated into Prometheus, further comprehensive analysis and visualization can 
+be performed using Grafana. Grafana is a top-tier open-source platform esteemed for its monitoring and observability 
+attributes, and it syncs seamlessly with Prometheus. It empowers users to construct dynamic, interactive dashboards 
+for a detailed examination of metrics data, granting a thorough insight into performance trends and potential issues 
+within Google BigQuery Data Transfer.
+
+If you need any further assistance with shipping your log data to Logit.io we're here to help you get started. 
+Feel free to get in contact with our support team by sending us a message via <IntercomButton text="live chat" /> & we'll be happy to assist.

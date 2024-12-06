@@ -1,0 +1,287 @@
+---
+title: Go
+metaTitle: Learn How to Integrate and Configure Go to Send Traces
+pageTitle: OpenTelemetry Go Configuration
+subTitle: Ship traces from Go to OpenSearch with OpenTelemetry
+logo: golang
+color: "#00b1d1"
+stackTypes: apm
+description: Follow our source integrations to send traces from Go to OpenSearch with OpenTelemetry. Ship Go data to your Logit.io stacks.
+tags: Go, Golang, Apm, Grpc, Http
+---
+
+Use OpenTelemetry to easily send Go traces to your Logit.io Stack.
+
+<Steps>
+  ## APM
+  <Callout type="info">
+  This sample app was created and tested with
+
+  `go version go1.23.0 windows/amd64`
+
+  </Callout>
+
+  ### Install
+
+  Create a new directory for your project and name it `GoAPMTestApp`.
+
+  Open a Terminal window or Command Prompt and navigate into the new `GoAPMTestApp` folder.
+
+  Initialize a Go module in the project directory by entering the following command.
+
+  ```cmd copy
+  go mod init GoAPMTestApp
+  ```
+
+  Now we need to install the required OpenTelemetry dependencies, do this by pasting the following into the terminal.
+
+  ```cmd copy
+  go get go.opentelemetry.io/otel
+  go get go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc
+  go get go.opentelemetry.io/otel/sdk/trace
+  go get go.opentelemetry.io/otel/trace
+  go get google.golang.org/grpc
+  go get go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp
+  go get go.opentelemetry.io/otel/sdk/resource
+  go get go.opentelemetry.io/otel/semconv/v1.12.0
+  ```
+
+  Create a new file in the folder and call it `main.go`. Open this new file using your choice of text editor.
+
+  Copy and Paste the code below into the file.
+
+  ```go copy
+  package main
+
+  import (
+    "context"
+    "encoding/base64"
+    "fmt"
+    "log"
+    "time"
+    "GoAPMTestApp/config"
+
+    "go.opentelemetry.io/otel"
+    "go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
+    "go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
+    "go.opentelemetry.io/otel/sdk/resource"
+    "go.opentelemetry.io/otel/sdk/trace"
+    "go.opentelemetry.io/otel/semconv/v1.12.0"
+      "google.golang.org/grpc"
+      "google.golang.org/grpc/credentials"
+  )
+
+  // This section sets up for sending via HTTPS
+
+  func initHTTPSTracer(endpoint, username, password, serviceName string) func(context.Context) error {
+    ctx := context.Background()
+
+    // Encode username and password for Basic Authentication
+    authHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte(username+":"+password))
+
+    // Set up OTLP HTTP exporter with Basic Authentication headers
+    exporter, err := otlptracehttp.New(ctx,
+      otlptracehttp.WithEndpoint(endpoint),
+      otlptracehttp.WithHeaders(map[string]string{
+        "Authorization": authHeader,
+      }),
+    )
+    if err != nil {
+      log.Fatalf("failed to create trace exporter: %v", err)
+    }
+
+    // Set resource attributes (like service name)
+    resource := resource.NewWithAttributes(
+      semconv.SchemaURL,
+      semconv.ServiceNameKey.String(serviceName),
+    )
+
+    // Create the TracerProvider with the exporter
+    tp := trace.NewTracerProvider(
+      trace.WithBatcher(exporter),
+      trace.WithResource(resource),
+    )
+
+    otel.SetTracerProvider(tp)
+
+    return tp.Shutdown
+  }
+
+
+  // This section sets up for sending via gRPC
+
+  // basicAuthCredentials is used to inject Basic Auth into gRPC metadata
+  type basicAuthCredentials struct {
+      username string
+      password string
+  }
+
+  // GetRequestMetadata adds the Basic Auth credentials to the gRPC metadata
+  func (b *basicAuthCredentials) GetRequestMetadata(ctx context.Context, _ ...string) (map[string]string, error) {
+      auth := base64.StdEncoding.EncodeToString([]byte(b.username + ":" + b.password))
+      return map[string]string{
+          "authorization": "Basic " + auth,
+      }, nil
+  }
+
+  // RequireTransportSecurity returns whether the connection requires transport security (TLS) when using gRPC
+  func (b *basicAuthCredentials) RequireTransportSecurity() bool {
+      return true
+  }
+
+  // initgRPCTracer sets up OpenTelemetry tracing with gRPC and Basic Auth
+  func initgRPCTracer(endpoint, username, password, serviceName string) func(context.Context) error {
+      ctx := context.Background()
+
+      // Create a gRPC connection with Basic Auth credentials
+      creds := credentials.NewTLS(nil) // Use TLS for secure communication
+      conn, err := grpc.DialContext(ctx, endpoint, grpc.WithTransportCredentials(creds),
+          grpc.WithPerRPCCredentials(&basicAuthCredentials{
+              username: username,
+              password: password,
+          }),
+      )
+      if err != nil {
+          log.Fatalf("failed to create gRPC connection: %v", err)
+      }
+
+      // Set up the OTLP gRPC exporter
+      exporter, err := otlptracegrpc.New(ctx, otlptracegrpc.WithGRPCConn(conn))
+      if err != nil {
+          log.Fatalf("failed to create trace exporter: %v", err)
+      }
+
+      // Set resource attributes, like service name
+      resource := resource.NewWithAttributes(
+          semconv.SchemaURL,
+          semconv.ServiceNameKey.String(serviceName),
+      )
+
+      // Create a new TracerProvider
+      tracerProvider := trace.NewTracerProvider(
+          trace.WithBatcher(exporter),
+          trace.WithResource(resource),
+      )
+
+      otel.SetTracerProvider(tracerProvider)
+
+      return tracerProvider.Shutdown
+  }
+
+  // This section is the main part of the project that creates your tracer (HTTPS or gRPC) and then creates sample traces
+
+  func main() {
+    ctx := context.Background()
+    serviceName := "GoAPMTestApp"
+    
+    fullEndpoint := fmt.Sprintf("%s:%s", config.Endpoint, config.Port)
+    
+    if config.Protocol == "https"{
+      // Initialize the tracer
+      shutdown := initHTTPSTracer(fullEndpoint, config.Username, config.Password, serviceName)
+      defer func() {
+        if err := shutdown(ctx); err != nil {
+          log.Fatalf("failed to shutdown tracer provider: %v", err)
+        }
+      }()
+    }else{
+      // Initialize the tracer
+      shutdown := initgRPCTracer(fullEndpoint, config.Username, config.Password, serviceName)
+      defer func() {
+        if err := shutdown(ctx); err != nil {
+          log.Fatalf("failed to shutdown tracer provider: %v", err)
+        }
+      }()
+    }
+    
+    // Start a trace
+    tracer := otel.Tracer(serviceName)
+    ctx, span := tracer.Start(ctx, "main")
+    defer span.End()
+
+    // Simulate work
+    fmt.Println("Creating traces...")
+    time.Sleep(100 * time.Millisecond)
+    
+    // Simulate another span
+    createSpan(ctx, serviceName)
+    
+  }
+
+  func createSpan(ctx context.Context, serviceName string) {
+    tracer := otel.Tracer(serviceName)
+    _, span := tracer.Start(ctx, "second")
+    defer span.End()
+
+    // Simulate some work
+    time.Sleep(100 * time.Millisecond)
+    fmt.Println("ServiceNAme:" + serviceName)
+    fmt.Println("Traces sent")
+  }
+  ```
+
+  ### Configuring the App
+
+  Now create a new folder inside the `GoAPMTestApp` folder, call the new folder `config`.
+
+  Navigate into the new `config` folder and once inside here create a new file called `config.go`.
+
+  Open this new file using your text editor and copy the code below into the file and save.
+
+  <Tabs items={["HTTPS", "gRPC"]}>
+  
+    <Tab>
+      ```go copy showLineNumbers /@opentelemetry.endpointAddress/ /@opentelemetry.base64encodedAuthString/ /@opentelemetry.username/ /@opentelemetry.password/
+      // config.go
+      package config
+
+      var (
+          Endpoint = "@opentelemetry.endpointAddress"
+          Port = "@opentelemetry.httpsPort"
+          Protocol = "https"
+          Username = "@opentelemetry.username"
+          Password = "@opentelemetry.password"
+      )
+      ```
+    </Tab>
+
+    <Tab>
+      ```go copy showLineNumbers /@opentelemetry.endpointAddress/ /@opentelemetry.base64encodedAuthString/ /@opentelemetry.username/ /@opentelemetry.password/
+      // config.go
+      package config
+
+      var (
+          Endpoint = "@opentelemetry.endpointAddress"
+          Port = "@opentelemetry.grpcPort"
+          Protocol = "grpc"
+          Username = "@opentelemetry.username"
+          Password = "@opentelemetry.password"
+      )
+      ```
+    </Tab>
+
+  </Tabs>
+
+  ### Run the Go App
+
+  Navigate back to the `GoAPMTestApp` folder, we need the terminal to be at the root of the project.
+
+  Copy and Paste the code below into the terminal to run the app.
+
+  ```cmd copy
+  go run main.go
+  ```
+
+  You will see feedback from the app so that you know that is running, the final message will say "Traces sent." so that you know that the process has finished.
+
+  The action of running the Go app will sent traces to your stack.
+
+  ### Launch Logit.io to view your traces
+
+  <LaunchVisualizer type="apm" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>

@@ -1,0 +1,67 @@
+---
+title: Fastly
+metaTitle: Learn How to Integrate and Configure Fastly to Send Logs
+subTitle: Ship logs from Fastly to Logstash
+logo: fastly
+color: "#e31e1c"
+description: Send your Fastly application/access/error logs to logit.io via logstash using the instructions below and begin searching your data
+stackTypes: logs
+sslPortType: syslog-ssl
+tags: Logs, Fastly
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Logs
+
+  Send your Fastly application/access/error logs to logit.io via logstash using the instructions below and begin searching your data.
+
+  ### Install Integration
+  <InstallIntegration/>
+  ### Configure Fastly Syslog server output
+  
+  Fastly's Real-Time Log Streaming feature facilitates the transmission of log files to 
+  syslog-based logging software, leveraging the widely adopted syslog standard for message logging.
+
+  Configure Fastly Log streaming for Syslog, see the [Fastly docs](https://docs.fastly.com/en/guides/log-streaming-syslog).
+
+  For the __Syslog address__ value use your Stack Syslog endpoint address:
+
+  ```txt copy
+  @logstash.host:@logstash.sslPort
+  ```
+  
+  ### Check Logit.io for your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="fastly" source="fastly" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+## Fastly Logging Overview
+
+Fastly, a leading content delivery network (CDN), excels in rapid global content delivery 
+and innovative logging integration. Its CDN infrastructure prioritizes minimal latency, 
+ensuring swift and reliable distribution of digital content worldwide.
+
+Fastly seamlessly integrates cutting-edge logging solutions, providing real-time analytics 
+for valuable insights into user interactions, system performance, and content delivery 
+efficiency. The developer-friendly platform grants control over log data, enabling customization 
+and tailoring of logging processes to meet specific business needs.
+
+Fastly's commitment to edge computing extends to logging, capturing and processing log 
+data closer to the user for enhanced efficiency and reduced latency. Security is a priority, 
+with features such as secure log forwarding and robust access controls ensuring the protection of log data.
+
+Streamlining logging management, Fastly offers an intuitive and user-friendly experience, 
+allowing organizations to effortlessly manage and analyze log data without extensive 
+configuration. For optimized logging alongside efficient content delivery, 
+explore Fastly's Logging Capabilities.
+
+If you need any further assistance with migrating your log data to ELK we're here to 
+help you get started. Feel free to get in contact with our support team by sending us 
+a message <IntercomButton text="via live chat" /> and we'll be happy to assist.

@@ -1,0 +1,91 @@
+---
+title: OpenVAS
+metaTitle: Learn How to Integrate and Configure Filebeat to Send OPENVAS Logs
+subTitle: Ship your OpenVAS reports to Logit.io via Logstash
+logo: openvas
+color: "#71BE45"
+description: Send your OpenVAS reports to logit.io via logstash using the instructions below and begin searching your data
+stackTypes: logs
+sslPortType: beats-ssl
+tags: Vulnerability Assessment, OpenVAS Reports, Security Scan, Openvas
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Logs
+
+  Send your OpenVAS reports to logit.io via logstash using the instructions below and begin searching your data.
+  
+  ### Install Integration
+  <InstallIntegration/>
+  ### Create OpenVAS Report
+
+  OpenVAS reports are typically generated manually.
+
+  After completing a scan in OpenVAS, perform the following steps to generate a CSV report.
+
+  Click the Scans tab, then select Reports.
+
+  Select a report from the list of results.
+
+  This will open the report summary. 
+
+  Select CSV Results from the drop-down menu and click the download option.
+
+  ### Install Filebeat
+
+  <InstallFilebeat />
+
+  ### Configure Filebeat
+
+  Copy and use the Filebeat configuration below.
+
+  Update the file path placeholder with the file path of the folder where you'll be keeping your OpenVAS reports.
+
+  ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/ /INSERT_PATH_TO_OPENVAS_REPORT/
+  ####################### Logit.io Filebeat Configuration ########################
+  # ============================== Filebeat inputs ==============================
+  filebeat.inputs:
+  - type: filestream
+    paths:
+      - INSERT_PATH_TO_OPENVAS_REPORT*.csv
+    
+    fields:
+      type: openvas
+    
+    fields_under_root: true
+    encoding: utf-8
+    ignore_older: 3h
+    
+    multiline:
+      pattern: '^(?:[0-9]{1,3}\.){3}[0-9]{1,3}'
+      negate: true
+      match: after
+
+    filebeat.registry.path: /var/lib/filebeat
+
+  # ============================== Filebeat modules ==============================
+  filebeat.config.modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+    #reload.period: 10s
+
+  # ================================== Outputs ===================================
+  # ------------------------------ Logstash Output -------------------------------
+  output.logstash:
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
+  ```
+  ### Start filebeat
+
+  <StartFilebeat />
+
+  ### Check Logit.io for your logs
+  <LaunchStack utmMedium="logs" utmCampaign="openvas" source="openvas" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>

@@ -1,0 +1,87 @@
+---
+title: Mailchimp
+metaTitle: Integrate and Configure Telegraf to send Mailchimp Metrics
+subTitle: Ship your Mailchimp Metrics via Telegraf to your Logit.io Stack
+logo: mailchimp
+color: "#4d4d4d"
+description: Use our example to configure Telegraf to ship Mailchimp metrics to your Logit.io stacks. Configure Telegraf to send Mailchimp metrics to Logstash or Elastic.
+stackTypes: metrics
+sslPortType: beats-ssl
+tags: Telegraf, Metrics, Telemetry, OpenTelemetry, Health, Instrumentation, Mailchimp, Email Marketing
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Metrics
+
+  Configure Telegraf to ship Mailchimp metrics to your Logit.io stacks via Logstash.
+  
+  ### Install Integration
+  <InstallIntegration/>
+
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+
+  ```toml copy
+  # Gathers metrics from the /3.0/reports MailChimp API
+  [[inputs.mailchimp]]
+    ## MailChimp API key
+    ## get from https://admin.mailchimp.com/account/api/
+    api_key = "" # required
+
+    ## Reports for campaigns sent more than days_old ago will not be collected.
+    ## 0 means collect all and is the default value.
+    days_old = 0
+
+    ## Campaign ID to get, if empty gets all campaigns, this option overrides days_old
+    # campaign_id = ""
+  ```
+
+  <Callout type="info">
+    Read more about how to configure data scraping and configuration options for [Mailchimp](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/mailchimp)
+  </Callout>
+
+  ### Configure The Output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack source="Mailchimp_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-Mailchimp-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+### Telegraf Mailchimp metrics Overview
+
+In order to effectively monitor and analyze MailChimp metrics in a distributed environment, it's crucial to have a reliable and efficient 
+metrics management solution. Telegraf, an open-source metrics collection agent, is ideally suited for this task. It can gather MailChimp 
+metrics from a variety of sources, such as live MailChimp instances, databases, and other related applications.
+
+Telegraf offers a broad array of input plugins, allowing users to collect metrics from diverse sources such as CPU usage, memory usage, 
+network activity, and more. To store and query these gathered metrics, organizations can utilize Prometheus, an open-source monitoring and 
+alerting system that supports a flexible querying language and graphical data visualization.
+
+To transmit MailChimp metrics from Telegraf to Prometheus, organizations need to configure Telegraf to output metrics in the Prometheus format, 
+and then set up Prometheus to scrape these metrics from the Telegraf server. This procedure involves organizing Telegraf to collect MailChimp 
+metrics and output them in the Prometheus format, configuring Prometheus to fetch these metrics from the Telegraf server, and then visually 
+analyzing the data using Prometheus's dynamic querying and data visualization capabilities.
+
+Once the metrics are available in Prometheus, further analysis and visualization can be conducted using Grafana. Grafana is an open-source 
+platform for monitoring and observability that is fully compatible with Prometheus. It empowers users to create dynamic and interactive dashboards, 
+offering a deeper understanding of the metrics data.
+
+If you need any further assistance with shipping your log data to Logit.io we're here to help you get started. Feel free to get in contact with 
+our support team by sending us a message via <IntercomButton text="live chat" /> & we'll be happy to assist.
