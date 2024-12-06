@@ -23,7 +23,41 @@ TODO: Add description
   
   ### Send data to TCP input
 
-  <SendDataToTCP />
+  We will start by adding some sample data to a file called `sample.log`:
+
+  ```cmd copy
+  echo "Message sent to Logit.io using TCP" >> sample.log
+  ```
+
+  Then we will use `openssl` to send the data to Logit.io via TLS:
+
+  <Tabs items={["Windows (Powershell)", "Linux", "macOS", "DEB", "RPM"]}>
+    <Tab>
+      ```ps1 copy
+      Get-Content sample.log | openssl s_client -connect @logstash.host:@logstash.sslPort
+      ```
+    </Tab>
+    <Tab>
+      ```bash copy
+      openssl s_client -connect @logstash.host:@logstash.sslPort < sample.log
+      ```
+    </Tab>
+    <Tab>
+      ```bash copy
+      openssl s_client -connect @logstash.host:@logstash.sslPort < sample.log
+      ```
+    </Tab>
+    <Tab>
+      ```bash copy
+      openssl s_client -connect @logstash.host:@logstash.sslPort < sample.log
+      ```
+    </Tab>
+    <Tab>
+      ```bash copy
+      openssl s_client -connect @logstash.host:@logstash.sslPort < sample.log
+      ```
+    </Tab>
+  </Tabs>
 
   ### Launch Logs to View Your Data
 
