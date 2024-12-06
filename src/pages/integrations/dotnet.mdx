@@ -145,7 +145,7 @@ TODO: Add description
 <Steps>
   ## APM
   ### Install Integration
-  
+
   <InstallIntegration/>
   
   ### Install
@@ -202,7 +202,127 @@ TODO: Add description
 
   ### Using OpenTelemetry
 
-  <UsingOtel />
+  Copy and Paste the code below into `Program.cs`. This code is based on the demonstration 
+  code used in the Microsoft article found [here](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/observability-with-otel) 
+  which also contains additional useful information about using OpenTelemetry with .NET.
+
+  ```csharp copy showLineNumbers filename="Program.cs"
+  using OpenTelemetry.Resources;
+  using OpenTelemetry.Trace;
+  using System.Diagnostics;
+  using System.Text;
+  using OpenTelemetry.Exporter;
+
+  var builder = WebApplication.CreateBuilder(args);
+
+  // Custom ActivitySource for the application
+  var greeterActivitySource = new ActivitySource("OtJa.Example");
+
+  var config = builder.Configuration;
+  var openTelemetryCongfig = config.GetSection("OpenTelemetry");
+  var serviceName = openTelemetryCongfig.GetValue<string>("ServiceName");
+  var tracingOtlpEndpoint = openTelemetryCongfig.GetValue<string>("OTLP_ENDPOINT_URL");
+  var tracingOtlpProtocol = openTelemetryCongfig.GetValue<string>("Protocol");
+  var tracingOtlpPort = openTelemetryCongfig.GetValue<string>("Port");
+  var tracingUsername = openTelemetryCongfig.GetValue<string>("Username");
+  var tracingPassword = openTelemetryCongfig.GetValue<string>("Password");
+
+  var otel = builder.Services.AddOpenTelemetry();
+
+  // Configure OpenTelemetry Resources with the service name
+  if (serviceName is null)
+  {
+      serviceName = "Logit.NetTestApp";
+  }
+
+  otel.ConfigureResource(resource => resource
+      .AddService(serviceName: serviceName));
+
+  // Add Tracing for ASP.NET Core and our custom ActivitySource and export to Jaeger
+  otel.WithTracing(tracing =>
+  {
+      tracing.AddAspNetCoreInstrumentation();
+      tracing.AddHttpClientInstrumentation();
+      tracing.AddSource(greeterActivitySource.Name);
+      if (tracingOtlpEndpoint != null)
+      {
+          tracing.AddOtlpExporter(otlpOptions =>
+          {
+              if (tracingOtlpPort is not null)
+              {
+                  tracingOtlpEndpoint += ":" + tracingOtlpPort;
+              }
+              otlpOptions.Endpoint = new Uri(tracingOtlpEndpoint);
+
+              otlpOptions.Protocol = tracingOtlpProtocol!.ToLower() == "grpc" ? OtlpExportProtocol.Grpc : OtlpExportProtocol.HttpProtobuf;
+              string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{tracingUsername}:{tracingPassword}"));
+              otlpOptions.Headers = "Authorization = Basic " + credentials;
+          });
+      }
+      else
+      {
+          tracing.AddConsoleExporter();
+      }
+  });
+
+  builder.Services.AddHttpClient();
+
+  var app = builder.Build();
+
+  app.MapGet("/", SendGreeting);
+  app.MapGet("/NestedGreeting", SendNestedGreeting);
+
+  app.Run();
+
+  async Task<string> SendGreeting(ILogger<Program> logger)
+  {
+      // Create a new Activity scoped to the method
+      using var activity = greeterActivitySource.StartActivity("GreeterActivity");
+
+      // Log a message
+      logger.LogInformation("Sending greeting");
+
+      // Add a tag to the Activity
+      activity?.SetTag("greeting", "Hello World!");
+
+      return "Hello World!";
+  }
+
+  async Task SendNestedGreeting(int nestlevel, ILogger<Program> logger, HttpContext context, IHttpClientFactory clientFactory)
+  {
+      // Create a new Activity scoped to the method
+      using var activity = greeterActivitySource.StartActivity("GreeterActivity");
+
+      if (nestlevel <= 5)
+      {
+          // Log a message
+          logger.LogInformation("Sending greeting, level {nestlevel}", nestlevel);
+
+          // Add a tag to the Activity
+          activity?.SetTag("nest-level", nestlevel);
+
+          await context.Response.WriteAsync($"Nested Greeting, level: {nestlevel}\r\n");
+
+          if (nestlevel > 0)
+          {
+              var request = context.Request;
+              var url = new Uri($"{request.Scheme}://{request.Host}{request.Path}?nestlevel={nestlevel - 1}");
+
+              // Makes an http call passing the activity information as http headers
+              var nestedResult = await clientFactory.CreateClient().GetStringAsync(url);
+              await context.Response.WriteAsync(nestedResult);
+          }
+      }
+      else
+      {
+          // Log a message
+          logger.LogError("Greeting nest level {nestlevel} too high", nestlevel);
+          await context.Response.WriteAsync("Nest level too high, max is 5");
+      }
+  }
+  ```
+
+  Run the application and two traces will have been sent to your Stack.
 
   ### Launch Logit.io to view your traces
 
