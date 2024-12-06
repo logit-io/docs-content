@@ -47,7 +47,7 @@ TODO: Add description
 
   Add this code somewhere inside the same file, for example:
 
-  ```python copy showLineNumbers /"@logstash.sslPort:strip_quotes"/ /@logstash.host/
+  ```python copy showLineNumbers /'@logstash.sslPort:strip_quotes'/ /@logstash.host/
   def main():
 
       # Create the logger and set it's logging level
@@ -57,7 +57,7 @@ TODO: Add description
       # Create the handler
       handler = AsynchronousLogstashHandler(
           host='@logstash.host', 
-          port="@logstash.sslPort:strip_quotes",
+          port='@logstash.sslPort:strip_quotes',
           ssl_enable=True, 
           ssl_verify=False,
           transport='logstash_async.transport.BeatsTransport',
