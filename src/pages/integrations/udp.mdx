@@ -18,7 +18,9 @@ TODO: Add description
   TODO: Add blurb
   
   ### Install Integration
+
   <InstallIntegration/>
+  
   ### Recommendations
 
   Logs sent via UDP are **not encrypted** and have **no delivery guarantee**.
@@ -27,7 +29,15 @@ TODO: Add description
 
   ### Send data to UDP input
 
-  <SendDataToUDP />
+  Sending an example log to logstash with `logger`. Logger is available by default on Linux, macOS, and Windows Subsystem for Linux (WSL).
+  Open a terminal and enter the following command. If you are logged in to your Logit.io account the host and
+  port details should be populated with the correct values.
+
+  ```bash copy
+  logger -n @logstash.host -P @logstash.port "My log message here"
+  ```
+
+  Note that `logger` also sends metadata with the log message, such as the hostname and the time the log was sent.
 
   ### Launch Logs to View Your Data
 
