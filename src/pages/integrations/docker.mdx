@@ -1,0 +1,69 @@
+---
+title: Docker
+metaTitle: Learn How to Integrate and Configure Docker to Send Logs
+subTitle: Collect and ship Docker container application logs to Logstash and Elasticsearch
+logo: docker
+color: "#008bb6"
+description: How to send Docker container application logs to your Hosted ELK Logstash instance. Configure Filebeat to send Docker container logs to your Logit.io Stack.
+stackTypes: logs
+sslPortType: beats-ssl
+tags: Logs, Metrics, Docker, Container, Cloud, Kubernetes, Containerization, Microservices, Hub, Cloud Logs
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Logs
+
+  Filebeat is a lightweight shipper that enables you to send your 
+  Docker container application logs to your Logit.io Stack. 
+  Configure [Filebeat](/integrations/log-management/shippers/filebeat) using the pre-defined 
+  examples below to start sending and analysing your Docker application logs.
+
+  ### Install Integration
+  <InstallIntegration/>
+  ### Install Filebeat
+
+  <InstallFilebeat />
+
+  ### Configure Filebeat
+
+The configuration file below is pre-configured to send data to your Logit.io Stack.
+        
+Copy the configuration file below and overwrite the contents of the Filebeat 
+configuration file typically located at `/etc/filebeat/filebeat.yml`
+
+```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+####################### Logit.io Filebeat Configuration #########################
+# ============================== Filebeat inputs ===============================
+filebeat.inputs:
+- type: container
+  enabled: true
+  paths:
+    - /var/lib/docker/containers/*/*.log
+
+# ================================== Outputs ===================================
+output.logstash:
+  hosts: ["@logstash.host:@logstash.sslPort"]
+  loadbalance: true
+  ssl.enabled: true
+```
+
+  ### Validate configuration
+
+  <ValidateBeat beatname="filebeat" />
+
+  ### Start filebeat
+  
+  <StartFilebeat />
+
+  ### Launch Logs to View Your Data
+
+  <LaunchVisualizer type="logs" />
+
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>

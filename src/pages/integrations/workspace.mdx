@@ -1,0 +1,133 @@
+---
+title: Google Cloud Workspace Configuration
+metaTitle: Integrate and Configure Google Cloud Workspace Configuration to Send Logs
+subTitle: Ship Google Cloud Workspace Logs to Logit.io
+logo: googlecloud
+color: "#e63429"
+description: GCP Workspace allows you to send logs to your ELK stacks. Configure GCP Workspace to send logs to Logstash or Elasticsearch. 
+stackTypes: logs
+sslPortType: beats-ssl
+tags: Beats, Logs, GCP Workspace, Google Cloud, Files, Text, Filebeat, Cloud Logs
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Logs
+
+  ### Install Integration
+
+  <InstallIntegration/>
+
+  ### Google Cloud Workspace
+
+  Google Workspace encompasses a suite of cloud-based computing tools, productivity applications, and collaborative solutions 
+  developed and offered by Google. Sending logs from Google Workspace to Logit.io can be achieved through the utilization 
+  of Filebeat and the Google Reports API.
+
+  1. **Set Up a Service Account:**
+    - Follow the [official Google Workspace tutorial](https://support.google.com/workspacemigrate/answer/10839762?sjid=10874551070185788155-EU#zippy=%2Cstep-use-google-cloud-to-turn-on-apis) for IAM-based service account setup.
+
+  2. **Grant Admin SDK API Access:**
+    - Enable access to the following APIs and services:
+      - [Admin SDK](http://admin.google.com/)
+      - People API or Contacts API.
+      - Google Workspace Migrate API
+      - Gmail API
+      - Google Calendar API
+      - Google Drive API
+      - Groups Migration API
+      - Groups Settings API
+      - Google Sheets API
+      - Tasks API
+
+  3. **Delegate Domain-Wide Authority to Your Service Account:**
+    - Open your [Google Workspace Admin console](http://admin.google.com/).
+    - Navigate to Main menu > Security > API controls.
+    - In the Domain-wide delegation pane, select Manage Domain Wide Delegation.
+    - If the option is not visible, switch to a super-admin Google Workspace account.
+    - Access Manage Domain Wide Delegation and click Add new.
+      - Fill in the details:
+        - Client ID: Found in the service account's details under Unique ID and in the client_id field of the auto-downloaded credentials file.
+        - OAuth Scopes: Enter the admin's API.
+      - Click Authorize to confirm your changes.
+  
+  ### Install Filebeat
+
+  <InstallFilebeat />
+  
+  ### Update Your Configuration File
+
+  The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+        
+  Copy the configuration file below and overwrite the contents of __filebeat.yml__.
+
+  ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+  ####################### Logit.io Filebeat Configuration ########################
+  # ============================== Filebeat modules ==============================
+  filebeat.modules:
+    - module: google_workspace
+      saml:
+        enabled: true
+        var.jwt_file: "./credentials_file.json"
+        var.delegated_account: "user@example.com"
+      user_accounts:
+        enabled: true
+        var.jwt_file: "./credentials_file.json"
+        var.delegated_account: "user@example.com"
+      login:
+        enabled: true
+        var.jwt_file: "./credentials_file.json"
+        var.delegated_account: "user@example.com"
+      admin:
+        enabled: true
+        var.jwt_file: "./credentials_file.json"
+        var.delegated_account: "user@example.com"
+      drive:
+        enabled: true
+        var.jwt_file: "./credentials_file.json"
+        var.delegated_account: "user@example.com"
+      groups:
+        enabled: true
+        var.jwt_file: "./credentials_file.json"
+        var.delegated_account: "user@example.com"
+  # ================================== Outputs ===================================
+  # ------------------------------ Logstash Output -------------------------------
+  output.logstash:
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
+
+  # ================================= Processors =================================
+  processors:
+    - add_fields:
+        fields:
+          type: google_workspace  
+    - add_host_metadata:
+        when.not.contains.tags: forwarded
+    - add_cloud_metadata: ~
+    - add_docker_metadata: ~
+    - add_kubernetes_metadata: ~
+  ```
+
+  __Validate your YAML__
+
+  _It's a good idea to run the configuration file through a YAML validator to rule out indentation errors, 
+  clean up extra characters, and check if your YAML file is valid. [Yamllint.com](https://yamllint.com) is a great choice._
+
+  ### Validate configuration
+
+  <ValidateBeat beatname="filebeat" />
+
+  ### Start filebeat
+
+  <StartFilebeat />
+
+    ### Launch Logs to View You Data
+
+  <LaunchVisualizer type="logs" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>

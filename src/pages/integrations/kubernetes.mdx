@@ -1,0 +1,284 @@
+---
+title: Kubernetes
+metaTitle: Learn How to Integrate and Configure Kubernetes to Ship Logs
+pageTitle: Kubernetes Logging
+subTitle: Ship Kubernetes container logs to your hosted Logstash instance at Logit.io
+logo: kubernetes
+color: "#3a64ad"
+description: Use our example to learn how to send Kubernetes container logs to your Hosted ELK Logstash instance. Configure Filebeat to send data to Logit. 
+stackTypes: logs
+sslPortType: beats-ssl
+tags: Logs, Kubernetes, K8s, GKE, EKS, Cloud
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Logs
+
+  Filebeat is a lightweight shipper that enables you to send your Kubernetes 
+  logs to Logstash and Elasticsearch. Configure Filebeat using the pre-defined 
+  examples below to start sending and analysing your Kubernetes logs.
+  
+  ### Install Integration
+
+  <InstallIntegration/>
+
+  ### Copy Manifest File
+
+  Copy and use the Kubernetes Filebeat manifest below.
+
+  If you aren't logged in, you may need to update the environment variables of your-logstash-host / your-logstash-port.
+
+  ```yaml copy
+  ---
+  apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: filebeat-config
+    namespace: kube-system
+    labels:
+      k8s-app: filebeat
+  data:
+    filebeat.yml: |-
+      filebeat.inputs:
+      - type: container
+        paths:
+          - /var/log/containers/*.log
+        processors:
+          - add_kubernetes_metadata:
+              host: ${NODE_NAME}
+              matchers:
+              - logs_path:
+                  logs_path: "/var/log/containers/"
+
+      processors:
+        - add_host_metadata:
+
+      output.logstash:
+        hosts: ['${LOGSTASH_HOST}:${BEATS_PORT}']
+        loadbalance: true
+        ssl.enabled: true
+  ---
+  apiVersion: apps/v1
+  kind: DaemonSet
+  metadata:
+    name: filebeat
+    namespace: kube-system
+    labels:
+      k8s-app: filebeat
+  spec:
+    selector:
+      matchLabels:
+        k8s-app: filebeat
+    template:
+      metadata:
+        labels:
+          k8s-app: filebeat
+      spec:
+        serviceAccountName: filebeat
+        terminationGracePeriodSeconds: 30
+        hostNetwork: true
+        dnsPolicy: ClusterFirstWithHostNet
+        containers:
+        - name: filebeat
+          image: docker.elastic.co/beats/filebeat:8.15.2
+          args: [
+            "-c", "/etc/filebeat.yml",
+            "-e",
+          ]
+          env:
+          - name: LOGSTASH_HOST
+            value: "@logstash.host"
+          - name: BEATS_PORT
+            value: "@logstash.sslPort"
+          - name: NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          securityContext:
+            runAsUser: 0
+            # If using Red Hat OpenShift uncomment this:
+            #privileged: true
+          resources:
+            limits:
+              memory: 200Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          volumeMounts:
+          - name: config
+            mountPath: /etc/filebeat.yml
+            readOnly: true
+            subPath: filebeat.yml
+          - name: data
+            mountPath: /usr/share/filebeat/data
+          - name: varlibdockercontainers
+            mountPath: /var/lib/docker/containers
+            readOnly: true
+          - name: varlog
+            mountPath: /var/log
+            readOnly: true
+        volumes:
+        - name: config
+          configMap:
+            defaultMode: 0640
+            name: filebeat-config
+        - name: varlibdockercontainers
+          hostPath:
+            path: /var/lib/docker/containers
+        - name: varlog
+          hostPath:
+            path: /var/log
+        # data folder stores a registry of read status for all files, so we don't send everything again on a Filebeat pod restart
+        - name: data
+          hostPath:
+            # When filebeat runs as non-root user, this directory needs to be writable by group (g+w).
+            path: /var/lib/filebeat-data
+            type: DirectoryOrCreate
+  ---
+  apiVersion: rbac.authorization.k8s.io/v1
+  kind: ClusterRoleBinding
+  metadata:
+    name: filebeat
+  subjects:
+  - kind: ServiceAccount
+    name: filebeat
+    namespace: kube-system
+  roleRef:
+    kind: ClusterRole
+    name: filebeat
+    apiGroup: rbac.authorization.k8s.io
+  ---
+  apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    name: filebeat
+    namespace: kube-system
+  subjects:
+    - kind: ServiceAccount
+      name: filebeat
+      namespace: kube-system
+  roleRef:
+    kind: Role
+    name: filebeat
+    apiGroup: rbac.authorization.k8s.io
+  ---
+  apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    name: filebeat-kubeadm-config
+    namespace: kube-system
+  subjects:
+    - kind: ServiceAccount
+      name: filebeat
+      namespace: kube-system
+  roleRef:
+    kind: Role
+    name: filebeat-kubeadm-config
+    apiGroup: rbac.authorization.k8s.io
+  ---
+  apiVersion: rbac.authorization.k8s.io/v1
+  kind: ClusterRole
+  metadata:
+    name: filebeat
+    labels:
+      k8s-app: filebeat
+  rules:
+  - apiGroups: [""] # "" indicates the core API group
+    resources:
+    - namespaces
+    - pods
+    - nodes
+    verbs:
+    - get
+    - watch
+    - list
+  - apiGroups: ["apps"]
+    resources:
+      - replicasets
+    verbs: ["get", "list", "watch"]
+  ---
+  apiVersion: rbac.authorization.k8s.io/v1
+  kind: Role
+  metadata:
+    name: filebeat
+    # should be the namespace where filebeat is running
+    namespace: kube-system
+    labels:
+      k8s-app: filebeat
+  rules:
+    - apiGroups:
+        - coordination.k8s.io
+      resources:
+        - leases
+      verbs: ["get", "create", "update"]
+  ---
+  apiVersion: rbac.authorization.k8s.io/v1
+  kind: Role
+  metadata:
+    name: filebeat-kubeadm-config
+    namespace: kube-system
+    labels:
+      k8s-app: filebeat
+  rules:
+    - apiGroups: [""]
+      resources:
+        - configmaps
+      resourceNames:
+        - kubeadm-config
+      verbs: ["get"]
+  ---
+  apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    name: filebeat
+    namespace: kube-system
+    labels:
+      k8s-app: filebeat
+  ---
+  ```
+
+  ### Deploy Pod
+
+  Now your deployment manifest is updated, you can deploy it using.
+
+  ```cmd copy
+  kubectl apply -f filebeat-kubernetes.yaml
+  ```
+
+  ### Confirm Completed Deployment
+
+  ```cmd copy
+  kubectl --namespace=kube-system get ds/filebeat
+
+  kubectl --namespace=kube-system get pods
+  ```
+  You should see a pod for each kubernetes node with a name similar to filebeat-abcde listed.
+  The pods should work though from Pending to Running within a couple of minutes as the containers are downloaded and started.
+
+  ### Check Logit.io for your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="kubernetes" source="kubernetes" />
+
+</Steps>
+
+### Kubernetes Logging to OpenSearch Overview
+
+Kubernetes was open-sourced in 2014 by Google and has quickly become one of the most popular container management tools on the 
+market as it helps to significantly lower the cost of cloud computing & provides a resilient framework for deploying applications.
+
+A common challenge for effective Kubernetes log aggregation is that during spikes data can easily be lost and not accounted for 
+without a scalable logging solution such as Logit.io. Our platform also provides log tailing for real-time monitoring of your Kubernetes metrics. 
+
+Logit.io's [container monitoring](https://logit.io/solutions/monitoring/container-monitoring/) platform is built to collect, parse, and transform 
+[application logs](https://logit.io/platform/logging/logging-as-a-service/application-logging/) from your Kubernetes clusters within a few steps 
+using the power of the managed Elastic Stack. 
+
+Monitor across 1,000s of containers, layers, logs levels, and data types, in one 
+[centralised logging platform](https://logit.io/platform/logging/logging-as-a-service/centralised-logging/) & save hours on monthly maintenance 
+to support the ELK Stack.
+
+If you need any further help with migrating your Kubernetes log files using Filebeat we're here to help. Feel free to reach 
+out by contacting our support team by visiting our dedicated Help Centre or via <IntercomButton text="live chat" /> & we'll 
+be happy to assist.

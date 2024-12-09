@@ -1,0 +1,123 @@
+---
+title: Falco
+metaTitle: Learn How to Integrate and Configure Filebeat to Send Falco Logs
+subTitle: Ship your Falco logs using Filebeat to your Logit.io Stack
+logo: falco
+color: "#19c5b9"
+description: Use our example to configure Filebeat to ship Falco logs to your Logit.io stacks. Configure Filebeat to send Falco logs to Logstash or Elastic.
+stackTypes: logs
+sslPortType: beats-ssl
+tags: Falco, IDS, Threat Detection, Kubernetes, Syslog, Beats, Logs, Filebeat, File, Text, Log Files
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Logs
+
+  Configure Falco to ship logs via Filebeat to your Logit.io stacks via Logstash.
+  
+  ### Install Integration
+  <InstallIntegration/>
+  ### Install Filebeat
+
+  <InstallFilebeat />
+
+  ### Configure Falco Logging
+
+  Falco serves as a container security and threat detection engine for Kubernetes at runtime, 
+  that detects unauthorized container activity and logs it. Falco has been approved 
+  by the [CNCF](https://www.cncf.io) for this purpose.
+
+  __Set the output format to JSON__
+
+  - Locate the configuration file, which is typically named `/etc/falco/falco.yaml`.
+  - Open the configuration file with a text editor of your choice.
+  - Ensure `json_output: true` and `json_include_output_property: true`
+  - Save the changes to the configuration file.
+  - Restart the Falco service to apply the updated configuration.
+
+  __Look up the filepath to Falco's logs__
+
+  - In the same configuration file `/etc/falco/falco.yaml`
+  - Under `file_output:` make a note of the `filename:` value, this will be used in step 3 to configure Filebeat.
+
+  It's important to review the Falco [documentation](https://falco.org/docs/) for any 
+  specific guidance or instructions if you need to customise how logging is configured.
+
+  <Callout type="info">
+    In the pre-configuted Filebeat configuration file below be sure to update the path 
+    to your Falco events log file. This path can vary depending on your installation.
+  </Callout>
+
+  ### Configure Filebeat.yml
+
+The configuration file below is pre-configured to send data to your Logit.io Stack.
+        
+Copy the configuration file below and overwrite the contents of the Filebeat 
+configuration file typically located at `/etc/filebeat/filebeat.yml`
+
+```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+####################### Logit.io Filebeat Configuration #########################
+# ============================== Filebeat inputs ===============================
+filebeat.inputs:
+- type: filestream
+  enabled: true
+  paths:
+  - "enter-the-filepath-to-your-Falco-events-log.txt"
+  
+  fields:
+    type: "falco"
+  fields_under_root: true
+  encoding: utf-8
+  ignore_older: 12h
+
+# ================================== Outputs ===================================
+output.logstash:
+  hosts: ["@logstash.host:@logstash.sslPort"]
+  loadbalance: true
+  ssl.enabled: true
+```
+
+  ### Validate Configuration
+
+  <ValidateBeat beatname="filebeat" />
+
+  ### Start Filebeat
+
+  <StartFilebeat />
+
+  ### Launch Logit.io to view your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="Falco" source="Falco" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+## Falco Overview
+
+Falco is a free, open-source container security monitoring solution that provides 
+real-time threat detection and response capabilities. It is designed to help 
+organizations identify and respond to security incidents in containerized environments.
+
+To effectively monitor and analyze security events in containerized environments, 
+it is essential to have a reliable and efficient log management solution. Falco provides 
+a centralized platform for collecting, processing, and visualizing security-related 
+data in real-time. It can be used to monitor various activities in container environments, 
+such as network connections, file system access, and process execution.
+
+To send data from Falco to other systems or services, organizations can use various 
+output options, including JSON logs, Syslog, and gRPC. For instance, to output JSON 
+logs to a file, users can modify the Falco configuration file and add the necessary output configuration.
+
+In summary, using Falco as a container security monitoring solution provides organizations 
+with a reliable and efficient way to detect and respond to security incidents in real-time. 
+By leveraging the output options and various agents and modules, organizations can collect 
+and analyze data from container environments and gain valuable insights into their security posture.
+
+If you need any further assistance with migrating your log data to ELK we're here to help 
+you get started. Feel free to get in contact with our support team by sending us a 
+message <IntercomButton text="via live chat" /> and we'll be happy to assist.

@@ -1,0 +1,75 @@
+---
+title: Azure Metrics
+metaTitle: Learn How to Integrate and Configure Azure to Send Metrics
+subTitle: Pull Metrics from an Azure Event Hub to Logstash
+logo: azure
+color: "#0089d6"
+description: Send your Azure platform Metrics to logit.io via logstash using the instructions below and begin searching your data
+stackTypes: metrics
+sslPortType: beats-ssl
+tags: microsoft, azure, event hub, Azure Metrics, Azure Monitoring, Azure Diagnostics, Azure Insights, Azure Management, Azure Integration
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Metrics
+
+  Stream Azure monitoring metrics to an event hub and configure Logstash to pull the metrics into the Logit.io stack.
+  
+  ### Install Integration
+  <InstallIntegration/>
+  ### Ensure Azure Event Hub
+
+  Before you begin you will need to ensure you have an available Azure Event Hub in your [Azure Portal](https://portal.azure.com/)
+
+  <Callout type="info">
+    You can see which platform Metrics are available to send to Logit.io via an Event Hub here:
+    
+    [Azure Metrics available via Diagnostic Settings](https://docs.microsoft.com/en-us/azure/azure-monitor/platform/metrics-supported#exporting-platform-metrics-to-other-locations)
+  </Callout>
+
+  ![View your Event hub](@/images/integrations/azure-container-activity-logs/container_activity_logs_step_event_hub.png)
+
+  <Callout type="info">
+    The Azure event hub Logstash plugin is only available for stacks running Logstash 6.4 onwards
+  </Callout>
+
+  ### Configure Permissions
+
+  <AzureConfiguration />
+
+  ### Start Sending Metrics To A Stack
+
+  <AzureInput stackType="metrics" utmMedium="logs" utmCampaign="azuremetrics" type="azure_metrics" />
+
+  ### Check Logit.io for your logs
+  <LaunchStack utmMedium="logs" utmCampaign="azuremetrics" source="azuremetrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+### Azure Metrics Monitoring Overview
+
+As one of the most popular cloud computing platforms, Microsoft Azure provides businesses with the capabilities to run databases, 
+servers & many other services virtually.
+
+Azure Event Hub is a flexible resource that allows you to capture various Azure Monitoring and platform Metrics so you always have 
+visibility of the informaton you need. 
+
+As a disaster recovery tool, Azure is known for its advanced site recovery which is operational across all operating systems, 
+locations, & languages. The platform also allows users to customise the frequency of backup schedules & works alongside the Logit.io 
+platform as our hosted ELK Stacks support version control & rollbacks for added peace of mind.
+
+Our platform is built to enable you to easily store and analyse Azure Metrics data and our hosted Elastic Stack allows you to aggregate 
+and analyze all of these Metrics centrally, saving your InfoSec & DevOps teams from unnecessary maintenance overheads by centralising 
+all of your Azure platform Metrics.
+
+If you need any further assistance with migrating your Azure Metrics to Logstash we're here to help you discover the insights locked 
+in data hosted on Azure, [GCP](/integrations/log-management/google-cloud/operations), AWS or any of the integrations covered in our 
+[data sources](/integrations). Feel free to reach out by contacting our 
+support team <IntercomButton text="via live chat" /> and we'll be happy to assist.
+

@@ -1,0 +1,63 @@
+---
+title: Google App Engine Metrics
+metaTitle: Integrate and Configure Telegraf to Send Google App Engine Metrics
+subTitle: Ship your Google App Engine Metrics via Telegraf to your Logit.io Stack
+color: "#3c76d7"
+logo: googlecloud
+description: Use our example to configure Telegraf to ship Google App Engine metrics to your Logit.io stacks. Configure Telegraf to send Google App Engine metrics to ELK.
+stackTypes: metrics
+tags: Telegraf, Metrics, Telemetry, OpenTelemetry, Instrumentation, Google App Engine, Platform as a Service, PaaS
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Metrics
+
+  Configure Telegraf to ship Google App Engine metrics to your Logit.io stacks via Logstash.
+  
+  ### Install Integration
+  <InstallIntegration/>
+  ### Set Credentials in GCP
+
+  <SetGCPCredentials intro="Google App Engine distinguishes itself as a specific collection of services encompassed within Google Cloud. It's expressly engineered for the construction, deployment, 
+  and management of applications, providing secure and efficient connections between numerous software elements in a cloud-based ecosystem."/>
+
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  <TelegrafStackDriverInput metric_type="appengine.googleapis.com"/>
+
+  ### Configure the output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack source="Google_App_Engine_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-GoogleAppEngine-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>
+
+## Telegraf Google App Engine metrics Overview
+
+Sending data to Logit.io from Google App Engine is a seamless process that empowers organizations to 
+efficiently monitor and analyze their application logs. With Logit.io, you can easily set up log 
+shipping, aggregation, and analysis, ensuring that you have full visibility into your applications 
+running on App Engine. In addition, by linking your App Engine logs to 
+[GMSAD](/integrations/infrastructure-metrics/google-cloud/managed-service-active-directory-telegraf-metrics), you can also ensure 
+seamless user authentication and authorization. This comprehensive service simplifies identity 
+management, offering a secure, scalable, and efficient way to integrate your applications with 
+Active Directory, enhancing security and compliance. Lastly, by routing log data through 
+[VPC](/integrations/infrastructure-metrics/google-cloud/vpc-telegraf-metrics) to Logit.io, you can guarantee 
+end-to-end security, efficient communication, and effective traffic management, which is crucial 
+for safeguarding your applications and infrastructure. Achieve effortless integration with 
+Logit.io's service for [GCP logging](https://logit.io/solutions/gcp-logging/).

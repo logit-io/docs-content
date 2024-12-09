@@ -1,0 +1,136 @@
+---
+title: Debian
+metaTitle: Learn How to Integrate and Configure Filebeat to Send Debian Logs
+subTitle: Ship system log files from Debian to Logstash
+logo: debian
+color: "#a80030"
+description: Use Filebeat to send Debian application, access and system logs to your ELK stacks. Configure Filebeat to send Debian system logs to Logstash or Elasticsearch.
+stackTypes: logs
+sslPortType: beats-ssl
+tags: Logs, Debian, Linux, Operating System Logs
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Logs
+  Configure Filebeat to ship logs from Debian Systems to Logstash and Elasticsearch.
+  
+  ### Install Integration
+  <InstallIntegration/>
+  ### Install Filebeat
+
+  <InstallFilebeat items={["DEB"]} />
+
+  ### Enable The System Module
+
+  There are several built in filebeat modules you can use. You will need to enable the system module.
+
+  Change directory to the location where filebeat was extracted and run the following commands:
+
+  ```bash copy
+  sudo filebeat modules list
+  sudo filebeat modules enable system
+  ```
+
+  Navigate to the `modules.d` folder, copy the snippet below and replace the contents of the system.yml module file:
+
+```yml copy showLineNumbers
+# Module: system
+# Docs: https://www.elastic.co/guide/en/beats/filebeat/8.15.2/filebeat-module-system.html
+
+- module: system
+  # Syslog
+  syslog:
+    enabled: true
+
+    # Set custom paths for the log files. If left empty,
+    # Filebeat will choose the paths depending on your OS.
+    #var.paths:
+
+  # Authorization logs
+  auth:
+    enabled: true
+
+    # Set custom paths for the log files. If left empty,
+    # Filebeat will choose the paths depending on your OS.
+    #var.paths:
+```
+
+  ### Update Your Configuration File
+
+  The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+
+  __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ field in the Logstash outputs section are correctly populated.
+  If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
+  The ___'paths'___ field will need to be set to the location of the logs you want to send to your Stack.
+  
+  Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
+
+```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+####################### Logit.io Filebeat Configuration ########################
+# ============================== Filebeat inputs ==============================
+filebeat.inputs:
+- type: filestream
+  enabled: true
+  id: my_unique_id
+  paths:
+    # REQUIRED CHANGE TO YOUR LOGS PATH
+    - /var/log/*.log
+  fields:
+    type: logfile
+
+# ============================== Filebeat modules ==============================
+filebeat.config.modules:
+  path: ${path.config}/modules.d/*.yml
+  reload.enabled: false
+  #reload.period: 10s
+
+# ================================== Outputs ===================================
+# ------------------------------ Logstash Output -------------------------------
+output.logstash:
+  hosts: ["@logstash.host:@logstash.sslPort"]
+  loadbalance: true
+  ssl.enabled: true
+
+# ================================= Processors =================================
+processors:
+  - add_host_metadata:
+      when.not.contains.tags: forwarded
+  - add_cloud_metadata: ~
+  - add_docker_metadata: ~
+  - add_kubernetes_metadata: ~
+```
+
+  ### Validate Configuration
+
+  ```bash copy
+  sudo filebeat -e -c /etc/filebeat/filebeat.yml
+  ```
+
+  <Callout type="info">   
+    If the yml file is invalid, filebeat will print an `error loading config file` error message with details on how to correct the problem. If you have 
+    issues starting filebeat see "How To Diagnose No Data In Stack" below to troubleshoot.
+  </Callout>
+
+  ### Start filebeat
+
+  To start Filebeat, run:
+
+  ```bash copy
+  sudo service filebeat start
+  ```
+
+  ### Check Logit.io for your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="debian" source="debian" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+  ### (Optional) Update Logstash Pipelines
+
+  <LogstashPipeline />
+
+</Steps>

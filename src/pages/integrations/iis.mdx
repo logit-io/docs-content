@@ -1,0 +1,87 @@
+---
+title: IIS
+metaTitle: Learn How to Integrate and Configure Filebeat to Send IIS Logs
+pageTitle: IIS Log Configuration
+subTitle: Ship logs from your IIS Websites to Logstash
+logo: iis
+color: "#0adef"
+description: Get started with analysing IIS logs with our easy integration allowing you to ship application logs from Filebeat to Logstash & Elasticsearch (ELK).
+stackTypes: logs
+sslPortType: beats-ssl
+tags: Logs, IIS, Microsoft, Windows, HTTP, Web, Web Server, Internet Information Services, .NET Framework, Iis
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Logs
+
+  Send your IIS logs to Logit.io via logstash using the instructions below.
+  
+  ### Install Integration
+
+  <InstallIntegration/>
+
+  ### Install Filebeat
+
+  <InstallFilebeat items={["Windows"]} />
+
+  ### Enable IIS module in Filebeat
+
+  We need to enable the IIS module in Filebeat so that filebeat know to look for IIS logs.
+  In Powershell run the following command:
+
+  `.\Filebeat modules enable iis`
+
+  The `iis.yml` module file in the `modules.d` folder in your Filebeat installation directory will need to be updated. 
+  You must enable at least one fileset in the module. Filesets are disabled by default. Below is an example with 
+  both the access and error logs enabled. You will need to update the var.paths to the location where the logs are stored.
+  The commented out var.paths are the default locations for the logs.
+
+  ```yml copy
+  - module: iis
+    # Access logs
+    access:
+      enabled: true
+
+    # Set custom paths for the log files. If left empty,
+    # Filebeat will choose the paths depending on your OS.
+    # var.paths: ["C:/inetpub/logs/LogFiles/*/*.log"]
+
+    # Error logs
+    error:
+      enabled: true
+
+    # Set custom paths for the log files. If left empty,
+    # Filebeat will choose the paths depending on your OS.
+    # var.paths: ["C:/Windows/System32/LogFiles/HTTPERR/*.log"]
+  ```
+
+  ### Update Your Configuration File
+
+  <UpdateFilebeatConfigFile />
+
+  ### Validate configuration
+
+  <ValidateBeat beatname="filebeat" include={["Windows"]} />
+
+  ### Start filebeat
+  
+  To start Filebeat, run in Powershell:
+
+  ```ps1 copy
+  Start-Service filebeat
+  ```
+
+  ### Launch Logs to View Your Data
+  
+  <LaunchVisualizer type="logs" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>
+
+### IIS dashboard
+The IIS module comes with predefined Kibana dashboards. To view your dashboards for any of your Logit.io stacks, launch Logs and choose Dashboards.
+![Predefined kibana dashboard screenshot](@/images/integrations/filebeat/iis.png)

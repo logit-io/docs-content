@@ -1,0 +1,190 @@
+---
+title: Traefik
+metaTitle: Learn How to Integrate and Configure Filebeat to Send Traefik Logs
+subTitle: Ship Traefik Access logs to Logstash
+logo: traefikio
+color: "#qqbfff"
+description: Learn how to send Traefik access logs to your Logstash instance using our configuration examples - Ship over 100 log data types easily with Logit.io
+stackTypes: logs
+sslPortType: beats-ssl
+tags: Logs, Traefik, Web Server, Ingress Controller
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Logs
+
+  Send Traefik access logs to your Hosted ELK Logstash instance.
+  
+  ### Install Integration
+  <InstallIntegration/>
+    ### Install Filebeat
+
+    <InstallFilebeat />
+
+    ### Enable the Traefik Module
+
+    <Tabs items={["Windows", "Linux", "macOS", "DEB", "RPM"]}>
+      <Tab>
+        There are several built in filebeat modules you can use. You will need to enable the traefik module:
+
+        ```cmd copy
+        .\filebeat.exe modules list
+        .\filebeat.exe modules enable traefik
+        ```
+        In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
+        
+        ___Filesets are disabled by default___.
+
+        Copy the snippet below and replace the contents of the traefik.yml module file:
+
+        ```yml copy
+        # Module: traefik
+        # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-traefik.html
+
+        - module: traefik
+          # Access logs
+          access:
+            enabled: true
+
+            # Set custom paths for the log files. If left empty,
+            # Filebeat will choose the paths depending on your OS.
+            #var.paths:
+        ```
+      </Tab>
+      <Tab>
+        There are several built in filebeat modules you can use. You will need to enable the traefik module:
+
+        ```cmd copy
+        sudo filebeat modules list
+        sudo filebeat modules enable traefik
+        ```
+        In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
+        
+        ___Filesets are disabled by default___.
+
+        Copy the snippet below and replace the contents of the traefik.yml module file:
+
+        ```yml copy
+        # Module: traefik
+        # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-traefik.html
+
+        - module: traefik
+          # Access logs
+          access:
+            enabled: true
+
+            # Set custom paths for the log files. If left empty,
+            # Filebeat will choose the paths depending on your OS.
+            #var.paths:
+        ```
+      </Tab>
+      <Tab>
+        There are several built in filebeat modules you can use. You will need to enable the traefik module:
+
+        ```cmd copy
+        ./filebeat modules list
+        ./filebeat modules enable traefik
+        ```
+        In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
+        
+        ___Filesets are disabled by default___.
+
+        Copy the snippet below and replace the contents of the traefik.yml module file:
+
+        ```yml copy
+        # Module: traefik
+        # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-traefik.html
+
+        - module: traefik
+          # Access logs
+          access:
+            enabled: true
+
+            # Set custom paths for the log files. If left empty,
+            # Filebeat will choose the paths depending on your OS.
+            #var.paths:
+        ```
+      </Tab>
+      <Tab>
+        There are several built in filebeat modules you can use. You will need to enable the traefik module:
+
+        ```cmd copy
+        sudo filebeat modules list
+        sudo filebeat modules enable traefik
+        ```
+        In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
+        
+        ___Filesets are disabled by default___.
+
+        Copy the snippet below and replace the contents of the traefik.yml module file:
+
+        ```yml copy
+        # Module: traefik
+        # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-traefik.html
+
+        - module: traefik
+          # Access logs
+          access:
+            enabled: true
+
+            # Set custom paths for the log files. If left empty,
+            # Filebeat will choose the paths depending on your OS.
+            #var.paths:
+        ```
+      </Tab>
+      <Tab>
+        There are several built in filebeat modules you can use. You will need to enable the traefik module:
+
+        ```cmd copy
+        sudo filebeat modules list
+        sudo filebeat modules enable traefik
+        ```
+        In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
+        
+        ___Filesets are disabled by default___.
+        
+        Copy the snippet below and replace the contents of the traefik.yml module file:
+
+        ```yml copy
+        # Module: traefik
+        # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-traefik.html
+
+        - module: traefik
+          # Access logs
+          access:
+            enabled: true
+
+            # Set custom paths for the log files. If left empty,
+            # Filebeat will choose the paths depending on your OS.
+            #var.paths:
+        ```
+      </Tab>
+    </Tabs>
+
+    ### Update Your Configuration File
+
+    <UpdateFilebeatConfigFile />
+
+    ### Validate configuration
+
+    <ValidateBeat beatname="filebeat" />
+    
+    ### Start filebeat
+
+    <StartFilebeat />
+
+    ### Check Logit.io for your logs
+    <LaunchStack utmMedium="logs" utmCampaign="traefik" source="traefik" />
+
+    ### How to diagnose no data in Stack
+
+    <DiagnoseNoData />
+</Steps>
+
+### Traefik Dashboard
+
+The Traefik module comes with predefined Kibana dashboards. To view your dashboards for any of your Logit.io stacks, launch Logs and choose Dashboards.
+        
+![Predefined kibana dashboard screenshot](@/images/integrations/filebeat/traefik.png)

@@ -1,0 +1,88 @@
+---
+title: DigitalOcean
+metaTitle: Learn How to Integrate and Configure DigitalOcean to Send Logs
+pageTitle: DigitalOcean Log Forwarding
+subTitle: Forward your DigitalOcean logs and metrics to OpenSearch via Logstash
+logo: digitalocean
+color: "#0080FF"
+description: Learn how to forward logs from your DigitalOcean droplets and Kubernetes clusters to Logit.io via Logstash. Use this guide to set up log forwarding to Logit.io.
+stackTypes: logs
+sslPortType: Syslog-SSL
+tags: DigitalOcean, Logs, Syslog, Centralized Logging, Kubernetes, Droplets, Cloud Computing, Monitoring
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Logs
+
+  Learn how to forward logs from your DigitalOcean droplets and Kubernetes clusters to Logit.io via Logstash.
+  
+  ### Install Integration
+  <InstallIntegration/>
+  ### Log Forwarding on DigitalOcean
+
+  This guide explains how to forward logs from DigitalOcean's App Platform 
+  to Logit.io. Integrating DigitalOcean with Logit.io optimizes log management 
+  and enhances the monitoring of your application's performance and security.
+      
+  Forwarding logs to Logit.io enables real-time log aggregation, search, 
+  and alerts, facilitating efficient troubleshooting and analysis.
+
+  ### Setting Up DigitalOcean for Log Forwarding to Logit.io
+
+  Begin by configuring your [DigitalOcean account for log forwarding](https://docs.digitalocean.com/products/app-platform/how-to/forward-logs/). 
+  You will set up a forwarding destination that routes logs to your Logit.io stack.
+
+  To forward logs from the DigitalOcean App Platform to Logit.io, follow these steps:
+
+  - Navigate to the [App Platform dashboard](https://cloud.digitalocean.com/apps) in your DigitalOcean account.
+  - Select the app you wish to configure log forwarding for.
+  - Go to the "Settings" tab and find the "Log Forwarding" section.
+  - From the list of log forwarders, select "Papertrail" as your forwarding option and enter your Logit.io Endpoint.
+
+  ```cmd copy
+  @logstash.host:@logstash.sslPort
+  ```
+
+  - Save the changes.
+
+  Your application logs will now be automatically forwarded to Logit.io.
+
+  ### View your logs in Logit.io
+
+  <LaunchStack utmMedium="logs" utmCampaign="digitalocean" source="digitalocean" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+## DigitalOcean Overview
+
+Integrating Logit.io with your DigitalOcean application significantly elevates 
+your log management capabilities, offering centralized control, real-time alerting, 
+and comprehensive analysis. This approach not only streamlines the monitoring of 
+your application's performance but also bolsters security by providing actionable 
+insights into potential vulnerabilities and performance bottlenecks. 
+
+Through consistent review and detailed analysis of logs, you can pinpoint and address 
+issues proactively, ensuring optimal application health and security.
+
+Implementing Logit.io's alerting features for specific log events further enhances 
+your monitoring strategy by enabling immediate detection of critical issues or 
+security threats. This proactive measure ensures that you are always ahead of 
+potential problems, allowing for swift resolution before they escalate. 
+
+Additionally, Logit.io's powerful search and analysis tools facilitate quick 
+problem diagnosis and trend identification over time, offering a deeper understanding 
+of your application's operational dynamics and security posture. 
+
+This integrated approach to log management with Logit.io and DigitalOcean ensures 
+a robust, secure, and efficient environment for your applications, leveraging the 
+full potential of both platforms to maximize your operational effectiveness.
+
+If you need any further assistance with forwarding logs from DigitalOcean to Logstash 
+we're here to help you get started. Just get in contact with our support team by 
+visiting our dedicated Help Centre or <IntercomButton text="via live chat" /> and we'll be happy to assist.
