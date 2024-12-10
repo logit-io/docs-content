@@ -1,12 +1,12 @@
 ---
 title: Google Cloud Run
-metaTitle: Integrate and Configure Google Cloud Run to Send Logs
-subTitle: Ship Google Cloud Run logs from Google Cloud Pub/Sub to Logstash
+metaTitle: Integrate and Configure Google Cloud Run to Send Logs and Metrics
+subTitle: Ship Google Cloud Run logs and metrics from Google Cloud Pub/Sub to Logit.io
 logo: googlecloud
 color: "#205bb0"
-description: Learn how to send Google Cloud Cloud Run logs to your Logstash instance & simplify your log analysis.
-stackTypes: logs
-tags: Logs, Google, GCE, Stack Driver, GKE, Stackdriver, Google Cloud Run, GCP, Cloud Compute, Cloud Run
+description: Learn how to send Google Cloud Cloud Run logs and metrics to your Logit.io & simplify your analysis.
+stackTypes: logs, metrics
+tags: Logs, Google, GCE, Stack Driver, GKE, Stackdriver, Google Cloud Run, GCP, Cloud Compute, Cloud Run, Telegraf, Metrics, Telemetry, OpenTelemetry, Instrumentation, Containerization, Containers
 ---
 
 Follow the steps below to send your observability data to Logit.io
@@ -86,6 +86,43 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Launch Logit.io to view your logs
   <LaunchStack utmMedium="google" utmCampaign="googlecloudrun" source="pubsubbeat" />
+</Steps>
+
+<Steps>
+  ## Metrics
+
+  Configure Telegraf to ship Google Cloud Run metrics to your Logit.io stacks via Logstash.
+  
+  ### Install Integration
+
+  <InstallIntegration/>
+
+  ### Set Credentials in GCP
+
+  <SetGCPCredentials intro="Google Cloud Run emerges as a unique collection of services nested within Google Cloud. It's specifically devised for the development, deployment, and management of containers, stimulating secure and efficient communication among diverse software units within a cloud-oriented ecosystem."/>
+  
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  <TelegrafStackDriverInput metric_type="run.googleapis.com"/>
+
+  ### Configure the output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack stackType="metrics" source="Google_Cloud_Run_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-GoogleCloudRun-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
 </Steps>
 
 ## Cloud Run Logging Overview

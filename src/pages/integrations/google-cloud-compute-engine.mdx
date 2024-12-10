@@ -1,12 +1,12 @@
 ---
 title: Google Compute Engine
-metaTitle: Integrate and Configur Google Compute Engine to Send Logs
-subTitle: Ship Google Compute Engine logs from Google Cloud Pub/Sub to Logstash
+metaTitle: Integrate and Configur Google Compute Engine to Send Logs and Metrics
+subTitle: Ship Google Compute Engine logs and metrics from Google Cloud Pub/Sub to Logit.io
 logo: googlecloud
 color: "#205bb0"
 description: Follow our Google Compute Engine tutorial to get started shipping Google Compute Engine logs to Logstash for monitoring and analysis in Logit.io.
-stackTypes: logs
-tags: Logs, Google, GCE, Stack Driver, GKE, Stackdriver, Google Compute Engine, GCP, Cloud Compute, Googlecloudcompute
+stackTypes: logs, metrics
+tags: Logs, Google, GCE, Stack Driver, GKE, Stackdriver, Google Compute Engine, GCP, Cloud Compute, Googlecloudcompute, Telegraf, Metrics, Telemetry, OpenTelemetry, Instrumentation, Virtual Machine, VM
 ---
 
 Follow the steps below to send your observability data to Logit.io
@@ -86,6 +86,43 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Launch Logit.io to view your logs
   <LaunchStack utmMedium="google" utmCampaign="googlecloudcompute" source="pubsubbeat" />
+</Steps>
+
+<Steps>
+  ## Metrics
+
+  Configure Telegraf to ship Google Compute Engine metrics to your Logit.io stacks via Logstash.
+  
+  ### Install Integration
+
+  <InstallIntegration/>
+
+  ### Set Credentials in GCP
+
+  <SetGCPCredentials intro="Google Compute Engine is a fundamental infrastructure service offered within Google Cloud. It provides organizations with virtual machine (VM) instances to run their workloads in a scalable, flexible, and reliable manner. With Compute Engine, organizations can deploy and manage VMs in the cloud environment efficiently."/>
+  
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  <TelegrafStackDriverInput metric_type="compute.googleapis.com"/>
+
+  ### Configure the output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack stackType="metrics" source="Google_Compute_Engine_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-GoogleComputeEngine-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
 </Steps>
 
 ## Cloud Compute Logging Overview
