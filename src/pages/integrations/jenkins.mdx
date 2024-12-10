@@ -1,10 +1,10 @@
 ---
 title: Jenkins
-metaTitle: Learn How to Integrate and Configure Filebeat to Send Jenkins Logs
-subTitle: Ship Jenkins logs to Logstash
+metaTitle: Learn How to Send Jenkins Logs and Metrics to Logit.io
+subTitle: Ship Jenkins logs and Metrics to Logit.io
 logo: jenkins
 color: "#4d4d4d"
-description: Send your Jenkins logs to logit.io via Logstash using the instructions below and begin searching your data
+description: Send your Jenkins logs and metrics to logit.io using the instructions below and begin searching your data
 stackTypes: logs, metrics
 sslPortType: beats-ssl
 tags: Automation, Deployment, CI/CD, Jenkins, Telegraf, Metrics, Telemetry, OpenTelemetry, Health, Instrumentation, Continuous Integration
@@ -27,7 +27,7 @@ Follow the steps below to send your observability data to Logit.io
 
   Copy and use the Filebeat configuration below.
 
-  Remember to update your Jenkins log file path if it is in a diffeerent location to the below configuration.
+  Remember to update your Jenkins log file path if it is in a different location to the below configuration.
 
   ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
   ###################### Logit.io Filebeat Configuration ########################
