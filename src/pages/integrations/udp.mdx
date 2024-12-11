@@ -1,0 +1,49 @@
+---
+title: UDP
+metaTitle: Learn How to Integrate and Configure UDP to Send Logs
+subTitle: Ship UDP logs to Logit.io via Logstash
+logo: udp
+color: "#2b7014"
+description: Learn how to send UDP logs to your Logstash instance using our configuration examples - Ship over 100 log data types easily with Logit.io
+stackTypes: logs
+portType: udp
+tags: Logs, UDP, Network, Protocol, Udp
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Logs
+  
+  ### Install Integration
+
+  <InstallIntegration/>
+
+  ### Recommendations
+
+  Logs sent via UDP are **not encrypted** and have **no delivery guarantee**.
+
+  This input is supported for legacy reasons and Logit.io would not recommend setting up a new source integration sending via UDP if there is a better option available.
+
+  ### Send data to UDP input
+
+  Sending an example log to logstash with `logger`. Logger is available by default on Linux, macOS, and Windows Subsystem for Linux (WSL).
+  Open a terminal and enter the following command. If you are logged in to your Logit.io account the host and
+  port details should be populated with the correct values.
+
+  ```bash copy
+  logger -n @logstash.host -P @logstash.port "My log message here"
+  ```
+
+  Note that `logger` also sends metadata with the log message, such as the hostname and the time the log was sent.
+
+  ### Launch Logs to View Your Data
+
+  <LaunchVisualizer type="logs" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+

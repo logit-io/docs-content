@@ -1,0 +1,129 @@
+---
+title: Zeek
+metaTitle: Learn How to Integrate and Configure Filebeat to Send Zeek Logs
+subTitle: Ship your Zeek logs using Filebeat to your Logit.io Stack
+color: "#008bb6"
+description: Use our example to configure Filebeat to ship Zeek logs to your Logit.io stacks. Configure Filebeat to send Zeek logs to Logstash or Elastic.
+stackTypes: logs
+sslPortType: beats-ssl
+tags: Zeek, Open Source, Firewall, Network Analysis, Security, Logs, Filebeat, Text Logs
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Logs
+
+  Configure Zeek to ship logs via Filebeat to your Logit.io stacks via Logstash.
+  
+  ### Install Integration
+  <InstallIntegration/>
+  ### Install Filebeat
+
+  <InstallFilebeat />
+
+  ### Configure Zeek Logging
+
+  Depending on the version of Zeek or Bro (Zeek's predecessor) you are running, 
+  the configuration filepath may vary. If you need assistance in locating the file, 
+  refer to your [installation's documentation](https://docs.zeek.org/en/master/).
+
+  For Bro, the configuration file should be named `ascii.bro` or if you are 
+  using Zeek, the filename will be `ascii.zeek`.
+
+  Once you have located the configuration file, you need to find the line that 
+  starts with `const use_json`. Set the value of this line to true (T) 
+  to enable the use of JSON format for output.
+
+  ```js copy
+  const use_json = T
+  ```
+
+  ### Configure Filebeat.yml
+
+The configuration file below is pre-configured to send data to your Logit.io Stack.
+        
+Copy the configuration file below and overwrite the contents of the Filebeat 
+configuration file typically located at `/etc/filebeat/filebeat.yml`
+
+```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+####################### Logit.io Filebeat Configuration ########################
+# ============================== Filebeat inputs ===============================
+filebeat.inputs:
+- type: filestream
+  enabled: true
+  paths:
+  - "/var/log/bro/current/dns.log"
+  - "/var/log/bro/current/dpd.log"
+  - "/var/log/bro/current/http.log"
+  - "/var/log/bro/current/rdp.log"
+  - "/var/log/bro/current/smb.log"
+  - "/var/log/bro/current/ssh.log"
+  - "/var/log/bro/current/ssl.log"
+  - "/var/log/bro/current/conn.log"
+  - "/var/log/bro/current/notice.log"
+
+  fields:
+    type: "zeek"
+  fields_under_root: true
+  encoding: utf-8
+  ignore_older: 12h
+
+# ================================== Outputs ===================================
+output.logstash:
+  hosts: ["@logstash.host:@logstash.sslPort"]
+  loadbalance: true
+  ssl.enabled: true
+```
+
+  ### Validate configuration
+
+  <ValidateBeat beatname="filebeat" />
+
+  ### Start Filebeat
+
+  <StartFilebeat />
+
+  ### Launch Logit.io to view your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="Zeek" source="zeek" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+  
+</Steps>
+
+## Zeek Overview
+
+Zeek (formerly known as Bro) is a free, open-source network security monitoring 
+solution that provides comprehensive threat detection and analysis capabilities. 
+To effectively monitor and analyze security events, it's essential to have a 
+reliable and efficient log management solution. Zeek can be configured to 
+generate logs in various formats, including ASCII and JSON, depending on the desired output.
+
+To send Zeek logs to Logstash for processing and analysis, organizations can 
+use Filebeat, an open-source log shipper. Filebeat can be configured to monitor 
+the Zeek logs directory and send any new logs to Logstash, where they can be 
+processed and analyzed for real-time threat detection and response.
+
+The configuration file path and filename for Zeek may vary depending on the specific 
+installation and version. You can refer to your installation's documentation to find 
+the location of the configuration file. In the configuration file, you need to set 
+the "LogAscii::use_json" variable to "T" (true) to generate logs in JSON format.
+
+Once the logs are generated in the desired format, Filebeat can be used to securely 
+transfer them to Logstash for processing and analysis. Logstash can leverage various 
+plugins and modules to filter, transform, and enhance the data, enabling advanced 
+correlation and analysis to identify potential security threats.
+
+Using Zeek with Filebeat and Logstash provides organizations with a powerful network 
+security monitoring solution that can detect and respond to security incidents in 
+real-time, while also maintaining compliance with industry regulations and standards. 
+By leveraging various agents and modules, organizations can collect and analyze data 
+from various sources, gain valuable insights into their network security posture, 
+and make informed decisions to improve their overall security stance.
+
+If you need any further assistance with migrating your log data to ELK we're here 
+to help you get started. Feel free to get in contact with our support team by sending 
+us a message <IntercomButton text="via live chat" /> and we'll be happy to assist.

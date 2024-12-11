@@ -1,0 +1,148 @@
+---
+title: Google Cloud Run
+metaTitle: Integrate and Configure Google Cloud Run to Send Logs and Metrics
+subTitle: Ship Google Cloud Run logs and metrics from Google Cloud Pub/Sub to Logit.io
+logo: googlecloud
+color: "#205bb0"
+description: Learn how to send Google Cloud Cloud Run logs and metrics to your Logit.io & simplify your analysis.
+stackTypes: logs, metrics
+tags: Logs, Google, GCE, Stack Driver, GKE, Stackdriver, Google Cloud Run, GCP, Cloud Compute, Cloud Run, Telegraf, Metrics, Telemetry, OpenTelemetry, Instrumentation, Containerization, Containers
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Logs
+  
+  ### Install Integration
+
+  <InstallIntegration/>
+  
+  ### Export Logs to Google Pub/Sub
+
+  Ensure that you have Cloud Run logs configured in [GCP](https://console.cloud.google.com/logs).
+
+  Now we can filter the logs as needed, by clicking on the service name and choosing Show matching entries as shown below.
+
+  ![Filter the logs that we want to export](@/images/integrations/google-pubsub/filter_logs.png)
+
+  <Callout type="info">
+    Read more about how to configure and export logs using the [Google Operations Console](https://cloud.google.com/logging/docs/export/configure_export_v2)
+  </Callout>
+
+  ### Create A Sink
+
+  To export the logs choose Create sink as shown below.
+
+  ![Select sink service](@/images/integrations/google-pubsub/gcp-ss2.png)
+  You will be then be prompted for:
+  - Sink details (enter a name)
+  - Sink destination (choose Cloud Pub/Sub topic creating a new topic if needed)
+  - Choose logs to include in sink (this will have a filter applied already if you filtered the logs above)
+
+  Choose Create sink to continue.
+
+  ![Fill in edit sink form](@/images/integrations/google-pubsub/gcp-ss3.png)
+
+  ### Create Google Pub/Sub
+
+  Locate your newly created [Pub/Sub topic](https://console.cloud.google.com/cloudpubsub/topic/) and choose Create subscription.
+
+  ![Find topic in Topics menu](@/images/integrations/google-pubsub/gcp-ss5.png)
+  
+  Enter a suitable Subscription ID and leave the delivery type as pull.
+
+  We don't need to change anything further at this stage, scroll to the bottom and choose CREATE to create the Subscription.
+
+  ### Create Service Account
+
+  Now in [service accounts](https://console.cloud.google.com/iam-admin/serviceaccounts), choose the project you're working with. 
+      
+  Then select CREATE SERVICE ACCOUNT, this account will be used to retrieve logs from the Pub/Sub and send them to Logit.io.
+
+  ![Service accounts screenshot](@/images/integrations/google-pubsub/gcp-ss8.png)
+
+  Name the service account and in step 2 add the role Pub/Sub Subscriber as shown below, then choose DONE.
+  
+  ![View new service account](@/images/integrations/google-pubsub/gcp-ss11.png)
+
+  Now choose Manage keys as shown below.
+
+  ![Add key using dropdown](@/images/integrations/google-pubsub/gcp-ss12.png)
+
+  Then choose ADD KEY > Create new key, choosing the recommended JSON format. This will download the JSON key to your machine ready to use in the next step.
+
+  ![Add key using dropdown](@/images/integrations/google-pubsub/gcp-ss13.png)
+
+  ### Configuring Logstash
+
+  To start pulling logs and metrics from the Google Cloud Platform to your Stack you need to configure a Google Cloud Platform Input on your Logit.io Stack.
+
+  <ConfigurePubSub type="" utmSource="pubsubbeat" utmMedium="google" utmCampaign="googlecloudrun"/>
+
+  <Callout type="info">
+    Logit.io will verify your input before it is applied, we will contact you to confirm when this has been completed.
+  </Callout>
+
+  ### Launch Logit.io to view your logs
+  <LaunchStack utmMedium="google" utmCampaign="googlecloudrun" source="pubsubbeat" />
+</Steps>
+
+<Steps>
+  ## Metrics
+
+  Configure Telegraf to ship Google Cloud Run metrics to your Logit.io stacks via Logstash.
+  
+  ### Install Integration
+
+  <InstallIntegration/>
+
+  ### Set Credentials in GCP
+
+  <SetGCPCredentials intro="Google Cloud Run emerges as a unique collection of services nested within Google Cloud. It's specifically devised for the development, deployment, and management of containers, stimulating secure and efficient communication among diverse software units within a cloud-oriented ecosystem."/>
+  
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  <TelegrafStackDriverInput metric_type="run.googleapis.com"/>
+
+  ### Configure the output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack stackType="metrics" source="Google_Cloud_Run_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-GoogleCloudRun-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>
+
+## Cloud Run Logging Overview
+
+Google Cloud Run is a container-as-a-service (CaaS) solution from Google Cloud Platform (GCP), offering the ability to run stateless containers 
+that are invocable via web requests or Pub/Sub events. Similar to platforms like Microsoft Azure Functions and AWS Lambda, Cloud Run is efficient 
+in terms of cost, often being more economical than its counterparts.
+
+Cloud Run maintains a detailed log of operations, user activities, and system messages, providing transparency and aiding in compliance and 
+audit requirements. Emphasis is placed on operational logs for optimal monitoring practices. These logs are essential in troubleshooting 
+and optimizing applications on Cloud Run.
+
+For effective log management, integrating Google Cloud Run logs with analytical tools like Hosted OpenSearch and Kibana through platforms 
+such as Logit.io can offer deep insights, allowing for centralized monitoring across services, including those not hosted on GCP. 
+Pre-set alerts and health checks keep you informed about your containerized applications' status and performance.
+    
+You can use Google Cloud Run logs & metrics to visualise the performance of your services in 
+[Hosted OpenSearch](https://logit.io/platform/features/hosted-kibana/) for intelligent reporting & by using our 
+[log analysis platform](https://logit.io/solutions/analysis/log-analysis) you can correlate the performance of your Cloud Run Services 
+with the rest of your applications (even those based outside of Google services).
+
+If you need any assistance with analysing your Google Cloud Compute logs we're here to help. Feel free to reach out by getting in contact 
+with us <IntercomButton text="via live chat" /> and we'll be happy to help you start analysing your Cloud Compute data.

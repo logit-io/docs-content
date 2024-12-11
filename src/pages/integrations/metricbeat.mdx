@@ -1,0 +1,321 @@
+---
+title: Metricbeat
+metaTitle: Learn How to Integrate and Configure Metricbeat to Ship Logs
+pageTitle: Metricbeat Configuration
+subTitle: Ship Metrics with Metricbeat to Logit.io
+logo: metricbeat
+color: "#00bfb3"
+description: Use Logit.io's Metricbeat example configuration to easily forward and send your logs to Logstash and Elasticsearch.
+stackTypes: logs
+sslPortType: beats-ssl
+tags: Beats, Logs, Metrics, Metricbeat, Stats, System, Monitoring
+---
+
+Metricbeat is an open-source shipping agent used to collect and ship 
+operating system and service metrics to your Logit.io Stack 
+via [Logstash](/integrations/log-management/shippers/logstash).
+
+<Steps>
+  ### Install Integration
+
+  <InstallIntegration/>
+
+  ### Install Metricbeat
+
+  <Tabs items={["Windows", "Linux", "macOS", "DEB", "RPM"]}>
+    <Tab>
+      To get started you will need to install metricbeat. To do this you have two main options:
+        
+      - Choose the [metricbeat](https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-8.15.2-windows-x86_64.zip) ZIP file (Windows ZIP x86_64) or
+      - Choose the [Microsoft Software Installer MSI](https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-8.15.2-windows-x86_64.msi) file (Windows MSI x86_64 (beta))
+
+      <Callout type="info">
+        To successfully install metricbeat and set up the required Windows service you will need to have administrator access. 
+      </Callout>
+
+      __If you have chosen to download the zip file:__
+
+      - Extract the contents of the zip file into C:\Program Files.
+      - Rename the extracted folder to metricbeat
+      - Open a PowerShell prompt as an Administrator (right-click the PowerShell icon and select Run As Administrator).
+      - From the PowerShell prompt, run the following commands to install metricbeat as a Windows service:
+
+      ```cmd copy
+      cd 'C:\Program Files\metricbeat'
+      ```
+
+      ```cmd copy
+      .\install-service-metricbeat.ps1
+      ```
+
+      If script execution is disabled on your system, you need to set the execution policy for the current session to allow the script to run. For example: 
+
+      ```cmd copy
+      PowerShell.exe -ExecutionPolicy UnRestricted -File .\install-service-metricbeat.ps1
+      ```
+
+      For more information about Powershell execution policies see [here](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_execution_policies?view=powershell-7.4).
+
+      __If you have chosen to download the metricbeat.msi file:__
+
+      - double-click on it and the relevant files will be downloaded. 
+
+      At the end of the installation process you'll be given the option to open the folder where metricbeat has been installed.
+
+      - Open a PowerShell prompt as an Administrator (right-click the PowerShell icon and select Run As Administrator).
+      - From the PowerShell prompt, change directory to the location where metricbeat was installed and run the following command to install metricbeat as a Windows service:
+
+      ```cmd copy
+      .\install-service-metricbeat.ps1
+      ```
+
+      If script execution is disabled on your system, you need to set the execution policy for the current session to allow the script to run. For example: 
+
+      ```cmd copy
+      PowerShell.exe -ExecutionPolicy UnRestricted -File .\install-service-metricbeat.ps1
+      ```
+      For more information about Powershell execution policies see [here](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_execution_policies?view=powershell-7.4).
+    </Tab>
+    <Tab>
+      To get started you will need to install metricbeat. To do this you have two main options:
+
+      - Choose the AMD / Intel file (x86_64) or
+      - Choose the ARM file (arm64)
+                                      
+      You can tell if you have a Linux PC with an AMD / Intel CPU (kernel) architecture by opening a terminal and running the `uname -m` command. If it displays ___x86_64___ you have AMD / Intel architecture.
+
+      <Callout type="info">
+        To successfully install metricbeat you will need to have root access. 
+      </Callout>
+
+      ___If you have an x86_64 system___ download and extract the contents of the file using the following commands:
+
+      ```cmd copy
+      curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-8.15.2-linux-x86_64.tar.gz
+      tar xzvf metricbeat-8.15.2-linux-x86_64.tar.gz
+      ```
+
+      ___If you have an arm64 system___ download and extract the contents of the file using the following commands:
+
+      ```cmd copy
+      curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-8.15.2-linux-arm64.tar.gz
+      tar xzvf metricbeat-8.15.2-linux-arm64.tar.gz
+      ```
+    </Tab>
+    <Tab>
+      To get started you will need to install metricbeat. To do this you have two main options:
+
+      - Choose the AMD / Intel file (x86_64) or
+      - Choose the ARM file (aarch64)
+              
+      You can tell if you have a Mac with an ARM CPU architecture by opening the Terminal application and 
+      running the ```arch``` command. If it displays ___arm64___ you have ARM architecture.
+              
+      <Callout type="info">
+        To successfully install metricbeat you will need to have root access. 
+      </Callout>
+
+      ___If you have an x86_64 system___ download and extract the contents of the file using the following commands:
+
+      ```cmd copy
+      curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-8.15.2-darwin-x86_64.tar.gz
+      tar xzvf metricbeat-8.15.2-darwin-x86_64.tar.gz
+      ```
+
+      ___If you have an aarch64 system___ download and extract the contents of the file using the following commands:
+
+      ```cmd copy
+      curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-8.15.2-darwin-aarch64.tar.gz
+      tar xzvf metricbeat-8.15.2-darwin-aarch64.tar.gz
+      ```
+    </Tab>
+    <Tab>
+      To get started you will need to install metricbeat. To do this you have two main options:
+
+      - Choose the AMD / Intel file (x86_64) or
+      - Choose the ARM file (aarch64)
+              
+      You can tell if you have a PC with an ARM CPU architecture by opening the Terminal 
+      application and running the `arch` command. If it displays ___arm64___ you have ARM architecture.
+
+      <Callout type="info">
+        To successfully install metricbeat you will need to have root access. 
+      </Callout>
+              
+      ___If you have an x86_64 system___ download and install metricbeat using the following commands:
+
+      ```cmd copy
+      curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-8.15.2-amd64.deb
+      sudo dpkg -i metricbeat-8.12.2-amd64.deb
+      ```
+
+      ___If you have an aarch64 system___ download and install metricbeat using the following commands:
+
+      ```cmd copy
+      curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-8.15.2-arm64.deb
+      sudo dpkg -i metricbeat-8.15.2-arm64.deb
+      ```
+    </Tab>
+    <Tab>
+      To get started you will need to install metricbeat. To do this you have two main options:
+
+      - Choose the AMD / Intel file (x86_64) or
+      - Choose the ARM file (aarch64)
+              
+      You can tell if you have a PC with an ARM CPU architecture by opening the Terminal 
+      application and running the `arch` command. If it displays ___arm64___ you have ARM architecture.
+
+      <Callout type="info">
+        To successfully install metricbeat you will need to have root access. 
+      </Callout>
+              
+      ___If you have an x86_64 system___ download and install metricbeat using the following commands:
+
+      ```cmd copy
+      curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-8.15.2-x86_64.rpm
+      sudo rpm -vi metricbeat-8.15.2-x86_64.rpm    
+      ```
+
+      ___If you have an aarch64 system___ download and install metricbeat using the following commands:
+
+      ```cmd copy
+      curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-8.15.2-aarch64.rpm
+      sudo rpm -vi metricbeat-8.15.2-aarch64.rpm
+      ```
+    </Tab>
+  </Tabs>
+
+  ### Copy Configuration File
+
+  The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+        
+  Copy the configuration file below and overwrite the contents of __metricbeat.yml__. 
+
+  ```yaml copy /@logstash.host/ /@logstash.sslPort/
+  ###################### Logit.io Metricbeat Configuration #######################
+  # =========================== Modules configuration ============================
+
+  metricbeat.config.modules:
+    # Glob pattern for configuration loading
+    path: ${path.config}/modules.d/*.yml
+
+    # Set to true to enable config reloading
+    reload.enabled: false
+
+    # Period on which files under path should be checked for changes
+    #reload.period: 10s
+  # ======================= Elasticsearch template setting =======================
+  setup.template.settings:
+    index.number_of_shards: 1
+    index.codec: best_compression
+    #_source.enabled: false
+
+  # ================================== Outputs ===================================
+  # ------------------------------ Logstash Output -------------------------------
+  output.logstash:
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
+
+  # ================================= Processors =================================
+  processors:
+    - add_host_metadata: ~
+    - add_cloud_metadata: ~
+    - add_docker_metadata: ~
+    - add_kubernetes_metadata: ~
+  ```
+
+  ### Validate Configuration
+
+  <ValidateBeat beatname="metricbeat" />
+
+  ### Start Metricbeat
+
+  <Tabs items={["Windows", "Linux", "macOS", "DEB", "RPM"]}>
+    <Tab>
+      To start Metricbeat, run in Powershell:
+
+        ```ps1 copy
+        Start-Service metricbeat
+        ```
+    </Tab>
+    <Tab>
+      To start Metricbeat, run:
+
+      ```bash copy
+      sudo chown root metricbeat.yml 
+      sudo chown root modules.d/*.yml
+      sudo ./metricbeat -e
+      ```
+
+      You'll be running Metricbeat as root, so you need to __change ownership of the configuration file__ and any configurations enabled in the modules.d directory, or run Metricbeat with __--strict.perms=false__ as shown above. 
+      Read more about how to [change ownership](https://www.elastic.co/guide/en/beats/libbeat/master/config-file-permissions.html).
+    </Tab>
+    <Tab>
+      To start Metricbeat, run:
+
+      ```bash copy
+      sudo chown root metricbeat.yml 
+      sudo chown root modules.d/{modulename}.yml 
+      sudo ./metricbeat -e
+      ```
+
+      You'll be running Metricbeat as root, so you need to __change ownership of the configuration file__ and any configurations enabled in the modules.d directory, or run Metricbeat with __--strict.perms=false__ as shown above. 
+      Read more about how to [change ownership](https://www.elastic.co/guide/en/beats/libbeat/master/config-file-permissions.html).
+    </Tab>
+    <Tab>
+      To start Metricbeat, run:
+
+      ```bash copy
+      sudo service metricbeat start
+      ```
+    </Tab>
+    <Tab>
+      To start Metricbeat, run:
+
+      ```bash copy
+      sudo service metricbeat start
+      ```
+    </Tab>
+  </Tabs>
+
+  ### Launch Logs to view your data
+
+  <LaunchVisualizer type="logs" />
+
+  ### Configure Modules (Optional)
+
+  The system status module is enabled by default to collect metrics about your server, such as CPU usage, 
+  memory usage, network IO metrics, and process statistics.
+
+  There are a range of other modules which can be enabled for Metricbeat, please choose the module from 
+  the list below if you wish to know more.
+
+  - [Apache](/integrations/infrastructure-metrics/platforms/metricbeat-module-apache),
+  - [Docker](/integrations/infrastructure-metrics/platforms/metricbeat-module-docker),
+  - [golang](/integrations/infrastructure-metrics/languages-and-libraries/metricbeat-module-golang),
+  - [haproxy](/integrations/infrastructure-metrics/platforms/metricbeat-module-haproxy),
+  - [http](/integrations/infrastructure-metrics/protocols/metricbeat-module-http),
+  - [Kafka](/integrations/infrastructure-metrics/platforms/metricbeat-module-kafka),
+  - [Kubernetes](/integrations/infrastructure-metrics/platforms/metricbeat-module-kubernetes),
+  - [MongoDB](/integrations/infrastructure-metrics/applications/mongodb-metrics),
+  - [mysql](/integrations/infrastructure-metrics/applications/mysql-metrics),
+  - [nginx](/integrations/infrastructure-metrics/platforms/metricbeat-module-nginx),
+  - [rabbitmq](/integrations/infrastructure-metrics/message-queues/metricbeat-module-rabbitmq),
+  - [Redis](/integrations/infrastructure-metrics/message-queues/metricbeat-module-redis),
+  - [CentOS](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-system-centos),
+  - [Debian](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-system-debian),
+  - [MacOS](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-system-macos),
+  - [Redhat](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-system-redhat),
+  - [Ubuntu](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-system-ubuntu),
+  - [Windows](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-system-windows),
+  - [uwsgi](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-uwsgi),
+  - [PostgreSQL](/integrations/infrastructure-metrics/applications/postgresql-metrics),
+  - [Zookeeper](/integrations/infrastructure-metrics/platforms/metricbeat-module-zookeeper),
+  - [Puppet](/integrations/infrastructure-metrics/applications/puppet)
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>

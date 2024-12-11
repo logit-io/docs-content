@@ -1,0 +1,83 @@
+---
+title: Google Apigee Metrics
+metaTitle: Integrate and Configure Telegraf to Send Google Apigee Metrics
+subTitle: Ship your Google Apigee Metrics via Telegraf to your Logit.io Stack
+logo: googlecloud
+color: "#3c76d7"
+description: Use our example to configure Telegraf to ship Google Apigee metrics to Logit.io. Configure Telegraf to send Google Apigee metrics to Logstash or Elastic.
+stackTypes: metrics
+tags: Telegraf, Metrics, Telemetry, OpenTelemetry, Instrumentation, Google Apigee, API Management, API Gateway
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Metrics
+
+  Configure Telegraf to ship Google Apigee metrics to your Logit.io stacks via Logstash.
+  
+  ### Install Integration
+  <InstallIntegration/>
+  ### Set Credentials in GCP
+
+  <SetGCPCredentials intro="Apigee, a key feature of Google Cloud's suite, exemplifies a unique ensemble of tools designed specifically for API lifecycle management. 
+  This comprehensive platform is engineered to design, deploy, and oversee APIs, thereby promoting secure and streamlined communication between disparate software entities in a cloud-oriented environment."/>
+  
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  <TelegrafStackDriverInput metric_type="apigee.googleapis.com"/>
+
+  ### Configure the output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack source="Google_Apigee_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-GoogleApigee-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>
+
+## Telegraf Google Apigee metrics Overview
+
+Telegraf, InfluxData's premier open-source server agent, is engineered for capturing metrics and data from a 
+myriad of sources, including APIs and gateway platforms. Google Apigee is designed to help organizations design, 
+secure, deploy, monitor, and scale APIs, playing a crucial role in digital transformation initiatives by 
+enabling seamless connectivity between applications, data, and devices across cloud and on-premises environments.
+
+The integration of Telegraf with Google Apigee empowers organizations to monitor their API performance, traffic, 
+and health metrics in real time. This capability is vital for API developers and operations teams to ensure 
+their APIs are performing optimally, remain secure, and provide the scalability necessary to handle varying loads. 
+Metrics such as API call latencies, error rates, traffic volumes, and response times are crucial for diagnosing 
+and resolving issues, optimizing API performance, and enhancing the overall user experience.
+
+However, the vast amount of data generated from monitoring APIs can be challenging to manage, analyze, and 
+visualize effectively. Logit.io offers a comprehensive solution to these challenges by providing a sophisticated 
+platform that simplifies the processing and analysis of metrics from Telegraf and Google Apigee. 
+
+With Logit.io, businesses can enhance their API monitoring and analytics capabilities, enabling them to quickly 
+identify and address performance bottlenecks, improve security postures, and ensure compliance with usage 
+policies and regulations. The platform's advanced analytics and visualization tools support proactive management 
+of API ecosystems, helping organizations to maintain high-quality, reliable API services that meet the demands 
+of their users and applications.
+
+For those utilizing Telegraf in conjunction with Google Apigee and looking to advance their API monitoring and 
+analytics strategies, Logit.io provides the tools and support necessary. Whether you're looking to optimize 
+performance, strengthen security, or gain a deeper understanding of your API usage, Logit.io's robust search 
+and analytics tools have you covered. With this integration, you can easily uncover hidden trends and issues 
+within your API traffic data, helping you make more informed decisions and take your API management to the 
+next level. For effective data management and sharing, explore the capabilities of sending 
+[Google Firestore](/integrations/infrastructure-metrics/google-cloud/firestore-telegraf-metrics) metrics next. 
+To delve into the transformative world 
+of [Google Contact Center AI](/integrations/infrastructure-metrics/google-cloud/contact-center-ai-insights-telegraf-metrics) insights 
+and metrics for exceptional customer service operations, check out our integration. Logit.io's 
+[GCP logging](https://logit.io/solutions/gcp-logging/) seamlessly integrates with various platforms.

@@ -1,0 +1,117 @@
+---
+title: AWS EKS Metrics
+metaTitle: Integrate and Configure VMAgent to Send AWS EKS Metrics
+subTitle: Ship AWS-EKS metrics using VictoriaMetrics VMAgent
+logo: aws
+color: "#ff9900"
+stackTypes: metrics
+description: Send AWS-EKS Metrics to VictoriaMetrics using the VMAgent instructions below and begin analysing your data
+tags: Metrics, VictoriaMetrics, Prometheus, VMagent, AWS, EKS, Kubernetes, Cloud Metrics, Aws Eks Metrics
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Metrics
+
+  VMAgent is a tiny but mighty agent which helps you collect metrics from various sources and store them in VictoriaMetrics.
+  
+  ### Install Integration
+  <InstallIntegration/>
+### AWS CLI Install
+
+Firstly Make sure you have the aws cli, eksctl & kubectl installed on local machine 
+using the [following guide](https://docs.aws.amazon.com/eks/latest/userguide/getting-started-eksctl.html).
+
+Also make sure you have set up aws configure with your AWS credentials. 
+
+To do this run run the following command in your aws terminal.
+
+```cmd copy
+aws configure
+```
+
+When you type this command, the AWS CLI prompts you for four pieces of information: 
+access key, secret access key, AWS Region, and output format. 
+
+This information is stored in a profile named default. 
+This profile is used when you run commands, unless you specify another one.
+
+### Connecting to the cluster
+
+Update your config by running the following command. Replace `<enter_region>` and 
+`<enter_name>` with your AWS cluster region and name.
+
+```cmd copy
+aws eks --region <enter_region> update-kubeconfig --name <enter_name>
+```
+
+Check you can connect to your cluster by running the following command:
+
+```cmd copy
+kubectl get svc
+```
+
+### Confirm you have Helm installed
+Confirm you have Helm installed and available. 
+If not, please refer to the [Helm installation documentation](https://helm.sh/docs/intro/install/).
+
+### Add VictoriaMetrics Helm Chart
+
+Run the following to add the Victoria Metrics Helm chart.
+
+```cmd copy
+helm repo add vm https://victoriametrics.github.io/helm-charts/
+```
+
+### Export default configuration yaml
+
+  Export the default configuration to a yaml file so that we can make an edit.
+
+```cmd copy
+helm show values vm/victoria-metrics-agent >> vmagent-kubernetes.yml
+```
+
+### Add remoteWriteUrls
+
+Open the exported configuration in a text editor to add in the remoteWriteUrls.
+
+You will need to edit Line 65 of the `vmagent-kubernetes.yml`
+
+From:
+
+```yaml copy 
+# WARN: need to specify at least one remote write url or one multi tenant url
+remoteWriteUrls: []
+# remoteWriteUrls:
+#   - http://vm-insert:8480/insert/0/prometheus
+#   - http://prometheus:8480/insert/0/prometheus
+```
+
+To:
+
+```yaml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
+# WARN: need to specify at least one remote write url or one multi tenant url
+remoteWriteUrls: ["https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"]
+# remoteWriteUrls:
+#   - http://vm-insert:8480/insert/0/prometheus
+#   - http://prometheus:8480/insert/0/prometheus
+```
+
+### Install Helm Chart
+You are now ready to install the helm chart.
+
+```cmd copy
+helm --namespace=victoriametrics install vmagent vm/victoria-metrics-agent --create-namespace -f vmagent-kubernetes.yml
+```
+</Steps>
+
+## AWS EKS Overview
+
+Sending data to Logit.io from AWS EKS streamlines monitoring and log management 
+for your containerized applications, empowering you with insights into their 
+performance and security. You can further enhance your infrastructure with Amazon 
+CloudFront to ensure high availability and low latency, by integrating 
+[AWS Lambda](/integrations/log-management/aws/aws-cloudwatch-lambda) and [CloudWatch](/integrations/infrastructure-metrics/aws/cloudwatch) to 
+monitor serverless functions in real-time. Logit.io's [AWS logging](https://logit.io/solutions/aws-logging/) 
+offers a fully scalable experience with these integrations.

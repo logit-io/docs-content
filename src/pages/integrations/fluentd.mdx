@@ -1,0 +1,89 @@
+---
+title: Fluentd
+metaTitle: Learn How to Integrate and Configure Fluentd to Send Logs
+subTitle: Ship Fluentd events
+logo: Fluentd
+color: "#2e62a4"
+description: Follow our Fluentd tutorial to get started shipping logs from Fluentd events to Logstash for monitoring and analysis in Logit.io.
+stackTypes: logs
+sslPortType: tcp-ssl
+tags: Logs, Fluent, Fluentd, Ruby, Application Logs
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Logs
+
+  Fluentd is an open source data collector which can be used to collect event logs from multiple sources. 
+  It filters, buffers and transforms the data before forwarding to one or more destinations, including 
+  [Logstash](/integrations/log-management/shippers/logstash).
+  
+  ### Install Integration
+  <InstallIntegration/>
+  ### Install the output plugin
+
+  <Callout type="info">
+      Our fluentd output plugin is available as a gem on [RubyGems](https://rubygems.org/gems/fluent-plugin-logit).
+  </Callout>
+
+  ```bash copy
+  gem install fluent-plugin-logit
+  ```
+  
+  ### Configure the output plugin
+
+  Add the following to your fluentd configuration.
+
+  ```cmd copy
+  <match>
+      @type logit
+      stack_id @logs_id
+      port @logstash.sslPort      
+      buffer_type file
+      buffer_path /tmp/
+      flush_interval 2s
+  </match>
+  ```
+
+  Ensure the `match` clause is correct for the events you wish to send to Logit.io. Buffering is optional but recommended.
+
+  ### Check Logit.io for your logs
+  <LaunchStack utmMedium="logs" utmCampaign="fluentd" source="fluentd" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+### Fluentd Logging Overview
+
+Fluentd was developed by Treasure Data & initially released in 2011. Fluentd often draws comparisons with Logstash as both log 
+collectors share some similarities especially when it comes to platform compatibility.
+
+Where these tools differ though can be seen clearly across their configuration difficulty & performance (Logstash is notably easier 
+to configure).
+
+Fluentd on the other hand is known for requiring minimal system resources & can be used with Fluent Bit for an even more lightweight 
+method of forwarding your data.
+
+Fluentd is used by many of the world's biggest technology companies, including Atlassian, Microsoft & AWS.
+
+For this configuration guide, we've covered using both Logstash & Fluentd together for forwarding your data for further log 
+analysis and processing using ELK (Elasticsearch, Logstash & Kibana).
+
+Fluentd is also often used alongside Bigquery as a scalable method of performing queries against log data from Google Cloud. 
+A centralised platform for log management can easily prove a more than suitable replacement for this, such as the platform 
+we have here at Logit.
+
+The Logit.io platform is built to allow you to drive data-driven insights from your logs & brings together Fluentd & Logstash 
+for full observability of your logs in a single centralised platform. Our platform offers a complete solution for centralising 
+your log files from multiple applications and servers and provides a Fluentd log analyser as standard.
+
+If you need any more help with migrating your Fluentd to Logstash the Logit.io team are here to help. 
+Feel free to get in contact with our support team <IntercomButton text="via live chat" /> and we'll be happy to assist.
+
+
+
+

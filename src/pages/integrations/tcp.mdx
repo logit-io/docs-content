@@ -1,0 +1,71 @@
+---
+title: TCP
+metaTitle: Learn How to Integrate and Configure TCP to Send Logs
+subTitle: Ship logs using TCP to Logstash
+logo: tcp
+color: "#0c8d8b"
+description: Learn how to send TCP logs to your Logstash instance using our configuration examples. Simplify sending logs with Logit.io's data config examples and guides.
+stackTypes: logs
+sslPortType: tcp-ssl
+portType: tcp
+tags: Logs, TCP, SSL, TLS, Netcat, ncat, Networking, Security, Encryption, Network Protocol, Tcp
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Logs
+
+  ### Install Integration
+
+  <InstallIntegration/>
+
+  ### Send data to TCP input
+
+  We will start by adding some sample data to a file called `sample.log`:
+
+  ```cmd copy
+  echo "Message sent to Logit.io using TCP" >> sample.log
+  ```
+
+  Then we will use `openssl` to send the data to Logit.io via TLS:
+
+  <Tabs items={["Windows (Powershell)", "Linux", "macOS", "DEB", "RPM"]}>
+    <Tab>
+      ```ps1 copy
+      Get-Content sample.log | openssl s_client -connect @logstash.host:@logstash.sslPort
+      ```
+    </Tab>
+    <Tab>
+      ```bash copy
+      openssl s_client -connect @logstash.host:@logstash.sslPort < sample.log
+      ```
+    </Tab>
+    <Tab>
+      ```bash copy
+      openssl s_client -connect @logstash.host:@logstash.sslPort < sample.log
+      ```
+    </Tab>
+    <Tab>
+      ```bash copy
+      openssl s_client -connect @logstash.host:@logstash.sslPort < sample.log
+      ```
+    </Tab>
+    <Tab>
+      ```bash copy
+      openssl s_client -connect @logstash.host:@logstash.sslPort < sample.log
+      ```
+    </Tab>
+  </Tabs>
+
+  ### Launch Logs to View Your Data
+
+  <LaunchVisualizer type="logs" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+    
+
