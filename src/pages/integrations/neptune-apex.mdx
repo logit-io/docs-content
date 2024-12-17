@@ -1,0 +1,89 @@
+---
+title: Neptune Apex
+metaTitle: Integrate and Configure Telegraf to send Neptune Apex Metrics
+subTitle: Ship your Neptune Apex Metrics via Telegraf to your Logit.io Stack
+color: "#4d4d4d"
+description: Use our example to configure Telegraf to ship Neptune Apex metrics to Logit.io. Configure Telegraf to send Neptune Apex metrics to Logstash or Elastic.
+stackTypes: metrics
+sslPortType: beats-ssl
+tags: Telegraf, Metrics, Telemetry, OpenTelemetry, Health, Instrumentation, Neptune Apex, Database, Monitoring, Cloud
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Metrics
+
+  Configure Telegraf to ship Neptune Apex metrics to your Logit.io stacks via Logstash.
+  
+  ### Install Integration
+  <InstallIntegration/>
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+
+  ```toml copy
+  # Neptune Apex data collector
+  [[inputs.neptune_apex]]
+    ## The Neptune Apex plugin reads the publicly available status.xml data from a local Apex.
+    ## Measurements will be logged under "apex".
+
+    ## The base URL of the local Apex(es). If you specify more than one server, they will
+    ## be differentiated by the "source" tag.
+    servers = ["http://apex.local",]
+
+    ## The response_timeout specifies how long to wait for a reply from the Apex.
+    #response_timeout = "5s"
+  ```
+
+  <Callout type="info">
+    Read more about how to configure data scraping and configuration options for [Neptune Apex](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/neptune_apex)
+  </Callout>
+
+  ### Configure the output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack source="Neptune_Apex_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-NeptuneApex-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+### Telegraf Neptune Apex Overview
+
+In order to effectively monitor and analyze Neptune Apex metrics in a distributed environment, it's vital to have a robust 
+and efficient metrics management solution. Telegraf, an open-source metrics collection agent, is ideally suited for this task, 
+capable of gathering Neptune Apex metrics from a variety of sources, including operational Neptune Apex devices, databases, 
+and other relevant applications.
+
+Telegraf provides a comprehensive selection of input plugins, enabling users to gather metrics from various sources such as 
+CPU usage, memory consumption, network activity, and more. For storing and analyzing these harvested metrics, organizations 
+can use Prometheus, an open-source monitoring and alerting tool known for its flexible querying language and impressive 
+graphical data visualization capabilities.
+
+To transfer Neptune Apex metrics from Telegraf to Prometheus, organizations need to configure Telegraf to output metrics 
+in the Prometheus format, and then set up Prometheus to scrape these metrics from the Telegraf server. This process 
+involves configuring Telegraf to collect Neptune Apex metrics, outputting them in the Prometheus format, setting up 
+Prometheus to pull these metrics from the Telegraf server, and then visually interpreting the data using Prometheus's 
+dynamic querying and graphical visualization features.
+
+Once the metrics are successfully integrated into Prometheus, further analysis and visualization can be conducted using Grafana. 
+Grafana is an open-source platform celebrated for its monitoring and observability capabilities, and it is fully compatible 
+with Prometheus. It allows users to create dynamic, interactive dashboards for a deeper understanding of the metrics data, 
+providing a comprehensive view of performance trends and potential issues.
+
+If you need any further assistance with shipping your log data to Logit.io we're here to help you get started. 
+Feel free to get in contact with our support team by sending us a message via <IntercomButton text="live chat" /> 
+& we'll be happy to assist.

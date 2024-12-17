@@ -1,0 +1,70 @@
+---
+title: GELF
+metaTitle: Learn How to Integrate and Configure GELF to Send Logs
+subTitle: Ship logs using GELF to Logstash
+color: "#e99d00"
+logo: gelf
+description: Learn how to send Gelf logs to your Logstash instance & Elastic Stack - Ship over 100 log data types fast with Logit.io & simplify your log analysis.
+stackTypes: logs
+portType: gelf
+tags: Logs, GELF, Logstash, Log Files, Gelf
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Logs
+
+  Configure Gelf logs to automatically send to Logstash and Elasticsearch for further log analysis with our config example below.
+  
+  ### Install Integration
+
+  <InstallIntegration/>
+
+  ### Send data to GELF input
+
+  Note: You need a UDP Logstash input on your Stack to be able to send GELF logs.
+
+  Sending the log to logstash with netcat:
+
+  ```cmd copy
+  echo '{"test_version": "1.1","test_host":"example.org","short_message":"A short message that helps you identify what is going on","test_level":1,"user_id":9001,"some_info":"foo","some_env_var":"bar"}' | gzip | nc -u -w 1 @logstash.host @logstash.port
+  ```
+
+  ### View data
+
+  Take a look in your kibana for your message, note UDP doesnt guarantee delivery
+
+  ### Check Logit.io for your logs
+  <LaunchStack utmMedium="logs" utmCampaign="gelf" source="gelf" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+### GELF Logstash Overview
+
+GELF (also known as Graylog Extended Log Format) is a convenient log format that was 
+originally created to provide an alternative to using [Syslog](/integrations/log-management/protocols/syslog). 
+This was done to close the gap between logging in an unstructured 
+format versus the more easily processable structured logging format.
+
+GELF uses a simple [JSON](/integrations/log-management/data-types/json) string 
+to send structured log messages and application data. Gelf also assists 
+in combating the additional shortcomings that become apparent when using 
+plain Syslog. As plain Syslog is limited to a length of 1024 bytes there 
+is very little remaining space left for backtraces and other payloads. 
+
+Due to its support for structured logging, GELF is highly suitable for 
+custom [APM](https://logit.io/platform/observability/application-performance-monitoring/) setups. 
+GELF log messages contain the following data fields; host, timestamp, 
+version, long and short messages and also provides support for custom 
+fields that can be configured as required.
+
+If you need any additional assistance in sending GELF logs 
+to [Logstash](/integrations/log-management/shippers/logstash) we're here 
+to help, simply get in touch by reaching out to the support team 
+via <IntercomButton text="live chat" /> and we'll be happy to help you 
+get started with sending logs and application data.

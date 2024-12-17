@@ -1,0 +1,87 @@
+---
+title: Apache Solr
+metaTitle: Integrate and Configure Telegraf to send Apache Solr Metrics
+subTitle: Ship your Apache Solr Metrics via Telegraf to your Logit.io Stack
+logo: solr
+color: "#4d4d4d"
+description: Use our example to configure Telegraf to ship Apache Solr metrics to Logit.io. Configure Telegraf to send Apache Solr metrics to Logstash or Elastic.
+stackTypes: metrics
+sslPortType: beats-ssl
+tags: Telegraf, Metrics, Telemetry, OpenTelemetry, Health, Instrumentation, Apache Solr, Prometheus, Search Engine, Lucene
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Metrics
+
+  Configure Telegraf to ship Apache Solr metrics to your Logit.io stacks via Logstash.
+
+  ### Install Integration
+  <InstallIntegration/>
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+
+  ```toml copy
+  # Read stats from one or more Solr servers or cores
+  [[inputs.solr]]
+    ## specify a list of one or more Solr servers
+    servers = ["http://localhost:8983"]
+    ##
+    ## specify a list of one or more Solr cores (default - all)
+    # cores = ["main"]
+    ##
+    ## Optional HTTP Basic Auth Credentials
+    # username = "username"
+    # password = "pa$$word"
+  ```
+
+  <Callout type="info">
+    Read more about how to configure data scraping and configuration options for [Apache Solr](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/solr)
+  </Callout>
+
+  ### Configure The Output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack source="Apache_Solr_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-ApacheSolr-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+### Telegraf Apache Solr Overview
+
+To effectively monitor and analyze Apache Solr metrics across multiple systems, it's vital to have a robust and efficient metrics management 
+solution. Telegraf, an open-source server agent for collecting and reporting metrics, is ideally suited for this role. It can gather Apache Solr 
+metrics from various sources, such as operational Apache Solr instances, databases, and other relevant applications.
+
+Telegraf features an extensive array of input plugins, allowing users to collect metrics from different sources like CPU usage, memory utilization, 
+network traffic, and more. These metrics are key to understanding Apache Solr performance. To store and analyze these harvested metrics, 
+organizations can use Prometheus, an open-source monitoring and alerting toolkit known for its flexible querying language and impressive data 
+visualization capabilities.
+
+To transmit Apache Solr metrics from Telegraf to Prometheus, organizations need to configure Telegraf to output metrics in the Prometheus format, 
+and then set up Prometheus to scrape these metrics from the Telegraf server. This process involves setting up Telegraf to collect Apache Solr 
+metrics, outputting them in the Prometheus format, configuring Prometheus to retrieve these metrics from the Telegraf server, and then visually 
+interpreting the data using Prometheus's dynamic querying and graphical visualization tools.
+
+Upon successful integration of the metrics into Prometheus, further analysis and visualization can be carried out using Grafana. Grafana, a 
+leading open-source platform recognized for its monitoring and observability features, is fully compatible with Prometheus. It allows users to 
+create dynamic, interactive dashboards for an in-depth look at the metrics data, offering a comprehensive understanding of performance trends and 
+potential issues within the Apache Solr system.
+
+If you need any further assistance with shipping your log data to Logit.io we're here to help you get started. Feel free to get in contact with 
+our support team by sending us a message via <IntercomButton text="live chat" /> & we'll be happy to assist.

@@ -1,0 +1,75 @@
+---
+title: Google Cloud Logging Metrics
+metaTitle: Configure Telegraf to Send Google Cloud Logging Metrics
+subTitle: Ship your Google Cloud Logging Metrics via Telegraf to your Logit.io Stack
+logo: GoogleCloudLogging
+color: "#3c76d7"
+description: Configure Telegraf to ship Google Cloud Logging metrics to Logit.io. Get started using our Telegraf Google Cloud Logging metrics example configuration.
+stackTypes: metrics
+tags: Telegraf, Metrics, Telemetry, OpenTelemetry, Instrumentation, Google Cloud Logging, Log Management, Logs
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Metrics
+
+  Configure Telegraf to ship Google Cloud Logging metrics to your Logit.io stacks via Logstash.
+  
+  ### Install Integration
+  <InstallIntegration/>
+  ### Set Credentials in GCP
+
+  <SetGCPCredentials intro="Google Cloud Logging forms a distinctive assortment of services within Google Cloud. It's specifically architected for the gathering, storage, and analysis of log data, enhancing secure and effective interaction between diverse software constituents in a cloud-anchored setup."/>
+  
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  <TelegrafStackDriverInput metric_type="logging.googleapis.com"/>
+
+  ### Configure the output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack stackType="metrics" source="Google_Cloud_Logging_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-GoogleCloudLogging-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>
+
+## Telegraf Google Cloud Logging metrics Overview
+
+By leveraging the Telegraf plugin for Google Cloud Logging, organizations can automate the collection 
+of logs from various Google Cloud services, facilitating real-time monitoring and operational efficiency. 
+This integration is crucial for gaining insights into application performance, troubleshooting issues, 
+and ensuring compliance with security and audit requirements.
+
+However, a significant challenge often lies in the volume and complexity of log data generated, which 
+can be overwhelming to analyze and act upon. Logit.io addresses this challenge by offering a sophisticated 
+solution that simplifies the management and analysis of log data from Telegraf and Google Cloud Logging. 
+
+With Logit.io, users gain access to advanced features such as real-time alerts, customizable dashboards, 
+and comprehensive reporting tools. This empowers organizations to effectively monitor their cloud 
+infrastructure, quickly identify and resolve issues, and derive actionable insights from their log data, 
+enhancing operational efficiency and security posture.
+
+For those integrating Telegraf with Google Cloud Logging and looking to elevate their log management 
+and analysis capabilities, Logit.io stands ready to assist. Sending data to Logit.io has never been 
+easier with Telegraf, a versatile data collection agent. By seamlessly integrating Telegraf with 
+[Google Cloud Logging](https://logit.io/solutions/gcp-logging/) metrics, you can effortlessly ship 
+your valuable data to Logit.io's platform for advanced monitoring and analysis. This powerful 
+combination empowers you to unlock the full potential of your [Google Compute Engine](/integrations/log-management/google-cloud/compute-engine) 
+and [Google Cloud VPN Metrics](/integrations/infrastructure-metrics/google-cloud/vpc-telegraf-metrics). 
+With just a few clicks, you can learn how to set up Google Compute Engine instances and harness 
+the capabilities of Google Cloud VPN Metrics to enhance your cloud infrastructure's performance. 
+Maximize your data management capabilities with Telegraf and Logit.io, while harnessing the 
+potential of Google's cloud services to stay ahead in the ever-evolving tech landscape.

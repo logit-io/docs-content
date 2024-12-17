@@ -1,0 +1,73 @@
+---
+title: Google Cloud Healthcare Metrics
+metaTitle: Configure Telegraf to Send Google Cloud Healthcare Metrics
+subTitle: Ship your Google Cloud Healthcare Metrics via Telegraf to your Logit.io Stack
+logo: googlecloud
+color: "#3c76d7"
+description: Configure Telegraf to ship Google Cloud Healthcare metrics to Logit.io. Get started using our Telegraf Google Cloud Healthcare metrics example configuration.
+stackTypes: metrics
+tags: Telegraf, Metrics, Telemetry, OpenTelemetry, Instrumentation, Google Cloud Healthcare, Health API, Api
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Metrics
+
+  Configure Telegraf to ship Google Cloud Healthcare metrics to your Logit.io stacks via Logstash.
+  
+  ### Install Integration
+  <InstallIntegration/>
+  ### Set Credentials in GCP
+
+  <SetGCPCredentials intro="Google Cloud Healthcare API, a part of Google Cloud, enables healthcare data interoperability by connecting traditional healthcare systems with cloud-based solutions."/>
+  
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  <TelegrafStackDriverInput metric_type="healthcare.googleapis.com"/>
+
+  ### Configure the output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack stackType="metrics" source="Google_Cloud_Healthcare_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-GoogleCloudHealthcare-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>
+
+## Telegraf Google AI Platform metrics Overview
+
+For effective tracking and intelligent scrutiny of Google Cloud Healthcare metrics across distributed systems, 
+the necessity for a powerful and proficient metrics management solution, such as Telegraf, is of utmost 
+importance. Telegraf, being an open-source server agent, is esteemed for its competence in collecting and 
+reporting metrics from diverse sources, including active Cloud Healthcare instances, databases, and relevant applications.
+
+Telegraf hosts an all-encompassing assortment of input plugins, enabling users to garner varied metrics 
+like query numbers, latency, error frequencies, and beyond. These metrics are vital to fathom the performance 
+of Google Cloud Healthcare. For the storage and examination of these accumulated metrics, organizations can 
+leverage Prometheus, an open-source monitoring and alerting toolkit, greatly valued for its flexible query 
+language and potent data visualization abilities.
+
+The process of transmitting Google Cloud Healthcare metrics from Telegraf to Prometheus comprises configuring 
+Telegraf to display metrics in Prometheus's format and then instructing Prometheus to scrape these metrics 
+from the Telegraf server.
+
+Once the metrics are successfully assimilated into Prometheus, further comprehensive analysis and visualization 
+can be performed using Grafana. Grafana is a top-tier open-source platform esteemed for its monitoring and 
+observability attributes, and it syncs seamlessly with Prometheus. It empowers users to construct dynamic, 
+interactive dashboards for a detailed examination of metrics data, granting a thorough insight into performance 
+trends and potential issues within Google Cloud Healthcare.
+
+If you need any further assistance with shipping your log data to Logit.io we're here to help you get started. 
+Feel free to get in contact with our support team by sending us a message via <IntercomButton text="live chat" /> & we'll be happy to assist.

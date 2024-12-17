@@ -1,0 +1,71 @@
+---
+title: JSON
+metaTitle: Learn How to Integrate and Configure JSON to Send Logs
+subTitle: How to upload JSON logs or JSON log file to Logit.io
+logo: json
+color: "#e99d00"
+description: Learn how to ship JSON logs to your Hosted Logstash instance using our example configurations. Simplify sending logs with Logit.io's source configurations.
+stackTypes: logs
+tags: Logs, cURL, JSON, HTTP, API, Web Services, Json
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Logs
+
+  Send JSON logs to Logit.io via Logstash.
+  
+  ### Install Integration
+
+  <InstallIntegration/>
+
+  ### Send a single JSON log using curl
+
+  ```cmd copy
+  curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: default" https://@logitApiEndpoint/v2 -d '{"test":"This is a test", "Country":"United Kingdom", "Weather":"Sunny" }'
+  ```
+
+  When you are logged in to your Logit.io account your ApiKey should be populated automatically.
+
+  Executing the command above will send the string through to Logstash. This can now be viewed by opening Kibana.
+
+  If the receiving stack has been set up to parse JSON, the data will have been logged as three new values. 
+  If the stack has not been set up to parse JSON the message 
+  field will contain a string corresponding with the data that has been sent.
+
+  Section 3 of this document has an example of how to update a filter to parse JSON data.
+
+  ### Send JSON log files using curl
+
+  It is also possible to test sending a JSON file to Logstash for logging. This example will show how to do this. 
+
+  Let's have a look at the contents of our sample.json file.
+
+  ```json copy
+  {
+    "name": "Jason",
+    "city": "Manchester",
+    "display": "Hello there from JSON file",
+    "value": 5
+  }
+  ```
+
+  The following command should now be entered into the command prompt, this will send the file to Logstash:
+
+  ```cmd copy
+  curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: json" https://@logitApiEndpoint/v2 -d @sample.json
+  ```
+
+  You should be able to see the new log record in Kibana. If the receiving stack has been set up to parse JSON, the data will have been logged a
+  s four new values. If the stack has not been set up to parse JSON the message field will contain a string corresponding with the data that has been sent.
+
+  ### Launch Logs to View Your Data
+
+  <LaunchVisualizer type="logs" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
