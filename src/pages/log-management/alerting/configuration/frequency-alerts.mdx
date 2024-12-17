@@ -23,17 +23,17 @@ timeframe:
   hours: 3
 num_events: 100
 filter:
-- query:
-   query_string:
-      query: "router.status: [500 TO 599]"
+  - query:
+      query_string:
+        query: "router.status: [500 TO 599]"
 realert:
   minutes: 10
 exponential_realert:
   hours: 8
 alert:
-- "email"
+  - "email"
 email:
-- "example@logit.io"
+  - "example@logit.io"
 ```
 
 ## Additional Options

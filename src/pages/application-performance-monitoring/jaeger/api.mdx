@@ -61,6 +61,8 @@ replace it.
 
 ### Example of a curl request to access your Logit.io Jaeger instance
 
+<Tabs items={["Windows", "Linux / macOS / DEB / RPM"]}>
+<Tab>
 This first method uses the __Basic Auth Header__:
 
 ```bash copy /@proxyAuthSetting.basicAuthHeader/ /@apm_id/
@@ -77,7 +79,26 @@ curl -XGET -H "Content-Type: application/json" ^
 -u "@proxyAuthSetting.username:@proxyAuthSetting.password" ^
 https://jaeger.logit.io/s/@apm_id/api/services
 ```
+</Tab>
+<Tab>
+This first method uses the __Basic Auth Header__:
 
+```bash copy /@proxyAuthSetting.basicAuthHeader/ /@apm_id/
+curl -XGET -H "Content-Type: application/json" \
+-H "Authorization: \
+Basic @proxyAuthSetting.basicAuthHeader" \
+https://jaeger.logit.io/s/@apm_id/api/services
+```
+
+This second method uses the __proxy username and password__:
+
+```bash copy /@proxyAuthSetting.username/ /@proxyAuthSetting.password/ /@apm_id/
+curl -XGET -H "Content-Type: application/json" \
+-u "@proxyAuthSetting.username:@proxyAuthSetting.password" \
+https://jaeger.logit.io/s/@apm_id/api/services
+```
+</Tab>
+</Tabs>
 Both curl requests call the same API Endpoint. This request returns a list of services that have reported traces to Jaeger
 
 There are many other Jaeger features that can be accessed via REST API through the Logit.io Proxy. These features are explained in the 

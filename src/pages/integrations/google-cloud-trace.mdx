@@ -1,0 +1,72 @@
+---
+title: Google Cloud Trace Metrics
+metaTitle: Configure Telegraf to Send Google Cloud Trace Metrics
+subTitle: Ship your Google Cloud Trace Metrics via Telegraf to your Logit.io Stack
+logo: GoogleCloudTrace
+color: "#3c76d7"
+description: Use our example to configure Telegraf to ship Google Cloud Trace metrics to Logit.io. Configure Telegraf to send Google Cloud Trace metrics to ELK.
+stackTypes: metrics
+tags: Telegraf, Metrics, Telemetry, OpenTelemetry, Instrumentation, Google Cloud Trace, Distributed Tracing
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Metrics
+
+  Configure Telegraf to ship Google Cloud Trace metrics to your Logit.io stacks via Logstash.
+  
+  ### Install Integration
+  <InstallIntegration/>
+  ### Set Credentials in GCP
+
+  <SetGCPCredentials intro="Google Cloud Trace is a distributed tracing system provided by Google Cloud that helps organizations understand the performance and behavior of their applications. It allows for the collection, analysis, and visualization of latency data to identify and troubleshoot performance issues within complex distributed systems."/>
+  
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  <TelegrafStackDriverInput metric_type="cloudtrace.googleapis.com"/>
+
+  ### Configure the output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack stackType="metrics" source="Google_Cloud_Trace_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-GoogleTrace-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>
+
+## Telegraf Google Trace Platform metrics Overview
+
+To ensure effective monitoring and analysis of Google Cloud Trace, it is important to implement a robust 
+metrics management solution. Telegraf, an open-source server agent, is widely recognized for its ability 
+to collect and report metrics from various sources, including application traces, request latency, and error rates.
+
+Telegraf offers a comprehensive set of input plugins that enable users to collect diverse metrics 
+related to application performance and tracing. These metrics are essential for understanding the 
+behavior and efficiency of applications utilizing Google Cloud Trace.
+
+For storing and analyzing these metrics, organizations can leverage Prometheus, an open-source 
+monitoring and alerting toolkit known for its flexible query language and powerful data visualization 
+capabilities. The process of transmitting Google Cloud Trace metrics from Telegraf to Prometheus 
+involves configuring Telegraf to present metrics in Prometheus's format and instructing Prometheus 
+to scrape these metrics from the Telegraf server.
+
+Once the metrics are successfully integrated into Prometheus, organizations can perform comprehensive 
+analysis and visualization using Grafana. Grafana, a leading open-source platform for monitoring 
+and observability, seamlessly integrates with Prometheus. It empowers users to create dynamic and 
+interactive dashboards for a detailed exploration of the metrics data, enabling organizations to 
+gain valuable insights into application performance, latency patterns, and potential optimization opportunities.
+
+If you need any further assistance with shipping your log data to Logit.io we're here to help you get started. 
+Feel free to get in contact with our support team by sending us a message via <IntercomButton text="live chat" /> & we'll be happy to assist.

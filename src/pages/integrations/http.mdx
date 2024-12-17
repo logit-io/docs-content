@@ -1,0 +1,112 @@
+---
+title: HTTP/S
+metaTitle: Learn How to Integrate and Configure Logstash to Send HTTP/S Logs
+subTitle: Ship logs using HTTP/S to your Logit.io Stack
+logo: https
+color: "#30a743"
+description: How to send HTTP endpoint server metrics to your Hosted ELK Logstash instance. Configure Metricbeat to send HTTP endpoint server metrics to Elasticsearch.
+stackTypes: logs
+tags: Logs, HTTP, JSON, API, cURL, Http, Curl, CURL
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Logs
+
+  Send HTTP/S logs to your Logit.io Stack via Logstash.
+  
+  ### Install Integration
+  <InstallIntegration/>
+  ### Requirements
+
+  - Valid JSON content
+  - API key, sent in the headers. If you are logged into your Logit.io account the API key and endpoint should be automatically populated in the examples below.
+  - Content-Type header set as application/json
+  - Either POST or PUT to https://@logitApiEndpoint/v2
+
+  ### Example
+
+  <Tabs items={["Windows", "Linux", "macOS", "DEB", "RPM"]}>
+  <Tab>
+  Remember that you will need to escape double-quote characters with a backslash in the data field as shown in the example below:
+              
+  CMD
+  ```bash copy
+  curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: json" https://@logitApiEndpoint/v2 -d "{\"test\":\"test\",\"example\": { \"a\": 1, \"b\": 2 } }"
+  ```
+
+  Powershell
+  ```ps1 copy
+  curl -Method Post `
+  -Uri "https://@logitApiEndpoint/v2" `
+  -Headers @{
+      "ApiKey" = "@apikey";
+      "Content-Type" = "application/json";
+      "LogType" = "json"
+  } `
+  -Body (@{
+      test = "test";
+      example = @{
+          a = 1;
+          b = 2
+      }
+  } | ConvertTo-Json)
+  ```
+  </Tab>
+
+  <Tab>
+  ```bash copy
+  curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: json" https://@logitApiEndpoint/v2 -d '{"test":"test","example": { "a": 1, "b": 2 } }'
+  ```
+  </Tab>
+
+  <Tab>
+  ```bash copy
+  curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: json" https://@logitApiEndpoint/v2 -d '{"test":"test","example": { "a": 1, "b": 2 } }'
+  ```
+  </Tab>
+
+  <Tab>
+  ```bash copy
+  curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: json" https://@logitApiEndpoint/v2 -d '{"test":"test","example": { "a": 1, "b": 2 } }'
+  ```
+  </Tab>
+
+  <Tab>
+  ```bash copy
+  curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: json" https://@logitApiEndpoint/v2 -d '{"test":"test","example": { "a": 1, "b": 2 } }'
+  ```
+  </Tab>
+
+  </Tabs>
+
+  ### Response
+
+  You should expect to receive a 202 ACCEPTED response code for a successful message
+
+  ```cmd copy
+  HTTP/1.1 202 ACCEPTED
+  Content-Type: application/json
+  Content-Length: 39
+  Connection: keep-alive
+  Server: Logit-API-Server
+  Date: Wed, 27 Mar 2024 14:34:39 GMT
+  Access-Control-Allow-Origin: *
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  X-Xss-Protection: 1; mode=block
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+
+  {"message":"Message Received, Thanks"}
+  ```
+
+  ### Launch Logs to View Your Data
+
+  <LaunchVisualizer type="logs" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>

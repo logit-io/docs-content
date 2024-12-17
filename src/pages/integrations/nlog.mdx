@@ -1,0 +1,232 @@
+---
+title: NLog
+metaTitle: Learn How to Integrate and Configure NLog to Send Logs
+pageTitle: NLog Logstash Setup
+subTitle: Ship logs from your .NET or .NET Core application to Logstash
+logo: nlog
+color: "#ea610a"
+stackTypes: logs
+description: Learn how to send NLog application logs to your Logstash instance - Ship over 100 log data types easily with Logit.io & simplify your log analysis.
+portType: tcp
+sslPortType: tcp-ssl
+tags: Logs, NLog, DotNet, .NET, DotNetCore, Nlog
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Logs
+
+  Use the Logit.io NLog configuration examples below to ship logs from your .NET or .NET Core application to Logstash.
+  
+  ### Install Integration
+  <InstallIntegration/>
+  ### Install
+
+  This guide assumes that Visual Studio 2019 is being used as the IDE (Integrated Development Environment). 
+  Type the relevant command below into the NuGet Package Manager console (you can find it under the 
+  `Tools` menu -> `NuGet Package Manager` -> `Package Manager Console`).
+
+  If you are using a different IDE please consult the [NLog wiki](https://github.com/NLog/NLog/wiki) for guidance.
+
+  <Tabs items={[".NET", ".NET Core"]}>
+    <Tab>  
+      ```ps copy
+      Install-Package NLog
+      ```
+    </Tab>
+    <Tab>
+      ```ps copy
+      Install-Package NLog.Web.AspNetCore
+      ```
+    </Tab>
+  </Tabs>
+
+  This will install the latest version. If you want to install a particular version 
+  you should append the version number you want to install, for example,
+
+  <Tabs items={[".NET", ".NET Core"]}>
+    <Tab>  
+      ```ps copy
+      Install-Package NLog -Version 4.7.10
+      ```
+    </Tab>
+    <Tab>
+      ```ps copy
+      Install-Package NLog.Web.AspNetCore -Version 4.12.0
+      ```
+    </Tab>
+  </Tabs>
+
+  For further information check out the [NLog documentation](https://nlog-project.org/download/).
+
+  ### Configuring NLog
+
+  Configuring NLog can be done in your application `app.config`, `web.config` or a separate nlog.config file.
+        
+  #### app.config/web.config Configuration
+
+  ```xml copy showLineNumbers filename="app.config/web.config" /@logstash.host/ /@logstash.port/
+  <configuration>
+    <configSections>
+      <section name="nlog" type="NLog.Config.ConfigSectionHandler, NLog" />
+    </configSections>
+    <nlog xmlns="http://www.nlog-project.org/schemas/NLog.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" throwExceptions="true">
+      <targets>
+        <target
+          xsi:type="Network"
+          name="LogitTarget"
+          address="tcp://@logstash.host:@logstash.sslPort"
+          newLine="True">
+          <layout type="JsonLayout" includeAllProperties="true">
+            <attribute name="timestamp" layout="${longdate}" />
+            <attribute name="logger" layout="${logger}" />
+            <attribute name="machinename" layout="${machinename}" />
+            <attribute name="threadid" layout="${threadid}" />
+            <attribute name="level" layout="${level}"/>
+            <attribute name="message" layout="${message}" />
+            <attribute name="exception" layout="${exception}" />
+          </layout>
+        </target>
+      </targets>
+      <rules>
+        <logger name="*" minlevel="Trace" writeTo="LogitTarget" />
+      </rules>
+    </nlog>
+  </configuration>
+  ```
+
+  #### nlog.config Configuration
+
+  ```xml copy showLineNumbers filename="nlog.config"  /@logstash.host/ /@logstash.port/
+  <?xml version="1.0" encoding="utf-8" ?>
+  <nlog xmlns="http://www.nlog-project.org/schemas/NLog.xsd"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <targets>
+      <target
+        xsi:type="Network"
+        name="LogitTarget"
+        address="tcp://@logstash.host:@logstash.sslPort"
+        newLine="True">
+        <layout type="JsonLayout" includeAllProperties="true">
+          <attribute name="timestamp" layout="${longdate}" />
+          <attribute name="logger" layout="${logger}" />
+          <attribute name="machinename" layout="${machinename}" />
+          <attribute name="threadid" layout="${threadid}" />
+          <attribute name="level" layout="${level}"/>
+          <attribute name="message" layout="${message}" />
+          <attribute name="exception" layout="${exception}" />
+        </layout>
+      </target>
+    </targets>
+
+    <rules>
+      <logger name="*" minlevel="Trace" writeTo="LogitTarget" />
+    </rules>
+  </nlog>
+  ```
+
+  For further information check out the [NLog documentation](https://github.com/nlog/NLog/wiki/Configuration-file).
+
+  ### Using NLog
+  
+  In order to emit log message you can simply call one of the methods on the Logger. 
+  
+  <Tabs items={[".NET", ".NET Core"]}>
+    <Tab>
+      ```csharp copy showLineNumbers filename="MyClass.cs"
+      using NLog;
+      
+      public class MyClass
+      {
+          private static Logger logger = LogManager.GetCurrentClassLogger();
+            
+          public void MyMethod1()
+          {
+              logger.Info("Sample trace message");
+
+              // below is an example of structured logging 
+              logger.Info(
+                "{user} logged in from IP address {ip_address}", 
+                "GreatestUser", "127.0.0.1");
+          }
+      }  
+      ```
+    </Tab>
+    <Tab>
+      ```csharp copy showLineNumbers filename="Program.cs"
+      using System;
+
+      namespace NlogTestAppCore
+      {
+          class Program
+          {
+              public static void Main()
+              {
+                  var logger = NLog.Web.NLogBuilder
+                    .ConfigureNLog("nlog.config")
+                    .GetCurrentClassLogger();
+
+                  try
+                  {
+                      Console.WriteLine(".NET Core NLog Logger app started...");
+                      logger.Info("Hello world");
+
+                      // below is an example of structured logging 
+                      logger.Info(
+                        "{user} logged in from IP address {ip_address}", 
+                        "GreatestUser", "127.0.0.1");
+
+                      System.Console.ReadKey();
+                  }
+                  catch (Exception ex)
+                  {
+                      Console.WriteLine(".NET Core NLog Logger app failed...");
+                      Console.WriteLine(ex.Message);
+                      logger.Error(ex, "Goodbye cruel world");
+                  }
+              }
+          }
+      }
+      ```
+    </Tab>
+  </Tabs>
+
+  NLog is a fully featured logging platform for .NET developers that provides many quality of life benefits. 
+  For more configuration options please see the [Nlog Documentation](https://github.com/NLog/NLog/wiki).
+  
+  For more information about structured logging please [see here](https://github.com/NLog/NLog/wiki/How-to-use-structured-logging) 
+  and [here](https://github.com/NLog/NLog/wiki/Tutorial) for a comprehensive tutorial about setting up and using NLog.
+
+  ### Check Logit.io for your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="nlog" source="nlog" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+## NLog Logger Overview
+
+NLog is a free open source logging platform for [.NET](/integrations/log-management/languages-and-libraries/dotnet) & 
+[.NET Core](/integrations/log-management/languages-and-libraries/dotnet), that is often compared to 
+[Serilog](/integrations/log-management/languages-and-libraries/serilog) & [Log4net](/integrations/log-management/languages-and-libraries/log4net). 
+NLog is well known for being easy to use & is highly flexible alongside its high performance capabilities.
+        
+NLog also provides support for structured log data & covers a huge range of data targets and formats. 
+NLog is able to note a variety of log severities including (by descending priority); 
+`Fatal`, `Error`, `Warn`, `Info`, `Debug` & `Trace`.
+
+While NLog itself is a logging platform, the service also creates internal 
+[application logs](https://logit.io/platform/logging/logging-as-a-service/application-logging/) of its 
+own that many users find extremely hard to troubleshoot & parse without the use of a tool like Hosted Logstash. 
+
+Our platform offers Hosted Logstash alongside Elasticsearch & Kibana to help 
+you view the entirety of your Nlog & .Net log files (among hundreds of other 
+popular data sources) in a single source of truth.
+
+If after following our NLog documentation you require any additional assistance 
+with analysing your NLog or .Net logs we're here to help. Just reach out by 
+contacting our support team <IntercomButton text="via live chat" /> and we'll be happy to help you get started.

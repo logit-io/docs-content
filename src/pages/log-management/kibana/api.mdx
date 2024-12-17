@@ -61,6 +61,8 @@ replace it.
 
 ### Example of a curl request to access your Logit.io Kibana instance
 
+<Tabs items={["Windows", "Linux / macOS / DEB / RPM"]}>
+<Tab>
 This first method uses the __Basic Auth Header__:
 
 ```bash copy /@proxyAuthSetting.basicAuthHeader/ /@logs_id/
@@ -77,6 +79,26 @@ curl -XGET -H "osd-xsrf:true" -H "Content-Type: application/json" ^
 -u "@proxyAuthSetting.username:@proxyAuthSetting.password" ^
 https://kibana.logit.io/s/@logs_id/api/status
 ```
+</Tab>
+<Tab>
+This first method uses the __Basic Auth Header__:
+
+```bash copy /@proxyAuthSetting.basicAuthHeader/ /@logs_id/
+curl -XGET -H "osd-xsrf:true" -H "Content-Type: application/json" -H \
+"Authorization: Basic \
+@proxyAuthSetting.basicAuthHeader" \
+https://kibana.logit.io/s/@logs_id/api/status
+```
+
+This second method uses the __proxy username and password__:
+
+```bash copy /@proxyAuthSetting.username/ /@proxyAuthSetting.password/ /@logs_id/
+curl -XGET -H "osd-xsrf:true" -H "Content-Type: application/json" \
+-u "@proxyAuthSetting.username:@proxyAuthSetting.password" \
+https://kibana.logit.io/s/@logs_id/api/status
+```
+</Tab>
+</Tabs>
 
 Both curl requests call the same API Endpoint. This request returns detailed information about your Kibana instance’s health including the 
 resource usage, the server status, installed plugins, plugin statuses and metrics.

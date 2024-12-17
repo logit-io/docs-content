@@ -43,16 +43,16 @@ name: "Spike example alert"
 type: spike
 index: "*-*"
 timeframe:
-hours: 7
+  hours: 7
 spike_height: 1
 spike_type: "up"
-- query:
-query_string:
-query: "MyFieldName:MyFieldValue"
+query:
+  query_string:
+    query: "MyFieldName:MyFieldValue"
 alert:
-- "email"
+  - "email"
 email:
-- "example@logit.io"
+  - "example@logit.io"
 ```
 
 ## 2. Customizing Rules for Different Applications or Computers
@@ -92,9 +92,9 @@ filter:
      query: "agent.machinename:myserver AND status: MyFieldName:MyFieldValue"
     
 alert:
-- "slack"
+  - "slack"
 slack_webhook_url:
-- “[YOUR SLACK HOOK]”
+  - “[YOUR SLACK HOOK]”
 ```
 
 ## 3. Detecting Web Request Interruptions

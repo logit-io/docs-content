@@ -60,6 +60,8 @@ replace it.
 
 ### Example of a curl request to access your Logit.io Grafana instance
 
+<Tabs items={["Windows", "Linux / macOS / DEB / RPM"]}>
+<Tab>
 This first method uses the __Basic Auth Header__:
 
 ```bash copy /@proxyAuthSetting.basicAuthHeader/ /@metrics_id/
@@ -76,6 +78,26 @@ curl -XGET -H "Content-Type: application/json" ^
 -u "@proxyAuthSetting.username:@proxyAuthSetting.password" ^
 https://grafana.logit.io/s/@logs_id/api/health
 ```
+</Tab>
+<Tab>
+This first method uses the __Basic Auth Header__:
+
+```bash copy /@proxyAuthSetting.basicAuthHeader/ /@metrics_id/
+curl -XGET -H "Content-Type: application/json" \
+-H "Authorization: \
+Basic @proxyAuthSetting.basicAuthHeader" \
+https://grafana.logit.io/s/@logs_id/api/health
+```
+
+This second method uses the __proxy username and password__:
+
+```bash copy /@proxyAuthSetting.username/ /@proxyAuthSetting.password/ /@metrics_id/
+curl -XGET -H "Content-Type: application/json" \
+-u "@proxyAuthSetting.username:@proxyAuthSetting.password" \
+https://grafana.logit.io/s/@logs_id/api/health
+```
+</Tab>
+</Tabs>
 
 Both curl requests call the same API Endpoint. This request returns detailed information about your Grafana instance’s health.
 

@@ -1,0 +1,101 @@
+---
+title: Redfish
+metaTitle: Integrate and Configure Telegraf to send Redfish Metrics
+subTitle: Ship your Redfish Metrics via Telegraf to your Logit.io Stack
+color: "#4d4d4d"
+description: Use our example to configure Telegraf to ship Redfish metrics to your Logit.io stacks. Configure Telegraf to send Redfish metrics to Logstash or Elastic.
+stackTypes: metrics
+sslPortType: beats-ssl
+tags: Telegraf, Metrics, Telemetry, OpenTelemetry, Health, Instrumentation, Redfish, Hardware Management, Monitoring
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Metrics
+
+  Configure Telegraf to ship Redfish metrics to your Logit.io stacks via Logstash.
+  
+  ### Install Integration
+  <InstallIntegration/>
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+
+  ```toml copy
+  # Read CPU, Fans, Powersupply and Voltage metrics of hardware server through redfish APIs
+  [[inputs.redfish]]
+    ## Redfish API Base URL.
+    address = "https://127.0.0.1:5000"
+
+    ## Credentials for the Redfish API.
+    username = "root"
+    password = "password123456"
+
+    ## System Id to collect data for in Redfish APIs.
+    computer_system_id="System.Embedded.1"
+
+    ## Amount of time allowed to complete the HTTP request
+    # timeout = "5s"
+
+    ## Optional TLS Config
+    # tls_ca = "/etc/telegraf/ca.pem"
+    # tls_cert = "/etc/telegraf/cert.pem"
+    # tls_key = "/etc/telegraf/key.pem"
+    ## Use TLS but skip chain & host verification
+    # insecure_skip_verify = false
+  ```
+  <Callout type="info">
+    Read more about how to configure data scraping and configuration options for [Redfish](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/redfish)
+  </Callout>
+
+  ### Configure the output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack source="Redfish_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-Redfish-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+### Telegraf Redfish Overview
+
+For the effective monitoring and analysis of Redfish metrics in a distributed environment, 
+a solid metrics management solution is key. Telegraf, an open-source server agent for collecting 
+and reporting metrics, is ideally suited for this role. It can gather Redfish metrics from 
+various sources, including operational Redfish instances, databases, and other relevant applications.
+      
+Telegraf offers a comprehensive set of input plugins that enable users to collect diverse metrics, 
+such as CPU usage, memory utilization, network traffic, and more, vital for understanding 
+Redfish performance. To store and examine these harvested metrics, organizations can use 
+Prometheus, an open-source monitoring and alerting toolkit recognized for its flexible 
+querying language and potent data visualization capabilities.
+
+The transmission of Redfish metrics from Telegraf to Prometheus requires configuring Telegraf 
+to output metrics in the Prometheus format, and then setting up Prometheus to scrape these metrics 
+from the Telegraf server. This process involves setting up Telegraf to collect Redfish metrics, 
+outputting them in the Prometheus format, configuring Prometheus to retrieve these metrics from 
+the Telegraf server, and then visually interpreting the data using Prometheus's dynamic 
+querying and graphical visualization tools.
+
+Once the metrics are successfully integrated into Prometheus, further analysis and visualization 
+can be carried out using Grafana. Grafana is a leading open-source platform known for its 
+monitoring and observability features, and is fully compatible with Prometheus. 
+It allows users to create dynamic, interactive dashboards for a deeper dive into the metrics data, 
+offering a comprehensive understanding of performance trends and potential issues within the Redfish system.
+
+If you need any further assistance with shipping your log data to Logit.io we're here to help you get started. 
+Feel free to get in contact with our support team by sending us a message via <IntercomButton text="live chat" /> 
+& we'll be happy to assist.

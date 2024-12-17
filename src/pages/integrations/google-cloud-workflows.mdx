@@ -1,0 +1,76 @@
+---
+title: Google Workflows Metrics
+metaTitle: Configure Telegraf to Send Google Workflows Metrics
+subTitle: Ship your Google Workflows Metrics via Telegraf to your Logit.io Stack
+logo: googlecloud
+color: "#3c76d7"
+description: Use our example to configure Telegraf to ship Google Workflows metrics to Logit.io. Configure Telegraf to send Google Workflows metrics to Logstash or Elastic.
+stackTypes: metrics
+tags: Telegraf, Metrics, Telemetry, OpenTelemetry, Instrumentation, Google Workflows, Workflow Automation, Orchestration
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Metrics
+
+  Configure Telegraf to ship Google Workflows metrics to your Logit.io stacks via Logstash.
+  
+  ### Install Integration
+  <InstallIntegration/>
+  ### Set Credentials in GCP
+
+  <SetGCPCredentials intro="Google Workflows is a serverless orchestration service provided by Google Cloud that allows organizations to automate and coordinate workflows across multiple services and systems. It provides a visual and intuitive interface for designing, executing, and monitoring workflows, making it easier to build complex business processes."/>
+  
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  <TelegrafStackDriverInput metric_type="workflows.googleapis.com"/>
+
+  ### Configure the output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack stackType="metrics" source="Google_Workflows_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-GoogleWorkflows-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>
+
+## Telegraf Google Workflows Platform metrics Overview
+
+Telegraf, developed by InfluxData, is a versatile open-source server agent capable of collecting metrics 
+and data from a broad spectrum of sources. Among its various integrations is support for Google Workflows, 
+a managed service offered by Google Cloud that orchestrates and automates Google Cloud and HTTP-based API 
+services with serverless workflows. Google Workflows allows developers to build and deploy applications 
+that integrate services within Google Cloud and external systems, streamlining complex processes into 
+scalable, reliable automation sequences.
+
+Integrating Telegraf with Google Workflows enables organizations to monitor the execution and performance 
+of their workflows in real-time. This capability is crucial for developers and operations teams to ensure 
+their automated processes run smoothly and efficiently, facilitating operational reliability and optimizing 
+resource utilization. Monitoring metrics such as workflow execution times, success and error rates, and 
+resource consumption are essential for identifying bottlenecks, debugging issues, and improving the overall 
+performance of automated processes.
+
+With Logit.io, businesses can enhance their monitoring and analytics capabilities for Google Workflows, 
+enabling them to proactively manage their automated processes, quickly resolve issues, and optimize the 
+performance of their workflows. The platform's advanced analytics and visualization tools support informed 
+decision-making, helping users to maintain high-quality, efficient, and reliable automation sequences.
+
+To further enhance your log management strategy, it's valuable to explore our complementary integrations 
+for the Google Cloud ecosystem. The [Google API Gateway](/integrations/infrastructure-metrics/google-cloud/api-gateway-telegraf-metrics) 
+integration allows seamless communication between your applications and Logit.io. 
+Additionally, the Google [VM Manager](/integrations/infrastructure-metrics/google-cloud/vm-manager-telegraf-metrics) 
+integration empowers you to efficiently manage and scale virtual machines in your cloud infrastructure, 
+ensuring the optimal performance of your applications. 
+Logit.io's [GCP logging](https://logit.io/solutions/gcp-logging/) also offers integrations that seamlessly enhance functionality.

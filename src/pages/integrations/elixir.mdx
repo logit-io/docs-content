@@ -1,0 +1,69 @@
+---
+title: Elixir
+metaTitle: Learn How to Integrate and Configure Elixir to Send Traces
+pageTitle: OpenTelemetry Elixir Configuration
+subTitle: Ship traces from Elixir to OpenSearch with OpenTelemetry
+logo: elixir
+color: "#800080"
+stackTypes: apm
+description: Follow the simple steps in our source integrations to ship traces from Elixir to OpenSearch with OpenTelemetry. Send Elixir data to your Logit.io stacks.
+tags: Elixir, Erlang, BEAM, Functional Programming, Apm, Grpc, Http
+---
+
+Use OpenTelemetry to easily send Elixir traces to your Logit.io Stack.
+
+<Steps>
+  ## APM
+  ### Install Integration
+  <InstallIntegration/>
+  
+  ### Getting Started
+
+  <Tabs items={["HTTPS", "gRPC"]}>
+  
+  <Tab>
+    You can get help Getting Started with OpenTelemetry for Elixir by referring 
+    to the [official documentation](https://opentelemetry.io/docs/instrumentation/erlang/getting-started/). 
+    You need to configure the OTLP exporter to ensure the trace data reaches your Logit.io Stack.
+
+    OTLP HTTP/S Exporter settings:
+
+    ```elixir copy showLineNumbers /@opentelemetry.endpointAddress/ /@opentelemetry.httpsPort/ /@opentelemetry.base64encodedAuthString/
+    config :opentelemetry_exporter,
+    otlp_protocol: :http_protobuf,
+    otlp_endpoint: "https://@opentelemetry.endpointAddress:@opentelemetry.httpsPort",
+    otlp_headers: [{"authorization", "Basic @opentelemetry.base64encodedAuthString" }]
+    ```
+
+    For more information about exporter configuration with Elixir please see the 
+    [documentation](https://opentelemetry.io/docs/instrumentation/erlang/exporters/).
+  </Tab>
+
+  <Tab>
+    You can get help Getting Started with OpenTelemetry for Elixir by referring 
+    to the [official documentation](https://opentelemetry.io/docs/instrumentation/erlang/getting-started/). 
+    You need to configure the OTLP exporter to ensure the trace data reaches your Logit.io Stack.
+
+    OTLP gRPC Exporter settings:
+
+    ```elixir copy showLineNumbers /@opentelemetry.endpointAddress/ /@opentelemetry.grpcPort/ /@opentelemetry.base64encodedAuthString/
+    config :opentelemetry_exporter,
+    otlp_protocol: :grpc,
+    otlp_endpoint: "https://@opentelemetry.endpointAddress:@opentelemetry.grpcPort",
+    otlp_headers: [{"authorization", "Basic @opentelemetry.base64encodedAuthString" }]
+    ```
+
+    For more information about exporter configuration with Elixir please see the 
+    [documentation](https://opentelemetry.io/docs/instrumentation/erlang/exporters/).
+  </Tab>
+
+  </Tabs>
+
+  ### Launch Logit.io to view your traces
+
+  <LaunchStack utmMedium="apm" utmCampaign="elixir" source="apm_elixir_http" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>

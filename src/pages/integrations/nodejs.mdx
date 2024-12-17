@@ -1,0 +1,297 @@
+---
+title: Node.js
+metaTitle: Learn How to Integrate and Configure Node.js to Send Logs and Traces
+pageTitle: Node.js Logging with Winston and Traces with OpenTelemetry
+subTitle: Ship data from your Node.js application to Logit.io
+logo: nodejs
+color: "#82bb26"
+stackTypes: logs, apm
+description: Send your node.js application logs to Logit.io via Logstash using the instructions below and begin searching your data
+sslPortType: tcp-ssl
+tags: Logs, NodeJS, Node.js, JavaScript, Node, Nodejs, Apm, Grpc, Http
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Logs
+
+  Get started quickly with Node.js logging using our configuration guide on how to easily ship Node.js logs to your hosted Logstash and OpenSearch.
+  
+  ### Install Integration
+
+  <InstallIntegration/>
+
+  ### Introduction
+
+  The example code used in this guide has been setup using Node.js v20.18.0 (64-bit). 
+  Node Package Manager (npm) can be used to install the required `winston` (3.15.0) 
+  and `winston-logstash` (1.2.1) packages.
+
+  These will allow you to send log data from your Node.js application, to 
+  your Logit.io stack. 
+
+  ### Installing
+
+  First, ensure that you have downloaded and installed Node.js. You can get 
+  it from the official website, [here](https://nodejs.org/en/download/). This includes various 
+  options to install including using an installer file (for Windows or Mac).
+
+  If you are just starting out with sending logs via Node.js there is a useful tutorial 
+  for creating an 'express' application to help get you up-and-running 
+  [here](https://code.visualstudio.com/docs/nodejs/nodejs-tutorial#_an-express-application).
+
+  Inside your project directory, open a terminal of your choice and type the following (this will install
+  the latest version of Winston and winston-logstash):
+
+  ```cmd copy
+  npm install winston
+  npm install winston-logstash
+  ```
+
+  ### Sending Logs
+
+  To setup Winston, add the following code to your application before sending logs:
+         
+  ```javascript copy showLineNumbers /'@logstash.sslPort:strip_quotes'/ /@logstash.host/
+
+  const winston = require('winston');
+  const LogstashTransport = require("winston-logstash/lib/winston-logstash-latest");
+
+  const logger = winston.createLogger({
+    transports: [
+      new LogstashTransport({
+        port: '@logstash.sslPort:strip_quotes',
+        host: '@logstash.host',
+        ssl_enable: true,
+        max_connect_retries: -1,
+      })
+    ]
+  });
+  ```
+  
+  You can then send logs using a Winston log method:
+  
+  ```javascript copy
+  logger.info('Hello, this is a log message!');
+  ```
+    
+  You can send different levels of log records by using different Winston log methods.
+  Other log record levels and their corresponding winston methods include:
+  
+  ```javascript copy showLineNumbers
+  winston.log("This is a standard log message");
+  winston.error("This is an error log message");
+  winston.warn("This is a warning log message");
+  ```
+
+  For additional information, the official Winston documentation can be found [here](https://github.com/winstonjs/winston).
+
+  ### Launch Logs to View Your Data
+
+  <LaunchVisualizer type="logs"/>
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+<Steps>
+  ## APM
+  ### Install Integration
+  <InstallIntegration/>
+  
+  ### Install
+
+  Create a new folder for the project called `opentelemetry_nodejs_example` and 
+  then open the command prompt or terminal window and navigate to the folder. 
+  Paste in the following command:
+
+  ```cmd copy
+  npm init -y
+  ```
+
+  This will create a `package.json` file with default settings.
+
+  This guide uses the Express framework to simplify handling HTTP requests. 
+  Next we need to paste the following command into the command prompt or terminal window:
+
+  ```cmd copy
+  npm install express
+  ```
+
+  You will now have a `node_modules` folder in addition to 
+  the `package.json` and a `package-lock.json` file.
+
+  We now need to install the necessary OpenTelemetry packages using npm (node package manager), 
+  the packages that we will be using are as follows:
+
+  - `opentelemetry-api`: Core API for OpenTelemetry
+  - `opentelemetry-sdk`: SDK implementation
+  - `opentelemetry-exporter-trace-otlp-grpc`: Exporter to send data to the OpenTelemetry Collector or other OTLP-compatible backends using grpc
+  - `opentelemetry-exporter-trace-otlp-http`: Exporter to send data to the OpenTelemetry Collector or other OTLP-compatible backends using https
+  - `opentelemetry-instrumentation-node`: Automatically instrument your node applications for tracing with OpenTelemetry
+
+  We install them with the following command.
+
+  ```cmd copy
+  npm install @opentelemetry/api @opentelemetry/sdk-node @opentelemetry/auto-instrumentations-node @opentelemetry/sdk-trace-base @opentelemetry/exporter-trace-otlp-http @opentelemetry/exporter-trace-otlp-grpc
+  ```
+  
+  Create three new files and name them `app.js`, `tracing.js` and `config.js`.
+
+  Open the `tracing.js` file with your choice of text editor, copy and paste the following code into the file and then save.
+
+  ```js copy showLineNumbers filename="tracing.js"
+  const config = require('./config');
+
+  const { NodeSDK } = require('@opentelemetry/sdk-node');
+  const { getNodeAutoInstrumentations } = require('@opentelemetry/auto-instrumentations-node');
+  const { Resource } = require('@opentelemetry/resources');
+  const { SemanticResourceAttributes } = require('@opentelemetry/semantic-conventions');
+  const { OTLPTraceExporter } = require(`@opentelemetry/exporter-trace-otlp-${config.protocol}`);
+  let sdk = new NodeSDK();
+  let channelCredentials = null;
+  let traceExporter = new OTLPTraceExporter();
+
+  // Define the service name
+  const serviceName = 'LogitNodeJSTestApp';
+
+  // Encode the username and password for Basic Authentication
+  const auth = Buffer.from(`${config.username}:${config.password}`).toString('base64');
+
+  if (config.protocol === "grpc") {    
+    const OTLP_ENDPOINT = `grpc://${config.endpoint}:${config.port}`;
+    const grpc = require('@grpc/grpc-js');
+    const { credentials } = grpc;
+    const metadata = new grpc.Metadata();
+    metadata.set('authorization', `Basic ${auth}`);
+    
+    // Create gRPC credentials with Basic Auth
+    channelCredentials = credentials.combineChannelCredentials(
+      credentials.createSsl(), // Use SSL credentials if your endpoint requires it
+      credentials.createFromMetadataGenerator((_params, callback) => {
+      callback(null, metadata);
+      })
+    );
+    
+    // Configure the OTLP trace exporter with gRPC and Basic Auth
+    traceExporter = new OTLPTraceExporter({
+      url: OTLP_ENDPOINT,
+      credentials: channelCredentials,
+    });
+    
+    // Create a new Node SDK instance with automatic instrumentation
+    sdk = new NodeSDK({
+      traceExporter,
+      instrumentations: [getNodeAutoInstrumentations()],
+      resource: new Resource({
+      [SemanticResourceAttributes.SERVICE_NAME]: serviceName,
+      }),
+    });    
+  } else {    
+    const OTLP_ENDPOINT = `https://${config.endpoint}:${config.port}/v1/traces`;
+    
+    // Create HTTPS credentials with Basic Auth
+    traceExporter = new OTLPTraceExporter({
+    url: OTLP_ENDPOINT,
+    headers: {
+      'Authorization': `Basic ${auth}`
+      }
+    });
+    
+    // Create a new Node SDK instance with automatic instrumentation
+    sdk = new NodeSDK({
+    traceExporter,
+    instrumentations: [getNodeAutoInstrumentations()],
+    resource: new Resource({
+      [SemanticResourceAttributes.SERVICE_NAME]: serviceName,
+      }),
+    });
+  }
+
+  // Initialize the SDK and start the tracing
+  sdk.start();
+  ```
+
+  Next open the `app.js` file with your text editor, copy and paste the following code into the file and then save.
+
+  ```js copy showLineNumbers filename="app.js"
+  // Import and initialize OpenTelemetry
+  require('./tracing');
+
+  const express = require('express');
+  const app = express();
+
+  app.get('/', (req, res) => {
+    res.send('Hello, World!');
+  });
+
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+  });
+  ```
+
+  ### Configuring the App
+
+  Open the `config.js` file using your text editor, copy and paste the 
+  following into the file and then save. Use the tab to choose between 
+  sending via HTTPS or gRPC. 
+
+  <Tabs items={["HTTPS", "gRPC"]}>  
+    <Tab>
+      ```js copy showLineNumbers /@opentelemetry.endpointAddress/ /@opentelemetry.base64encodedAuthString/ /@opentelemetry.username/ /@opentelemetry.password/
+      // config.js
+      module.exports = {
+        endpoint: "@opentelemetry.endpointAddress",
+        port: "@opentelemetry.httpsPort",
+        protocol: "http",
+        username: '@opentelemetry.username',
+        password: '@opentelemetry.password',
+      };
+      ```
+    </Tab>
+
+    <Tab>
+      ```js copy showLineNumbers /@opentelemetry.endpointAddress/ /@opentelemetry.base64encodedAuthString/ /@opentelemetry.username/ /@opentelemetry.password/
+      // config.js
+      module.exports = {
+        endpoint: "@opentelemetry.endpointAddress",
+        port: "@opentelemetry.grpcPort",
+        protocol: "grpc",
+        username: '@opentelemetry.username',
+        password: '@opentelemetry.password',
+      };
+      ```
+    </Tab>
+
+  </Tabs>
+
+  ### Run the NodeJs App
+
+  Run the NodeJS app with the following command in Terminal or the Command Prompt window.
+
+  ```cmd copy
+  node app.js
+  ```
+
+  You will see feedback from the app so that you know that is running, 
+  the message should say "Server is running on http://localhost:3000".
+
+  The action of launching the NodeJS app will have sent traces 
+  to your stack which can now be viewed in Jaeger.
+  
+  ### Launch Logit.io to view your traces
+
+  <LaunchVisualizer type="apm" />
+
+  If you open your browser and enter http://localhost:3000 you will 
+  see that action of browsing to the page served by the NodeJS app 
+  will send further traces to your stack.
+
+  ### How to diagnose no data in stack
+
+  <DiagnoseNoData />
+</Steps>

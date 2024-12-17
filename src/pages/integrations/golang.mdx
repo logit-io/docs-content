@@ -1,0 +1,127 @@
+---
+title: Golang
+metaTitle: Learn How to Integrate and Configure Golang to Send Logs
+pageTitle: Golang Logging
+subTitle: Ship GoLang application logs to Logstash
+logo: golang
+color: "#00b1d1"
+stackTypes: logs
+description: How to send Golang server metrics to your Hosted ELK Logstash instance. Configure Metricbeat to send Go programming language server metrics to Logstash. 
+sslPortType: tcp-ssl
+tags: Logs, Go, Application Logs, Golang
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Logs
+
+  Configure your GoLang application to send logs to Logstash & Elasticsearch.
+  
+  ### Install Integration
+  <InstallIntegration/>
+  ### Create Go Logging Application
+
+  Paste the following into a Go file to create a generic logging application.
+      
+  This is not a straight plug and play piece of code. You will need to add this 
+  to your own application and tell it when to log Info, Warn, Error & Fatal messages 
+  in order for this to work. This is just an example configuration to get you started.
+  
+  ```go copy showLineNumbers
+  package main
+  import (
+          "github.com/bshuster-repo/logrus-logstash-hook"
+          "github.com/sirupsen/logrus"
+          "crypto/tls"
+  )
+  func main() {
+          log := logrus.New()
+          conn, err := tls.Dial("tcp", "@logstash.host:@logstash.sslPort", &tls.Config{ RootCAs: nil }) 
+          if err != nil {
+                  log.Fatal(err)
+          }
+          hook := logrustash.New(conn, logrustash.DefaultFormatter(logrus.Fields{"type": "myappName"}))
+          log.Hooks.Add(hook)
+          ctx := log.WithFields(logrus.Fields{
+                  "method": "main",
+          })
+          ctx.Info("Info Message")
+          ctx.Error("Error Message")
+          ctx.Warn("Warn Message")
+          ctx.Fatal("Fatal Message")
+  }
+  ```
+  
+  In the code above you can edit the message displayed by editing the text 
+  between the brackets of the ctx.Info, ctx.Error etc.
+
+  ### Go Package Requirements
+
+  Now you need to run the following commands to install the logging package requirements
+
+  ```cmd copy
+  go get github.com/bshuster-repo/logrus-logstash-hook
+  go get github.com/sirupsen/logrus
+  ```
+
+  ### Run the application
+  
+  If you called the example configuration file logs.go you would run the following command 
+  and then be able to see the Info, Warn, Error & Fatal message in Kibana.
+      
+  ```cmd copy
+  go run logs.go
+  ```
+  
+  You should see output similar to the following:
+
+  ```ruby copy showLineNumbers
+  {
+    "@timestamp" => "2020-04-07T22:22:43.000Z",
+    "@version" => "1",
+    "level" => "info",
+    "message" => "Info Message",
+    "method" => "main",
+    "host" => "172.17.0.1",
+    "port" => 15678,
+    "type" => "myappName"
+  }
+  ```
+
+  ### Check Logit.io for your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="golang" source="golang" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+## Golang Logging Overview
+
+Golang (also known as Go) is an open-source programming language created in 2009 by Google. 
+It forms the backbone of many platforms, including the core tools involved in 
+containerisation ([Kubernetes](/integrations/log-management/containerisation/kubernetes) & [Docker](/integrations/log-management/containerisation/docker)).
+
+While many [application logs](https://logit.io/platform/logging/logging-as-a-service/application-logging/) 
+include a variety of statuses, Golang only records log messages when an error is generated. 
+Golang error logs include a variety of valuable data for troubleshooting, including 
+timestamps, contextual data, and what level of error has been encountered. 
+      
+It may not be sustainable for large organisations to track these log messages reliably 
+if your Go logs are deployed across numerous hosts. These will likely require 
+tailing in a centralised logging environment.
+
+Using a specialised Golang logger makes root cause analysis, application monitoring, 
+and reporting at scale far easier than relying on distributed logs located 
+across all your Go-based applications.  
+      
+The Logit.io platform includes everything you need for Golang logging & is built to 
+enable you to drive data-driven insights for error resolution fast. Our platform is 
+fully integrated with a number of third-party alerting tools so you can be notified 
+in real-time when your program encounters an exception.
+
+If you need any more help with migrating your Go log files to Logstash the Logit.io 
+team is here to help. Just get in contact with us <IntercomButton text="via live chat" /> and we'll be happy to assist.

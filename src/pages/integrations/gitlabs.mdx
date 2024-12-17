@@ -1,0 +1,105 @@
+---
+title: GitLab
+metaTitle: Learn How to Integrate and Configure Filebeat to Send GitLab Logs
+subTitle: Ship your GitLab logs using Filebeat to your Logit.io Stack
+logo: gitlab
+color: "#f66000"
+description: Use our example to configure Filebeat to ship GitLab logs to your Logit.io stacks. Configure Filebeat to send GitLab logs to Logstash or Elastic.
+stackTypes: logs
+sslPortType: beats-ssl
+tags: GitLab, DevOps, Syslog, Beats, Logs, Filebeat, File, Text, Log Files, Gitlabs
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Logs
+
+  Configure GitLab to ship logs via Filebeat to your Logit.io stacks via Logstash.
+  
+  ### Install Integration
+  <InstallIntegration/>
+  ### Install Filebeat
+
+  <InstallFilebeat />
+
+  ### Configure GitLab Logging
+
+  GitLab comes equipped with a sophisticated logging framework that ships several system logs. 
+          
+  To manage these logs effectively, we recommend referring to 
+  the ["Log system from GitLab"](https://docs.gitlab.com/ee/administration/logs/index.html) documentation 
+  and customizing the Filebeat configuration below to meet your specific requirements. 
+  
+  This will help you collect and forward the relevant log data to your 
+  preferred destination for analysis and monitoring purposes.
+
+  ### Configure Filebeat.yml
+
+The configuration file below is pre-configured to send data to your Logit.io Stack.
+        
+Copy the configuration file below and overwrite the contents of the Filebeat 
+configuration file typically located at `/etc/filebeat/filebeat.yml`
+
+```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+####################### Logit.io Filebeat Configuration #########################
+# ============================== Filebeat inputs ===============================
+filebeat.inputs:
+- type: filestream
+  enabled: true
+  paths:
+  - "/var/opt/gitlab/*.log"
+  
+  fields:
+    type: "gitlabs"
+  fields_under_root: true
+  encoding: utf-8
+  ignore_older: 12h
+
+# ================================== Outputs ===================================
+output.logstash:
+  hosts: ["@logstash.host:@logstash.sslPort"]
+  loadbalance: true
+  ssl.enabled: true
+```
+  ### Validate Configuration
+
+  <ValidateBeat beatname="filebeat" />
+
+  ### Start Filebeat
+
+  <StartFilebeat />
+
+  ### Launch Logit.io to view your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="GitLab" source="GitLab" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>
+
+## GitLab Overview
+
+GitLab is a versatile software development platform that offers numerous features to 
+streamline development workflows for organizations. To effectively monitor and analyze 
+activity on GitLab, it's crucial to have a reliable and efficient log management solution.
+
+GitLab generates various types of logs that capture significant information about system 
+activity, application performance, and user behavior. Organizations can use Filebeat, 
+an open-source log shipper, to send GitLab logs to various destinations such as 
+Elasticsearch, Logstash, and OpenSearch for effective log management.
+
+Filebeat is highly compatible and easy to use, making it a widely preferred option for 
+sending logs from GitLab to different destinations. Organizations can configure GitLab 
+to forward logs to a syslog server and use Filebeat to collect and 
+forward log data to Elasticsearch or other destinations.
+
+A robust log management solution enables organizations to gain valuable insights into 
+GitLab activity and take proactive steps to ensure optimal system performance and 
+application security. By leveraging tools such as Filebeat and OpenSearch, organizations 
+can analyze data from various sources and gain a deeper understanding of their development workflows.
+
+If you need any further assistance with shipping your log data to Logit.io we're 
+here to help you get started. Feel free to get in contact with our support team 
+by sending us a message <IntercomButton text="via live chat" /> and we'll be happy to assist.

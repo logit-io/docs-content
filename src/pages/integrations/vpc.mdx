@@ -1,0 +1,79 @@
+---
+title: VPC Flow Logs
+metaTitle: Learn How to Integrate and Configure AWS VPC Flow Logs to Send Logs
+pageTitle: VPC Flow Log Setup
+subTitle: Ship logs from VPC to Logstash
+logo: vpcflowlogs
+color: "#ef7c23"
+stackTypes: logs
+description: Follow our VPC Flow tutorial to get started sending VPC Flow logs to Logstash for monitoring and analysis in Logit.io.
+tags: Logs, AWS, S3, VPC, Cloud, Vpc
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Logs
+
+  ### Install Integration
+
+  <InstallIntegration/>
+  
+  ### Confirm S3 Bucket
+
+  Ensure your logs are being sent to an S3 bucket. The following guide from Amazon will 
+  help you achieve this if you are not doing this already, you can choose the best way 
+  to achieve this, but cloudwatch or cloudtrail are a great place to start:
+
+  [VPC Flow Logs Guide](http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/flow-logs.html)
+
+  ### Ensure Adequate Bucket Permissions
+
+  The following permissions applied to the AWS IAM Policy being used:
+  
+  - `s3:ListBucket` to check if the S3 bucket exists and list objects in it.
+  - `s3:GetObject` to check object metadata and download objects from S3 buckets.
+  
+  Below is how your permissions should appear:
+
+  ```json copy showLineNumbers
+  {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "SidID",
+        "Effect": "Allow",
+        "Action": ["s3:GetObject", "s3:ListBucket"],
+        "Resource": ["arn:aws:s3:::your-bucket/*"]
+      }
+    ]
+  }
+  ```
+
+  ### Configure Logstash for Amazon VPC
+
+  <AddS3Input type="aws_vpc" utmMedium="logs" utmCampaign="awsvpc" />
+  
+  ### Check Logit.io for your logs
+
+  <LaunchStack source="vpc" utmMedium="aws" utmCampaign="vpc" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>
+
+## VPC Flow Logs Overview
+
+Sending data from your Amazon VPC to Logit.io is a streamlined process that enhances 
+your AWS ecosystem's visibility and analytical capabilities. Logit.io's robust integration 
+solutions make it effortless to consolidate logs and metrics, providing invaluable insights 
+into your infrastructure's performance and security. With this integration, you can centralize 
+your data, enabling efficient monitoring and troubleshooting while leveraging Logit.io's powerful analytics tools.
+
+Additionally, for in-depth insights into [AWS EKS](/integrations/log-management/aws/aws-eks-logs) it is 
+well worth exploring this dedicated integration. These resources will help empower 
+you to optimize your data analytics capabilities and make informed decisions about your AWS environment.
+
+Logit.io's service for [AWS logging](https://logit.io/solutions/aws-logging/)
+is renowned for its fully scalable operations, thanks to these integrations.
