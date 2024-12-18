@@ -1,0 +1,79 @@
+---
+title: KeyCDN
+metaTitle: Learn How to Integrate and Configure KeyCDN to Send Logs
+subTitle: Ship logs from KeyCDN to Logstash
+logo: key-cdn
+color: "#047aed"
+description: Learn how to ship KeyCDN logs to your Hosted ELK Logstash instance using our example configurations.
+stackTypes: logs
+portType: syslog
+tags: Logs, KeyCDN, CDN, Content Delivery Network, Keycdn
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Logs
+
+  Learn how to ship KeyCDN logs to your Hosted ELK Logstash instance using our example configurations.
+  
+  ### Install Integration
+  <InstallIntegration/>
+  ### Configure KeyCDN
+
+  Login to your KeyCDN dashboard and go to “Account Settings” > “Edit Log Settings”
+
+  Enter the following settings:
+
+  ```yml copy
+  - Status: "enabled"
+  - Destination Server: "@logstash.host:strip_quotes"
+  - Destination Port: "@logstash.port:strip_quotes"
+  ```
+  
+  ![Edit log settings](@/images/integrations/keycdn/step-1.png)
+
+  ### Verify
+
+  Select save and wait a couple of minutes and your logs will start to appear in Logit.io
+
+  ### Check Logit.io for your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="keycdn" source="keycdn" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+## KeyCDN Logging Overview
+
+KeyCDN is a content delivery network (CDN) that offers one of the lowest 
+priced solutions in the content delivery marketplace. Their CDN allows you 
+to deliver content to your visitors at a much faster rate than 
+traditional image/content serving methods.
+
+Their platform is home to advanced features including real-time analytics, 
+two factor authentication, Let's Encrypt SSL and HTTP/2 compatibility. 
+KeyCDN is a popular solution which is only helped by their many ready to 
+launch integrations for Magento, WordPress, Drupal and a whole host of 
+additional site hosting services.
+
+KeyCDN logs contain vital information on how each HTTP request is sent to 
+the service. These logs include all of the following fields; HTTP Status Code, 
+IP, POP, User & Zone ID, Organisation and TLS Version used, as well as 
+many other additional fields.
+
+KeyCDN created log files are not automatically parsed, their data is formatted 
+as raw unstructured text that requires processing in an external tool 
+such as [Logstash](/integrations/log-management/shippers/logstash). When you're tracking in excess 
+of ten different metrics per log line, it is easy to see why this would 
+be hard to analyse without an external system.
+
+Thanks to our hosted log management platform providing Logstash, Elasticsearch 
+and Kibana, Logit.io makes parsing and analysing your KeyCDN logs easy and efficient. 
+
+If you need any further assistance in sending your logs from KeyCDN to Logstash 
+we're here to help. Simply get in touch by reaching out to 
+our support team <IntercomButton text="via live chat" /> and we'll reply shortly.

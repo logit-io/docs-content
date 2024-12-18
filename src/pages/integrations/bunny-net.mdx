@@ -1,0 +1,120 @@
+---
+title: bunny.net CDN
+metaTitle: Learn How to Integrate and Configure Filebeat to Send bunny.net CDN Logs
+subTitle: Ship your bunny.net logs using Filebeat to your Logit.io Stack
+logo: bunny-net
+color: "#ff9900"
+description: Use our example to configure Filebeat to ship bunny.net content delivery logs to your Logit.io stacks. Configure Filebeat to send bunny.net logs to Logstash or Elastic.
+stackTypes: logs
+sslPortType: beats-ssl
+tags: bunny.net, bunny.net content delivery, content delivery network, cdn, syslog, beats, logs, filebeat, file ,files, text, Bunny Net
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Logs
+
+  Configure a bunny.net to ship logs via Filebeat to your Logit.io stacks via Logstash.
+  
+  ### Install Integration
+  <InstallIntegration/>
+  ### Install Filebeat
+
+  <InstallFilebeat />
+
+  ### Configure bunny.net Logging
+
+  __Configure the bunny.net content delivery network to log to a syslog server:__
+
+  To select logs from a Pull Zone on bunny.net, log in to your account 
+  and navigate to the details page of the Pull Zone
+  
+  On the left side panel, click on "Security" and select "Logging", ensure that 
+  both "Enable logging" and "Enable log forwarding" switches are turned on
+  
+  Under the "Syslog Endpoint" section enter the following:
+  
+  - Hostname: FILEBEAT-IP-ADDRESS
+  - Port: 514
+  - Log Server Protocol: UDP
+  - Log Format: Plain Text
+
+  Save the Forwarding Configuration.
+
+  ### Configure Filebeat.yml
+
+The configuration file below is pre-configured to send data to your Logit.io Stack.
+        
+Copy the configuration file below and overwrite the contents of the Filebeat 
+configuration file typically located at `/etc/filebeat/filebeat.yml`
+
+```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+####################### Logit.io Filebeat Configuration ########################
+# ============================== Filebeat inputs ===============================
+filebeat.inputs:
+- type: udp
+  max_message_size: 10MiB
+  host: "0.0.0.0:514"
+  enabled: true
+
+  fields:
+    type: "bunny-net"
+  fields_under_root: true
+  encoding: utf-8
+  ignore_older: 12h
+
+# ================================== Outputs ===================================
+output.logstash:
+  hosts: ["@logstash.host:@logstash.sslPort"]
+  loadbalance: true
+  ssl.enabled: true
+```
+
+  ### Validate configuration
+
+  <ValidateBeat beatname="filebeat" />
+
+  ### Start Filebeat
+
+  <StartFilebeat />
+
+  ### Launch Logit.io to view your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="bunnycdn" source="bunny_net_content_delivery" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+## bunny.net Overview
+
+Bunny.net is a powerful content delivery network that provides fast and reliable 
+content delivery for websites, videos, and other online content. To effectively 
+monitor and analyze the performance of your Bunny.net CDN, it is essential to 
+have a reliable and efficient log management solution. The Bunny.net CDN generates 
+logs that capture information about network traffic, user activity, and content delivery.
+
+To manage these logs effectively, organizations can use Filebeat, an open-source 
+shipping tool, to send logs from the Bunny.net CDN to various destinations, including 
+OpenSearch, Logstash, and Kibana, due to its reliability and minimal memory footprint. 
+Filebeat is widely used to send logs from Bunny.net CDN to various destinations, 
+including OpenSearch, Logstash, and Kibana, due to its compatibility and ease of use.
+
+To send Bunny.net CDN logs to Filebeat, organizations can configure the CDN to forward 
+logs to a syslog server, and then use Filebeat to collect and forward log data to 
+OpenSearch or other destinations. This process involves setting up a syslog server to 
+receive the logs, configuring the CDN to send logs to the syslog server, and configuring 
+Filebeat to collect and forward the logs from the syslog server to OpenSearch or other destinations.
+
+In summary, using Filebeat to send Bunny.net CDN logs to various destinations, including 
+Elasticsearch, Logstash, and Kibana, is a reliable and efficient log management solution. 
+By configuring the CDN to forward logs to a syslog server and using Filebeat to collect and 
+forward the logs to Logit.io, organizations can gain insights into network traffic, user activity, 
+and content delivery, and take action to improve the performance and reliability of their Bunny.net CDN.
+
+If you need any further assistance with migrating your log data to ELK we're 
+here to help you get started. Feel free to get in contact with our support team by 
+sending us a message <IntercomButton text="via live chat" />  we'll be happy to assist.

@@ -1,0 +1,65 @@
+---
+title: Azure SQL
+metaTitle: Learn How to Integrate and Configure Azure SQL to Send Logs
+subTitle: Pull logs from Azure Event Hub to Logstash & get started with Azure application logging
+logo: azure_sql
+color: "#0089d6"
+description: Follow our Azure SQL tutorial to pull logs from Azure Event Hub to Logstash and begin with Azure Application logging.
+stackTypes: logs
+tags: Microsoft, Azure, Event Hub, SQL, Database, Cloud Database, Azure Sql
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Logs
+  
+  ### Install Integration
+
+  <InstallIntegration/>
+  
+  ### Prerequisites
+
+  Before you begin you will need to ensure you have an available Azure Event Hub in your [Azure Portal](https://portal.azure.com/)
+
+  Confirm you have the following:
+  - An Azure SQL Database you wish to get diagnostic Logs from.
+  - An Eventhub you wish to stream the SQL diagnostic logs to.
+
+  <Callout type="info">
+    The Azure event hub Logstash plugin is only available for stacks running Logstash 6.4 onwards
+  </Callout>
+
+  ### Configure Diagnostic Logs
+
+  Once you have confirmed you have everything required it's time to configure diagnostic logging.
+
+  Choose your Azure SQL Database you wish to get diagnostic logs from. You will need to browse to the Diagnostic Settings from the left hand menu.
+
+  ![Choose your Azure SQL Database](@/images/integrations/azure/sql/creatediagnostic01.png)
+
+  Go ahead and choose add diagnostic setting, enter a suitable name and then select the diagnostic logs you need.
+
+  Select stream to an Eventhub and enter the details of your Eventhub.
+
+  Once you're happy with the settings select save.
+
+  ![Save settings](@/images/integrations/azure/sql/creatediagnostic02.png)
+
+  ### Configure Permissions
+
+  <AzureConfiguration />
+
+  ### Start Sending Logs To A Stack
+
+  <AzureInput stackType="logs" utmMedium="logs" utmCampaign="azuresql" type="azure_sql" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+  ### Check Logit.io for your logs
+
+  <LaunchStack utmMedium="logs" utmCampaign="azuresql" source="azure_sql" />
+
+</Steps>

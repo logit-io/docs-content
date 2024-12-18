@@ -1,0 +1,126 @@
+---
+title: AWS ECS Fargate Metrics
+metaTitle: Integrate and Configure AWS to Send AWS ECS Fargate Metrics
+subTitle: Ship your ECS and ECS Fargate Metrics via Telegraf to your Logit.io Stack
+logo: aws
+color: "#ff9900"
+stackTypes: metrics
+description: Use our example to configure Telegraf to ship AWS ECS metrics to your Logit.io stacks. Configure Telegraf to send ECS metrics to Prometheus.
+sslPortType: beats-ssl
+tags: Telegraf, Metrics, Telemetry, OpenTelemetry, Instrumentation, AWS, ECS, Fargate, Prometheus, Cloud Computing, Api
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Metrics
+
+  ### Install Integration
+
+  <InstallIntegration/>
+  
+  ### Telegraf ECS/Fargate plugin
+
+  The Telegraf Amazon ECS plugin is Fargate compatible. It uses the ECS metadata and the stats API 
+  endpoints to gether stats on the containers in the Task it is configured in.
+        
+  The telegraf container must be run in the same Task as the workload you with to collect stats for.
+
+  ### Prepare the Configuration file
+
+  You will need to prepare the telegraf-ecs.conf file with the contents of the next step.
+        
+  As a ECS user you likely already have a solution for loading a configuration file into a container.
+        
+  For demonstration purposes we will be using a remote configuration file, this would not 
+  be the recommended solution for a production environment.
+
+  ### Configure the Telegraf input plugin
+
+  You can download a copy of the configuration file that you will 
+  need [telegraf-ecs.conf](https://cdn.logit.io/telegraf-ecs.conf).
+
+  Or a copy of the configuration file is below.
+  ```ruby copy showLineNumbers
+  [[inputs.ecs]]
+    ## ECS metadata url.
+    ## Metadata v2 API is used if set explicitly. Otherwise,
+    ## v3 metadata endpoint API is used if available.
+    # endpoint_url = ""
+
+    ## Containers to include and exclude. Globs accepted.
+    ## Note that an empty array for both will include all containers
+    # container_name_include = []
+    # container_name_exclude = []
+
+    ## Container states to include and exclude. Globs accepted.
+    ## When empty only containers in the "RUNNING" state will be captured.
+    ## Possible values are "NONE", "PULLED", "CREATED", "RUNNING",
+    ## "RESOURCES_PROVISIONED", "STOPPED".
+    # container_status_include = []
+    # container_status_exclude = []
+
+    ## ecs labels to include and exclude as tags.  Globs accepted.
+    ## Note that an empty array for both will include all labels as tags
+    ecs_label_include = [ "com.amazonaws.ecs.*" ]
+    ecs_label_exclude = []
+
+    ## Timeout for queries.
+    # timeout = "5s"
+
+  [[outputs.http]]
+    url = "${LOGIT_METRICS_URL}"
+    data_format = "prometheusremotewrite"
+
+    [outputs.http.headers]
+      Content-Type = "application/x-protobuf"
+      Content-Encoding = "snappy"
+  ```
+
+  ### Configure an additional container on your Task Template
+
+  You will need to do this for *each* task you wish to monitor
+
+  Add an additional container to your existing task or as part of your container images
+
+  <Callout type="info">
+    You will need to pass the `LOGIT_METRICS_URL` env variable. 
+  </Callout>
+
+  *Demonstration configuration only*
+
+  ```cmd copy showLineNumbers
+  Name: Telegraf
+  Image URI: telegraf:latest
+  Environment variables:
+    LOGIT_METRICS_URL = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+  Docker configuration - Command:
+    "--config", "https://cdn.logit.io/telegraf-ecs.conf"
+  ```
+
+  ### View your metrics
+  <LaunchStack source="telegraf-aws-ecs" utmMedium="metrics" utmCampaign="telegraf-aws-ecs-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+## Telegraf AWS ECS and Fargate metrics Overview
+
+Telegraf offers a comprehensive solution for monitoring Amazon ECS and Fargate metrics, 
+simplifying the management of containerized environments on AWS. With Telegraf's seamless 
+integration with Amazon CloudWatch, users gain access to a rich array of performance data, 
+including CPU utilization, memory usage, disk I/O, and network metrics.
+
+Telegraf automates the collection of these metrics, providing real-time insights into the 
+health and performance of ECS and Fargate workloads. Its lightweight, agent-based 
+architecture ensures minimal overhead, making it an ideal choice for monitoring containerized 
+applications running on AWS infrastructure.
+
+Telegraf's extensible plugin system allows users to easily customize monitoring configurations 
+to meet their specific requirements, ensuring flexibility and scalability as their monitoring 
+needs evolve. Whether you're managing a small-scale ECS deployment or a complex Fargate 
+architecture, Telegraf empowers you to monitor with precision, optimize resource allocation, 
+and ensure the reliability of your containerized applications on AWS.

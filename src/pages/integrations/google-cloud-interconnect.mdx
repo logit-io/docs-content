@@ -1,0 +1,73 @@
+---
+title: Google Cloud Interconnect Metrics
+metaTitle: Configure Telegraf to Send Google Cloud Interconnect Metrics
+subTitle: Ship your Google Cloud Interconnect Metrics via Telegraf to your Logit.io Stack
+logo: GoogleCloudInterconnect
+color: "#3c76d7"
+description: Configure Telegraf to ship Google Cloud Interconnect metrics to your Logit.io stacks. Get started using our Telegraf Google Cloud Interconnect metrics example.
+stackTypes: metrics
+tags: Telegraf, Metrics, Telemetry, OpenTelemetry, Instrumentation, Google Cloud Interconnect, Networking, Network
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Metrics
+
+  Configure Telegraf to ship Google Cloud Interconnect metrics to your Logit.io stacks via Logstash.
+  
+  ### Install Integration
+  <InstallIntegration/>
+  ### Set Credentials in GCP
+
+  <SetGCPCredentials intro="Google Cloud Interconnect represents a specialized suite of services nestled within Google Cloud, meticulously devised for establishing private network connections, fostering secure and efficient communication within a cloud-driven infrastructure."/>
+  
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  <TelegrafStackDriverInput metric_type="interconnect.googleapis.com"/>
+
+  ### Configure the output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack stackType="metrics" source="Google_Cloud_Interconnect_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-GoogleCloudInterconnect-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>
+
+## Telegraf Google Cloud Interconnect metrics Overview
+
+For effective tracking and insightful examination of Google Cloud Interconnect metrics across various systems, 
+the indispensability of a robust and adept metrics management solution like Telegraf is paramount. 
+As an open-source server agent, Telegraf is lauded for its proficiency in collecting and reporting 
+metrics from a myriad of sources, including active Interconnect instances and related applications.
+
+Telegraf comes equipped with a comprehensive array of input plugins, authorizing users to aggregate 
+diverse metrics such as connection quality, latency, error rates, and beyond. These metrics are crucial 
+to decipher the performance of Google Cloud Interconnect. For the conservation and scrutiny of these 
+amassed metrics, organizations can employ Prometheus, an open-source monitoring and alerting toolkit, 
+renowned for its adaptable query language and formidable data visualization aptitudes.
+
+The mechanism to channel Google Cloud Interconnect metrics from Telegraf to Prometheus includes 
+configuring Telegraf to exhibit metrics in Prometheus's format, succeeded by instructing Prometheus 
+to scrape these metrics off the Telegraf server.
+
+After the metrics are successfully incorporated into Prometheus, an extensive analysis and visualization 
+can be pursued using Grafana. Grafana, a leading open-source platform praised for its monitoring and 
+observability capabilities, aligns perfectly with Prometheus. It empowers users to design dynamic, 
+interactive dashboards for an exhaustive exploration of the metrics data, bestowing a profound insight 
+into performance trends and potential predicaments within Google Cloud Interconnect.
+
+If you need any further assistance with shipping your log data to Logit.io we're here to help you 
+get started. Feel free to get in contact with our support team by sending us a message via <IntercomButton text="live chat" /> & we'll be happy to assist.

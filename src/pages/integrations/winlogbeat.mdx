@@ -1,0 +1,61 @@
+---
+title: Winlogbeat
+metaTitle: Learn How to Integrate and Configure Winlogbeat to Send Logs
+pageTitle: Winlogbeat Configuration
+subTitle: Ship logs to Logit.io via Winlogbeat
+logo: winlogbeat
+color: "#00bfb3"
+description: Winlogbeat is a Windows-specific event log-shipping agent.
+stackTypes: logs
+sslPortType: beats-ssl
+tags: Beats, Logs, Windows, Microsoft, System, Event Log, Logging, Winlogbeat
+---
+
+Winlogbeat is a Windows specific event-log shipping agent installed 
+as a Windows service. It can be used to collect and send event 
+logs to one or more destinations, including Logstash.
+
+<Steps>
+  ## Logs
+  
+  ### Install Integration
+  
+  <InstallIntegration/>
+
+  ### Install Winlogbeat
+
+  <InstallWindowsBeat
+    beatname = "winlogbeat"
+    version = "8.15.2"
+  />
+
+  ### Update Your Configuration File
+  
+  <WinlogBeatConfigFile />
+
+  ### Validate Configuration
+
+  <ValidateWinlogBeat beatname="winlogbeat" />
+
+  ### Start winlogbeat
+
+  From the PowerShell prompt, (in the directory where winlogbeat was installed) run the following command:
+
+  ```ps1 copy
+  Start-Service winlogbeat
+  ```
+
+  ### Launch Logs to View Your Data
+  
+  <LaunchVisualizer type="logs" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+
+
+
+

@@ -1,0 +1,83 @@
+---
+title: Google Cloud Monitoring Metrics
+metaTitle: Configure Telegraf to Send Google Cloud Monitoring Metrics
+subTitle: Ship your Google Cloud Monitoring Metrics via Telegraf to your Logit.io Stack
+logo: GoogleCloudMonitoring
+color: "#3c76d7"
+description: Configure Telegraf to ship Google Cloud Monitoring metrics to your Logit.io stacks. Get started using our Telegraf Google Cloud Monitoring metrics example.
+stackTypes: metrics
+tags: Telegraf, Metrics, Telemetry, OpenTelemetry, Instrumentation, Google Cloud Monitoring, Performance Monitoring
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Metrics
+
+  Configure Telegraf to ship Google Cloud Monitoring metrics to your Logit.io stacks via Logstash.
+  
+  ### Install Integration
+  <InstallIntegration/>
+  ### Set Credentials in GCP
+
+  <SetGCPCredentials intro="Google Cloud Monitoring is a singular set of services contained within Google Cloud, specifically designed for the tracking, evaluation, and management of cloud resources and applications, promoting secure and efficient communication between varied software components in a cloud-centric ecosystem."/>
+  
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  <TelegrafStackDriverInput metric_type="monitoring.googleapis.com"/>
+
+  ### Configure the output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack stackType="metrics" source="Google_Cloud_Monitoring_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-GoogleCloudMonitoring-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>
+
+## Telegraf Google Cloud Monitoring metrics Overview
+
+Telegraf, the highly versatile open-source server agent by InfluxData, is adept at collecting metrics 
+and data from various sources, including cloud-based services. Google Cloud Monitoring provides 
+comprehensive monitoring, logging, and diagnostics across Google Cloud and AWS, offering IT and 
+DevOps teams detailed insights into the health, performance, and availability of their cloud infrastructure and applications.
+
+Integrating Telegraf with Google Cloud Monitoring allows organizations to aggregate, visualize, 
+and analyze metrics across their cloud environments efficiently. This integration is crucial for 
+maintaining optimal performance and availability of cloud services, as it enables the monitoring 
+of compute instances, databases, applications, and more. By leveraging Telegraf for data collection 
+and Google Cloud Monitoring for insights, teams can detect anomalies, set up alerts for potential issues, 
+and gain a holistic view of their cloud operations.
+
+However, the sheer volume and variety of data produced can overwhelm traditional monitoring tools, 
+making it challenging to derive actionable insights quickly. Logit.io offers a powerful solution 
+by providing an advanced analytics platform tailored for the aggregation, visualization, and 
+analysis of metrics from Telegraf and Google Cloud Monitoring.
+
+With Logit.io, businesses can improve their cloud monitoring and management practices, 
+ensuring they can swiftly identify and rectify issues, optimize resource utilization, 
+and maintain the security and compliance of their cloud infrastructure. The platform's 
+comprehensive analytics capabilities facilitate informed decision-making, enabling organizations 
+to achieve operational excellence and deliver high-quality services.
+
+For those using Telegraf in conjunction with Google Cloud Monitoring and seeking to elevate 
+their cloud infrastructure monitoring and analytics, Logit.io is an invaluable resource. 
+Logit.io provides a robust platform for log and metric management and analysis. However, to 
+successfully fully integrate Google Cloud Monitoring with Logit.io, it's essential 
+to understand how to interact with [GCP's APIs](/integrations/infrastructure-metrics/google-cloud/api-telegraf-metrics). 
+Explore our Google Cloud's API integration documentation to learn more about the APIs you 
+might need to use for configuring and managing your metrics data. Furthermore, it's equally 
+important to ensure that you have comprehensive visibility into your logs, which are often 
+closely related to your metrics. [Google Cloud Logging](https://logit.io/solutions/gcp-logging/) 
+is a powerful tool from Logit.io for collecting, analyzing, and monitoring logs from your GCP environment.

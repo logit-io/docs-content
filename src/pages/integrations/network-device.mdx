@@ -1,0 +1,70 @@
+---
+title: Network Device
+metaTitle: Learn How to Integrate and Configure a Network Device to Send Logs
+subTitle: Ship logs from your network device to Logstash
+logo: asset22
+color: "#1A6C6B"
+description: Send your network device logs to logit.io via logstash using the instructions below and begin searching your data
+stackTypes: logs
+sslPortType: beats-ssl
+tags: Logs, Network, Device, Network Device, Networking, Networkdevice
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Logs
+
+  Send your network device logs to logit.io via logstash using the instructions below and begin searching your data.
+  
+  ### Install Integration
+  <InstallIntegration/>
+  ### Install Filebeat
+
+  <InstallFilebeat />
+
+  ### Configure Your Device
+
+  Configure your network device to send logs to TCP port 9000 of your Filebeat server. 
+
+  You may need to consult your network device's documentation to do this.
+
+  ### Configure Filebeat.yml
+
+  The configuration file below is pre-configured to send data to your Logit.io Stack.
+          
+  Copy the configuration file below and overwrite the contents of the Filebeat configuration file typically located at `/etc/filebeat/filebeat.yml`
+
+  ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+  ####################### Logit.io Filebeat Configuration ########################
+  # ============================== Filebeat inputs ===============================
+  filebeat.inputs:
+  - type: tcp
+    max_message_size: 10MiB
+    host: "0.0.0.0:6515"
+    enabled: true
+
+    fields:
+      type: networkdevice
+      fields_under_root: true
+      encoding: utf-8
+      ignore_older: 12h
+
+  # ================================== Outputs ===================================
+  output.logstash:
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
+  ```
+
+  ### Start filebeat
+
+  <StartFilebeat />
+
+  ### Check Logit.io for your logs
+  <LaunchStack utmMedium="logs" utmCampaign="filebeat" source="filebeat" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>

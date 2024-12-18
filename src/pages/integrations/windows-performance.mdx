@@ -1,0 +1,160 @@
+---
+title: Windows Performance
+metaTitle: Integrate and Configure Telegraf to send Windows Performance Metrics
+subTitle: Ship your Windows Performance Metrics via Telegraf to your Logit.io Stack
+logo: windows
+color: "#4d4d4d"
+description: Use our example to configure Telegraf to ship Windows Performance metrics to Logit.io. Configure Telegraf to send Windows Performance metrics to ELK.
+stackTypes: metrics
+sslPortType: beats-ssl
+tags: Telegraf, Metrics, Telemetry, OpenTelemetry, Health, Instrumentation, Windows, Performance Metrics
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Metrics
+
+  Configure Telegraf to ship Windows Performance metrics to your Logit.io stacks via Logstash.
+  
+  ### Install Integration
+  <InstallIntegration/>
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+
+  ```toml copy
+  ###############################################################################
+  # Windows Performance Counters plugin.
+  # These are the recommended method of monitoring system metrics on windows,
+  # as the regular system plugins (inputs.cpu, inputs.mem, etc.) rely on WMI,
+  # which utilize more system resources.
+  #
+  # See more configuration examples at:
+  #   https://github.com/influxdata/telegraf/tree/master/plugins/inputs/win_perf_counters
+  [[inputs.win_perf_counters]]
+    [[inputs.win_perf_counters.object]]
+      # Processor usage, alternative to native, reports on a per core.
+      ObjectName = "Processor"
+      Instances = ["*"]
+      Counters = [
+        "% Idle Time",
+        "% Interrupt Time",
+        "% Privileged Time",
+        "% User Time",
+        "% Processor Time",
+      ]
+      Measurement = "win_cpu"
+      # Set to true to include _Total instance when querying for all (*).
+      #IncludeTotal=false
+    [[inputs.win_perf_counters.object]]
+      # Disk times and queues
+      ObjectName = "LogicalDisk"
+      Instances = ["*"]
+      Counters = [
+        "% Idle Time",
+        "% Disk Time","% Disk Read Time",
+        "% Disk Write Time",
+        "% User Time",
+        "Current Disk Queue Length",
+      ]
+      Measurement = "win_disk"
+      # Set to true to include _Total instance when querying for all (*).
+      #IncludeTotal=false
+    [[inputs.win_perf_counters.object]]
+      ObjectName = "System"
+      Counters = [
+        "Context Switches/sec",
+        "System Calls/sec",
+      ]
+      Instances = ["------"]
+      Measurement = "win_system"
+      # Set to true to include _Total instance when querying for all (*).
+      #IncludeTotal=false
+    [[inputs.win_perf_counters.object]]
+      # Example query where the Instance portion must be removed to get data back,
+      # such as from the Memory object.
+      ObjectName = "Memory"
+      Counters = [
+        "Available Bytes",
+        "Cache Faults/sec",
+        "Demand Zero Faults/sec",
+        "Page Faults/sec",
+        "Pages/sec",
+        "Transition Faults/sec",
+        "Pool Nonpaged Bytes",
+        "Pool Paged Bytes",
+      ]
+      # Use 6 x - to remove the Instance bit from the query.
+      Instances = ["------"]
+      Measurement = "win_mem"
+      # Set to true to include _Total instance when querying for all (*).
+      #IncludeTotal=false
+
+    [[inputs.win_perf_counters.object]]
+      # Example query where the Instance portion must be removed to get data back,
+      # such as from the Paging File object.
+      ObjectName = "Paging File"
+      Counters = [
+        "% Usage",
+      ]
+      Instances = ["_Total"]
+      Measurement = "win_swap"
+  ```
+
+  <Callout type="info">
+    Read more about how to configure data scraping and configuration options for [Windows Performance Counters](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/win_perf_counters/README.md)
+  </Callout>
+
+  ### Configure the output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack source="Windows_Performance_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-WindowsPerformanceCounters-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+</Steps>
+
+### Telegraf Windows Performance metrics Overview
+
+To effectively monitor and analyze Windows performance metrics in a distributed environment, organizations 
+require a reliable and efficient metrics management solution. Telegraf, an open-source metrics collection 
+agent, is the ideal tool for gathering Windows performance metrics from various sources, including CPU 
+usage, memory consumption, disk I/O, and network traffic.
+
+With its wide range of input plugins, Telegraf empowers organizations to collect diverse Windows performance 
+metrics, such as processor queue length, page file usage, disk read/write speeds, and network packet details. 
+These metrics provide valuable insights into the operational health and efficiency of Windows-based systems, 
+enabling organizations to optimize their infrastructure management processes.
+
+For storing and querying the collected Windows performance metrics, Prometheus, a powerful open-source 
+monitoring and alerting tool, is the preferred choice. Prometheus supports a flexible querying language 
+and graphical visualization capabilities, allowing organizations to gain actionable insights from Windows 
+performance metrics. By configuring Telegraf to output Windows performance metrics in the Prometheus format 
+and setting up Prometheus to scrape the metrics from the Telegraf server, seamless integration is achieved.
+
+This process involves configuring Telegraf to collect Windows performance metrics, formatting them in the 
+Prometheus format, and setting up Prometheus to scrape the metrics from the Telegraf server. Leveraging 
+Prometheus's advanced querying and visualization features, organizations can gain deep insights into system 
+performance, identify potential bottlenecks, and troubleshoot issues effectively.
+
+By leveraging Telegraf to ship Windows performance metrics to Prometheus, organizations establish a reliable 
+and efficient metrics management solution for their distributed environments. This empowers them to monitor 
+system performance, optimize infrastructure management processes, and make data-driven decisions to ensure 
+optimal system health and performance.
+
+If you need any further assistance with shipping your log data to Logit.io we're here to help you get started. 
+Feel free to get in contact with our support team by sending us a message via <IntercomButton text="live chat" /> 
+& we'll be happy to assist.

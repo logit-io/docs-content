@@ -1,0 +1,76 @@
+---
+title: Google Cloud IDS Metrics
+metaTitle: Configure Telegraf to Send Google Cloud IDS Metrics
+subTitle: Ship your Google Cloud IDS Metrics via Telegraf to your Logit.io Stack
+logo: googlecloud
+color: "#3c76d7"
+description: Use our example to configure Telegraf to ship Google Cloud IDS metrics to Logit.io. Configure Telegraf to send Google Cloud IDS metrics to Logstash or Elastic.
+stackTypes: metrics
+tags: Telegraf, Metrics, Telemetry, OpenTelemetry, Instrumentation, Google Cloud IDS, Intrusion Detection System, Ids
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Metrics
+
+  Configure Telegraf to ship Google Cloud IDS metrics to your Logit.io stacks via Logstash.
+  
+  ### Install Integration
+  <InstallIntegration/>
+  ### Set Credentials in GCP
+
+  <SetGCPCredentials intro="Google Cloud IDS is a distinctive assembly of services included within Google Cloud. It is specifically designed for intrusion detection, fostering a secure environment and efficient interaction within a cloud-driven ecosystem."/>
+  
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  <TelegrafStackDriverInput metric_type="ids.googleapis.com"/>
+
+  ### Configure the output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### View your metrics
+  <LaunchStack stackType="metrics" source="Google_Cloud_IDS_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-GoogleCloudIDS-metrics" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>
+
+## Telegraf Google AI Platform metrics Overview
+
+The integration of Telegraf with Google Cloud IDS empowers organizations to monitor and collect metrics 
+related to security threats, providing real-time visibility into intrusion attempts, malware detection, 
+and other security events. This capability is essential for maintaining robust security postures, 
+enabling IT and security teams to respond swiftly to potential threats and ensure the integrity of their cloud environments.
+
+Despite the criticality of these metrics, the complexity and volume of data generated can pose 
+significant analysis and management challenges. Logit.io emerges as a comprehensive solution 
+to these challenges, offering an advanced platform for the efficient processing and analysis 
+of security metrics from Telegraf and Google Cloud IDS. 
+
+By leveraging Logit.io, organizations can enhance their security analytics, enabling faster detection 
+and response to potential threats detected by Google Cloud IDS. Our platform not only facilitates 
+the efficient management of security data but also supports compliance and helps in identifying 
+security trends and vulnerabilities within cloud environments.
+
+If you're integrating Telegraf with Google Cloud IDS and seeking to optimize your security data 
+analytics, Logit.io is here to support you. Our platform offers the tools and expertise needed 
+to manage complex security data effectively.By collecting and reporting metrics from active 
+IDS instances and other relevant sources, Telegraf enables organizations to understand the 
+performance of Google Cloud IDS. After transmitting these metrics from Telegraf to 
+[Prometheus](https://logit.io/platform/features/hosted-prometheus/) in its format, further 
+comprehensive analysis and visualization can be performed using [Grafana](https://logit.io/platform/features/grafana/). 
+This process provides an in-depth understanding of performance patterns and potential issues within Google Cloud IDS.
+
+If you need any further assistance with shipping your log data to Logit.io we're here to help you get started. 
+Feel free to get in contact with our support team by sending us a message via <IntercomButton text="live chat" /> & we'll be happy to assist.
