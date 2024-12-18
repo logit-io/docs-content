@@ -17,7 +17,7 @@ GDPR, PCI & Cyber Essentials Compliance.
 
 You will need to sign into your OKTA account and then go to the Admin area.
 
-From the left-side menu select Applications -> Applications and then click the "Create App Integration" button.
+From the left-side menu select Applications -> Applications and then click the **Create App Integration** button.
 
 ![Create Okta App](@/images/sso/okta/okta-create-app.png)
 
@@ -27,6 +27,11 @@ This will bring up the **Create a new app integration** dialog box. In the **Sig
 ![Select Integration Type](@/images/sso/okta/okta-select-integration.png)
 
 You will be redirected to the **New Web App Integration** screen. Give your new application a name to identify it e.g. **Logit.io**. 
+You can download the Logo from our CDN <a href="https://cdn.logit.io/content/images/logo.png" download target="_blank">Here</a> or use the url below
+
+```text copy 
+curl -O https://cdn.logit.io/content/images/logo.png || wget https://cdn.logit.io/content/images/logo.png
+```
 
 ![Name the Integration](@/images/sso/okta/okta-name-integration.png)
 
@@ -52,7 +57,7 @@ required later.
 ![Get App Credentials](@/images/sso/okta/okta-credentials.png)
 
 Finally, you need your Okta Domain, if you do not know what this is you can get it by clicking on your username in the top right-hand 
-corner and copy it from here as shown below. In this example the domain name is **trial-3094661.okta.com**. You will also need this later.
+corner and copy it from here as shown below. Note you will need this later.
 
 ![Get the Okta Domain](@/images/sso/okta/okta-domain.png)
 
