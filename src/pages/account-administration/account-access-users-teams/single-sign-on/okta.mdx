@@ -1,5 +1,5 @@
 ---
-title: Logit.io OKTA SSO (Single Sign-On)
+title: Configure OKTA
 metaTitle: Learn How to Enable OKTA SSO (Single Sign-On)
 description: Discover the steps you need to take to enable OKTA SSO (Single Sign-On) for your Logit.io account in this help article.
 ---
@@ -13,7 +13,7 @@ it means your users will have a seamless experience where they can sign in once 
 Logit.io too. Using Logit.io with OKTA enabled will help you stay on top of the constantly growing compliance requirements such as ISO 27001, SOC2, 
 GDPR, PCI & Cyber Essentials Compliance.
 
-### How can I enable OKTA?
+### Configure OKTA
 
 You will need to sign into your OKTA account and then go to the Admin area.
 
@@ -21,41 +21,42 @@ From the left-side menu select Applications -> Applications and then click the "
 
 ![Create Okta App](@/images/sso/okta/okta-create-app.png)
 
-This will bring up the "Create a new app integration" dialog box. In the **Sign-in method** section select "OIDC - OpenID Connect" and in the 
-**Application type** section select "Web Application" as shown below and then click "Next".
+This will bring up the **Create a new app integration** dialog box. In the **Sign-in method** section select **OIDC - OpenID Connect** and in the 
+**Application type** section select **Web Application** as shown below and then click **Next**.
 
 ![Select Integration Type](@/images/sso/okta/okta-select-integration.png)
 
-You will be redirected to the "New Web App Integration" screen. Give your new application a name to identify it. It isn't important what you call it as 
-this is not used again.
+You will be redirected to the **New Web App Integration** screen. Give your new application a name to identify it e.g. **Logit.io**. 
 
 ![Name the Integration](@/images/sso/okta/okta-name-integration.png)
 
-Now scroll down slightly to the "Sign-in redirect URIs" field and copy and paste this sign-in redirect URL.
+Now scroll down slightly to the **Sign-in redirect URIs** field and copy and paste this sign-in redirect URL below.
 
-```text copy
+```text  copy filename="Sign-in Redirect URIs" 
 https://auth.logit.io/login/callback
 ```
 
 ![Add redirect url](@/images/sso/okta/okta-add-redirect.png)
 
-Finally scroll down to the "Assignments" section and click "Allow everyone in you organization to access" for **Controlled access** and also de-select 
-"Enable immediate access with Federation Broker Mode" for **Enable immediate access** and then click "Save".
+Finally scroll down to the **Assignments** section and click **Allow everyone in you organization to access** for **Controlled access** and also de-select 
+**Enable immediate access with Federation Broker Mode** for **Enable immediate access** and then click **Save**.
 
-_Info - Clicking "Allow everyone in your organization to access" means that all users are automatically assigned to the new app without you having to do 
+_Info - Clicking **Allow everyone in your organization to access** means that all users are automatically assigned to the new app without you having to do 
 it for each user manually._
 
 ![Add Otka assignments](@/images/sso/okta/okta-assignments.png)
 
-You will be returned to the "General" tab of the Application. From here copy the "Client ID" and the  "Client Secret" to somewhere as they will be 
+You will be returned to the **General** tab of the Application. From here copy the **Client ID** and the **Client Secret** to somewhere as they will be 
 required later.
 
 ![Get App Credentials](@/images/sso/okta/okta-credentials.png)
 
 Finally, you need your Okta Domain, if you do not know what this is you can get it by clicking on your username in the top right-hand 
-corner and copy it from here as shown below. In this example the domain name is "trial-3094661.okta.com". You will also need this later.
+corner and copy it from here as shown below. In this example the domain name is **trial-3094661.okta.com**. You will also need this later.
 
 ![Get the Okta Domain](@/images/sso/okta/okta-domain.png)
+
+### Send your configuration to Logt.io
 
 Now that you have set the account up you have everything you need to contact us to set this up for you. Please email us at [support@logit.io](mailto:support@logit.io)
 and include the following information:
@@ -64,11 +65,11 @@ and include the following information:
 Request to enable Single Sign On for AccountId: @account_id
 ```
 
-```text copy filename="body" /@account_id/
+```text copy filename="body" /@account_id/ /@client_secret/ /@client_id/ /@domain/
 Logit.io AccountId: @account_id
-Okta Domain: Retrieved in the steps above
-Okta Client ID: Retrieved in the steps above
-Okta Client Secret: Retrieved in the step above
+Okta Domain: @domain
+Okta Client ID: @client_id
+Okta Client Secret: @client_secret
 ```
 
-The "Retrieved in the steps above" text should be replaced with the values that you stored during the OKTA app creation process.
+The email text should be replaced with the values that you stored during the OKTA app creation process.
