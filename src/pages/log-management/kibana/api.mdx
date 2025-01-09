@@ -1,0 +1,106 @@
+---
+title: Access Kibana features via REST API
+metaTitle: Learn How to Access Kibana features via REST API
+description: Read Logit.io’s help article to learn how to access Kibana features via REST API.
+---
+
+# Accessing Kibana features via REST API
+
+You can use Basic Authentication to connect to the Logit.io Proxy and access Kibana without having to go 
+through the Logit.io Dashboard. This can improve your user experience and allow proper integration between your company, your applications 
+and the Logit.io service.
+
+You have the option to connect your application directly to the Logit.io API to do a range of things such as load dashboards, visualizations, index patterns and mappings etc. or load them straight from your computer.
+
+This article explains how to call REST API Endpoints to access Kibana using our Logit.io proxy and connect to it using Basic 
+Authentication.
+
+<Callout type="info">
+    Basic Authentication is a simple authentication method in HTTP(S) where the client includes a username and password with each request. 
+    The username and password is combined with a colon in-between as a string. You don't need to worry about how to create a basic authentication 
+    header as we have done it for you. 
+</Callout>
+
+Each request to a REST API Endpoint must include all of the necessary information for Kibana to fulfill the request. If all the necessary 
+information is provided the API requests return JSON output.
+
+Use the following operations to interact with the Kibana via the Logit.io Proxy.
+
+* __GET__ - Fetches the data.
+* __POST__ - Adds new data.
+* __PUT__ - Updates the existing data.
+* __PATCH__ - Applies partial modifications to the existing data.
+* __DELETE__ - Removes the data.
+
+All the details that you require in order to connect to the Logit.io proxy are found on the Profile Settings page of the Logit.io Dashboard. 
+The Profile Settings page has a section called `Proxy Settings` where you will find everything that you need. 
+Click [here](https://dashboard.logit.io/profile) to view you profile page.
+
+There are two ways that you can call the REST API using the Logit.io proxy. The call to our proxy needs to be in either of the following formats:
+
+__Basic Authentication header__:
+
+```bash
+curl -XGET "osd-xsrf:true" -H "Content-Type: application/json" 
+-H "Authorization: Basic {basic auth header}" {endpoint to call}
+```
+
+__Proxy Username and Password__:
+
+```bash
+curl -XGET "osd-xsrf:true" -H "Content-Type: application/json" 
+-u "{proxy username}:{proxy password}" {endpoint to call}
+```
+
+Below are two curl request examples that show how to connect to the Logit.io Proxy. The examples use the Stack Id of a Stack that you have access to. 
+If you need to access another of your stacks then you can simply find the Stack that you require, retrieve the stack Id from that stack and then 
+replace it. 
+
+<ProxyAuthPlaceholderWarning stackType="logs" />
+
+### Example of a curl request to access your Logit.io Kibana instance
+
+<Tabs items={["Windows", "Linux / macOS / DEB / RPM"]}>
+<Tab>
+This first method uses the __Basic Auth Header__:
+
+```bash copy /@proxyAuthSetting.basicAuthHeader/ /@logs_id/
+curl -XGET -H "osd-xsrf:true" -H "Content-Type: application/json" -H ^
+"Authorization: Basic ^
+@proxyAuthSetting.basicAuthHeader" ^
+https://kibana.logit.io/s/@logs_id/api/status
+```
+
+This second method uses the __proxy username and password__:
+
+```bash copy /@proxyAuthSetting.username/ /@proxyAuthSetting.password/ /@logs_id/
+curl -XGET -H "osd-xsrf:true" -H "Content-Type: application/json" ^
+-u "@proxyAuthSetting.username:@proxyAuthSetting.password" ^
+https://kibana.logit.io/s/@logs_id/api/status
+```
+</Tab>
+<Tab>
+This first method uses the __Basic Auth Header__:
+
+```bash copy /@proxyAuthSetting.basicAuthHeader/ /@logs_id/
+curl -XGET -H "osd-xsrf:true" -H "Content-Type: application/json" -H \
+"Authorization: Basic \
+@proxyAuthSetting.basicAuthHeader" \
+https://kibana.logit.io/s/@logs_id/api/status
+```
+
+This second method uses the __proxy username and password__:
+
+```bash copy /@proxyAuthSetting.username/ /@proxyAuthSetting.password/ /@logs_id/
+curl -XGET -H "osd-xsrf:true" -H "Content-Type: application/json" \
+-u "@proxyAuthSetting.username:@proxyAuthSetting.password" \
+https://kibana.logit.io/s/@logs_id/api/status
+```
+</Tab>
+</Tabs>
+
+Both curl requests call the same API Endpoint. This request returns detailed information about your Kibana instance’s health including the 
+resource usage, the server status, installed plugins, plugin statuses and metrics.
+
+There are many other Kibana features that can be accessed via REST API through the Logit.io Proxy. These features are explained in the 
+Elastic docs [here](https://www.elastic.co/guide/en/kibana/current/api.html)
