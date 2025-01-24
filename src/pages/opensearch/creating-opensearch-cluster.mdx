@@ -1,0 +1,100 @@
+---
+title: Getting Started Sending Logs
+metaTitle: Learn How to Get Started with Log Management
+pagination: false
+timestamp: false
+stackTypes: logs
+---
+
+## Getting Started Sending Logs to Your Logit.io Stack
+
+<Steps>
+  ### Send Sample Log
+
+  First, verify that you can send a sample log message to your stack using Logit.io's API.
+
+  <Tabs items={["Windows (via Command Prompt)", "Windows (via PowerShell)", "macOS", "Linux"]}>
+    <Tab>    
+      ```bash copy /@apikey/ 
+      curl -i ^
+      -H "ApiKey: @apikey" ^
+      -H "Content-Type: application/json" ^
+      -H "LogType: json" ^
+      https://@logitApiEndpoint/v2 ^
+      -d "{\"message\":\"Sample message from my computer\"}"
+      ```
+    </Tab>
+    <Tab>
+      ```ps1 copy /@apikey/ 
+      $headers = @{
+        ApiKey = "@apikey"
+        "Content-Type" = "application/json"
+        LogType = "json"
+      }
+
+      $body = @{
+        "message" = "Sample message from my computer"
+      } | ConvertTo-Json
+
+      curl -Uri "https://@logitApiEndpoint/v2" `
+        -Method Post `
+        -Headers $headers `
+        -Body $body
+      ```
+    </Tab>
+
+    <Tab>
+      ```bash copy /@apikey/ 
+      curl -i \
+      -H "ApiKey: @apikey" \
+      -H "Content-Type: application/json" \
+      -H "LogType: json" \
+      https://@logitApiEndpoint/v2 \
+      -d '{"message":"Sample message from my computer"}'
+      ```
+    </Tab>
+
+    <Tab>
+      ```bash copy /@apikey/ 
+      curl -i \
+      -H "ApiKey: @apikey" \
+      -H "Content-Type: application/json" \
+      -H "LogType: json" \
+      https://@logitApiEndpoint/v2 \
+      -d '{"message":"Sample message from my computer"}'
+      ```
+    </Tab>
+  </Tabs>
+
+  You should expect to receive a `202 ACCEPTED` response:
+
+  ```cmd
+  HTTP/1.1 202 ACCEPTED
+  {"message":"Message Received, Thanks"}
+  ```
+
+  ### Launch Logs to View Sample Data
+  
+  Click the button below to open the log management visualizer:
+
+  <LaunchVisualizer type="logs" />
+
+  You should now see the sample log stored in your stack.
+  
+  ### Start Integrating Your Logs
+
+  Logit.io provides more than 350 data source integration guides to help you get started. 
+  
+  Click the link below to get started.
+
+  <Cards>
+    <Card title="Log Management Integrations" href="/integrations/log-management" />
+  </Cards>
+
+</Steps>
+
+<Callout type="info">
+  If you get stuck and need help, or can't find an integration guide that 
+  meets your requirements, then please feel free to get in touch with our support 
+  team <IntercomButton text="via live chat" />, and we'll be happy to assist you.
+</Callout>
