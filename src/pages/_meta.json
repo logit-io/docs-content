@@ -14,7 +14,7 @@
   "log-management": "Log Management",
   "infrastructure-metrics": "Infrastructure Metrics",
   "application-performance-monitoring": "Application Performance Monitoring",
-  "opensearch": "OpenSearch",
+  "opensearch": "Hosted OpenSearch",
   "opentelemetry": "OpenTelemetry",
   "integrations": "Integrations",
   "account-administration": "Account Administration",

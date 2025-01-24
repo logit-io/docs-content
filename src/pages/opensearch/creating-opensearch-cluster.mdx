@@ -1,100 +1,61 @@
 ---
-title: Getting Started Sending Logs
-metaTitle: Learn How to Get Started with Log Management
+title: Creating an OpenSearch Cluster
+metaTitle: Learn How to Creating an OpenSearch Cluster
 pagination: false
 timestamp: false
-stackTypes: logs
+stackTypes: opensearch
 ---
 
-## Getting Started Sending Logs to Your Logit.io Stack
+## Creating an OpenSearch Cluster
+
+This article describes how to provision an OpenSearch cluster using Logit.io.
 
 <Steps>
-  ### Send Sample Log
+  ### Add Hosted OpenSearch
 
-  First, verify that you can send a sample log message to your stack using Logit.io's API.
+  **If you are logged section **
 
-  <Tabs items={["Windows (via Command Prompt)", "Windows (via PowerShell)", "macOS", "Linux"]}>
-    <Tab>    
-      ```bash copy /@apikey/ 
-      curl -i ^
-      -H "ApiKey: @apikey" ^
-      -H "Content-Type: application/json" ^
-      -H "LogType: json" ^
-      https://@logitApiEndpoint/v2 ^
-      -d "{\"message\":\"Sample message from my computer\"}"
-      ```
-    </Tab>
-    <Tab>
-      ```ps1 copy /@apikey/ 
-      $headers = @{
-        ApiKey = "@apikey"
-        "Content-Type" = "application/json"
-        LogType = "json"
-      }
+  To get started, click the 'Add Stack' button at the top of your dashboard.
 
-      $body = @{
-        "message" = "Sample message from my computer"
-      } | ConvertTo-Json
+  ![Add Stack](@/images/getting-started/opensearch/addstack.png)
 
-      curl -Uri "https://@logitApiEndpoint/v2" `
-        -Method Post `
-        -Headers $headers `
-        -Body $body
-      ```
-    </Tab>
+  You will see a list of all the available stack type, click the 'Add to Plan' button next to Hosted OpenSearch.
 
-    <Tab>
-      ```bash copy /@apikey/ 
-      curl -i \
-      -H "ApiKey: @apikey" \
-      -H "Content-Type: application/json" \
-      -H "LogType: json" \
-      https://@logitApiEndpoint/v2 \
-      -d '{"message":"Sample message from my computer"}'
-      ```
-    </Tab>
+  ![Add To Plan](@/images/getting-started/opensearch/add-to-plan.png)
 
-    <Tab>
-      ```bash copy /@apikey/ 
-      curl -i \
-      -H "ApiKey: @apikey" \
-      -H "Content-Type: application/json" \
-      -H "LogType: json" \
-      https://@logitApiEndpoint/v2 \
-      -d '{"message":"Sample message from my computer"}'
-      ```
-    </Tab>
-  </Tabs>
+   ### Configure Stack
 
-  You should expect to receive a `202 ACCEPTED` response:
+  You will be presented with your configuration options. Choose a configuration that matches your performance and pricing requirements. 
+  Logit.io assign you at least 2 cluster nodes which ensures that the nodes are allocated across different racks within a data centre 
+  and also that the allocation is evenly distributed. We do this to ensures stability, fault tolerance and consistent performance. 
 
-  ```cmd
-  HTTP/1.1 202 ACCEPTED
-  {"message":"Message Received, Thanks"}
-  ```
+  ![Configuration Options](@/images/getting-started/opensearch/configuration-options.png)
 
-  ### Launch Logs to View Sample Data
-  
-  Click the button below to open the log management visualizer:
+  ### Stack Summary
 
-  <LaunchVisualizer type="logs" />
+  On the right hand side of the page you will see a summary, in this case as we are only adding a Hosted OpenSearch Stack we see just a 
+  summary for that. Once you have reviewed the details and pricing and are happy that it meets your requirements click the 'Add Stack' 
+  button to create your OpenSearch Cluster.
 
-  You should now see the sample log stored in your stack.
-  
-  ### Start Integrating Your Logs
+  ![Stack Summary](@/images/getting-started/opensearch/payment-summary.png)
 
-  Logit.io provides more than 350 data source integration guides to help you get started. 
-  
-  Click the link below to get started.
+  ### Logit dashboard
 
-  <Cards>
-    <Card title="Log Management Integrations" href="/integrations/log-management" />
-  </Cards>
+  Your will be returned to your Logit.io dashboard and that's it. You have now finished creating your OpenSearch Cluster and it is ready 
+  for use.
+
+  The Hosted OpenSearch will be visible on your Logit.io Dashboard, you may have to scroll to find it if you have several Stacks already set up on 
+  your account.
+
+  ![Logit.io Dashboard Summary](@/images/getting-started/opensearch/dashboard.png)
+
+  You can click the 'How To Connect To My Cluster" button of the Stack on your Logit.io Dashboard or alternatively see the articles below for help 
+  and guidance as a next step:
 
 </Steps>
 
-<Callout type="info">
+{/* <Callout type="info">
   If you get stuck and need help, or can't find an integration guide that 
   meets your requirements, then please feel free to get in touch with our support 
   team <IntercomButton text="via live chat" />, and we'll be happy to assist you.
-</Callout>
+</Callout> */}
