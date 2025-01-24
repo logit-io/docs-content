@@ -16,6 +16,8 @@ please see this guide to create to create a cluster:
 <Steps>
   ### Logit.io Dashboard
 
+  **If you are logged section **
+
   Once your OpenSearch Cluster has been created you will be returned to the Logit.io Dashboard. The Stack on 
   this page shows a few basic details. Here you can see the endpoint, username and the password (the password 
   is hidden but clicking show will display it on the screen). These settings are what we need to connect to the 
@@ -43,12 +45,25 @@ please see this guide to create to create a cluster:
   These are the settings that you require in order to send data to your OpenSearch Cluster, below are examples of 
   how to do this.
 
+  Here are some simple examples of how to connect to your OpenSearch Cluster using several popular programming languages.
+
   __Note__: Please make sure the ___'opensearch-endpoint'___, ___'your-username'___ and ___'your-password'___ fields 
   are correctly populated.
 
   If you are logged into your Logit.io account the ___'opensearch-endpoint'___, ___'your-username'___ and ___'your-password'___ 
   fields should have been pre-populated with the correct values.
 
+  <Tabs items={["cURL", "Java", "Python", "C#"]}>
+    <Tab>
+     curl stuff
+    </Tab>
+    <Tab>
+      Java stuff
+    </Tab>
+    <Tab>
+     Python
+    </Tab>
+    <Tab>
   ```c# copy /@apikey/ 
   using Serilog;
   using Serilog.Sinks.OpenSearch;
@@ -97,6 +112,9 @@ please see this guide to create to create a cluster:
       }
   }
   ```
+    </Tab>
+  </Tabs>
+
   ### Further Help and Guidance
 
   See the articles below for further help and guidance as a next step:
