@@ -124,14 +124,14 @@ Ok, time to start ingesting data!
 
 Journalbeat is a recent addition to Elastic's Beats family that collects log entries from Systemd Journals. Journalbeat is based on the libbeat 
 framework. Journalbeat is forecast to be repurposed from being a Beat and will instead become a module for 
-[Filebeat](/integrations/log-management/shippers/filebeat) in the near future.
+[Filebeat](/integrations/filebeat) in the near future.
 
 Journalbeat monitors the journal locations that are specified and also collects logs for forwarding with Logstash and further processing in 
 Elasticsearch. It is rated as being easier to use than more commonly known Beats (such as Filebeat), but is noted as an experimental Beat by Elastic 
 so is subject to change.
 
-Journalbeat can be used to ship logs from [Kubernetes](/integrations/log-management/containerisation/kubernetes) but some users may not see their data being 
-reflected in Elasticsearch and may prefer to use Filebeat or [Fluentd](/integrations/log-management/shippers/fluentd) for a seamless and wider community 
+Journalbeat can be used to ship logs from [Kubernetes](/integrations/kubernetes) but some users may not see their data being 
+reflected in Elasticsearch and may prefer to use Filebeat or [Fluentd](/integrations/fluentd) for a seamless and wider community 
 supported logging experience.
 
 If you require any more assistance in using Journalbeat or any other Elastic Beats for shipping your log events we're here to help. Feel free to reach 

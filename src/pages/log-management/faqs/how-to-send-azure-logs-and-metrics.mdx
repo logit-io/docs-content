@@ -41,8 +41,8 @@ configurations is listed below.
 
 ## An Overview of Logit.io's Azure Integrations
 
-Logit.io provides 6 [log management integration guides](/integrations/log-management/azure) 
-and 3 [infrastructure metrics integration guides](/integrations/infrastructure-metrics/azure) for Azure. 
+Logit.io provides 6 [log management integration guides](/integrations) 
+and 3 [infrastructure metrics integration guides](/integrations/azure/#metrics) for Azure. 
 
 This article explains each of these in more detail below, where you can 
 follow the simple steps for each integration to effectively implement 
@@ -53,7 +53,7 @@ your source integration and start sending logs and metrics.
 Metricbeat is a nimble data collector designed to facilitate the monitoring 
 of Azure Kubernetes Service. It achieves this by gathering essential 
 metrics from the containers operating on the host system. 
-This [configuration](/integrations/infrastructure-metrics/azure/azure-kubernetes) will 
+This [configuration](/integrations/azure-kubernetes/#metrics) will 
 enable Metricbeat to efficiently harvest Azure Kubernetes Service 
 metrics and statistics, and seamlessly forward them to 
 either Logstash or Elasticsearch.
@@ -61,7 +61,7 @@ either Logstash or Elasticsearch.
 ### 2. Azure Kubernetes Metrics
 
 Metricbeat is designed to facilitate your Azure Kubernetes Service 
-monitoring efforts. This [integration](/integrations/infrastructure-metrics/azure/azure-kubernetes) achieves 
+monitoring efforts. This [integration](/integrations/azure-kubernetes/#metrics) achieves 
 this by gathering crucial metrics from the containers operating on the host system. 
 You can configure Metricbeat with the provided predefined examples, allowing you 
 to gather and transmit metrics and statistics from Azure Kubernetes Service to Logit.io.
@@ -74,19 +74,19 @@ service for effective event transformation and real-time log analysis.
 
 Azure's disaster recovery capabilities are renowned for their cross-compatibility 
 across different operating systems, regions, and languages, with customizable 
-backup schedules and [integration](/integrations/log-management/azure/azure-eventhub-diagnostics) with 
+backup schedules and [integration](/integrations/azure-eventhub-diagnostics) with 
 the Logit.io platform for enhanced data protection and version control. 
 
 Pulling diagnostic logs from Azure Event Hub to Logstash is straightforward. 
 The full configuration guide can be found in our extensive source 
-integrations, [Azure Event Hub Diagnostic Logs](/integrations/log-management/azure/azure-eventhub-diagnostics).
+integrations, [Azure Event Hub Diagnostic Logs](/integrations/azure-eventhub-diagnostics).
 
 ### 4. Azure Kubernetes Logs
 
 Filebeat, a lightweight log shipper, simplifies the process of monitoring 
 Azure Kubernetes Service. It achieves this by harvesting logs from the 
 containers operating on the host system. By following 
-the [predefined examples](/integrations/log-management/azure/azure-kubernetes-logs), you 
+the [predefined examples](/integrations/azure-kubernetes-logs), you 
 can configure Filebeat to gather and transmit Azure Kubernetes logs to Logit.io.
 
 ### 5. Azure Logs
@@ -96,7 +96,7 @@ volumes of data. With the ability to process millions of events per second, it's
 crucial to have a reliable log management service to efficiently transform and 
 monitor these events for comprehensive log message analysis. Our platform offers 
 automated parsing through robust and highly available Logstash pipelines, 
-facilitating a swift [migration](/integrations/log-management/azure) of your log data.
+facilitating a swift [migration](/integrations) of your log data.
 
 ### 6. Azure SQL
 
@@ -104,7 +104,7 @@ Experience enhanced data management with our Azure SQL Database integration.
 Logit.io connects with your Azure SQL Database, providing you with powerful 
 data analysis and monitoring capabilities. 
 
-With our [Azure SQL integration guide](/integrations/log-management/azure/azure-sql), 
+With our [Azure SQL integration guide](/integrations/azure-sql), 
 you can easily monitor your database's performance and security in real-time, 
 enabling data-driven decision-making. Logit.io simplifies the process, 
 so you can focus on gaining valuable insights from your data.
@@ -113,7 +113,7 @@ so you can focus on gaining valuable insights from your data.
 
 Optimize your Azure AKS Cluster with Logit.io integration. Connect your 
 cluster to Logit.io's platform for enhanced monitoring and analysis. 
-Our [Azure AKS metrics integration guide](/integrations/infrastructure-metrics/time-series-database/azure-aks-metrics) 
+Our [Azure AKS metrics integration guide](/integrations/azure-aks-metrics/#metrics) 
 provides real-time visibility into your containerized applications and microservices, 
 helping you manage and troubleshoot effectively. Keep a close eye on performance 
 and security, and leverage the benefits of Logit.io to streamline your 
@@ -123,14 +123,14 @@ AKS Cluster operations.
 
 Simplify your Azure Container Activity Log Management with Logit.io's integration. 
 Connect your logs to our platform for comprehensive analysis. 
-Our [Azure container activity logs integration guide](/integrations/infrastructure-metrics/azure/azure-container-activity-logs) 
+Our [Azure container activity logs integration guide](/integrations/azure-container-activity-logs/#metrics) 
 provides real-time insights into container activities, enabling you to efficiently 
 monitor performance, security, and compliance. Logit.io streamlines your 
 monitoring process, allowing you to make the most of your Azure Container Activity Logs.
 
 ### 9. Azure Metrics
 
-Unlock the power of the [Azure Metrics integration](/integrations/infrastructure-metrics/azure/azure-metrics) with 
+Unlock the power of the [Azure Metrics integration](/integrations/azure-metrics/#metrics) with 
 Logit.io. Monitor essential services and resources, customize dashboards, 
 and leverage anomaly detection to optimize performance. Logit.io streamlines 
 integration for comprehensive data analysis, enabling you to enhance your 
