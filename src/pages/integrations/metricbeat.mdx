@@ -13,7 +13,7 @@ tags: Beats, Logs, Metrics, Metricbeat, Stats, System, Monitoring
 
 Metricbeat is an open-source shipping agent used to collect and ship 
 operating system and service metrics to your Logit.io Stack 
-via [Logstash](/integrations/log-management/shippers/logstash).
+via [Logstash](/integrations/logstash).
 
 <Steps>
   ### Install Integration
@@ -282,37 +282,6 @@ via [Logstash](/integrations/log-management/shippers/logstash).
   ### Launch Logs to view your data
 
   <LaunchVisualizer type="logs" />
-
-  ### Configure Modules (Optional)
-
-  The system status module is enabled by default to collect metrics about your server, such as CPU usage, 
-  memory usage, network IO metrics, and process statistics.
-
-  There are a range of other modules which can be enabled for Metricbeat, please choose the module from 
-  the list below if you wish to know more.
-
-  - [Apache](/integrations/infrastructure-metrics/platforms/metricbeat-module-apache),
-  - [Docker](/integrations/infrastructure-metrics/platforms/metricbeat-module-docker),
-  - [golang](/integrations/infrastructure-metrics/languages-and-libraries/metricbeat-module-golang),
-  - [haproxy](/integrations/infrastructure-metrics/platforms/metricbeat-module-haproxy),
-  - [http](/integrations/infrastructure-metrics/protocols/metricbeat-module-http),
-  - [Kafka](/integrations/infrastructure-metrics/platforms/metricbeat-module-kafka),
-  - [Kubernetes](/integrations/infrastructure-metrics/platforms/metricbeat-module-kubernetes),
-  - [MongoDB](/integrations/infrastructure-metrics/applications/mongodb-metrics),
-  - [mysql](/integrations/infrastructure-metrics/applications/mysql-metrics),
-  - [nginx](/integrations/infrastructure-metrics/platforms/metricbeat-module-nginx),
-  - [rabbitmq](/integrations/infrastructure-metrics/message-queues/metricbeat-module-rabbitmq),
-  - [Redis](/integrations/infrastructure-metrics/message-queues/metricbeat-module-redis),
-  - [CentOS](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-system-centos),
-  - [Debian](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-system-debian),
-  - [MacOS](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-system-macos),
-  - [Redhat](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-system-redhat),
-  - [Ubuntu](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-system-ubuntu),
-  - [Windows](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-system-windows),
-  - [uwsgi](/integrations/infrastructure-metrics/operating-systems/metricbeat-module-uwsgi),
-  - [PostgreSQL](/integrations/infrastructure-metrics/applications/postgresql-metrics),
-  - [Zookeeper](/integrations/infrastructure-metrics/platforms/metricbeat-module-zookeeper),
-  - [Puppet](/integrations/infrastructure-metrics/applications/puppet)
 
   ### How to diagnose no data in Stack
 

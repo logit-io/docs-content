@@ -154,7 +154,7 @@ Follow the steps below to send your observability data to Logit.io
 ### Heartbeat Logging Overview
 
 Heartbeat is a lightweight shipping agent created by Elastic as part of their Beats group of log shippers. Compared to other tools in 
-the Beats family, such as [Metricbeat](/integrations/log-management/shippers/metricbeat) & [Winlogbeat](/integrations/log-management/shippers/winlogbeat), 
+the Beats family, such as [Metricbeat](/integrations/metricbeat) & [Winlogbeat](/integrations/winlogbeat), 
 Heartbeat is a relatively new addition to the Elastic Stack.
 
 Heartbeat is the only member of the Beats family that Elastic recommends you to install on a separate network/machine to the one you are currently 
@@ -163,7 +163,7 @@ wishing to monitor.
 Heartbeat was created to allow observability of the health of services running on the host (this includes uptime monitoring functionality as standard). 
 These results can then be shipped to one or more destinations, including Logstash.
 
-Heartbeat supports [HTTP](/integrations/log-management/protocols/http), ICMP and [TCP](/integrations/log-management/protocols/tcp) protocols for monitoring 
+Heartbeat supports [HTTP](/integrations/http), ICMP and [TCP](/integrations/tcp) protocols for monitoring 
 service availability. 
 
 If you need to keep a close eye on uptime for the purposes of complying with your company's service level agreement (SLA) then you'll find that Heartbeat 
