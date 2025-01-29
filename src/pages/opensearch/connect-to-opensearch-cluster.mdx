@@ -16,8 +16,6 @@ please see this guide to create to create a cluster:
 <Steps>
   ### Logit.io Dashboard
 
-  **If you are logged section **
-
   Once your OpenSearch Cluster has been created you will be returned to the Logit.io Dashboard. The Stack on 
   this page shows a few basic details. Here you can see the endpoint, username and the password (the password 
   is hidden but clicking show will display it on the screen). These settings are what we need to connect to the 
@@ -25,7 +23,7 @@ please see this guide to create to create a cluster:
 
   ![Logit.io Dashboard Summary](@/images/getting-started/opensearch/dashboard.png)
 
-  To see more of your setting, click the 'settings' link to navigate to the stack settings overview page.
+  <ViewStackSettings/>
 
   ### Stack Settings Overview
 
@@ -35,8 +33,7 @@ please see this guide to create to create a cluster:
 
   ![Stack Settings Overview](@/images/getting-started/opensearch/stack-settings-overview.png)
 
-  Clicking on the 'Endpoints' link in the menu on the left hand side will give you the information that you require 
-  to send data to OpenSearch.
+  <ViewEndpoints/>
 
   ### Endpoints
 
@@ -55,67 +52,7 @@ please see this guide to create to create a cluster:
   If you are logged into your Logit.io account the ___'opensearch-endpoint'___, ___'your-username'___ and ___'your-password'___ 
   fields should have been pre-populated with the correct values.
 
-  <Tabs items={["cURL", "Java", "Python", "C#"]}>
-    <Tab>
-     curl stuff
-    </Tab>
-    <Tab>
-      Java stuff
-    </Tab>
-    <Tab>
-     Python
-    </Tab>
-    <Tab>
-  ```c# copy /@apikey/ 
-  using Serilog;
-  using Serilog.Sinks.OpenSearch;
-  using System;
-
-  class Program
-  {
-      static void Main(string[] args)
-      {
-          // OpenSearch configuration
-          var openSearchUri = "https://your-opensearch-endpoint:9200";
-          var username = "your-username";
-          var password = "your-password";
-
-          // Configure Serilog
-          Log.Logger = new LoggerConfiguration()
-              .Enrich.FromLogContext()
-              .WriteTo.Console() // Optional: log to console
-              .WriteTo.OpenSearch(new OpenSearchSinkOptions(new Uri(openSearchUri))
-              {
-                  ModifyConnectionSettings = x => x.BasicAuthentication(username, password),
-                  AutoRegisterTemplate = true, // Automatically register index template
-                  IndexFormat = "my-app-logs-{0:yyyy.MM.dd}", // Daily index
-                  TypeName = null, // For OpenSearch 2.x and above, this should be null
-                  EmitEventFailure = EmitEventFailureHandling.WriteToSelfLog | EmitEventFailureHandling.RaiseCallback,
-                  FailureCallback = e => Console.WriteLine($"Failed to log to OpenSearch: {e.Message}")
-              })
-              .CreateLogger();
-
-          try
-          {
-              // Log some messages
-              Log.Information("This is an information log");
-              Log.Warning("This is a warning log");
-              Log.Error("This is an error log");
-          }
-          catch (Exception ex)
-          {
-              Console.WriteLine($"Exception occurred: {ex.Message}");
-          }
-          finally
-          {
-              // Dispose the logger
-              Log.CloseAndFlush();
-          }
-      }
-  }
-  ```
-    </Tab>
-  </Tabs>
+  Links to Pages to follow:
 
   ### Further Help and Guidance
 
