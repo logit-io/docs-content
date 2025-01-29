@@ -18,10 +18,20 @@ please see this guide to create to create a cluster:
 
   Once your OpenSearch Cluster has been created you will be returned to the Logit.io Dashboard. The Stack on 
   this page shows a few basic details. Here you can see the endpoint, username and the password (the password 
-  is hidden but clicking show will display it on the screen). These settings are what we need to connect to the 
-  OpenSearch Cluster but we will have a look at the settings first.
+  is hidden but clicking show will display it on the screen). 
 
   ![Logit.io Dashboard Summary](@/images/getting-started/opensearch/dashboard.png)
+
+  Here are the settings for your OpenSearch Cluster:
+
+  ```text copy /'@elasticsearch.endpointAddress:strip_quotes'/ /'@elasticsearch.username:strip_quotes'/ /'@elasticsearch.password:strip_quotes'/
+  Endpoint: '@elasticsearch.endpointAddress:strip_quotes'
+  Username: '@elasticsearch.username:strip_quotes'
+  Password: '@elasticsearch.password:strip_quotes'
+  ```
+
+  These settings are what we need to connect to the OpenSearch Cluster, the rest of the article is a guide to where 
+  to find your OpenSearch settings in the Logit.io Dashboard app.
 
   <ViewStackSettings/>
 
@@ -42,7 +52,7 @@ please see this guide to create to create a cluster:
   These are the settings that you require in order to send data to your OpenSearch Cluster, below are examples of 
   how to do this.
 
-  ### Simple example apps
+  ### Simple Example Apps
 
   Here are some simple examples of how to connect to your OpenSearch Cluster using several popular programming languages.
 
