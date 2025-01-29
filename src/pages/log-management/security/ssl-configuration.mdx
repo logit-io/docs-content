@@ -9,7 +9,7 @@ stackTypes: logs
 
 **To view the SSL Certificate Expiry Notice it can be found [here.](/log-management/security/ssl-certificate-expiry-notice)**
 
-The [updated certificate file](https://cdn.logit.io/root.logit.io.crt?_gl=1*6mao2j*_ga*NzE2MTk2MzcxLjE3MTAyNDM2MTA.*_ga_W546BZYLYM*MTcxODI4NzM3MS4xMTIuMS4xNzE4MjkwMDA5LjU3LjAuMA..) contains 
+The [updated certificate file](https://cdn.logit.io/root.logit.io.crt) contains 
 both the old and new root certificates and should be updated as soon as possible, 
 if you have any issues with the new certificate, please contact us.
 
@@ -34,7 +34,7 @@ $ActionSendStreamDriverPermittedPeer *.logit.io
 Rsyslog will only accept a single file name to verify the SSL connection 
 with, but you can have more than one certificate in that file.
 
-Replace the certificate file with a new file available from [here](https://cdn.logit.io/root.logit.io.crt?_gl=1*14o90h8*_ga*NzE2MTk2MzcxLjE3MTAyNDM2MTA.*_ga_W546BZYLYM*MTcxODI4NzM3MS4xMTIuMS4xNzE4MjkwMTk2LjYwLjAuMA..)
+Replace the certificate file with a new file available from [here](https://cdn.logit.io/root.logit.io.crt)
 
 Restart rsyslog and confirm it's reconnected and still sending data and reporting no errors.
 
@@ -55,7 +55,7 @@ and will need to update the intermediate.crt on your system, see below and examp
 
 ```
 
-Please [download](https://cdn.logit.io/root.logit.io.crt?_gl=1*1wwfhtn*_ga*NzE2MTk2MzcxLjE3MTAyNDM2MTA.*_ga_W546BZYLYM*MTcxODI4NzM3MS4xMTIuMS4xNzE4MjkwMTk2LjYwLjAuMA..) the 
+Please [download](https://cdn.logit.io/root.logit.io.crt) the 
 new certificate and replace the old intermediate.crt. 
 
 Newer configurations that do not specify a certificate_authority are unlikely to 
