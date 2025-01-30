@@ -1,6 +1,6 @@
 ---
-title: Creating an OpenSearch Cluster with C#
-metaTitle: Learn How to Creating an OpenSearch Cluster with C#
+title: Connecting to an OpenSearch Cluster with C#
+metaTitle: Learn How to connect to an OpenSearch Cluster with C#
 pagination: false
 timestamp: false
 stackTypes: opensearch
@@ -13,38 +13,86 @@ please see this guide to create to create a cluster:
 
 [Creating an OpenSearch Cluster](creating-opensearch-cluster.mdx)
 
+Here's a C# example of sending logs to OpenSearch using basic authentication with your username, password, 
+and your api endpoint. This example uses the Serilog logging library and the Serilog.Sinks.OpenSearch package.
+
 <Steps>
-  ### Add Hosted OpenSearch
+  ### Install NuGet Packages
+
+  * Install Serilog
+
+  * Install Serilog.Sinks.OpenSearch
+
+  ```bash copy
+  dotnet add package Serilog
+  dotnet add package Serilog.Sinks.OpenSearch
+  ```
+
+  ### C# Code Example
+
+  ```csharp copy /@elasticsearch.endpointAddress/ /@elasticsearch.username/ /@elasticsearch.password/
+  using Serilog;
+  using Serilog.Sinks.OpenSearch;
+  using System;
+
+  class Program
+  {
+      static void Main(string[] args)
+      {
+          // OpenSearch configuration
+          var openSearchUri = "@elasticsearch.endpointAddress";
+          var username = "@elasticsearch.username";
+          var password = "@elasticsearch.password";
+
+          // Configure Serilog
+          Log.Logger = new LoggerConfiguration()
+              .Enrich.FromLogContext()
+              .WriteTo.Console() // Optional: log to console
+              .WriteTo.OpenSearch(new OpenSearchSinkOptions(new Uri(openSearchUri))
+              {
+                  ModifyConnectionSettings = x => x.BasicAuthentication(username, password),
+                  AutoRegisterTemplate = true, // Automatically register index template
+                  IndexFormat = "my-app-logs-{0:yyyy.MM.dd}", // Daily index
+                  TypeName = null, // For OpenSearch 2.x and above, this should be null
+                  EmitEventFailure = EmitEventFailureHandling.WriteToSelfLog | EmitEventFailureHandling.RaiseCallback,
+                  FailureCallback = e => Console.WriteLine($"Failed to log to OpenSearch: {e.Message}")
+              })
+              .CreateLogger();
+
+          try
+          {
+              // Log some messages
+              Log.Information("This is an information log");
+              Log.Warning("This is a warning log");
+              Log.Error("This is an error log");
+          }
+          catch (Exception ex)
+          {
+              Console.WriteLine($"Exception occurred: {ex.Message}");
+          }
+          finally
+          {
+              // Dispose the logger
+              Log.CloseAndFlush();
+          }
+      }
+  }
+  ```
   
-  <AddOpenSearchStack/>
+  ### Key Points
 
-   ### Configure Stack
+  The IndexFormat is customizable. Adjust it based on your indexing strategy.
 
-  You will be presented with your configuration options. Choose a configuration that matches your performance and pricing requirements. 
-  Logit.io assign you at least 2 cluster nodes which ensures that the nodes are allocated across different racks within a data centre 
-  and also that the allocation is evenly distributed. We do this to ensures stability, fault tolerance and consistent performance. 
+  Handle failures using the FailureCallback to ensure logs are captured if the connection fails.
+  
 
-  ![Configuration Options](@/images/getting-started/opensearch/configuration-options.png)
+  ### Running the Application:
 
-  ### Stack Summary
+  Compile and run the application. Logs will be sent to the specified OpenSearch endpoint, and you 
+  should see them in the configured index.
 
-  On the right hand side of the page you will see a summary, in this case as we are only adding a Hosted OpenSearch Stack we see just a 
-  summary for that. Once you have reviewed the details and pricing and are happy that it meets your requirements click the 'Add Stack' 
-  button to create your OpenSearch Cluster.
+  ### Further Help and Guidance
 
-  ![Stack Summary](@/images/getting-started/opensearch/payment-summary.png)
-
-  ### Logit dashboard
-
-  Your will be returned to your Logit.io dashboard and that's it. You have now finished creating your OpenSearch Cluster and it is ready 
-  for use.
-
-  The Hosted OpenSearch will be visible on your Logit.io Dashboard, you may have to scroll to find it if you have several Stacks already set up on 
-  your account.
-
-  ![Logit.io Dashboard Summary](@/images/getting-started/opensearch/dashboard.png)
-
-  You can click the 'How To Connect To My Cluster" button of the Stack on your Logit.io Dashboard or alternatively see the articles below for help 
-  and guidance as a next step:
+  See the articles below for further help and guidance as a next step:
 
 </Steps>

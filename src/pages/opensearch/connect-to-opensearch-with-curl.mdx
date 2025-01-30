@@ -1,0 +1,87 @@
+---
+title: Connecting to an OpenSearch Cluster with cURL
+metaTitle: Learn How to connect to an OpenSearch Cluster with cURL
+pagination: false
+timestamp: false
+stackTypes: opensearch
+---
+
+## Connect to an OpenSearch Cluster with cURL
+
+This article assumes that you have already created an OpenSearch Cluster, if you have not yet done this then 
+please see this guide to create to create a cluster:
+
+[Creating an OpenSearch Cluster](creating-opensearch-cluster.mdx)
+
+Here's a curl example of sending logs to OpenSearch. This method directly interacts with the __OpenSearch REST API__.
+
+<Steps>
+
+### cURL Code Example
+
+  ```cmd copy /@elasticsearch.endpointAddress/ /@elasticsearch.username/ /@elasticsearch.password/ /my-app-logs/
+    curl -X POST "@elasticsearch.endpointAddress/my-app-logs/_doc" \
+    -H "Content-Type: application/json" \
+    -u @elasticsearch.username:@elasticsearch.password \
+    -d '{
+    "timestamp": "'"$(date -u +"%Y-%m-%dT%H:%M:%SZ")"'",
+    "level": "INFO",
+    "message": "This is a log message from curl",
+    "service": "example-service"
+    }'
+  ```
+  
+  ### Key Points
+
+  OpenSearch Client: The opensearch-py client handles the connection, authentication, and indexing.
+
+  Index: Replace __my-app-logs__ with your desired index name..
+
+  Headers:
+  * Content-Type: application/json: Indicates the payload format.
+  * -u @elasticsearch.username:@elasticsearch.password: Provides basic authentication.
+
+  Payload:
+  * timestamp: ISO 8601 formatted timestamp (e.g., 2025-01-30T12:34:56Z).
+  * level: Log level (e.g., INFO, ERROR).
+  * message: The log message.
+  * service: (Optional) Specify the source of the log.
+
+  ### Example Output
+
+  OpenSearch will respond with a status indicating that the document was indexed.
+
+  ```json /my-app-logs/
+    {
+      "_index": "my-app-logs",
+      "_type": "_doc",
+      "_id": "123456",
+      "_version": 1,
+      "result": "created",
+      "_shards": {
+        "total": 2,
+        "successful": 1,
+        "failed": 0
+      },
+      "_seq_no": 1,
+      "_primary_term": 1
+    }
+  ```
+
+  ### Verifying Logs
+
+  To verify that the log was indexed, you can query the index using curl.
+
+  ```bash copy /@elasticsearch.endpointAddress/ /@elasticsearch.username/ /@elasticsearch.password/ /my-app-logs/
+    curl -X GET "@elasticsearch.endpointAddress/my-app-logs/_search?pretty=true" \
+    -u @elasticsearch.username:@elasticsearch.password
+  ```
+
+  This will return all documents in the __my-app-logs__ index, replace __my-app-logs__ with your index if you used 
+  a different one.
+
+  ### Further Help and Guidance
+
+  See the articles below for further help and guidance as a next step:
+
+</Steps>

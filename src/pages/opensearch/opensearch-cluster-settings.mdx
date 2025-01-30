@@ -1,12 +1,12 @@
 ---
-title: Connect to an OpenSearch Cluster
-metaTitle: Learn How to Connect to an OpenSearch Cluster
+title: OpenSearch Cluster Settings
+metaTitle: Learn How to view your OpenSearch Cluster Settings
 pagination: false
 timestamp: false
 stackTypes: opensearch
 ---
 
-## Connect to an OpenSearch Cluster
+## OpenSearch Cluster Settings
 
 This article assumes that you have already created an OpenSearch Cluster, if you have not yet done this then 
 please see this guide to create to create a cluster:
@@ -14,15 +14,26 @@ please see this guide to create to create a cluster:
 [Creating an OpenSearch Cluster](creating-opensearch-cluster.mdx)
 
 <Steps>
-  ### Logit.io Dashboard
+ 
+  ### Stack Settings Overview
 
-  Once your OpenSearch Cluster has been created you will be returned to the Logit.io Dashboard. The Stack on 
-  this page shows a few basic details. Here you can see the endpoint, username and the password (the password 
-  is hidden but clicking show will display it on the screen). 
+  The Stack Settings Overview page is where you will find all the information that you need relating to your 
+  OpenSearch stack. 
 
-  ![Logit.io Dashboard Summary](@/images/getting-started/opensearch/dashboard.png)
+  <ViewStackSettings/>
 
-  Here are the settings for your OpenSearch Cluster:
+  The first bit of information you should notice is that all of your nodes are in a healthy 
+  state and there are no errors.
+
+  ![Stack Settings Overview](@/images/getting-started/opensearch/stack-settings-overview.png)
+
+  <ViewEndpoints/>
+
+  ### Endpoints
+
+  ![OpenSearch Endpoints](@/images/getting-started/opensearch/endpoints.png)
+
+  Here are the Endpoint details for your OpenSearch Cluster:
 
   ```text copy /'@elasticsearch.endpointAddress:strip_quotes'/ /'@elasticsearch.username:strip_quotes'/ /'@elasticsearch.password:strip_quotes'/
   Endpoint: '@elasticsearch.endpointAddress:strip_quotes'
@@ -32,10 +43,8 @@ please see this guide to create to create a cluster:
 
   These settings are what we need to connect to the OpenSearch Cluster.
 
-  Click the link below to find out more about your OpenSearch Cluster Settings or continue with this article to get started sending data 
-  to your OpenSearch Cluster.
-
-  [OpenSearch Cluster Settings](opensearch-cluster-settings.mdx)
+  These are the settings that you require in order to send data to your OpenSearch Cluster, below are examples of 
+  how to do this.
 
   ### Simple Example Apps
 
