@@ -19,8 +19,8 @@ Here's a curl example of sending logs to OpenSearch. This method directly intera
 
 ### cURL Code Example
 
-  ```cmd copy /@elasticsearch.endpointAddress/ /@elasticsearch.username/ /@elasticsearch.password/ /my-app-logs/
-    curl -X POST "@elasticsearch.endpointAddress/my-app-logs/_doc" \
+  ```cmd copy /@elasticsearch.endpointAddress/ /@elasticsearch.username/ /@elasticsearch.password/
+    curl -X POST "@elasticsearch.endpointAddress/logit-example/_doc" \
     -H "Content-Type: application/json" \
     -u @elasticsearch.username:@elasticsearch.password \
     -d '{
@@ -34,8 +34,6 @@ Here's a curl example of sending logs to OpenSearch. This method directly intera
   ### Key Points
 
   OpenSearch Client: The opensearch-py client handles the connection, authentication, and indexing.
-
-  Index: Replace __my-app-logs__ with your desired index name..
 
   Headers:
   * Content-Type: application/json: Indicates the payload format.
@@ -51,9 +49,9 @@ Here's a curl example of sending logs to OpenSearch. This method directly intera
 
   OpenSearch will respond with a status indicating that the document was indexed.
 
-  ```json /my-app-logs/
+  ```json
     {
-      "_index": "my-app-logs",
+      "_index": "logit-example",
       "_type": "_doc",
       "_id": "123456",
       "_version": 1,
@@ -72,13 +70,12 @@ Here's a curl example of sending logs to OpenSearch. This method directly intera
 
   To verify that the log was indexed, you can query the index using curl.
 
-  ```bash copy /@elasticsearch.endpointAddress/ /@elasticsearch.username/ /@elasticsearch.password/ /my-app-logs/
-    curl -X GET "@elasticsearch.endpointAddress/my-app-logs/_search?pretty=true" \
+  ```bash copy /@elasticsearch.endpointAddress/ /@elasticsearch.username/ /@elasticsearch.password/
+    curl -X GET "@elasticsearch.endpointAddress/logit-example/_search?pretty=true" \
     -u @elasticsearch.username:@elasticsearch.password
   ```
 
-  This will return all documents in the __my-app-logs__ index, replace __my-app-logs__ with your index if you used 
-  a different one.
+  This will return all documents in the __logit-example__ index.
 
   ### Further Help and Guidance
 

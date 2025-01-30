@@ -13,8 +13,8 @@ please see this guide to create to create a cluster:
 
 [Creating an OpenSearch Cluster](creating-opensearch-cluster.mdx)
 
-Here's a Python example of sending logs to OpenSearch using basic authentication with your username, password, 
-and your api endpoint. This example uses __opensearch-py__ client and the __logging library__ for integration.
+Here's a Python example of sending logs to OpenSearch, this example uses __opensearch-py__ client and 
+the __logging library__ for integration.
 
 <Steps>
   ### Install Dependencies
@@ -27,7 +27,7 @@ and your api endpoint. This example uses __opensearch-py__ client and the __logg
 
   ### Python Code Example
 
-  ```python copy /@elasticsearch.endpointAddress/ /@elasticsearch.username/ /@elasticsearch.password/
+  ```python copy filename="program.py" /@elasticsearch.endpointAddress/ /@elasticsearch.username/ /@elasticsearch.password/
     import logging
     from opensearchpy import OpenSearch
     from logging.handlers import HTTPHandler
@@ -36,7 +36,7 @@ and your api endpoint. This example uses __opensearch-py__ client and the __logg
     opensearch_endpoint = "@elasticsearch.endpointAddress"
     username = "@elasticsearch.username"
     password = "@elasticsearch.password"
-    index_name = "my-app-logs"
+    index_name = "logit-example"
 
     # Set up OpenSearch client with basic authentication
     client = OpenSearch(

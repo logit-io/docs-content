@@ -13,8 +13,8 @@ please see this guide to create to create a cluster:
 
 [Creating an OpenSearch Cluster](creating-opensearch-cluster.mdx)
 
-Here's a C# example of sending logs to OpenSearch using basic authentication with your username, password, 
-and your api endpoint. This example uses the Serilog logging library and the Serilog.Sinks.OpenSearch package.
+Here's a C# example of sending logs to OpenSearch, this example uses the Serilog logging library and the 
+Serilog.Sinks.OpenSearch package.
 
 <Steps>
   ### Install NuGet Packages
@@ -30,7 +30,7 @@ and your api endpoint. This example uses the Serilog logging library and the Ser
 
   ### C# Code Example
 
-  ```csharp copy /@elasticsearch.endpointAddress/ /@elasticsearch.username/ /@elasticsearch.password/
+  ```csharp copy filename="program.cs" /@elasticsearch.endpointAddress/ /@elasticsearch.username/ /@elasticsearch.password/
   using Serilog;
   using Serilog.Sinks.OpenSearch;
   using System;
@@ -52,7 +52,7 @@ and your api endpoint. This example uses the Serilog logging library and the Ser
               {
                   ModifyConnectionSettings = x => x.BasicAuthentication(username, password),
                   AutoRegisterTemplate = true, // Automatically register index template
-                  IndexFormat = "my-app-logs-{0:yyyy.MM.dd}", // Daily index
+                  IndexFormat = "logit-example-{0:yyyy.MM.dd}", // Daily index
                   TypeName = null, // For OpenSearch 2.x and above, this should be null
                   EmitEventFailure = EmitEventFailureHandling.WriteToSelfLog | EmitEventFailureHandling.RaiseCallback,
                   FailureCallback = e => Console.WriteLine($"Failed to log to OpenSearch: {e.Message}")
