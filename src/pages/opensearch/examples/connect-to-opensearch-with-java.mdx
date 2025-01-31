@@ -16,4 +16,73 @@ please see this guide to create to create a cluster:
 Here's a Python example of sending logs to OpenSearch, this example uses the __OpenSearch Java Client__
 _(org.opensearch.client:opensearch-java)_ and integrates it with the logging framework __SLF4J__.
 
+This guide is created using __Maven__.
 
+<Steps>
+  ### Add Dependencies
+
+  Add the following depenencies to your __pom.xml__ file
+
+  ```xml copy filename="pom.xml"
+  <dependencies>
+    <!-- OpenSearch Java Client -->
+    <dependency>
+        <groupId>org.opensearch.client</groupId>
+        <artifactId>opensearch-java</artifactId>
+        <version>2.10.0</version>
+    </dependency>
+    <!-- SLF4J Logging -->
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>2.0.7</version>
+    </dependency>
+  </dependencies>
+  ```
+
+  ### Java Code Example
+
+  ```java copy filename="program.java" /@elasticsearch.endpointAddress/ /@elasticsearch.username/ /@elasticsearch.password/
+  import org.opensearch.client.opensearch.OpenSearchClient;
+  import org.opensearch.client.opensearch.core.IndexRequest;
+  import org.opensearch.client.opensearch.core.IndexResponse;
+  import org.opensearch.client.opensearch.core.SearchRequest;
+  import org.opensearch.client.opensearch.core.SearchResponse;
+  import org.opensearch.client.transport.aws.AwsSdk2Transport;
+  import org.opensearch.client.transport.aws.HttpClientProvider;
+  import org.opensearch.client.transport.rest_client.RestClientTransport;
+  import org.apache.http.auth.AuthScope;
+  import org.apache.http.auth.UsernamePasswordCredentials;
+  import org.apache.http.impl.client.BasicCredentialsProvider;
+  import java.util.Base64.*;
+
+  public class openLogsExample{
+
+
+      constructor(){
+          connect(){
+
+          }
+          public static void main(String[] Args){
+
+          }
+
+
+      }
+  }
+  ```
+  
+  ### Key Points
+
+  
+  
+
+  ### Running the Application:
+
+  
+
+  ### Further Help and Guidance
+
+  See the articles below for further help and guidance as a next step:
+
+</Steps>
