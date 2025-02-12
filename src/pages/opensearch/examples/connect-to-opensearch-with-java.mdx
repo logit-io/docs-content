@@ -46,40 +46,94 @@ This guide is created using __Maven__.
   import org.opensearch.client.opensearch.OpenSearchClient;
   import org.opensearch.client.opensearch.core.IndexRequest;
   import org.opensearch.client.opensearch.core.IndexResponse;
-  import org.opensearch.client.opensearch.core.SearchRequest;
-  import org.opensearch.client.opensearch.core.SearchResponse;
-  import org.opensearch.client.transport.aws.AwsSdk2Transport;
-  import org.opensearch.client.transport.aws.HttpClientProvider;
   import org.opensearch.client.transport.rest_client.RestClientTransport;
+  import org.opensearch.client.transport.rest_client.RestClientTransport.Builder;
   import org.apache.http.auth.AuthScope;
   import org.apache.http.auth.UsernamePasswordCredentials;
   import org.apache.http.impl.client.BasicCredentialsProvider;
-  import java.util.Base64.*;
+  import org.elasticsearch.client.RestClient;
+  import org.slf4j.Logger;
+  import org.slf4j.LoggerFactory;
 
-  public class openLogsExample{
+  import java.io.IOException;
+  import java.util.HashMap;
+  import java.util.Map;
 
+  public class OpenSearchLogger {
+      private static final Logger logger = LoggerFactory.getLogger(OpenSearchLogger.class);
 
-      constructor(){
-          connect(){
+      public static void main(String[] args) {
+          String endpoint = "@elasticsearch.endpointAddress:9200";
+          String username = "@elasticsearch.username";
+          String password = "@elasticsearch.password";
+          String indexName = "logit-example";
 
+          // Configure authentication
+          BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+          credentialsProvider.setCredentials(
+                  AuthScope.ANY,
+                  new UsernamePasswordCredentials(username, password)
+          );
+
+          // Create OpenSearch REST client
+          RestClient restClient = RestClient.builder(org.apache.http.HttpHost.create(endpoint))
+                  .setHttpClientConfigCallback(httpClientBuilder -> 
+                      httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider))
+                  .build();
+
+          // Transport and OpenSearch client
+          RestClientTransport transport = new RestClientTransport(restClient, new org.opensearch.client.json.jackson.JacksonJsonpMapper());
+          OpenSearchClient client = new OpenSearchClient(transport);
+
+          try {
+              // Create a log entry
+              Map<String, Object> logEntry = new HashMap<>();
+              logEntry.put("timestamp", System.currentTimeMillis());
+              logEntry.put("level", "INFO");
+              logEntry.put("message", "This is a log message from Java");
+              logEntry.put("service", "example-service");
+
+              // Send log to OpenSearch
+              IndexRequest<Map<String, Object>> request = new IndexRequest.Builder<Map<String, Object>>()
+                      .index(indexName)
+                      .document(logEntry)
+                      .build();
+
+              IndexResponse response = client.index(request);
+
+              logger.info("Log indexed with ID: {}", response.id());
+          } catch (Exception e) {
+              logger.error("Failed to send log to OpenSearch", e);
+          } finally {
+              try {
+                  restClient.close();
+              } catch (IOException e) {
+                  logger.error("Failed to close OpenSearch client", e);
+              }
           }
-          public static void main(String[] Args){
-
-          }
-
-
       }
   }
   ```
   
   ### Key Points
 
-  
-  
+  Ensure all required dependencies are correctly installed.
 
+  Properly handle exceptions for production use, e.g., retry logic for failed requests.
+  
   ### Running the Application:
 
-  
+  Build the Project:
+
+  ```bash copy
+  mvn clean install
+  ```
+
+  Use your IDE’s "Run" feature or execute the compiled JAR file:
+
+   ```bash copy
+  java -jar target/your-application-name.jar
+  ```
 
   ### Further Help and Guidance
 
