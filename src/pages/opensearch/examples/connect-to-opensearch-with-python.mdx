@@ -8,6 +8,10 @@ stackTypes: opensearch
 
 ## Connect to an OpenSearch Cluster with Python
 
+<Callout type="info">
+This sample app was created and tested with `Python 3.11.2` and `pip 24.2` and `python-logstash-async 3.3.0`
+</Callout>
+
 This article assumes that you have already created an OpenSearch Cluster, if you have not yet done this then 
 please see this guide to create to create a cluster:
 
@@ -17,83 +21,104 @@ Here's a Python example of sending logs to OpenSearch, this example uses __opens
 the __logging library__ for integration.
 
 <Steps>
-  ### Install Dependencies
 
-  * Install the __opensearch-py__ package for interacting with OpenSearch.
+    ### Create a Virtual Environment (optional but recommended)
 
-  ```bash copy
-  pip install opensearch-py
-  ```
+    Create a virtual environment for the test app.
 
-  ### Python Code Example
+    ```bash copy
+    python -m venv opensearch-env
+    ```
 
-  ```python copy filename="program.py" /@elasticsearch.endpointAddress/ /@elasticsearch.username/ /@elasticsearch.password/
-    import logging
-    from opensearchpy import OpenSearch
-    from logging.handlers import HTTPHandler
+    ### Activate the Virtual Environment
 
-    # OpenSearch configuration
-    opensearch_endpoint = "@elasticsearch.endpointAddress"
-    username = "@elasticsearch.username"
-    password = "@elasticsearch.password"
+    <Tabs items={["Windows", "macOS & Linux"]}>
+        <Tab>
+            ```bash copy
+            opensearch-env\Scripts\activate
+            ```
+        </Tab>
+        <Tab>
+            ```bash copy
+            source opensearch-env/bin/activate
+            ```
+        </Tab>
+    </Tabs>
+
+    ### Install Dependencies
+
+    * Install the __opensearch-py__ package for interacting with OpenSearch.
+
+    ```bash copy
+    pip install requests
+    ```
+
+    ### Python Code Example
+
+    Create a new file and call it __send_logs.py__. Open this file using your choice of text editor, paste in the 
+    following and then save.
+
+    ```python copy filename="send_logs.py" /@elasticsearch.endpointAddress/ /@elasticsearch.username/ /@elasticsearch.password/
+    import requests
+    from datetime import datetime
+    import json
+
+    # Configuration
+    opensearch_url = "@elasticsearch.endpointAddress"  # OpenSearch endpoint
     index_name = "logit-example"
+    username = "@elasticsearch.username"  # Your username
+    password = "@elasticsearch.password"  # Your password
 
-    # Set up OpenSearch client with basic authentication
-    client = OpenSearch(
-        hosts=[opensearch_endpoint],
-        http_auth=(username, password),
-        use_ssl=True,
-        verify_certs=True
-    )
+    # Generate current timestamp
+    timestamp = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%fZ')
 
-    # Function to send logs to OpenSearch
-    class OpenSearchHandler(logging.Handler):
-        def __init__(self, client, index):
-            super().__init__()
-            self.client = client
-            self.index = index
+    # Log entry
+    log_entry = {
+        "@timestamp": timestamp,
+        "level": "INFO",
+        "message": "This is a log message from Python script",
+        "service": "example-service"
+    }
 
-        def emit(self, record):
-            log_entry = self.format(record)
-            try:
-                self.client.index(index=self.index, body={"message": log_entry})
-            except Exception as e:
-                print(f"Failed to send log to OpenSearch: {e}")
+    # Prepare the request headers
+    headers = {"Content-Type": "application/json"}
 
-    # Configure the logger
-    logger = logging.getLogger("OpenSearchLogger")
-    logger.setLevel(logging.INFO)
+    # Define the URL for the specific index
+    url = f"{opensearch_url}/{index_name}/_doc/"
 
-    # Create and add OpenSearch handler
-    os_handler = OpenSearchHandler(client, index_name)
-    formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
-    os_handler.setFormatter(formatter)
-    logger.addHandler(os_handler)
+    # Send the POST request
+    response = requests.post(url, auth=(username, password), headers=headers, data=json.dumps(log_entry))
 
-    # Log messages
-    try:
-        logger.info("This is an info log message.")
-        logger.warning("This is a warning log message.")
-        logger.error("This is an error log message.")
-    except Exception as e:
-        print(f"Logging failed: {e}")
-  ```
-  
-  ### Key Points
+    # Check response
+    if response.status_code == 201:
+        print("Log entry successfully sent!")
+    else:
+        print(f"Failed to send log: {response.status_code}, {response.text}")
+    ```
+    
+    ### Key Points
 
-  OpenSearch Client: The opensearch-py client handles the connection, authentication, and indexing.
+    OpenSearch Client: The opensearch-py client handles the connection, authentication, and indexing.
 
-  The IndexFormat is customizable. Adjust it based on your indexing strategy.
+    The IndexFormat is customizable. Adjust it based on your indexing strategy.
 
-  Logging: The custom OpenSearchHandler sends logs to OpenSearch using the client’s index method.
-  
+    Logging: The custom OpenSearchHandler sends logs to OpenSearch using the client’s index method.
+    
 
-  ### Running the Application:
+    ### Running the Application:
 
-  Run the script, and logs should appear in the specified index in OpenSearch.
+    Run the script, and logs should appear in the specified index in OpenSearch.
 
-  ### Further Help and Guidance
+    Run the script from your command line:
 
-  See the articles below for further help and guidance as a next step:
+    ```bash copy
+    python send_logs.py
+    ```
+
+    You should see the output "Log entry successfully sent!"
+
+    ### Further Help and Guidance
+
+    See the articles below for further help and guidance as a next step:
 
 </Steps>
