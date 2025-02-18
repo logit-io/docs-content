@@ -20,15 +20,15 @@ Here's a curl example of sending logs to OpenSearch. This method directly intera
 ### cURL Code Example
 
   ```cmd copy /@elasticsearch.endpointAddress/ /@elasticsearch.username/ /@elasticsearch.password/
-    curl -X POST "@elasticsearch.endpointAddress/logit-example/_doc" \
-    -H "Content-Type: application/json" \
-    -u @elasticsearch.username:@elasticsearch.password \
-    -d '{
-    "timestamp": "'"$(date -u +"%Y-%m-%dT%H:%M:%SZ")"'",
-    "level": "INFO",
-    "message": "This is a log message from curl",
-    "service": "example-service"
-    }'
+  curl -X POST "@elasticsearch.endpointAddress/logit-example-2025.02.17/_doc/" ^
+  -H "Content-Type: application/json" ^
+  -u @elasticsearch.username:@elasticsearch.password ^
+  -d ^
+  "{ \"@timestamp\": \"2025-02-18T11:54:09.7667466+00:00\", ^
+  \"level\": \"INFO\", ^
+  \"message\": \"This is a log message from curl\", ^
+  \"service\": \"example-service\" ^
+  }"
   ```
   
   ### Key Points
