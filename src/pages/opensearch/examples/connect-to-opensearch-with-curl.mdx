@@ -27,7 +27,7 @@ Here's a curl example of sending logs to OpenSearch. This method directly intera
 
   Headers:
   * Content-Type: application/json: Indicates the payload format.
-  * -u @elasticsearch.username:@elasticsearch.password: Provides basic authentication.
+  * -u @opensearch.username:@opensearch.password: Provides basic authentication.
 
   Payload:
   * timestamp: ISO 8601 formatted timestamp (e.g., 2025-01-30T12:34:56Z).
@@ -60,10 +60,21 @@ Here's a curl example of sending logs to OpenSearch. This method directly intera
 
   To verify that the log was indexed, you can query the index using curl.
 
-  ```bash copy /@elasticsearch.endpointAddress/ /@elasticsearch.username/ /@elasticsearch.password/
-    curl -X GET "@elasticsearch.endpointAddress/logit-example/_search?pretty=true" \
-    -u @elasticsearch.username:@elasticsearch.password
-  ```
+
+  <Tabs items={["Windows", "macOS & Linux"]}>
+      <Tab>
+          ```bash copy /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+          curl -X GET "@opensearch.endpointAddress/logit-example/_search?pretty=true" ^
+          -u @opensearch.username:@opensearch.password
+          ```
+      </Tab>
+      <Tab>
+          ```bash copy /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+          curl -X GET "@opensearch.endpointAddress/logit-example/_search?pretty=true" \
+          -u @opensearch.username:@opensearch.password
+          ```
+      </Tab>
+  </Tabs>
 
   This will return all documents in the __logit-example__ index.
 
