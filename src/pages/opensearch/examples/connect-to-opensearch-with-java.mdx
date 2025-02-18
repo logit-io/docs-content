@@ -128,7 +128,7 @@ This guide is created using __Maven__.
 
     Replace the contents of __src/main/java/com/example/App.java__ with the following code:
 
-    ```java copy filename="App.java" /@elasticsearch.endpointAddress/ /@elasticsearch.username/ /@elasticsearch.password/
+    ```java copy filename="App.java" /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
     package com.example;
 
     import org.apache.http.HttpHost;
@@ -150,10 +150,10 @@ This guide is created using __Maven__.
     public class App {
         public static void main(String[] args) {
             // OpenSearch endpoint configuration
-            String hostname = "@elasticsearch.endpointAddress";
+            String hostname = "@opensearch.endpointAddress";
             String scheme = "https";
-            String username = "@elasticsearch.username";
-            String password = "@elasticsearch.password";
+            String username = "@opensearch.username";
+            String password = "@opensearch.password";
 
             // Set up authentication
             BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();

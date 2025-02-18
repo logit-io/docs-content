@@ -30,7 +30,7 @@ Serilog.Sinks.OpenSearch package in a Console Application.
 
   ### C# Code Example
 
-  ```csharp copy filename="program.cs" /@elasticsearch.endpointAddress/ /@elasticsearch.username/ /@elasticsearch.password/
+  ```csharp copy filename="program.cs" /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
   using Serilog;
   using Serilog.Sinks.OpenSearch;
   using System;
@@ -40,9 +40,9 @@ Serilog.Sinks.OpenSearch package in a Console Application.
       static void Main(string[] args)
       {
           // OpenSearch configuration
-          var openSearchUri = "@elasticsearch.endpointAddress";
-          var username = "@elasticsearch.username";
-          var password = "@elasticsearch.password";
+          var openSearchUri = "@opensearch.endpointAddress";
+          var username = "@opensearch.username";
+          var password = "@opensearch.password";
 
           // Configure Serilog
           Log.Logger = new LoggerConfiguration()

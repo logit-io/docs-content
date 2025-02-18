@@ -58,16 +58,16 @@ the __logging library__ for integration.
     Create a new file and call it __send_logs.py__. Open this file using your choice of text editor, paste in the 
     following and then save.
 
-    ```python copy filename="send_logs.py" /@elasticsearch.endpointAddress/ /@elasticsearch.username/ /@elasticsearch.password/
+    ```python copy filename="send_logs.py" /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
     import requests
     from datetime import datetime
     import json
 
     # Configuration
-    opensearch_url = "@elasticsearch.endpointAddress"  # OpenSearch endpoint
+    opensearch_url = "@opensearch.endpointAddress"  # OpenSearch endpoint
     index_name = "logit-example"
-    username = "@elasticsearch.username"  # Your username
-    password = "@elasticsearch.password"  # Your password
+    username = "@opensearch.username"  # Your username
+    password = "@opensearch.password"  # Your password
 
     # Generate current timestamp
     timestamp = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%fZ')
