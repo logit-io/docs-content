@@ -64,13 +64,13 @@ Here's a curl example of sending logs to OpenSearch. This method directly intera
   <Tabs items={["Windows", "macOS & Linux"]}>
       <Tab>
           ```bash copy /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
-          curl -X GET "@opensearch.endpointAddress/logit-example/_search?pretty=true" ^
+          curl -X GET "@opensearch.endpointAddress:9200/logit-example/_search?pretty=true" ^
           -u @opensearch.username:@opensearch.password
           ```
       </Tab>
       <Tab>
           ```bash copy /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
-          curl -X GET "@opensearch.endpointAddress/logit-example/_search?pretty=true" \
+          curl -X GET "@opensearch.endpointAddress:9200/logit-example/_search?pretty=true" \
           -u @opensearch.username:@opensearch.password
           ```
       </Tab>
