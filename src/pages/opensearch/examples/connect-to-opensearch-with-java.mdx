@@ -151,7 +151,6 @@ This guide is created using __Maven__.
         public static void main(String[] args) {
             // OpenSearch endpoint configuration
             String hostname = "@opensearch.endpointAddress:9200";
-            String scheme = "https";
             String username = "@opensearch.username";
             String password = "@opensearch.password";
 
@@ -161,7 +160,7 @@ This guide is created using __Maven__.
 
             // Create OpenSearch client
             RestHighLevelClient client = new RestHighLevelClient(
-                    RestClient.builder(HttpHost.create(scheme + "://" + hostname))
+                    RestClient.builder(HttpHost.create(hostname))
                             .setHttpClientConfigCallback(
                                     httpClientBuilder -> httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider)
                             )
