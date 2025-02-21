@@ -1,0 +1,85 @@
+---
+title: Connecting to an OpenSearch Cluster with cURL
+metaTitle: Learn How to connect to an OpenSearch Cluster with cURL
+pagination: false
+timestamp: false
+stackTypes: opensearch
+---
+
+## Connect to an OpenSearch Cluster with cURL
+
+This article assumes that you have already created an OpenSearch Cluster, if you have not yet done this then 
+please see this guide to create to create a cluster:
+
+[Creating an OpenSearch Cluster](creating-opensearch-cluster.mdx)
+
+Here's a curl example of sending logs to OpenSearch. This method directly interacts with the __OpenSearch REST API__.
+
+<Steps>
+
+  ### cURL Code Example
+
+  <CurlExample/>
+
+  ### Key Points
+
+  OpenSearch Client: The opensearch-py client handles the connection, authentication, and indexing.
+
+  Headers:
+  * Content-Type: application/json: Indicates the payload format.
+  * -u @opensearch.username:@opensearch.password: Provides basic authentication.
+
+  Payload:
+  * timestamp: ISO 8601 formatted timestamp (e.g., 2025-01-30T12:34:56Z).
+  * level: Log level (e.g., INFO, ERROR).
+  * message: The log message.
+  * service: (Optional) Specify the source of the log.
+
+  ### Example Output
+
+  OpenSearch will respond with a status indicating that the document was indexed.
+
+  ```json
+    {
+      "_index": "logit-example",
+      "_type": "_doc",
+      "_id": "123456",
+      "_version": 1,
+      "result": "created",
+      "_shards": {
+        "total": 2,
+        "successful": 1,
+        "failed": 0
+      },
+      "_seq_no": 1,
+      "_primary_term": 1
+    }
+  ```
+
+  ### Verifying Logs
+
+  To verify that the log was indexed, you can query the index using curl.
+
+
+  <Tabs items={["Windows", "macOS & Linux"]}>
+      <Tab>
+          ```bash copy /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+          curl -X GET "@opensearch.endpointAddress:9200/logit-example/_search?pretty=true" ^
+          -u @opensearch.username:@opensearch.password
+          ```
+      </Tab>
+      <Tab>
+          ```bash copy /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+          curl -X GET "@opensearch.endpointAddress:9200/logit-example/_search?pretty=true" \
+          -u @opensearch.username:@opensearch.password
+          ```
+      </Tab>
+  </Tabs>
+
+  This will return all documents in the __logit-example__ index.
+
+  ### Further Help and Guidance
+
+  See the articles below for further help and guidance as a next step:
+
+</Steps>

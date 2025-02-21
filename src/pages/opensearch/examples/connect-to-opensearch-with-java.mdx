@@ -1,0 +1,251 @@
+---
+title: Connecting to an OpenSearch Cluster with Java
+metaTitle: Learn How to connect to an OpenSearch Cluster with Java
+pagination: false
+timestamp: false
+stackTypes: opensearch
+---
+
+## Connect to an OpenSearch Cluster with Java
+
+<Callout type="info">
+  This sample app was created and tested with
+
+  - `java version "23.0.2" 2025-01-21`
+  - `Apache Maven 3.9.8 (36645f6c9b5079805ea5009217e36f2cffd34256)`
+</Callout>
+
+This article assumes that you have already created an OpenSearch Cluster, if you have not yet done this then 
+please see this guide to create to create a cluster:
+
+[Creating an OpenSearch Cluster](creating-opensearch-cluster.mdx)
+
+Here's a Python example of sending logs to OpenSearch, this example uses the __OpenSearch Java Client__
+_(org.opensearch.client:opensearch-java)_ and integrates it with the logging framework __SLF4J__.
+
+This guide is created using __Maven__.
+
+<Steps>
+    ### Create Project
+
+    Create a new Maven project:
+
+    ```bash copy
+    mvn archetype:generate -DgroupId=com.example -DartifactId=OpenSearchLogger -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+    ```
+
+    Navigate into the project directory of your new project.
+
+    ```bash copy
+    cd OpenSearchLogger
+    ```
+
+    ### Add Dependencies
+
+    Open your __pom.xml__ file and copy the following over the existing content.
+
+    ```xml copy filename="pom.xml"
+    <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+        <modelVersion>4.0.0</modelVersion>
+        <groupId>com.example</groupId>
+        <artifactId>OpenSearchLogger</artifactId>
+        <packaging>jar</packaging>
+        <version>1.0-SNAPSHOT</version>
+        <name>OpenSearchLogger</name>
+        <url>http://maven.apache.org</url>
+        <dependencies>
+            <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
+            </dependency>
+            <!-- OpenSearch High-Level REST Client -->
+                <dependency>
+                    <groupId>org.opensearch.client</groupId>
+                    <artifactId>opensearch-rest-high-level-client</artifactId>
+                    <version>2.9.0</version> <!-- Update version if needed -->
+                </dependency>
+
+                <!-- Apache HTTP Components (Required for Basic Authentication) -->
+                <dependency>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                    <version>4.5.13</version> <!-- Update version if needed -->
+                </dependency>
+
+                <!-- SLF4J for Logging -->
+                <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                    <version>2.0.9</version> <!-- Update version if needed -->
+                </dependency>
+                <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                    <version>2.0.9</version> <!-- Update version if needed -->
+                </dependency>
+
+        </dependencies>
+        
+        <build>
+            <plugins>
+                <!-- Maven Shade Plugin to create an executable JAR -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>3.2.1</version>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>shade</goal>
+                            </goals>
+                            <configuration>
+                                <transformers>
+                                    <!-- Add the main class to the JAR manifest -->
+                                    <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                        <mainClass>com.example.App</mainClass> <!-- Replace with your main class -->
+                                    </transformer>
+                                </transformers>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </build>
+        </project>
+    ```
+
+    Save the file and then run the following command.
+
+    ```bash copy
+    mvn clean install
+    ```
+
+    ### Java Code Example
+
+    Replace the contents of __src/main/java/com/example/App.java__ with the following code:
+
+    ```java copy filename="App.java" /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+    package com.example;
+
+    import org.apache.http.HttpHost;
+    import org.apache.http.auth.AuthScope;
+    import org.apache.http.auth.UsernamePasswordCredentials;
+    import org.apache.http.impl.client.BasicCredentialsProvider;
+    import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
+    import org.opensearch.client.RequestOptions;
+    import org.opensearch.client.RestClient;
+    import org.opensearch.client.RestHighLevelClient;
+    import org.opensearch.action.index.IndexRequest;
+    import org.opensearch.action.index.IndexResponse;
+    import org.opensearch.common.xcontent.XContentType;
+
+    import java.io.IOException;
+    import java.time.LocalDateTime;
+    import java.time.format.DateTimeFormatter;
+
+    public class App {
+        public static void main(String[] args) {
+            // OpenSearch endpoint configuration
+            String hostname = "@opensearch.endpointAddress:9200";
+            String username = "@opensearch.username";
+            String password = "@opensearch.password";
+
+            // Set up authentication
+            BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+            credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));
+
+            // Create OpenSearch client
+            RestHighLevelClient client = new RestHighLevelClient(
+                    RestClient.builder(HttpHost.create(hostname))
+                            .setHttpClientConfigCallback(
+                                    httpClientBuilder -> httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider)
+                            )
+            );
+
+            // Create a daily log index name
+            String indexName = "logit-example-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+
+            // Prepare a sample log entry
+            String logMessage = "{"
+                    + "\"@timestamp\":\"" + LocalDateTime.now() + "\","
+                    + "\"level\":\"INFO\","
+                    + "\"message\":\"This is a log message from Java\","
+                    + "\"service\":\"logit-service\""
+                    + "}";
+
+            try {
+                // Create and send an index request
+                IndexRequest request = new IndexRequest(indexName)
+                        .source(logMessage, XContentType.JSON);
+                IndexResponse response = client.index(request, RequestOptions.DEFAULT);
+
+                // Log the response
+                System.out.println("Log indexed successfully. ID: " + response);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                // Close the client
+                try {
+                    client.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+    ```
+
+    Create a new file called __Utils.java__ in the same folder as __App.java__. Copy the following code and save the file.
+
+    ```java copy filename="Utils.java"
+    package com.example;
+
+    import org.apache.http.auth.AuthScope;
+    import org.apache.http.auth.UsernamePasswordCredentials;
+    import org.apache.http.impl.client.BasicCredentialsProvider;
+
+    public class Utils {
+        /**
+         * Creates a BasicCredentialsProvider for OpenSearch authentication.
+         *
+         * @param username the username for authentication
+         * @param password the password for authentication
+         * @return a BasicCredentialsProvider with the provided credentials
+         */
+        public static BasicCredentialsProvider getCredentialsProvider(String username, String password) {
+            BasicCredentialsProvider provider = new BasicCredentialsProvider();
+            provider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));
+            return provider;
+        }
+    }
+    ```
+
+    ### Key Points
+
+    Ensure all required dependencies are correctly installed.
+
+    Properly handle exceptions for production use, e.g., retry logic for failed requests.
+
+    ### Build and Run the Application
+
+    Build the project with the following command.
+
+    ```bash copy
+    mvn clean package
+    ```
+
+    Run the application to send logs to hosted Opensearch.
+
+    ```bash copy
+    java -cp target/OpenSearchLogger-1.0-SNAPSHOT.jar com.example.App
+    ```
+
+    ### Further Help and Guidance
+
+    See the articles below for further help and guidance as a next step:
+
+</Steps>

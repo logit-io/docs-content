@@ -1,0 +1,98 @@
+---
+title: Connecting to an OpenSearch Cluster with C#
+metaTitle: Learn How to connect to an OpenSearch Cluster with C#
+pagination: false
+timestamp: false
+stackTypes: opensearch
+---
+
+## Connect to an OpenSearch Cluster with C#
+
+This article assumes that you have already created an OpenSearch Cluster, if you have not yet done this then 
+please see this guide to create to create a cluster:
+
+[Creating an OpenSearch Cluster](creating-opensearch-cluster.mdx)
+
+Here's a C# example of sending logs to OpenSearch, this example uses the Serilog logging library and the 
+Serilog.Sinks.OpenSearch package in a Console Application. 
+
+<Steps>
+  ### Install NuGet Packages
+
+  * Install Serilog
+
+  * Install Serilog.Sinks.OpenSearch
+
+  ```bash copy
+  dotnet add package Serilog
+  dotnet add package Serilog.Sinks.OpenSearch
+  ```
+
+  ### C# Code Example
+
+  ```csharp copy filename="program.cs" /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+  using Serilog;
+  using Serilog.Sinks.OpenSearch;
+  using System;
+
+  class Program
+  {
+      static void Main(string[] args)
+      {
+          // OpenSearch configuration
+          var openSearchUri = "@opensearch.endpointAddress:9200";
+          var username = "@opensearch.username";
+          var password = "@opensearch.password";
+
+          // Configure Serilog
+          Log.Logger = new LoggerConfiguration()
+              .Enrich.FromLogContext()
+              .WriteTo.Console() // Optional: log to console
+              .WriteTo.OpenSearch(new OpenSearchSinkOptions(new Uri(openSearchUri))
+              {
+                  ModifyConnectionSettings = x => x.BasicAuthentication(username, password),
+                  AutoRegisterTemplate = true, // Automatically register index template
+                  IndexFormat = $"logit-example-{DateTime.Now:yyyy.MM.dd}", // Daily index
+                  TypeName = null, // For OpenSearch 2.x and above, this should be null
+                  EmitEventFailure = EmitEventFailureHandling.WriteToSelfLog | EmitEventFailureHandling.RaiseCallback,
+                  FailureCallback = e => Console.WriteLine($"Failed to log to OpenSearch: {e.Exception}")
+              })
+              .CreateLogger();
+
+          try
+          {
+              // Log some messages
+              Log.Information("This is an information log");
+              Log.Warning("This is a warning log");
+              Log.Error("This is an error log");
+          }
+          catch (Exception ex)
+          {
+              Console.WriteLine($"Exception occurred: {ex.Message}");
+          }
+          finally
+          {
+              // Dispose the logger
+              Log.CloseAndFlush();
+          }
+      }
+  }
+  ```
+  
+  ### Key Points
+
+  The IndexFormat is customizable. Adjust it based on your indexing strategy.
+
+  Handle failures using the FailureCallback to ensure logs are captured if the connection fails.
+  
+
+  ### Running the Application:
+
+  Compile and run the application. Logs will be sent to the specified OpenSearch endpoint, and you 
+  should see them in the configured index.
+
+  ### Further Help and Guidance
+
+  See the articles below for further help and guidance as a next step:
+
+</Steps>

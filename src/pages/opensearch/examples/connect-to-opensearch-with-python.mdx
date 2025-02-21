@@ -1,0 +1,124 @@
+---
+title: Connecting to an OpenSearch Cluster with Python
+metaTitle: Learn How to connect to an OpenSearch Cluster with Python
+pagination: false
+timestamp: false
+stackTypes: opensearch
+---
+
+## Connect to an OpenSearch Cluster with Python
+
+<Callout type="info">
+This sample app was created and tested with `Python 3.11.2` and `pip 24.2` and `requests 2.32.3`
+</Callout>
+
+This article assumes that you have already created an OpenSearch Cluster, if you have not yet done this then 
+please see this guide to create to create a cluster:
+
+[Creating an OpenSearch Cluster](creating-opensearch-cluster.mdx)
+
+Here's a Python example of sending logs to OpenSearch, this example uses __opensearch-py__ client and 
+the __logging library__ for integration.
+
+<Steps>
+
+    ### Create a Virtual Environment (optional but recommended)
+
+    Create a virtual environment for the test app.
+
+    ```bash copy
+    python -m venv opensearch-env
+    ```
+
+    ### Activate the Virtual Environment
+
+    <Tabs items={["Windows", "macOS & Linux"]}>
+        <Tab>
+            ```bash copy
+            opensearch-env\Scripts\activate
+            ```
+        </Tab>
+        <Tab>
+            ```bash copy
+            source opensearch-env/bin/activate
+            ```
+        </Tab>
+    </Tabs>
+
+    ### Install Dependencies
+
+    * Install the __opensearch-py__ package for interacting with OpenSearch.
+
+    ```bash copy
+    pip install requests
+    ```
+
+    ### Python Code Example
+
+    Create a new file and call it __send_logs.py__. Open this file using your choice of text editor, paste in the 
+    following and then save.
+
+    ```python copy filename="send_logs.py" /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+    import requests
+    from datetime import datetime
+    import json
+
+    # Configuration
+    opensearch_url = "@opensearch.endpointAddress:9200"  # OpenSearch endpoint
+    index_name = "logit-example"
+    username = "@opensearch.username"  # Your username
+    password = "@opensearch.password"  # Your password
+
+    # Generate current timestamp
+    timestamp = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+
+    # Log entry
+    log_entry = {
+        "@timestamp": timestamp,
+        "level": "INFO",
+        "message": "This is a log message from Python script",
+        "service": "example-service"
+    }
+
+    # Prepare the request headers
+    headers = {"Content-Type": "application/json"}
+
+    # Define the URL for the specific index
+    url = f"{opensearch_url}/{index_name}/_doc/"
+
+    # Send the POST request
+    response = requests.post(url, auth=(username, password), headers=headers, data=json.dumps(log_entry))
+
+    # Check response
+    if response.status_code == 201:
+        print("Log entry successfully sent!")
+    else:
+        print(f"Failed to send log: {response.status_code}, {response.text}")
+    ```
+    
+    ### Key Points
+
+    OpenSearch Client: The opensearch-py client handles the connection, authentication, and indexing.
+
+    The IndexFormat is customizable. Adjust it based on your indexing strategy.
+
+    Logging: The custom OpenSearchHandler sends logs to OpenSearch using the client’s index method.
+    
+
+    ### Running the Application:
+
+    Run the script, and logs should appear in the specified index in OpenSearch.
+
+    Run the script from your command line:
+
+    ```bash copy
+    python send_logs.py
+    ```
+
+    You should see the output "Log entry successfully sent!"
+
+    ### Further Help and Guidance
+
+    See the articles below for further help and guidance as a next step:
+
+</Steps>
