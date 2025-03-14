@@ -1,6 +1,7 @@
 ---
 title: Connecting to an OpenSearch Cluster with cURL
-metaTitle: Learn How to connect to an OpenSearch Cluster with cURL
+metaTitle: Learn How to Connect to an OpenSearch Cluster with cURL
+description: This guide shows you how to connect to an OpenSearch cluster using cURL to interact directly with the OpenSearch REST API.
 pagination: false
 timestamp: false
 stackTypes: opensearch
@@ -9,9 +10,9 @@ stackTypes: opensearch
 ## Connect to an OpenSearch Cluster with cURL
 
 This article assumes that you have already created an OpenSearch Cluster, if you have not yet done this then 
-please see this guide to create to create a cluster:
+please see this guide to create a cluster:
 
-[Creating an OpenSearch Cluster](creating-opensearch-cluster.mdx)
+[Creating an OpenSearch Cluster](../creating-opensearch-cluster.mdx)
 
 Here's a curl example of sending logs to OpenSearch. This method directly interacts with the __OpenSearch REST API__.
 
@@ -23,7 +24,7 @@ Here's a curl example of sending logs to OpenSearch. This method directly intera
 
   ### Key Points
 
-  OpenSearch Client: The opensearch-py client handles the connection, authentication, and indexing.
+  REST API: This example directly uses the OpenSearch REST API without any client libraries.
 
   Headers:
   * Content-Type: application/json: Indicates the payload format.
@@ -81,5 +82,10 @@ Here's a curl example of sending logs to OpenSearch. This method directly intera
   ### Further Help and Guidance
 
   See the articles below for further help and guidance as a next step:
+
+  - [OpenSearch Cluster Settings](../opensearch-cluster-settings.mdx) - View and manage your cluster configuration
+  - [OpenSearch Overview](../overview.mdx) - Learn more about OpenSearch capabilities
+  - [Connect with other programming languages](../examples.mdx) - Explore examples in C#, Python, and Java
+  - [Creating an OpenSearch Cluster](../creating-opensearch-cluster.mdx) - Set up a new cluster if needed
 
 </Steps>
