@@ -11,7 +11,20 @@ sslPortType: tcp-ssl
 tags: Logs, Microsoft, .NET, Dotnet, Mono, ASP, Application Logs, Microsoft Core, Dotnet Core, ASP, Application Logs, Dotnetcore, APM, Core, Application Performance Monitoring, Apm, Grpc, Https
 ---
 
-Follow the steps below to send your observability data to Logit.io
+This guide will walk you through the steps to ship both logs and traces from your ASP.NET applications to Logit.io. By integrating Serilog for logging and OpenTelemetry 
+for tracing, you can gain full observability into your .NET applications.
+
+We'll cover:
+
+**Logging with Serilog** 
+
+Set up Serilog to send logs securely to Logit.io via TCP/TLS or UDP.
+
+**Tracing with OpenTelemetry** 
+
+Configure OpenTelemetry to export trace data and monitor application performance.
+
+Follow the steps below to send your observability data to Logit.io.
 
 <Steps>
   ## Logs
