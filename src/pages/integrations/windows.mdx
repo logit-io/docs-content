@@ -1,20 +1,29 @@
 ---
 title: Windows
-metaTitle: Learn How to Integrate and Configure Windows to Send Logs
-pageTitle: Windows Winlogbeat Setup
-subTitle: Use Winlogbeat to ship logs to Logit.io
+metaTitle: Learn How to Integrate and Configure Windows to Send Logs and Metrics
+pageTitle: Windows Winlogbeat and Telegraf Setup
+subTitle: Use Winlogbeat and Telegraf to ship logs and metrics to Logit.io
 logo: windows
 color: "#00bfb3"
-description: Send your Windows application/access/error logs to Logit.io via Winlogbeat.
-stackTypes: logs
+description: Send your Windows system logs and metrics to Logit.io via Winlogbeat and Telegraf.
+stackTypes: logs, metrics
 sslPortType: beats-ssl
-tags: Logs, Windows, Microsoft, System, Event Log, Operating System, Winlogbeat
+tags: Logs, Windows, Microsoft, System, Event Log, Operating System, Winlogbeat, Telegraf, Metrics, Telemetry, Health, Services, Service, Performance Metrics
 dashboardIds: winlogbeat
 ---
 
-Winlogbeat is a Windows specific event-log shipping agent installed 
+This page provides instructions on how to ship your Windows system logs and metrics to Logit.io via Winlogbeat and Telegraf respectively.
+
+Winlogbeat is a Windows-specific event log-shipping agent installed 
 as a Windows service. It can be used to collect and send event 
 logs to one or more destinations, including Logstash.
+
+Telegraf is a plugin-driven server agent for collecting and reporting metrics.
+It is used to collect metrics from various sources, including Windows Performance Counters and Windows Services.
+
+If you are only interested in shipping logs, you can ignore the Metrics section and use the Logs section below.
+
+If you are only interested in shipping metrics, you can skip the Logs section and go straight to the [Metrics](#metrics) section further down the page.
 
 <Steps>
   ## Logs
@@ -27,7 +36,7 @@ logs to one or more destinations, including Logstash.
 
   <InstallWindowsBeat
     beatname = "winlogbeat"
-    version = "8.15.2"
+    version = "8.17.4"
   />
 
   ### Update your configuration file
@@ -53,5 +62,171 @@ logs to one or more destinations, including Logstash.
   ### How to diagnose no data in Stack
 
   <DiagnoseNoData />
+
+  ## Metrics
+  
+  ### Install Integration
+
+  <InstallIntegration/>
+
+  ### Install Telegraf
+
+  When you paste the command below into Powershell it will download the Telegraf zip file 
+  and then extract that into `C:\Program Files\InfluxData\telegraf\telegraf-1.33.0`. (You will need 
+  to press enter after the initial download command to run the extract command).
+
+  ```ps copy
+  wget `
+  https://dl.influxdata.com/telegraf/releases/telegraf-1.33.0_windows_amd64.zip `
+  -UseBasicParsing `
+  -OutFile telegraf-1.33.0_windows_amd64.zip
+  Expand-Archive .\telegraf-1.33.0_windows_amd64.zip `
+  -DestinationPath 'C:\Program Files\InfluxData\telegraf\'
+  ```
+  Move the telegraf.exe and telegraf.conf files from C:\Program Files\InfluxData\telegraf\telegraf-1.33.0 
+  to the parent directory C:\Program Files\InfluxData\telegraf
+
+  ### Configure the Telegraf input and output plugins
+
+  The configuration file below is pre-configured to scrape the system metrics from your hosts. 
+  Add the following to the configuration file (i.e. C:\Program Files\InfluxData\telegraf\telegraf.conf). 
+  It includes plugins for both Windows Performance Counters and Windows Services and specifies the output configuration
+  for sending your data to Logit.io.
+
+  ```toml copy
+  # Input plugin to report Windows services info.
+  # This plugin ONLY supports Windows
+  [[inputs.win_services]]
+    ## Names of the services to monitor. Leave empty to monitor all the available services on the host. Globs accepted. Case sensitive.
+    service_names = [
+      "LanmanServer",
+      "TermService",
+      "Win*",
+    ]
+    excluded_service_names = ['WinRM'] # optional, list of service names to exclude
+
+  ###############################################################################
+  # Windows Performance Counters plugin.
+  # These are the recommended method of monitoring system metrics on windows,
+  # as the regular system plugins (inputs.cpu, inputs.mem, etc.) rely on WMI,
+  # which utilize more system resources.
+  #
+  # See more configuration examples at:
+  #   https://github.com/influxdata/telegraf/tree/master/plugins/inputs/win_perf_counters
+  [[inputs.win_perf_counters]]
+    [[inputs.win_perf_counters.object]]
+      # Processor usage, alternative to native, reports on a per core.
+      ObjectName = "Processor"
+      Instances = ["*"]
+      Counters = [
+        "% Idle Time",
+        "% Interrupt Time",
+        "% Privileged Time",
+        "% User Time",
+        "% Processor Time",
+      ]
+      Measurement = "win_cpu"
+      # Set to true to include _Total instance when querying for all (*).
+      #IncludeTotal=false
+    [[inputs.win_perf_counters.object]]
+      # Disk times and queues
+      ObjectName = "LogicalDisk"
+      Instances = ["*"]
+      Counters = [
+        "% Idle Time",
+        "% Disk Time","% Disk Read Time",
+        "% Disk Write Time",
+        "% User Time",
+        "Current Disk Queue Length",
+      ]
+      Measurement = "win_disk"
+      # Set to true to include _Total instance when querying for all (*).
+      #IncludeTotal=false
+    [[inputs.win_perf_counters.object]]
+      ObjectName = "System"
+      Counters = [
+        "Context Switches/sec",
+        "System Calls/sec",
+      ]
+      Instances = ["------"]
+      Measurement = "win_system"
+      # Set to true to include _Total instance when querying for all (*).
+      #IncludeTotal=false
+    [[inputs.win_perf_counters.object]]
+      # Example query where the Instance portion must be removed to get data back,
+      # such as from the Memory object.
+      ObjectName = "Memory"
+      Counters = [
+        "Available Bytes",
+        "Cache Faults/sec",
+        "Demand Zero Faults/sec",
+        "Page Faults/sec",
+        "Pages/sec",
+        "Transition Faults/sec",
+        "Pool Nonpaged Bytes",
+        "Pool Paged Bytes",
+      ]
+      # Use 6 x - to remove the Instance bit from the query.
+      Instances = ["------"]
+      Measurement = "win_mem"
+      # Set to true to include _Total instance when querying for all (*).
+      #IncludeTotal=false
+
+    [[inputs.win_perf_counters.object]]
+      # Example query where the Instance portion must be removed to get data back,
+      # such as from the Paging File object.
+      ObjectName = "Paging File"
+      Counters = [
+        "% Usage",
+      ]
+      Instances = ["_Total"]
+      Measurement = "win_swap"
+
+      [[outputs.http]]
+      url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+      data_format = "prometheusremotewrite"
+
+      [outputs.http.headers]
+        Content-Type = "application/x-protobuf"
+        Content-Encoding = "snappy"
+  ```
+
+  <Callout type="info">
+    Read more about how to configure data scraping and configuration options for Windows Performance Counters [here](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/win_perf_counters/README.md)
+  </Callout>
+
+  <Callout type="info">
+    Read more about how to configure data scraping and configuration options for Windows Services [here](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/win_services)
+  </Callout>
+
+  ### Start Telegraf
+
+  Run the following command to install Telegraf as a Windows service. 
+  ```ps1 copy
+  .\telegraf.exe --service install `
+  --config "C:\Program Files\InfluxData\telegraf\telegraf.conf"
+  ```
+  To test that the installation works, enter the following command:
+  ```ps1 copy
+  .\telegraf.exe `
+  --config C:\"Program Files"\InfluxData\telegraf\telegraf.conf --test
+  ```
+  This will run Telegraf in test mode and output the metrics to the console.
+  If you see the metrics output in the console, it means that Telegraf is working correctly.
+
+  To start collecting data run the following command:
+  ```ps1 copy
+  Start-Service telegraf
+  ```
+
+  Once Telegraf is running you should see output similar to the following, which confirms the inputs 
+  and basic configuration the application has been started 
+  (there will be a lot more lines of output but as long as there are no errors you are good to go):
+
+  ![Powershell Telegraf information](@/images/integrations/system-metrics/windows-telegraf-start.png)
+
+  ### View your metrics
+
+  <LaunchVisualizer type="metrics" />
 
 </Steps>
