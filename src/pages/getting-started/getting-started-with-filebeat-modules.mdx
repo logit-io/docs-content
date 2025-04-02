@@ -1,0 +1,43 @@
+---
+title: Getting started with Filebeat Modules
+metaTitle: Learn about sending logs and metrics to Logit.io via Filebeat using modules
+description: Read Logit.io's Getting Started with Filebeat modules article and learn about logs and metrics for various applications
+stackTypes: logs, metrics
+---
+
+# Getting started with Filebeat Modules
+
+Filebeat modules are pre-built, ready-to-use configurations that simplify the collection, parsing, 
+and visualization of logs from specific applications, systems, or services. Each module is tailored 
+to handle logs for popular tools and platforms like web servers, databases, cloud services, and more.
+
+## Key Features of Filebeat Modules:
+
+1. Predefined Settings:
+   - Modules come with configurations for input paths, processors, and ingest pipelines.
+
+2. Automatic Parsing:
+   - Parse logs into structured data (e.g., extracting fields like `method` or `url`).
+
+3. Integrated Dashboards:
+   - Many modules provide ready-to-use Kibana / OpenSearch dashboards.
+
+4. Easy Setup:
+   - Enable modules with `filebeat modules enable <module_name>`.
+
+5. Customizable:
+   - Modules can be fine-tuned for specific environments.
+
+## Examples of Filebeat Modules:
+- IIS (Windows IIS logs) - see our [IIS integration](../integrations/iis)
+- Nginx (Web server logs) - see our [NGINX integration](../integrations/nginx)
+- Apache (Web server logs) - see our [Apache integration](../integrations/apache)
+- MySQL (Database logs) - see our [MySQL integration](../integrations/mysql)
+- System (OS logs, such as Syslog) - see our [SysLog integration](../integrations/syslog)
+
+Modules streamline workflows and make Filebeat user-friendly for log management tasks.
+
+These modules significantly simplify log management workflows, making Filebeat more user-friendly 
+for various use cases.
+
+See our full list of integrations for sending logs, metrics and traces [here](../integrations).
