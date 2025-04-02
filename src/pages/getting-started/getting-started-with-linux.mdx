@@ -21,24 +21,25 @@ We can use what is know as a "log shipper" to collect these logs and send them t
 Filebeat is a lightweight shipper designed to collect and forward system logs,
 including syslog and journal logs, to a centralized platform for analysis.
 
-You can find out more about how to configure Filebeat to send system logs [here]().
+You can find out more about how to configure Filebeat to send system logs [here](../integrations/filebeat-system).
 
 ## Application Logs
 
 Many applications write to their own separate log files and we can use Filebeat to collect these logs 
 and send them to Logit.io for analysis. Please see below for instructions to configure Filebeat to send application logs:
 
-[Filebeat docs]()
+You can find out more about how to configure Filebeat to send application logs [here](../integrations/filebeat).
 
 Some applications have their own Filebeat modules, which are preconfigured setups designed 
 to simplify the collection, parsing, and visualization of specific types of log files.
-For example, the Apache module can be used to collect logs from Apache web servers:
-[Apache docs]()
+For example, the Apache module can be used to collect logs from Apache web servers.
+
+You can find out more about how to configure Filebeat to send Apache logs [here](../integrations/apache).
 
 The Nginx module can be used to collect logs from Nginx web servers:
-[Nginx directory]()
+You can find out more about how to configure Filebeat to send Nginx logs [here](../integrations/nginx).
 
-You can find more general information about Filebeat modules [Filebeat modules docs].
+You can find more general information about Filebeat modules [Filebeat modules docs TBC].
 
 ## Custom Log Files
 
@@ -49,7 +50,7 @@ to load the data into logit.
 Depending on the format of your logs you may need to do additional filter work to maximise the value of your data, 
 but using filebeat is a good starting point.
 
-[Filebeat]()
+You can find out more about how to configure Filebeat to send custom logs [here](../integrations/filebeat).
 
 ## System Metrics
 
@@ -66,4 +67,4 @@ application issue or resource leak.
 Telegraf is a powerful agent that collects system metrics in Linux environments. Telegraf gathers real-time 
 data on key system resources and forwards them to a centralized platform for analysis. 
 
-[ Link to telegraf system metrics docs]()
+You can find out more about how to configure Telegraf to send system metrics [here](../integrations/system-metrics).
