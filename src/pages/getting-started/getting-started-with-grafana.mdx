@@ -7,8 +7,9 @@ stackTypes: metrics
 
 # Getting started with Grafana
 
-In this guide we are going to explain what Grafana is, how to view your data in Grafana and how to create a dashboard. We will go through a 
-step-by-step example of viewing an individual metric in Grafana and then creating a simple dashboard.
+In this guide we are going to explain what Grafana is and how to view your data in Grafana. We will go through a 
+step-by-step example of viewing an individual metric in Grafana.
+
 
 ## What is Grafana?
 
@@ -30,7 +31,7 @@ These are the steps we will follow:
 
 ### Install Telegraf
 
-This integration allows you to configure a Telegraf agent to send your metrics, in multiple formats, to Logit.io.
+This integration allows you to configure a Telegraf agent to send your metrics to Logit.io.
 
 Choose the installation method for your operating system:
 
@@ -93,7 +94,13 @@ Choose the installation method for your operating system:
 
 ### Configure Telegraf
 
-The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+The default `telegraf.conf` configuration file is thousands of lines long so, for simplicity, we will create a new
+  configuration file for this guide.
+  Create a new text file and copy the configuration details below into it and save it as `telegraf-demo.conf` in 
+  the directory where Telegraf has been installed.
+
+The configuration file below is pre-configured to scrape the system metrics from your hosts.
+
 <Tabs items={["Windows (Powershell)", "Ubuntu & Debian", "macOS", "Red Hat & centOS", "Linux binaries (64-bit)"]}>
   <Tab>
     We are going to use the `win_perf_counters` input plugin to scrape the CPU usage metric from your Windows host.
@@ -192,8 +199,74 @@ The configuration file below is pre-configured to scrape the system metrics from
   </Tab>
 </Tabs>
 
+### Start Telegraf
+
+<Tabs items={["Windows (Powershell)", "Ubuntu & Debian", "macOS", "Red Hat & centOS", "Linux binaries (64-bit)"]} unlink>
+  <Tab>
+    From the location where Telegraf was installed (`C:\Program Files\InfluxData\telegraf\telegraf-1.34.1`) run the program 
+    providing the chosen configuration file as a parameter:
+  
+    ```ps1 copy
+    .\telegraf.exe --config telegraf-demo.conf
+    ```
+
+    Once Telegraf is running you should see output similar to the following, which confirms the inputs, 
+    output and basic configuration the application has been started with:
+    ![Powershell Telegraf information](@/images/integrations/system-metrics/windows-telegraf-start.png)
+  </Tab>
+  <Tab>
+    ```bash copy
+    sudo telegraf --config telegraf-demo.conf
+    ```
+
+    For systemd installations
+
+    ```bash copy
+    sudo /usr/bin/telegraf --config /path/to/telegraf-demo.conf
+    ```
+  </Tab>
+  <Tab>
+    ```bash copy
+    telegraf --config telegraf-demo.conf
+    ```
+  </Tab>
+  <Tab>
+    ```bash copy
+    telegraf --config telegraf-demo.conf
+    ```
+
+    For systemd installations
+
+    ```bash copy
+    sudo /usr/bin/telegraf --config /path/to/telegraf-demo.conf
+    ```
+  </Tab>
+  <Tab>
+    ```bash copy
+    telegraf --config telegraf-demo.conf
+    ```
+
+    For systemd installations
+
+    ```bash copy
+    sudo /usr/bin/telegraf --config /path/to/telegraf-demo.conf
+    ```
+  </Tab>
+</Tabs>
+
+### View your metrics in Grafana
+
+Once you have started Telegraf, the CPU metric data we set-up in the configuration file will be sent to your Logit.io stack and can be viewed in Grafana. 
+
+Click the 'Launch Metrics' button below to open Grafana.
+
+<LaunchVisualizer type="metrics" />
+
+
 
 ## Grafana Dashboards
+
+You can find out more about Grafana Dashboards, include how to create them [here](../getting-started/getting-started-with-grafana#dashboards).
 
 Dashboards in Grafana are dynamic, interactive visual interfaces that provide a consolidated view of data from various sources. 
 They are highly customizable, allowing users to arrange panels to display metrics in formats such as graphs, gauges, heatmaps, and tables. 
@@ -201,10 +274,3 @@ Dashboards are essential for monitoring system health, tracking performance tren
 With features like real-time updates, templating, and filters, they empower users to make informed decisions quickly and efficiently. 
 Whether you're a developer troubleshooting an issue or an operations team optimizing resources, dashboards serve as a single-pane-of-glass 
 view that simplifies complex data into actionable insights. Let me know if you'd like to dive into specific dashboard features!
-
-
-
-
-
-You can find instructions X [here](../integrations/windows#logs)
-
