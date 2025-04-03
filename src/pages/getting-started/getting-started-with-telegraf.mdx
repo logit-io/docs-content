@@ -1,0 +1,88 @@
+---
+title: Getting started with Telegraf
+metaTitle: Learn about Telegraf
+description: Read Logit.io’s Getting Started with Telegraf article and learn how Telegraf helps to collect, process, and send metrics from various sources
+stackTypes: metrics
+---
+
+# What is Telegraf?
+
+Telegraf is a lightweight, open-source metrics collection agent. It is designed to collect, process, and send metrics from various sources, such as system 
+resources, applications, and databases, to different monitoring and observability platforms like Grafana and Prometheus.
+
+Telegraf is plugin-based, meaning it supports multiple input, processor, and output plugins, making it highly flexible for different use cases.
+
+### Why Use Telegraf for Metrics Collection?
+
+Whether you're monitoring infrastructure performance, tracking business KPIs, or analyzing application behavior, Telegraf simplifies observability by offering 
+a flexible, scalable, and real-time metrics collection solution. Here is a summary of what Telegraf offers:
+
+Lightweight and efficient
+
+Supports over 300 plugins for various data sources
+
+Easily configurable with a simple TOML file
+
+Supports multiple output formats, including JSON, Prometheus, OpenTelemetry, and more
+
+Works across different OS platforms, including Windows, Linux, and macOS
+
+### Collecting Metrics (Input Plugins)
+
+Telegraf collects system and application metrics using input plugins. These plugins fetch data from various sources, here are some popular examples:
+
+**System Metrics**
+
+The System Metrics Telegraf plugin collects essential performance data from a system, including CPU usage, memory consumption, disk I/O, and network 
+activity. It provides real-time insights into resource utilization, helping users monitor system health and detect performance bottlenecks. This plugin 
+is ideal for tracking infrastructure metrics across Windows, Linux and macOS environments, making it a key component of application performance monitoring. 
+
+To find out more about Configuring Telegraf to ship system metrics to Logit.io click [here](../integrations/system-metrics/)
+
+**Application Metrics**
+
+Application Metrics refer to performance data collected from applications, such as request rates, error rates, response times, and database query performance. 
+These metrics help monitor application health, detect performance issues, and optimize resource usage. Telegraf gathers application metrics using various 
+input plugins and database monitoring plugins, enabling seamless integration with different frameworks, microservices, and cloud environments. 
+
+Here are examples of plugins to send application metrics to Logit.io.
+
+**Nginx:** The Nginx Telegraf plugin collects key performance metrics from Nginx servers, including active connections, request rates, response statuses, 
+and upstream performance. It retrieves data from the Nginx stub status module or the Plus API, providing insights into server load, traffic patterns, and 
+potential bottlenecks. This plugin is essential for monitoring web server health, optimizing performance, and ensuring high availability in production 
+environments. 
+
+To find out more about Configuring Telegraf to ship Nginx metrics to Logit.io click [here](../integrations/nginx/#metrics).
+
+**MySQL:** The MySQL Telegraf plugin collects vital performance metrics from MySQL and MariaDB databases, including query performance, connections, buffer 
+usage, cache hit rates, and replication status. It retrieves data from the MySQL ‘SHOW STATUS’ and ‘SHOW VARIABLES’ commands, helping users monitor database 
+health, optimize queries, and detect performance bottlenecks. This plugin is essential for ensuring database efficiency, stability, and scalability in production 
+environments.
+
+To find out more about Configuring Telegraf to ship MySQL metrics to Logit.io click [here](../integrations/mysql/#metrics).
+
+**PostgreSQL:** The PostgreSQL Telegraf plugin collects key performance metrics from PostgreSQL databases, including active connections, query execution times, 
+cache hit rates, replication status, and table statistics. It retrieves data using SQL queries and PostgreSQL’s built-in statistics views, helping users monitor 
+database health, optimize queries, and detect potential bottlenecks. This plugin is essential for ensuring efficient, stable, and scalable database performance 
+in production environments.
+
+To find out more about Configuring Telegraf to ship PostgreSQL metrics to Logit.io click [here](../integrations/postgresql/#metrics).
+
+**Redis:** The Redis Telegraf plugin collects key performance metrics from Redis instances, including memory usage, keyspace statistics, connected clients, command 
+rates, replication status, and cache hit rates. It gathers data using the ‘INFO’ and ‘CLIENT LIST’ commands, helping users monitor database health, optimize 
+performance, and detect potential bottlenecks. This plugin is essential for ensuring Redis runs efficiently, especially in high-performance caching and data storage 
+scenarios.
+
+To find out more about Configuring Telegraf to ship Redis metrics to Logit.io click [here](../integrations/redis/#metrics).
+
+**Custom Metrics**
+
+In Telegraf, Custom Metrics allow users to collect and process application-specific data that isn't covered by standard plugins. Using custom input plugins Telegraf 
+can ingest metrics from custom applications, scripts, or services. This flexibility enables teams to monitor unique performance indicators, integrate with proprietary 
+systems, and tailor observability to their specific operational needs. Here is an example of a custom plugin that can be used to send metrics to Logit.io.
+
+**Prometheus:** The Prometheus Telegraf plugin collects metrics from Prometheus exporters or services exposing metrics in Prometheus format. It acts as a Prometheus 
+scraper, gathering application, system, and infrastructure metrics over HTTP endpoints. This plugin enables seamless integration with Prometheus-based monitoring 
+setups, allowing users to centralize data collection, analyze trends, and optimize performance across distributed systems.
+
+To find out more about Configuring The Prometheus Telegraf plugin to ship metrics to Logit.io click [here](../integrations/prometheus/).
