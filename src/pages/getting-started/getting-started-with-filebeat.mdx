@@ -1,0 +1,57 @@
+---
+title: Getting started with Filebeat
+metaTitle: Learn about Filebeat
+description: Read Logit.io’s Getting Started with Filebeat article and learn how Filebeat helps to Ship Logs
+stackTypes: logs
+---
+
+# Getting started with Filebeat
+
+Filebeat is a lightweight, open-source log shipper designed to efficiently forward and centralize log data. It monitors specified log files, reads 
+new entries in real time, and securely transmits them to various destinations. Filebeat is commonly used to send logs to an observability platform 
+like Logit.io, making it a crucial component in modern logging and monitoring pipelines.
+
+With its low resource consumption and built-in modules for structured log parsing, Filebeat is ideal for collecting and shipping logs from 
+applications, containers, and system files. It supports automatic backpressure handling (the ability to adapt to slowdowns in the pipeline when 
+sending logs to a destination, such as Elasticsearch, Logstash, or OpenSearch, instead of overwhelming the destination), secure data transmission, 
+and configurable processing pipelines, ensuring reliable log delivery even in high-traffic environments.
+
+Below are some of the most common use cases where Filebeat plays a critical role in modern observability and security setups.
+
+### Shipping Application Logs
+
+Collect logs from a Web application and send them to Logit.io for centralized monitoring.
+
+Filebeat can tail logs (continuously reads new log entries as they are written to a file) from .log files or collect structured JSON logs from a 
+microservices architecture.
+
+### Monitoring System Logs
+
+Forward system logs from Linux (/var/log/syslog) or Windows Event Logs to Logit.io for security auditing and troubleshooting.
+
+Use Filebeat’s system module to ship authentication and kernel logs to detect security threats.
+
+### Collecting Container Logs
+
+Aggregate logs from Docker containers running microservices.
+
+Filebeat’s Docker input captures container logs and sends them to Logit.io.
+
+### Streaming Logs from Cloud Services
+
+Monitor AWS, Azure, or GCP logs and centralize them for analysis.
+Use the AWS module in Filebeat to collect CloudWatch logs and forward them to a Logit.io.
+
+### Log Forwarding from Remote Servers
+
+Forward logs from multiple remote servers to Logit.io.
+
+Deploy Filebeat on web servers, application servers, and database servers to stream logs to Logit.io securely over TLS.
+
+### Sending Network and Security Logs
+
+Collect logs from firewalls, IDS/IPS, and network appliances.
+
+Use Filebeat to forward Suricata, Cisco ASA, or Zeek logs to Logit.io for security monitoring.
+
+Click [here](../integrations/filebeat/) for instructions on how to use setup and use Filebeat to send logs to Logit.io.

@@ -1,0 +1,161 @@
+---
+title: Getting started with Monitoring an Application
+metaTitle: Learn about Monitoring an Application
+description: Read Logit.io’s Getting Started with Monitoring an Application article and learn how to monitor an application effectively
+stackTypes: logs
+---
+
+# Monitoring an Application
+
+In today’s fast-paced digital world, ensuring the health, performance, and reliability of applications is crucial for businesses of all sizes. 
+Application monitoring provides real-time visibility into how applications behave, helping teams detect issues before they impact users. 
+Whether you’re running a web application, a backend API, or an enterprise system, monitoring helps prevent downtime, optimize performance, 
+and improve troubleshooting efficiency.
+
+This guide will walk you through how to monitor an application effectively, covering logs, metrics, and application performance monitoring (APM). 
+We will explore different use cases where monitoring is essential, such as web applications, APIs, microservices, and enterprise software.
+
+**Defining Use Cases**
+
+Before diving into the technical aspects of application monitoring, it’s important to define where and why monitoring is needed. Different types 
+of applications have unique monitoring requirements, and understanding these helps in selecting the right tools and strategies. Below are some 
+common use cases where logs, metrics, and APM play a crucial role.
+
+### Web Applications
+
+Web applications, such as e-commerce platforms, SaaS solutions, and content management systems, require monitoring to ensure smooth user 
+experiences and high availability. Common challenges are slow page load times, failed transactions and security vulnerabilities.
+
+**Key monitoring aspects:**
+
+**Logs:** Track HTTP requests, errors, and database queries
+
+**Metrics:** Monitor response times, traffic spikes, and resource utilization
+
+**APM:** Trace user interactions and identify performance bottlenecks
+
+### APIs & Microservices
+
+Modern applications often rely on APIs and microservices to communicate across distributed systems. Monitoring these services ensures that 
+dependencies don’t introduce failures. Common challenges are latency issues, failed API calls and inter-service communication failures.
+ 
+**Key monitoring aspects:**
+
+**Logs:** API request/response logs, authentication failures
+
+**Metrics:** Request rates, error rates, and service latency
+
+**APM:** Distributed tracing to track requests across multiple services
+
+### Enterprise Applications
+
+Large-scale ERP, CRM, and business intelligence applications are critical for daily business operations. Monitoring helps ensure that these 
+systems run efficiently without disruptions. Common challenges are slow report generation, integration failures and SQL query performance issues.
+
+**Key monitoring aspects:**
+
+**Logs:** Track user activity, data synchronization logs
+
+**Metrics:** Database query execution time, CPU and memory usage
+
+**APM:** Detect bottlenecks in application workflows
+
+### Mobile & IoT Applications
+
+Mobile and IoT applications generate vast amounts of data and require continuous monitoring to detect connectivity issues, crashes, and performance 
+problems. Common challenges are network instability, app crashes, sensor data inconsistencies.
+
+**Key monitoring aspects:**
+
+**Logs:** Crash reports, API call failures
+
+**Metrics:** Battery consumption, latency in data transmission
+
+**APM:** User session tracking and performance monitoring
+
+### Logs: Collecting & Analyzing Application Logs
+
+Application logs provide critical insights into system behavior, errors, and performance issues. Effective log collection and analysis help 
+troubleshoot problems, enhance security, and optimize application performance. This section outlines how to collect, ship, and analyze logs in both 
+Windows and Linux environments.
+
+Before setting up log collection, it's important to understand the types of logs your application generates:
+
+**System Logs:** Logs from the operating system (e.g., Windows Event Logs, Linux Syslog).
+
+**Application Logs:** Logs created by the application (e.g., web server logs, API logs, database logs).
+
+**Security Logs:** Logs that capture authentication attempts, firewall activity, and security incidents.
+
+**Audit Logs:** Logs that track user actions and changes in the application for compliance purposes.
+
+**Collecting Logs with Logit.io**
+
+To collect logs we typically recommend using Filebeat. Filebeat is a lightweight, open-source log shipper designed to efficiently forward and centralize 
+log data. It monitors specified log files, reads new entries in real time, and securely transmits them to various destinations
+
+Click [here](getting-started-with-filebeat/) to read more information about Filebeat and learn how to start sending logs to Logit.io.
+
+### Metrics: Tracking Performance Indicators
+
+Application metrics provide quantifiable insights into system health, performance, and resource utilization. By monitoring key metrics, you can identify 
+bottlenecks, detect anomalies, and optimize efficiency before issues impact users.
+
+Effective monitoring requires tracking different types of metrics, including:
+
+**System Metrics:** CPU usage, memory consumption, disk I/O, network activity.
+
+**Application Metrics:** Request rate, error rate, latency, database query performance.
+
+**User Experience Metrics:** Page load time, API response time, session duration.
+
+**Business Metrics:** Conversion rates, transaction success rates, customer churn.
+
+**Collecting Metrics with Logit.io**
+
+We recommend several different Telegraf plugins depending on what metrics you want to send to Logit.io.
+
+To send **Basic System Metrics (CPU, Memory, Disk, Network)** we recommend using the System Metrics plugin, click 
+[here](../integrations/system-metrics/) to find out more information about the System Metrics plugin and how to set it up.
+
+To send **Web Application (API & Request) metrics** we recommend using the NGINX plugin, click [here](../integrations/nginx/#metrics) 
+to find out more information about the NGINX plugin and how to set it up.
+
+To send **Database (SQL & NoSQL Monitoring) metrics** we recommend using different Telegraf plugin depending on your database type:
+
+For **PostgreSQL** we recommend the PostgreSQL plugin, click [here](../integrations/postgresql/#metrics) to find out more information 
+about the PostgreSQL plugin and how to set it up.
+
+For **MySQL/MariaDB** we recommend the MySQL plugin, click [here](../integrations/mysql/#metrics) to find out more information about 
+the MySQL plugin and how to set it up.
+
+For **MongoDB** we recommend the MongoDB plugin, click [here](../integrations/mongodb/#metrics) to find out more information about the 
+MongoDB plugin and how to set it up.
+
+### APM: Application Performance Monitoring
+
+APM provides the visibility you need to understand how your application behaves under different conditions and loads. It helps you quickly 
+pinpoint performance issues, such as slow database queries, inefficient code paths, or network bottlenecks, and take action before they 
+impact the user experience. By monitoring real-time data, you can optimize performance, reduce downtime, and improve overall application 
+efficiency.
+
+APM typically tracks:
+
+**Transaction traces:** An end-to-end view of requests from the user to your application, including all relevant services involved.
+
+**Error rates:** The frequency and types of errors occurring within the application.
+
+**Response times:** How long it takes for your application to respond to user requests.
+
+**Throughput:** The number of requests your application can handle in a given time frame.
+
+**Application Performance Monitoring with Logit.io**
+
+We recommend using OpenTelemetry to send traces to Logit.io. OpenTelemetry is an open-source framework that allows you to collect and export 
+distributed tracing and metrics.
+
+Click [here](getting-started-with-opentelemetry/) to read more information about OpenTelemetry and learn how to start sending logs to Logit.io.
+
+
+
+
