@@ -1,0 +1,65 @@
+---
+title: Getting started with Windows
+metaTitle: Learn about sending Windows logs and Metrics to Logit.io
+description: Read Logit.io's Getting Started with Windows article and learn about logs and metrics in a Windows environment
+stackTypes: logs, metrics
+---
+
+# Getting started with Windows
+
+When getting started with onboarding a Windows installation you will likely want to send one or more of the following:
+system Logs, applications logs, custom log files, system metrics. We will cover each of these in turn.
+
+## System Logs
+
+System logs are records of events that have occurred within Windows. 
+The operating system logs these internally to the Windows Event Log 
+(which can be viewed using the Windows Event Viewer).
+
+We can use what is know as a "log shipper" to collect these logs and send them to Logit.io for analysis. 
+Winlogbeat is a lightweight shipper designed to collect and forward Windows Event Logs, 
+including Application, System, and Security logs, to a centralized platform for analysis. 
+These logs allow administrators to track critical system activities, errors, and security events, 
+such as application crashes, security breaches, or failed login attempts.
+
+You can find instructions for sending logs from Windows [here](../integrations/windows#logs)
+
+## Application Logs
+
+Many applications, even Microsoft ones, do not use the built-in Windows Event Log, 
+and instead write to their own separate Log files instead.
+While Winlogbeat handles event logs specific to Windows, Filebeat is used for shipping 
+other log types (such as application logs, or custom log files) that may be generated 
+by applications or services running on the Windows server. 
+
+You can find out more about Filebeat [link to Filebeat getting started guide].
+
+## Custom Log Files
+
+If you have existing data you wish to send, perhaps logs downloaded from elsewhere, 
+then Filebeat is a good choice, it can be configured to watch a file/folder and send 
+files as they arrive, or run once against existing file(s) to load the data into logit.
+
+Depending on the format of your logs you may need to do additional filter 
+work to maximise the value of your data, but using Filebeat is a good starting point.
+
+You can find out more about Filebeat [here]().
+
+## Windows System Metrics
+
+Metrics provide real-time data that gives administrators a snapshot of how system resources are performing. 
+Monitoring metrics related to CPU usage, memory consumption, disk I/O, and network activity, 
+offer an insight into the current health of a system.
+
+The real power of collecting metrics is not just in real-time monitoring but in tracking trends over time. 
+By collecting system performance data at regular intervals, allowing administrators to observe 
+how system resources evolve over time.
+
+For example, consistent CPU usage spikes or gradual increases in memory consumption could be early 
+indicators of an application issue or resource leak.
+
+Telegraf is a powerful agent that collects system metrics in Windows environments. 
+Through its various plugins, such as Windows Performance Counters and WMI (Windows Management Instrumentation), 
+Telegraf gathers real-time data on key system resources and can forward them to Logit.io for analysis. 
+
+You can find instructions for sending metrics from Windows [here](../integrations/windows#metrics)

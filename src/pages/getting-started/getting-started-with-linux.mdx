@@ -1,0 +1,70 @@
+---
+title: Getting started with Linux
+metaTitle: Learn about sending Linux logs and Metrics to Logit.io
+description: Read Logit.io's Getting Started with Linux article and learn logs and metrics in an Linux environment
+stackTypes: logs, metrics
+---
+
+# Getting started with Linux
+
+When getting started with onboarding a Linux installation you will likely want to send one or more of the following:
+system logs, applications logs, custom log files, system metrics. We will cover each of these in turn.
+
+## System Logs
+
+System Logs are records of events that have occurred within Linux.
+They are usually found in one of two places depending on the flavour of Linux you are using:
+
+`'/var/log/syslog` or accessed via systemd's `journalctl` utility.
+
+We can use what is know as a "log shipper" to collect these logs and send them to Logit.io for analysis. 
+Filebeat is a lightweight shipper designed to collect and forward system logs,
+including syslog and journal logs, to a centralized platform for analysis.
+
+You can find out more about how to configure Filebeat to send system logs [here](../integrations/filebeat-system).
+
+## Application Logs
+
+Many applications write to their own separate log files and we can use Filebeat to collect these logs 
+and send them to Logit.io for analysis. Please see below for instructions to configure Filebeat to send application logs:
+
+You can find out more about how to configure Filebeat to send application logs [here](../integrations/filebeat).
+
+Some applications have their own Filebeat modules, which are preconfigured setups designed 
+to simplify the collection, parsing, and visualization of specific types of log files.
+For example, the Apache module can be used to collect logs from Apache web servers.
+
+You can find out more about how to configure Filebeat to send Apache logs [here](../integrations/apache).
+
+The Nginx module can be used to collect logs from Nginx web servers:
+You can find out more about how to configure Filebeat to send Nginx logs [here](../integrations/nginx).
+
+You can find more information about Filebeat modules [here](../getting-started/getting-started-with-filebeat-modules.mdx).
+
+## Custom Log Files
+
+If you have existing data you wish to send, perhaps logs downloaded from elsewhere, then Filebeat is a good choice, 
+it can be configured to watch a file/folder and send files as they arrive, or run once against existing file(s) 
+to load the data into logit.
+
+Depending on the format of your logs you may need to do additional filter work to maximise the value of your data, 
+but using filebeat is a good starting point.
+
+You can find out more about how to configure Filebeat to send custom logs [here](../integrations/filebeat).
+
+## System Metrics
+
+Metrics provide real-time data that gives administrators a snapshot of how system resources are performing. 
+Monitoring metrics related to CPU usage, memory consumption, disk I/O, and network activity, offer an 
+insight into the current health of a system.
+
+The real power of collecting metrics is not just in real-time monitoring but in tracking trends over time. 
+By collecting system performance data at regular intervals, allowing administrators to observe how system resources evolve over time.
+
+For example, consistent CPU usage spikes or gradual increases in memory consumption could be early indicators of an 
+application issue or resource leak.
+
+Telegraf is a powerful agent that collects system metrics in Linux environments. Telegraf gathers real-time 
+data on key system resources and forwards them to a centralized platform for analysis. 
+
+You can find out more about how to configure Telegraf to send system metrics [here](../integrations/system-metrics).
