@@ -212,7 +212,8 @@ The configuration file below is pre-configured to scrape the system metrics from
 
     Once Telegraf is running you should see output similar to the following, which confirms the inputs, 
     output and basic configuration the application has been started with:
-    ![Powershell Telegraf information](@/images/integrations/system-metrics/windows-telegraf-start.png)
+
+    ![Powershell Telegraf information](@/images/getting-started/telegraf-powershell-demo-start.png)
   </Tab>
   <Tab>
     ```bash copy
@@ -262,7 +263,34 @@ Click the 'Launch Metrics' button below to open Grafana.
 
 <LaunchVisualizer type="metrics" />
 
+In the Grafana interface, you will see a side menu on the left-hand side.
+This menu provides access to various features and functionalities of Grafana, including dashboards, alerts, and data sources. 
+Click on the "Explore" option in the side menu to access the Explore page, where you can query and visualize your data interactively.
 
+On the Explore page there is a Metric drop-down more or less in the middle of the page.
+This drop-down allows you to select the metric we have have just configured to be sent to your stack.
+
+On Windows, the metric name is `win_cpu_Percent_Processor_Time` and on other Operating Systems it is `cpu_XXX`.
+
+To the right of the Metric drop-down is a `Label filters` field. 
+Choose `host` from the drop-down and select the name of your host (i.e. computer) in the `Select value` field to the right. 
+(There should only be one option in the `Select value` field if you have only one host sending metrics to your stack.)
+
+![Grafana Explore page focus](@/images/getting-started/grafana-explore2.png)
+
+Click on the blue `Run Query` button (with the circular double arrows) 
+to the top right of the page to run the query and view the results, 
+which will be displayed in a graph at the bottom of the page. 
+This data is being pulled from your Logit.io stack 
+and (as we'd expect) is the total CPU usage of the machine the Telegraf agent is running on.
+
+To the immediate right of the `Run Query` button is an `Auto-refresh` drop-down. 
+If you select a time period from this drop-down,
+this will automatically refresh the data in the graph at the bottom at the chosen interval.
+If you choose `5s` for example, the data will refresh every 5 seconds. 
+If you run a processor-intensive task on your computer you should see the graph reporting higher values while that task is active.
+
+When you have finished exploring the data, you can stop Telegraf by pressing `Ctrl + C` (`Cmd + C` on Mac) in the terminal window where it is running.
 
 ## Grafana Dashboards
 
