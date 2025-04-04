@@ -1,0 +1,42 @@
+---
+title: Telegraf
+metaTitle: Learn How to Integrate and Configure Telegraf to Send Metrics
+subTitle: Ship your Metrics via Telegraf to your Logit.io Stack
+logo: telegraf
+color: "#4d4d4d"
+description: Use our example to configure Telegraf to ship Nginx metrics to your Logit.io stacks. Configure Telegraf to send Nginx metrics to Logstash or Elastic.
+stackTypes: metrics
+sslPortType: beats-ssl
+tags: Telegraf, Metrics, Telemetry, OpenTelemetry, Health, Instrumentation, Monitoring, Performance
+---
+
+You can find out more about Telegraf in our getting started guide [here](..\getting-started\getting-started-with-telegraf.mdx). 
+To learn how to install Telegraf and configure the output plugin to send metrics to your Logit.io stack, follow the steps below. 
+You will need to use a specific integration guide for the type of metrics you want to send in order to configure Telegraf.
+
+<Steps>
+  ## Metrics
+
+  Configure Telegraf to ship Nginx metrics to your Logit.io stacks via Logstash.
+
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the Telegraf input plugin
+
+  You will set the metrics you want to collect in the Telegraf configuration file (called `telegraf.conf` by default). 
+  The configuration file that is installed with Telegraf is thousands of lines long, and supports many different
+  input plugins. You can find the recommended inputs configuration in the documentation for the
+  type of metrics you want to send. For example, if you are sending Nginx metrics to Logit.io, you can find the 
+  instructions [here](..\integrations\nginx.mdx).
+
+  ### Configure the output plugin
+
+  <TelegrafOutputPlugin />
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+</Steps>
