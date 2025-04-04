@@ -1,0 +1,108 @@
+---
+title: Getting started with Jaeger
+metaTitle: Learn about Jaeger
+description: Read Logit.io’s Getting Started with Jaeger article and learn how Telegraf helps to visualize the flow of requests through a distributed system
+stackTypes: metrics
+---
+
+# Getting started with Jaeger
+
+Jaeger is an open-source distributed tracing system that helps monitor and troubleshoot microservices architectures. By tracing requests as they flow through 
+various services, Jaeger provides insights into system performance, identifies bottlenecks, and assists in debugging complex application interactions. It's an 
+essential tool for Application Performance Monitoring (APM), particularly in systems with microservices, where traditional logging may not provide sufficient 
+visibility into request flow across services.
+
+In this guide, we'll explain what Jaeger is, why it's used, and how you can start using it for effective tracing and monitoring in your application with Logit.io.
+
+### What Does Jaeger Do?
+
+Jaeger helps visualize the flow of requests through a distributed system by capturing distributed traces. Each trace represents a single request and is composed 
+of spans, which are individual operations or events in the request lifecycle. Jaeger collects data about the following:
+
+**Latency:** How long each operation or request took.
+
+**Dependencies:** How services interact with each other.
+
+**Performance Bottlenecks:** Identifying slow operations or services that may be affecting performance.
+
+**Error Detection:** Monitoring and debugging errors by tracing the flow of requests.
+
+By correlating this data, Jaeger allows you to visualize service performance, understand the timing of requests, and gain insights into service dependencies.
+
+### Why Use Jaeger?
+
+Distributed Tracing: Jaeger traces requests as they pass through multiple services in a microservices architecture, helping you understand the request flow in 
+complex environments.
+
+**Performance Monitoring:** It identifies latency bottlenecks, allowing you to monitor the time taken by various operations and pinpoint performance issues.
+
+**Root Cause Analysis:** Jaeger's traces allow you to debug failures and errors by following the path of a request, helping you identify which service or 
+operation caused the issue.
+
+**Service Dependencies:** Jaeger provides a visual map of how different services interact, which is especially valuable in distributed systems. You can see 
+how services depend on each other and how failures in one service affect others.
+
+**Scalability:** Jaeger is designed to scale horizontally and can handle large amounts of trace data, making it a reliable choice for production-grade observability.
+
+If you're working with a microservices architecture, you could be facing challenges related to debugging and performance monitoring due to the distributed nature 
+of the system. Jaeger helps address these issues by providing visibility into:
+
+**End-to-End Request Tracking:** Track a request across its lifecycle, from frontend to backend, even when it crosses multiple services.
+
+**Service Performance Optimization:** Identify and optimize high-latency operations or services that may be slowing down the overall system.
+
+**Improved Debugging:** Quickly find the root cause of issues by following the trace of a request and checking for errors at any point in its journey.
+
+### Using Jaeger with Logit.io
+
+To use Jaeger with Logit.io you need to create an Application Performance Monitoring (APM) stack and send some data. Logit.io provides the Jaeger visualizer as part 
+of the APM stack for visualizing your distributed traces.
+
+To learn more about how to do this click [here](https://logit.io/docs/application-performance-monitoring/)
+
+Once you have created your stack and sent data you can launch the Jaeger visualizer to view your APM stack's data by pressing the `Launch APM` button found at the top 
+of your Logit.io stack settings page:
+
+![Launch APM button](@/images/help/apm/overview/launch-apm.jpg)
+
+If you have more than one Logit.io stack then you can also find this button directly on your dashboard: 
+
+![Launch APM button](@/images/help/apm/overview/launch-apm-dashboard.jpg)
+
+Clicking `Launch APM` will take you to your Jaeger instance.
+
+![Jaeger UI Preview](@/images/help/apm/overview/jaeger-ui.png)
+
+Now that you have traces appearing in the Jaeger UI, you can use the Jaeger UI to visualize and analyze them. Here's what you can do:
+
+**Search for Traces:**
+
+Select a service from the dropdown menu.
+
+Set parameters like operation name, tags, and time range.
+
+Click "Find Traces" to retrieve matching traces.
+
+![Jaeger UI Preview](@/images/getting-started/jaeger/search-for-traces.png)
+
+**Trace Timeline View:**
+
+Clicking on a specific trace.
+
+Displays the sequence of spans (operations) in a trace.
+
+Shows the duration of each span, helping identify bottlenecks.
+
+![Jaeger UI Preview](@/images/getting-started/jaeger/trace-timeline.png)
+
+**Trace Details:**
+
+Clicking on a span reveals detailed information, including logs, tags, and process data.
+
+![Jaeger UI Preview](@/images/getting-started/jaeger/trace-details.png)
+
+**Service Dependencies:**
+
+Clicking on ‘Dependencies’ on the top navigation bar visualizes how services interact with each other, aiding in understanding system architecture.
+
+![Jaeger UI Preview](@/images/getting-started/jaeger/service-dependancies.png)
