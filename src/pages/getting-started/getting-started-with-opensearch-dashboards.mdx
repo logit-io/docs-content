@@ -1,0 +1,156 @@
+---
+title: Getting started with OpenSearch Dasboards
+metaTitle: Learn about OpenSearch Dasboards
+description: Read Logit.io’s Getting Started with OpenSearch Dasboards article and learn how OpenSearch Dashboards providespowerful real-time dashboards, charts, and analytics for your log data
+stackTypes: logs, opensearch
+---
+
+# Getting started with OpenSearch Dashboards
+
+OpenSearch Dashboards is an open-source, data visualization and exploration tool designed to work with OpenSearch. It provides powerful real-time dashboards, charts, 
+and analytics for your log data. Whether you're monitoring infrastructure, debugging applications, or tracking business metrics, OpenSearch Dashboards makes it easy 
+to turn raw data into actionable insights.
+
+### What Is OpenSearch Dashboards?
+
+OpenSearch Dashboards is the user interface for OpenSearch — the open-source fork of Elasticsearch and Kibana. It allows you to visualize and interact with your data 
+stored in OpenSearch through:
+
+Interactive dashboards and visualizations (bar charts, pie charts, line graphs, tables, maps)
+
+Full-text search and filtering
+
+Real-time log monitoring
+
+Alerting, anomaly detection, and observability features
+
+### Why Use OpenSearch Dashboards?
+
+OpenSearch Dashboards is ideal for companies, teams or users that want to:
+
+**Centralize observability data:** Logsfrom multiple sources  can be stored in OpenSearch and visualized in one place.
+
+**Monitor system health:** Build dashboards that track infrastructure performance (CPU, memory, disk usage), application behavior, or uptime.
+
+**Troubleshoot faster:** Filter and search through logs to quickly identify issues or anomalies.
+
+**Create shareable reports:** Build and export custom dashboards for stakeholders or audit purposes.
+
+**Visualize business intelligence:** Track KPIs and user behavior across applications.
+
+**Key Features**
+
+Real-time data exploration and dashboards
+
+Powerful search and filtering using OpenSearch Query DSL or Lucene
+
+Multiple visualization types including charts, maps, and gauges
+
+Alerting and notifications via OpenSearch plugins
+
+Role-based access control (when integrated with OpenSearch security features)
+
+Integration with Beats, Logstash, Fluentd, and many other data shippers
+
+### Using Opensearch Dashboards with Logit.io
+
+To use Opensearch Dashboards with Logit.io you need to create a Log Management or Hosted Opensearch stack and send some data. Logit.io provides the OpenSearch Dashboards 
+as part of the Log Management stack and can be added as an extra to the Hosted Opensearch stack for visualizing your distributed traces.
+
+To learn more about how to create a Log Management stack click [here](../log-management/)
+
+To learn more about how to create a Hosted OpenSearch stack click [here](../opensearch/)
+
+Once you have created your stack and sent data you can launch the OpenSearch Dashboards visualizer to view your stack's data by pressing the `Launch Logs` button found at 
+the top of your Logit.io stack settings page:
+
+![Launch Logs button](@/images/getting-started/logs/launch-logs-button.png)
+
+This part of the article will explain some of the key features to help you get started with OpenSearch Dashboards.When the Opensearch Dashboard visualizer opens you will 
+see the `Discovery` view.
+
+![Launch Logs button](@/images/help/log-management/getting-started/opensearch-discovery-page.png)
+
+**Discovery**
+
+Use Discover to explore raw logs and search through data.
+
+You can use the `Search` bar at the top of the page to search for a word or expression.
+
+You can choose a field to narrow a search by selecting a particular field.
+
+![Select Field](@/images/help/log-management/getting-started/select-fields.png)
+
+Selecting a field (e.g., `status_code`, `host`, `user_id`) allows you to:
+
+Apply filters based on values (e.g., only show logs where status_code is 500)
+
+Narrow down large datasets to investigate issues or trends
+
+Drill down into specific subsets of your data
+
+See the frequency of field values
+
+Look for spikes in error.message
+
+Filter on specific service.name or trace.id values
+
+Isolate logs from a particular host, container, or time period
+
+You can also change the date range
+
+![Date Range](@/images/help/log-management/getting-started/opensearch-date-range.png)
+
+Using the date range in OpenSearch Dashboards is essential for focusing your analysis on the most relevant time period. Here's why it's important:
+
+You can narrow down to:
+
+**Last 15 minutes** to troubleshoot an ongoing incident
+
+**Yesterday** to review recent deployments or events
+
+**Custom range** to investigate a historical outage or trend
+
+This helps reduce noise and lets you focus on data that matters. You can set the date range to align with known events such as error logs around a failed deployment, 
+traffic surges during a product launch and outages or performance drops.
+
+Using the date range properly ensures you're looking at the right data, at the right time, and it’s one of the most powerful tools in OpenSearch Dashboards for 
+actionable analysis.
+
+**Dashboards**
+
+From the Discovery page you can click the three lines menu button in the top left of the page to open the side menu and click `Dashboards`.
+
+![Dashboard Side Menu](@/images/getting-started/logs/dashboard-menu.png)
+
+Dashboards are customizable, interactive visual displays that let you monitor, explore, and analyze your data in real time—all in one place.
+
+A dashboard is a collection of visualizations—like charts, graphs, tables, maps, and more—that represent different slices of your log data. Think of it as a command 
+center for understanding what’s happening in your application, infrastructure, or business. Logit.io installs a number of dashboards for you when we create your Log 
+Management stack.
+
+![Date Range](@/images/help/log-management/getting-started/opensearch-dashboards.png)
+
+Dashboards help you spot trends, patterns, and anomalies at a glance without running multiple queries manually.
+
+You can pull data from logs into one cohesive view and track things like error spikes, latency issues, service performance and application health.
+
+Dashboards can be shared with stakeholders or teams for collaboration, reporting, or incident reviews.
+
+**Alerting**
+
+Alerting in OpenSearch Dashboards allows you to monitor your data continuously and get notified when specific conditions are met—such as error spikes, slow response 
+times, or system failures.
+
+Using the Alerting plugin, you can define monitors that run queries on your data and trigger alerts when thresholds are breached. These alerts can be sent via email, 
+Slack, webhooks, or other integrations.
+
+Alerting helps teams react quickly to issues, maintain system uptime, and enforce SLAs—making it an essential part of observability with OpenSearch.
+
+To find out more about ALerting with Logit.io click [here](../log-management/alerting/) for more information.
+
+### Summary
+
+OpenSearch Dashboards is a versatile, open-source tool for gaining visibility into your systems and applications. Whether you're analyzing server performance or exploring 
+application logs it gives you the flexibility to explore and present your data the way you need it. To find out more you can click 
+[here](../log-management/opensearch/opensearch-dashboards/) for more information.
