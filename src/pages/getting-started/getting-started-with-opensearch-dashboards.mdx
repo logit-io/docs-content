@@ -14,31 +14,34 @@ to turn raw data into actionable insights.
 ### What Is OpenSearch Dashboards?
 
 OpenSearch Dashboards is the user interface for OpenSearch — the open-source fork of Elasticsearch and Kibana. It allows you to visualize and interact with your data 
-stored in OpenSearch through:
-
-Interactive dashboards and visualizations (bar charts, pie charts, line graphs, tables, maps)
-
-Full-text search and filtering
-
-Real-time log monitoring
-
-Alerting, anomaly detection, and observability features
+stored in OpenSearch through interactive dashboards and visualizations (bar charts, pie charts, line graphs, tables, maps), full-text search and filtering, real-time log monitoring
+and alerting, anomaly detection, and observability features.
 
 ### Why Use OpenSearch Dashboards?
 
 OpenSearch Dashboards is ideal for companies, teams or users that want to:
 
-**Centralize observability data:** Logsfrom multiple sources  can be stored in OpenSearch and visualized in one place.
+**Centralize observability data**
 
-**Monitor system health:** Build dashboards that track infrastructure performance (CPU, memory, disk usage), application behavior, or uptime.
+Logs from multiple sources  can be stored in OpenSearch and visualized in one place.
 
-**Troubleshoot faster:** Filter and search through logs to quickly identify issues or anomalies.
+**Monitor system health** 
 
-**Create shareable reports:** Build and export custom dashboards for stakeholders or audit purposes.
+Build dashboards that track infrastructure performance (CPU, memory, disk usage), application behavior, or uptime.
 
-**Visualize business intelligence:** Track KPIs and user behavior across applications.
+**Troubleshoot faster**
 
-**Key Features**
+Filter and search through logs to quickly identify issues or anomalies.
+
+**Create shareable reports**
+
+Build and export custom dashboards for stakeholders or audit purposes.
+
+**Visualize business intelligence**
+
+Track KPIs and user behavior across applications.
+
+**Key Features:**
 
 Real-time data exploration and dashboards
 
@@ -61,21 +64,68 @@ To learn more about how to create a Log Management stack click [here](../log-man
 
 To learn more about how to create a Hosted OpenSearch stack click [here](../opensearch/)
 
+To learn more about how to send data to your stack click [here](../log-management/getting-started/)
+
 Once you have created your stack and sent data you can launch the OpenSearch Dashboards visualizer to view your stack's data by pressing the `Launch Logs` button found at 
-the top of your Logit.io stack settings page:
+the top of your Logit.io stack or on the stack settings page:
 
 ![Launch Logs button](@/images/getting-started/logs/launch-logs-button.png)
 
-This part of the article will explain some of the key features to help you get started with OpenSearch Dashboards.When the Opensearch Dashboard visualizer opens you will 
+This section of the article will explain some of the key features to help you get started with OpenSearch Dashboards. When the Opensearch Dashboard visualizer opens you will 
 see the `Discovery` view.
 
-![Launch Logs button](@/images/help/log-management/getting-started/opensearch-discovery-page.png)
+![Launch Logs button](@/images/help/log-management/getting-started/expand-log.png)
 
-**Discovery**
+### Discovery
 
-Use Discover to explore raw logs and search through data.
+Use Discover to explore raw logs and search through data. Here are examples of what you can do on the discovery page.
 
-You can use the `Search` bar at the top of the page to search for a word or expression.
+**Search**
+
+You can use the `Search` bar at the top of the page to search for a word or expression. 
+
+![Search Bar](@/images/getting-started/logs/search-bar.png)
+
+The search bar in OpenSearch Dashboards is a powerful tool for querying and filtering your data. It allows users to refine displayed results by entering keywords, phrases, 
+or complex query expressions using the Lucene, Elasticsearch Query DSL, or KQL (Kibana Query Language) syntax. This makes it easy to explore large datasets, pinpoint specific 
+logs, metrics, or documents, and gain deeper insights into your data. You can combine the search bar with filters, field selections, and date ranges to create highly 
+customized views for analysis or troubleshooting.
+
+Here are some examples of how the use search:
+
+A **Basic search** for 'payment failure' would search for all occurrences of "payment failure"
+
+```text copy
+payment failure
+```
+
+This search will return all documents containing the phrase "payment failure" in any field.
+
+You can use a **Field-Specific search**, such as the `error_type` field.
+
+```text copy
+error_type:"payment failure"
+```
+
+This ensures that only logs with the exact phrase "payment failure" in the `error_type` field are displayed.
+
+You can use a **Boolean Search** to combine multiple conditions using Boolean operators like AND, OR, and NOT.
+
+```text copy
+error_type:"payment failure" AND status_code:500
+```
+
+This query retrieves all documents where `error_type` is "payment failure" and the HTTP `status_code` is 500.
+
+You can use a **Wildcard Search** to match partial terms.
+
+```text copy
+error_type:pay* AND status_code:5*
+```
+
+This finds logs where `error_type` starts with "pay" (e.g., "payment" or "payout") and `status_code` starts with "5" (e.g., 500, 503).
+
+**Selected Fields**
 
 You can choose a field to narrow a search by selecting a particular field.
 
@@ -91,17 +141,19 @@ Drill down into specific subsets of your data
 
 See the frequency of field values
 
-Look for spikes in error.message
+Look for spikes,e.g. focus on `error.message`
 
-Filter on specific service.name or trace.id values
+Filter on specific `service.name` or `trace.id` values
 
 Isolate logs from a particular host, container, or time period
+
+**Date Range**
 
 You can also change the date range
 
 ![Date Range](@/images/help/log-management/getting-started/opensearch-date-range.png)
 
-Using the date range in OpenSearch Dashboards is essential for focusing your analysis on the most relevant time period. Here's why it's important:
+Using the date range in OpenSearch Dashboards is essential for focusing your analysis on the most relevant time period.
 
 You can narrow down to:
 
@@ -127,15 +179,16 @@ Dashboards are customizable, interactive visual displays that let you monitor, e
 
 A dashboard is a collection of visualizations—like charts, graphs, tables, maps, and more—that represent different slices of your log data. Think of it as a command 
 center for understanding what’s happening in your application, infrastructure, or business. Logit.io installs a number of dashboards for you when we create your Log 
-Management stack.
+Management stack or when you add OpenSearch Dashboards to your Hosted OpenSearch Stack.
 
 ![Date Range](@/images/help/log-management/getting-started/opensearch-dashboards.png)
 
-Dashboards help you spot trends, patterns, and anomalies at a glance without running multiple queries manually.
-
-You can pull data from logs into one cohesive view and track things like error spikes, latency issues, service performance and application health.
+Dashboards help you spot trends, patterns, and anomalies at a glance without running multiple queries manually. You can pull data from logs into one cohesive view and 
+track things like error spikes, latency issues, service performance and application health.
 
 Dashboards can be shared with stakeholders or teams for collaboration, reporting, or incident reviews.
+
+To learn more about OpenSearch you can click [here](../log-management/opensearch/opensearch-dashboards/overview/) for more information
 
 **Alerting**
 
