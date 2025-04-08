@@ -1,17 +1,25 @@
 ---
 title: Node.js
-metaTitle: Learn How to Integrate and Configure Node.js to Send Logs and Traces
+metaTitle: Learn How to Integrate and Configure Node.js to Send Logs and Traces to Logit.io
 pageTitle: Node.js Logging with Winston and Traces with OpenTelemetry
 subTitle: Ship data from your Node.js application to Logit.io
 logo: nodejs
 color: "#82bb26"
 stackTypes: logs, apm
-description: Send your node.js application logs to Logit.io via Logstash using the instructions below and begin searching your data
+description: Send your node.js application logs via Logstash and traces via OpenTelemetry to Logit.io using the instructions below and begin analysing your data
 sslPortType: tcp-ssl
 tags: Logs, NodeJS, Node.js, JavaScript, Node, Nodejs, Apm, Grpc, Http
 ---
 
-Follow the steps below to send your observability data to Logit.io
+For developers working with Node.js, seamlessly sending logs and traces to Logit.io can unlock valuable insights for debugging, 
+monitoring, and improving system reliability. This guide will help you configure your node.js application to send logs and traces
+to your Logit.io stack and analyse the data in OpenSearch Dashboards (for logs) or Jaeger (for traces). 
+
+The guide below will help you get started with sending logs and traces from your Node.js application to Logit.io. 
+
+If you only want to send APM data, you can skip to the [APM section](#apm).
+
+If you only want to send logs, continue to the next section below.
 
 <Steps>
   ## Logs
@@ -25,7 +33,7 @@ Follow the steps below to send your observability data to Logit.io
   ### Introduction
 
   The example code used in this guide has been setup using Node.js v20.18.0 (64-bit). 
-  Node Package Manager (npm) can be used to install the required `winston` (3.15.0) 
+  Node Package Manager (npm) can be used to install the required `winston` (3.17.0) 
   and `winston-logstash` (1.2.1) packages.
 
   These will allow you to send log data from your Node.js application, to 
@@ -99,7 +107,9 @@ Follow the steps below to send your observability data to Logit.io
 
 <Steps>
   ## APM
+
   ### Install Integration
+
   <InstallIntegration/>
   
   ### Install
