@@ -1,12 +1,12 @@
 ---
-title: HTTP/S
+title: JSON via HTTP/S
 metaTitle: Learn How to Send JSON Logs via HTTP/S to Logit.io
 subTitle: Ship JSON logs using HTTP/S to your Logit.io Stack
 logo: https
 color: "#30a743"
 description: Learn how to send JSON logs via HTTP/S to your Logit.io Stack using cURL.
 stackTypes: logs
-tags: Logs, HTTP, JSON, API, cURL, Http, Curl, CURL
+tags: Logs, HTTP, JSON, API, cURL, Http, Curl, CURL, Web Services
 ---
 
 If you have logs that are in JSON format, you can send them to your Logit.io Stack using the HTTP/S API. 
@@ -29,9 +29,15 @@ This is a great way to send logs from applications that do not have a native int
   - Content-Type header set as application/json
   - Either POST or PUT to https://@logitApiEndpoint/v2
 
-  ### Example
+  ### Send a single JSON log using curl
 
-  <Tabs items={["Windows", "Linux", "macOS", "DEB", "RPM"]}>
+  <Tabs items={["Linux, macOS, DEB, RPM","Windows"]}>
+    <Tab>
+    ```bash copy
+    curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: json" https://@logitApiEndpoint/v2 -d '{"test":"test","example": { "a": 1, "b": 2 } }'
+    ```
+    </Tab>
+
     <Tab>
     If using the command prompt you will need to escape double-quote characters with a backslash in the data field as shown in the example below.
                 
@@ -59,53 +65,33 @@ This is a great way to send logs from applications that do not have a native int
     ```
     </Tab>
 
-    <Tab>
-    ```bash copy
-    curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: json" https://@logitApiEndpoint/v2 -d '{"test":"test","example": { "a": 1, "b": 2 } }'
-    ```
-    </Tab>
-
-    <Tab>
-    ```bash copy
-    curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: json" https://@logitApiEndpoint/v2 -d '{"test":"test","example": { "a": 1, "b": 2 } }'
-    ```
-    </Tab>
-
-    <Tab>
-    ```bash copy
-    curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: json" https://@logitApiEndpoint/v2 -d '{"test":"test","example": { "a": 1, "b": 2 } }'
-    ```
-    </Tab>
-
-    <Tab>
-    ```bash copy
-    curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: json" https://@logitApiEndpoint/v2 -d '{"test":"test","example": { "a": 1, "b": 2 } }'
-    ```
-    </Tab>
-
   </Tabs>
 
-  ### Response
+  ### Response from Logit.io
 
   You should expect to receive a 202 ACCEPTED response code for a successful message
 
-  ```cmd copy
-  HTTP/1.1 202 ACCEPTED
-  Content-Type: application/json
-  Content-Length: 39
-  Connection: keep-alive
-  Server: Logit-API-Server
-  Date: Wed, 27 Mar 2025 14:34:39 GMT
-  Access-Control-Allow-Origin: *
-  Strict-Transport-Security: max-age=31536000; includeSubDomains
-  X-Xss-Protection: 1; mode=block
-  X-Content-Type-Options: nosniff
-  X-Frame-Options: SAMEORIGIN
+  <Tabs items={["Curl command", "Windows Powershell"]} unlink>
+    <Tab>
+      ```cmd copy
+      HTTP/1.1 202 ACCEPTED
+      Content-Type: application/json
+      Content-Length: 39
+      Connection: keep-alive
+      Server: Logit-API-Server
+      Date: Wed, 27 Mar 2025 14:34:39 GMT
+      Access-Control-Allow-Origin: *
+      Strict-Transport-Security: max-age=31536000; includeSubDomains
+      X-Xss-Protection: 1; mode=block
+      X-Content-Type-Options: nosniff
+      X-Frame-Options: SAMEORIGIN
 
-  {"message":"Message Received, Thanks"}
-  ```
+      {"message":"Message Received, Thanks"}
+      ```
+    </Tab>
 
-  Although essentially the same, the message format will be slightly different in Powershell:
+    <Tab>
+    Although essentially the same, the message format will be slightly different in Powershell:
 
     ```ps1 copy
     StatusCode        : 202
@@ -127,7 +113,46 @@ This is a great way to send logs from applications that do not have a native int
     ParsedHtml        : mshtml.HTMLDocumentClass
     RawContentLength  : 39
     ```
+    </Tab>
+  
+  </Tabs>
 
+  ### Send JSON log files using curl
+
+  It is also possible to test sending logs in a JSON file to Logit.io.
+
+  Create a new file in the same directory as your command prompt and copy the snippet below and save it as `sample.json`.
+
+  ```json copy
+  {
+    "name": "Jason",
+    "city": "Jakarta",
+    "display": "Hello there from JSON file",
+    "value": 5
+  }
+  ```
+
+  The following command should now be entered into the command prompt, this will send the file to Logstash:
+  <Tabs items={["Linux, macOS, DEB, RPM","Windows Powershell"]}>
+    <Tab>
+    ```cmd copy
+    curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: json" https://@logitApiEndpoint/v2 -d @sample.json
+    ```
+    </Tab>
+    <Tab>
+    ```ps1 copy
+    Invoke-RestMethod -Uri "https://@logitApiEndpoint/v2" `
+      -Headers @{
+          "ApiKey" = "@apikey";
+          "Content-Type" = "application/json";
+          "LogType" = "json"
+      } `
+      -Method POST `
+      -Body (Get-Content -Path "sample.json" -Raw)
+    ```
+    </Tab>
+  </Tabs>
+  
   ### Launch Logs to View Your Data
 
   <LaunchVisualizer type="logs" />
