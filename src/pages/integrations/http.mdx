@@ -1,83 +1,87 @@
 ---
 title: HTTP/S
-metaTitle: Learn How to Integrate and Configure Logstash to Send HTTP/S Logs
-subTitle: Ship logs using HTTP/S to your Logit.io Stack
+metaTitle: Learn How to Send JSON Logs via HTTP/S to Logit.io
+subTitle: Ship JSON logs using HTTP/S to your Logit.io Stack
 logo: https
 color: "#30a743"
-description: How to send HTTP endpoint server metrics to your Hosted ELK Logstash instance. Configure Metricbeat to send HTTP endpoint server metrics to Elasticsearch.
+description: Learn how to send JSON logs via HTTP/S to your Logit.io Stack using cURL.
 stackTypes: logs
 tags: Logs, HTTP, JSON, API, cURL, Http, Curl, CURL
 ---
 
-Follow the steps below to send your observability data to Logit.io
+If you have logs that are in JSON format, you can send them to your Logit.io Stack using the HTTP/S API. 
+This is a great way to send logs from applications that do not have a native integration with Logit.io or if you want to send logs from a custom application.
 
 <Steps>
   ## Logs
 
-  Send HTTP/S logs to your Logit.io Stack via Logstash.
+  Send JSON logs to your Logit.io Stack via your Logit.io API endpoint.
   
   ### Install Integration
+
   <InstallIntegration/>
+
   ### Requirements
 
   - Valid JSON content
-  - API key, sent in the headers. If you are logged into your Logit.io account the API key and endpoint should be automatically populated in the examples below.
+  - API key, sent in the headers. If you are logged into your Logit.io account the API key and endpoint should be automatically 
+    populated in the examples below.
   - Content-Type header set as application/json
   - Either POST or PUT to https://@logitApiEndpoint/v2
 
   ### Example
 
   <Tabs items={["Windows", "Linux", "macOS", "DEB", "RPM"]}>
-  <Tab>
-  Remember that you will need to escape double-quote characters with a backslash in the data field as shown in the example below:
-              
-  CMD
-  ```bash copy
-  curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: json" https://@logitApiEndpoint/v2 -d "{\"test\":\"test\",\"example\": { \"a\": 1, \"b\": 2 } }"
-  ```
+    <Tab>
+    If using the command prompt you will need to escape double-quote characters with a backslash in the data field as shown in the example below.
+                
+    Command Prompt:
+    ```cmd copy
+    curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: json" https://@logitApiEndpoint/v2 -d "{\"test\":\"test\",\"example\": { \"a\": 1, \"b\": 2 } }"
+    ```
 
-  Powershell
-  ```ps1 copy
-  curl -Method Post `
-  -Uri "https://@logitApiEndpoint/v2" `
-  -Headers @{
-      "ApiKey" = "@apikey";
-      "Content-Type" = "application/json";
-      "LogType" = "json"
-  } `
-  -Body (@{
-      test = "test";
-      example = @{
-          a = 1;
-          b = 2
-      }
-  } | ConvertTo-Json)
-  ```
-  </Tab>
+    Or you can send the cURL request via Powershell:
+    ```ps1 copy
+    curl -Method Post `
+    -Uri "https://@logitApiEndpoint/v2" `
+    -Headers @{
+        "ApiKey" = "@apikey";
+        "Content-Type" = "application/json";
+        "LogType" = "json"
+    } `
+    -Body (@{
+        test = "test";
+        example = @{
+            a = 1;
+            b = 2
+        }
+    } | ConvertTo-Json)
+    ```
+    </Tab>
 
-  <Tab>
-  ```bash copy
-  curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: json" https://@logitApiEndpoint/v2 -d '{"test":"test","example": { "a": 1, "b": 2 } }'
-  ```
-  </Tab>
+    <Tab>
+    ```bash copy
+    curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: json" https://@logitApiEndpoint/v2 -d '{"test":"test","example": { "a": 1, "b": 2 } }'
+    ```
+    </Tab>
 
-  <Tab>
-  ```bash copy
-  curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: json" https://@logitApiEndpoint/v2 -d '{"test":"test","example": { "a": 1, "b": 2 } }'
-  ```
-  </Tab>
+    <Tab>
+    ```bash copy
+    curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: json" https://@logitApiEndpoint/v2 -d '{"test":"test","example": { "a": 1, "b": 2 } }'
+    ```
+    </Tab>
 
-  <Tab>
-  ```bash copy
-  curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: json" https://@logitApiEndpoint/v2 -d '{"test":"test","example": { "a": 1, "b": 2 } }'
-  ```
-  </Tab>
+    <Tab>
+    ```bash copy
+    curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: json" https://@logitApiEndpoint/v2 -d '{"test":"test","example": { "a": 1, "b": 2 } }'
+    ```
+    </Tab>
 
-  <Tab>
-  ```bash copy
-  curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: json" https://@logitApiEndpoint/v2 -d '{"test":"test","example": { "a": 1, "b": 2 } }'
-  ```
-  </Tab>
+    <Tab>
+    ```bash copy
+    curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: json" https://@logitApiEndpoint/v2 -d '{"test":"test","example": { "a": 1, "b": 2 } }'
+    ```
+    </Tab>
 
   </Tabs>
 
@@ -91,7 +95,7 @@ Follow the steps below to send your observability data to Logit.io
   Content-Length: 39
   Connection: keep-alive
   Server: Logit-API-Server
-  Date: Wed, 27 Mar 2024 14:34:39 GMT
+  Date: Wed, 27 Mar 2025 14:34:39 GMT
   Access-Control-Allow-Origin: *
   Strict-Transport-Security: max-age=31536000; includeSubDomains
   X-Xss-Protection: 1; mode=block
@@ -100,6 +104,29 @@ Follow the steps below to send your observability data to Logit.io
 
   {"message":"Message Received, Thanks"}
   ```
+
+  Although essentially the same, the message format will be slightly different in Powershell:
+
+    ```ps1 copy
+    StatusCode        : 202
+    StatusDescription : ACCEPTED
+    Content           : {"message":"Message Received, Thanks"}
+
+    RawContent        : HTTP/1.1 202 ACCEPTED
+                        Connection: keep-alive
+                        Access-Control-Allow-Origin: *
+                        Strict-Transport-Security: max-age=31536000; includeSubDomains
+                        X-Xss-Protection: 1; mode=block
+                        X-Content-Type-Options: ...
+    Forms             : {}
+    Headers           : {[Connection, keep-alive], [Access-Control-Allow-Origin, *], [Strict-Transport-Security,
+                        max-age=31536000; includeSubDomains], [X-Xss-Protection, 1; mode=block]...}
+    Images            : {}
+    InputFields       : {}
+    Links             : {}
+    ParsedHtml        : mshtml.HTMLDocumentClass
+    RawContentLength  : 39
+    ```
 
   ### Launch Logs to View Your Data
 
