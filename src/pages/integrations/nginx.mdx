@@ -46,32 +46,37 @@ This guide walks you through the process of integrating Filebeat and Telegraf wi
       ```yml copy filename="nginx.yml" showLineNumbers
       # Module: nginx
       # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.17/filebeat-module-nginx.html
-
+      
       - module: nginx
         # Access logs
         access:
           enabled: true
-
+      
           # Set var.paths for the log files. If left empty,
           # Filebeat will choose the paths depending on your OS.
-          #var.paths:
-
+          var.paths:
+          - 'C:\nginx\logs\access.log'
+      
         # Error logs
         error:
           enabled: true
-
+      
           # Set var.paths for the error log files. If left empty,
           # Filebeat will choose the paths depending on your OS.
-          #var.paths:
-
+          var.paths:
+          - 'C:\nginx\logs\error.log'
+      
         # Ingress-nginx controller logs. This is disabled by default. It could be used in Kubernetes environments to parse ingress-nginx logs
         ingress_controller:
-          enabled: true
-
+          enabled: false
+      
           # Set var.paths for the log files. If left empty,
           # Filebeat will choose the paths depending on your OS.
           #var.paths:
       ```
+
+      __Note__: In the snippet above we assume that Nginx is located at `C:\nginx\`, if you have Nginx located elsewhere you will need to update the file accordingly.
+
     </Tab>
     <Tab>
       You will need to enable the nginx module:
