@@ -10,12 +10,13 @@ sslPortType: beats-ssl
 tags: Telegraf, Metrics, Telemetry, Health, Instrumentation, System Metrics, Monitoring
 ---
 
-Follow the steps below to send your observability data to Logit.io
+The following integration guide will show you how to ship your system metrics to Logit.io using Telegraf and then
+view them in Grafana.
 
 <Steps>
   ## Metrics
 
-  Configure Telegraf to ship system metrics to your Logit.io stacks via Logstash.
+  Configure Telegraf to ship your system metrics to Logit.io.
   
   ### Install Integration
 
@@ -190,23 +191,28 @@ Follow the steps below to send your observability data to Logit.io
   
   <LaunchVisualizer type="metrics" />
   
-  Once opened, click on the Explore option in the left-hand menu:
+  Now, as a simple demonstration we will use Grafana to view some metrics data that is being sent to your Logit.io stack. 
+
+  Once Grafana has been opened, click on the Explore option in the left-hand menu:
   ![Grafana Explore](@/images/integrations/system-metrics/grafana-explore.png)
   
   <Tabs items={["Windows", "Linux, macOS"]}>
     <Tab>
       Under the Metric header you will see 'Select metric'. Open the drop-down menu 
       and scroll to and select 'win_mem_Available_Bytes':
+
       ![Grafana Select Metric](@/images/integrations/system-metrics/grafana-metrics-win_mem.png)
     </Tab>
     <Tab>
       Under the Metric header you will see 'Select metric'. Open the drop-down menu 
       and scroll to and select 'mem_available':
+
       ![Grafana Select Metric](@/images/integrations/system-metrics/grafana-metrics-mem.png)
     </Tab>
   </Tabs>
 
   Click on the blue Run query button near the top-right of the screen:
+
   ![Grafana Run Query](@/images/integrations/system-metrics/grafana-run-query.png)
 
   You will now see the metric data displayed and if you click on the blue Run query button this will be updated.
