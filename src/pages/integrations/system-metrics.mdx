@@ -36,43 +36,149 @@ Follow the steps below to send your observability data to Logit.io
   on and these will be sent to your Logit.io stack. Metrics include CPU, memory and disk usage and system metrics 
   such as system load and uptime.
 
-  ```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
-  # Read metrics about cpu usage
-  [[inputs.cpu]]
-      ## Whether to report per-cpu stats or not
-      percpu = true
-      ## Whether to report total system cpu stats or not
-      totalcpu = true
-      ## If true collect raw cpu time metrics
-      collect_cpu_time = true
-      ## If true compute and report the sum of all non-idle cpu states
-      report_active = true
+  <Tabs items={["Windows", "Linux, macOS"]}>
+  <Tab>
+    We are going to use the `win_perf_counters` input plugin to scrape the CPU usage metric from your Windows host.
   
-  # Read metrics about memory usage
-  [[inputs.mem]]
+    ```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
+    # Input plugin to report Windows services info.
+    # This plugin ONLY supports Windows
+    [[inputs.win_services]]
+      ## Names of the services to monitor. Leave empty to monitor all the available services on the host. Globs accepted. Case sensitive.
+      service_names = [
+        "LanmanServer",
+        "TermService",
+        "Win*",
+      ]
+      excluded_service_names = ['WinRM'] # optional, list of service names to exclude
+
+    ###############################################################################
+    # Windows Performance Counters plugin.
+    # These are the recommended method of monitoring system metrics on windows,
+    # as the regular system plugins (inputs.cpu, inputs.mem, etc.) rely on WMI,
+    # which utilize more system resources.
+    #
+    # See more configuration examples at:
+    #   https://github.com/influxdata/telegraf/tree/master/plugins/inputs/win_perf_counters
+    [[inputs.win_perf_counters]]
+      [[inputs.win_perf_counters.object]]
+        # Processor usage, alternative to native, reports on a per core.
+        ObjectName = "Processor"
+        Instances = ["*"]
+        Counters = [
+          "% Idle Time",
+          "% Interrupt Time",
+          "% Privileged Time",
+          "% User Time",
+          "% Processor Time",
+        ]
+        Measurement = "win_cpu"
+        # Set to true to include _Total instance when querying for all (*).
+        #IncludeTotal=false
+      [[inputs.win_perf_counters.object]]
+        # Disk times and queues
+        ObjectName = "LogicalDisk"
+        Instances = ["*"]
+        Counters = [
+          "% Idle Time",
+          "% Disk Time","% Disk Read Time",
+          "% Disk Write Time",
+          "% User Time",
+          "Current Disk Queue Length",
+        ]
+        Measurement = "win_disk"
+        # Set to true to include _Total instance when querying for all (*).
+        #IncludeTotal=false
+      [[inputs.win_perf_counters.object]]
+        ObjectName = "System"
+        Counters = [
+          "Context Switches/sec",
+          "System Calls/sec",
+        ]
+        Instances = ["------"]
+        Measurement = "win_system"
+        # Set to true to include _Total instance when querying for all (*).
+        #IncludeTotal=false
+      [[inputs.win_perf_counters.object]]
+        # Example query where the Instance portion must be removed to get data back,
+        # such as from the Memory object.
+        ObjectName = "Memory"
+        Counters = [
+          "Available Bytes",
+          "Cache Faults/sec",
+          "Demand Zero Faults/sec",
+          "Page Faults/sec",
+          "Pages/sec",
+          "Transition Faults/sec",
+          "Pool Nonpaged Bytes",
+          "Pool Paged Bytes",
+        ]
+        # Use 6 x - to remove the Instance bit from the query.
+        Instances = ["------"]
+        Measurement = "win_mem"
+        # Set to true to include _Total instance when querying for all (*).
+        #IncludeTotal=false
+
+      [[inputs.win_perf_counters.object]]
+        # Example query where the Instance portion must be removed to get data back,
+        # such as from the Paging File object.
+        ObjectName = "Paging File"
+        Counters = [
+          "% Usage",
+        ]
+        Instances = ["_Total"]
+        Measurement = "win_swap"
+
+        [[outputs.http]]
+        url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+        data_format = "prometheusremotewrite"
+
+        [outputs.http.headers]
+          Content-Type = "application/x-protobuf"
+          Content-Encoding = "snappy"
+    ```
+  </Tab>
+  <Tab>
+    ```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
+    # Read metrics about cpu usage
+    [[inputs.cpu]]
+        ## Whether to report per-cpu stats or not
+        percpu = true
+        ## Whether to report total system cpu stats or not
+        totalcpu = true
+        ## If true collect raw cpu time metrics
+        collect_cpu_time = true
+        ## If true compute and report the sum of all non-idle cpu states
+        report_active = true
+    
+    # Read metrics about memory usage
+    [[inputs.mem]]
+    
+    # Read metrics about system load & uptime
+    [[inputs.system]]
+        namepass = ["system"]
+    
+    # Read metrics about disk usage by mount point
+    [[inputs.disk]]
+        ## By default, telegraf gather stats for all mountpoints.
+        ## Setting mountpoints will restrict the stats to the specified mountpoints.
+        # mount_points = ["/"]
+    
+        ## Ignore some mountpoints by filesystem type. For example (dev)tmpfs (usually
+        ## present on /run, /var/run, /dev/shm or /dev).
+        ignore_fs = ["tmpfs", "devtmpfs"]
+    
+    [[outputs.http]]
+      url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+      data_format = "prometheusremotewrite"
+    
+    [outputs.http.headers]
+    Content-Type = "application/x-protobuf"
+    Content-Encoding = "snappy"
+    ```
+  </Tab>
   
-  # Read metrics about system load & uptime
-  [[inputs.system]]
-      namepass = ["system"]
-  
-  # Read metrics about disk usage by mount point
-  [[inputs.disk]]
-      ## By default, telegraf gather stats for all mountpoints.
-      ## Setting mountpoints will restrict the stats to the specified mountpoints.
-      # mount_points = ["/"]
-  
-      ## Ignore some mountpoints by filesystem type. For example (dev)tmpfs (usually
-      ## present on /run, /var/run, /dev/shm or /dev).
-      ignore_fs = ["tmpfs", "devtmpfs"]
-  
-  [[outputs.http]]
-    url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
-    data_format = "prometheusremotewrite"
-  
-  [outputs.http.headers]
-  Content-Type = "application/x-protobuf"
-  Content-Encoding = "snappy"
-  ```
+</Tabs>
 
   ### Start Telegraf
 
@@ -87,16 +193,25 @@ Follow the steps below to send your observability data to Logit.io
   Once opened, click on the Explore option in the left-hand menu:
   ![Grafana Explore](@/images/integrations/system-metrics/grafana-explore.png)
   
-  Under the Metric header you will see 'Select metric'. Open the drop-down menu 
-  and scroll to and select 'mem_used':
-  ![Grafana Select Metric](@/images/integrations/system-metrics/grafana-metric.png)
+  <Tabs items={["Windows", "Linux, macOS"]}>
+    <Tab>
+      Under the Metric header you will see 'Select metric'. Open the drop-down menu 
+      and scroll to and select 'win_mem_Available_Bytes':
+      ![Grafana Select Metric](@/images/integrations/system-metrics/grafana-metrics-win_mem.png)
+    </Tab>
+    <Tab>
+      Under the Metric header you will see 'Select metric'. Open the drop-down menu 
+      and scroll to and select 'mem_available':
+      ![Grafana Select Metric](@/images/integrations/system-metrics/grafana-metrics-mem.png)
+    </Tab>
+  </Tabs>
 
   Click on the blue Run query button near the top-right of the screen:
   ![Grafana Run Query](@/images/integrations/system-metrics/grafana-run-query.png)
 
-  You will now see the 'mem_used' metric data displayed and if you click on the blue Run query button this will be updated.
-  You can set this to automatically update by clicking on the arrow on the blue button and chosing the interval you want the 
-  data to be updated.
+  You will now see the metric data displayed and if you click on the blue Run query button this will be updated.
+  You can set this to automatically update by clicking on the arrow on the blue button and chosing the interval 
+  at which you want the data to be updated.
 
   When you want to stop Telegraf sending metric data press Ctrl + C in the terminal app / Powershell.
 
