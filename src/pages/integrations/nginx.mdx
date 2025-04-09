@@ -8,10 +8,11 @@ description: Use our example to configure Telegraf to ship Nginx metrics to your
 stackTypes: logs, metrics
 sslPortType: beats-ssl
 tags: Telegraf, Metrics, Telemetry, OpenTelemetry, Health, Instrumentation, Nginx, Web Server, Monitoring, Performance
-dashboardIds: nginx
 ---
 
-Following this guide will enable you to ship Nginx logs and metrics to your Logit.io stack.
+Nginx is a powerful and widely-used web server and reverse proxy solution, critical for managing high-performance, scalable web applications. 
+
+This guide walks you through the process of integrating Filebeat and Telegraf with Nginx to collect and ship both logs and metrics to your Logit.io stack. 
 
 <Steps>
   ## Logs
@@ -36,16 +37,15 @@ Following this guide will enable you to ship Nginx logs and metrics to your Logi
       .\filebeat.exe modules enable nginx
       ```
 
-      In the module config under modules.d, change the module settings to match your environment. 
-      You must enable at least one fileset in the module. 
-      
-      ___Filesets are disabled by default___.
+      You will see a folder called `modules.d`, open this folder and you will see a list of yaml files.
+      These yaml files are called filesets and they are __all disabled by default__.
 
-      Copy the snippet below and replace the contents of the nginx.yml module file:
+      Open the `nginx.yml` file with your prefered text editor and copy the snippet below, replace 
+      the contents of the `nginx.yml` module file and then save:
 
-      ```yml copy
+      ```yml copy filename="nginx.yml" showLineNumbers
       # Module: nginx
-      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.15/filebeat-module-nginx.html
+      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.17/filebeat-module-nginx.html
 
       - module: nginx
         # Access logs
@@ -81,14 +81,13 @@ Following this guide will enable you to ship Nginx logs and metrics to your Logi
       sudo filebeat modules enable nginx
       ```
             
-      In the module config under modules.d, change the module settings to match your environment. 
-      You must enable at least one fileset in the module. 
-            
-      ___Filesets are disabled by default___.
+      You will see a folder called `modules.d`, open this folder and you will see a list of yaml files.
+      These yaml files are called filesets and they are __all disabled by default__.
 
-      Copy the snippet below and replace the contents of the nginx.yml module file:
+      Open the `nginx.yml` file with your prefered text editor and copy the snippet below and replace 
+      the contents of the nginx.yml module file and then save:
 
-      ```yml copy
+      ```yml copy filename="nginx.yml" showLineNumbers
       # Module: nginx
       # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.15/filebeat-module-nginx.html
 
@@ -126,14 +125,13 @@ Following this guide will enable you to ship Nginx logs and metrics to your Logi
       ./filebeat modules enable nginx
       ```
             
-      In the module config under modules.d, change the module settings to match your environment. 
-      You must enable at least one fileset in the module. 
-            
-      ___Filesets are disabled by default___.
+      You will see a folder called `modules.d`, open this folder and you will see a list of yaml files.
+      These yaml files are called filesets and they are __all disabled by default__.
 
-      Copy the snippet below and replace the contents of the nginx.yml module file:
+      Open the `nginx.yml` file with your prefered text editor and copy the snippet below and replace 
+      the contents of the nginx.yml module file and then save:
 
-      ```yml copy
+      ```yml copy filename="nginx.yml" showLineNumbers
       # Module: nginx
       # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.15/filebeat-module-nginx.html
 
@@ -171,14 +169,13 @@ Following this guide will enable you to ship Nginx logs and metrics to your Logi
       sudo filebeat modules enable nginx
       ```
             
-      In the module config under modules.d, change the module settings to match your environment. 
-      You must enable at least one fileset in the module. 
-            
-      ___Filesets are disabled by default___.
+      You will see a folder called `modules.d`, open this folder and you will see a list of yaml files.
+      These yaml files are called filesets and they are __all disabled by default__.
 
-      Copy the snippet below and replace the contents of the nginx.yml module file:
+      Open the `nginx.yml` file with your prefered text editor and copy the snippet below and replace 
+      the contents of the nginx.yml module file and then save:
 
-      ```yml copy
+      ```yml copy filename="nginx.yml" showLineNumbers
       # Module: nginx
       # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.15/filebeat-module-nginx.html
 
@@ -288,8 +285,70 @@ Following this guide will enable you to ship Nginx logs and metrics to your Logi
   ### Configure Nginx
 
   Update the NGINX configuration file (nginx.conf) to enable the `stub_status` module:
-    
-  ```nginx copy
+
+  The location of the Nginx configuration file (nginx.conf) depends on your operating system and how Nginx was installed. Below are common locations for the file:
+
+  <Tabs items={["Windows", "Linux", "macOS", "DEB", "RPM"]}>
+    <Tab>
+
+      __Common Location:__
+
+      `<Nginx installation directory>\conf\nginx.conf`
+    </Tab>
+    <Tab>
+      __Common Locations:__
+
+      Linux (default installation):
+
+      `/etc/nginx/nginx.conf`
+
+      Linux (compiled from source):
+
+      `/usr/local/nginx/conf/nginx.conf`
+
+      If you installed Nginx using a package manager or a specific repository, the configuration file might also be split into multiple files, with the main file 
+      (nginx.conf) including other configuration files, often located in /etc/nginx/conf.d/ or /etc/nginx/sites-available/.
+    </Tab>
+    <Tab>
+      __Common Location:__
+
+      using Homebrew:
+
+      `/usr/local/etc/nginx/nginx.conf`
+    </Tab>
+    <Tab>
+      __Common Locations:__
+
+      Linux (default installation):
+
+      `/etc/nginx/nginx.conf`
+
+      Linux (compiled from source):
+
+      `/usr/local/nginx/conf/nginx.conf`
+
+      If you installed Nginx using a package manager or a specific repository, the configuration file might also be split into multiple files, with the main file 
+      (nginx.conf) including other configuration files, often located in /etc/nginx/conf.d/ or /etc/nginx/sites-available/.
+    </Tab>
+    <Tab>
+      __Common Locations:__
+
+      Linux (default installation):
+
+      `/etc/nginx/nginx.conf`
+
+      Linux (compiled from source):
+
+      `/usr/local/nginx/conf/nginx.conf`
+
+      If you installed Nginx using a package manager or a specific repository, the configuration file might also be split into multiple files, with the main file 
+      (nginx.conf) including other configuration files, often located in /etc/nginx/conf.d/ or /etc/nginx/sites-available/.
+    </Tab>
+  </Tabs>
+
+  Open the `nginx.conf` file with your prefered text editor and copy the snippet below, replace the contents of the `nginx.conf` module file and then save:
+
+  ```nginx copy filename="nginx.conf" showLineNumbers
   server {
     listen 127.0.0.1:80;
     server_name 127.0.0.1;
