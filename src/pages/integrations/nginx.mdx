@@ -283,7 +283,7 @@ This guide walks you through the process of integrating Filebeat and Telegraf wi
 <Steps>
   ## Metrics
 
-  Configure Telegraf to ship Nginx metrics to your Logit.io stacks via Logstash.
+  Configure Telegraf to ship Nginx metrics to your a Logit.io metrics stack.
 
   ### Install Integration
   <InstallIntegration/>
@@ -351,13 +351,13 @@ This guide walks you through the process of integrating Filebeat and Telegraf wi
     </Tab>
   </Tabs>
 
-  Open the `nginx.conf` file with your prefered text editor and copy the snippet below, replace the contents of the `nginx.conf` module file and then save:
+  Open the `nginx.conf` file with your prefered text editor, find the server section. Replace this section with the code snippet below and then save:
 
   ```nginx copy filename="nginx.conf" showLineNumbers
   server {
     listen 127.0.0.1:80;
     server_name 127.0.0.1;
-    location /nginx_status {
+    location /server_status {
       stub_status on;
       allow <Your localhost address>;
       deny all;
@@ -365,7 +365,7 @@ This guide walks you through the process of integrating Filebeat and Telegraf wi
   }     
   ```
 
-  Replace &#60;Your localhost address&#62; with your localhost address and restart Nginx.
+  Replace __&#60;Your localhost address&#62;__ with your localhost address and restart Nginx.
 
   ### Install Telegraf
 
