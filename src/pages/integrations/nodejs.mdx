@@ -231,22 +231,22 @@ If you only want to send logs, continue to the next section below.
 
   ```js copy showLineNumbers filename="tracing.js"
   const config = require('./config');
-
+  
   const { NodeSDK } = require('@opentelemetry/sdk-node');
   const { getNodeAutoInstrumentations } = require('@opentelemetry/auto-instrumentations-node');
-  const { Resource } = require('@opentelemetry/resources');
-  const { SemanticResourceAttributes } = require('@opentelemetry/semantic-conventions');
+  const { resourceFromAttributes } = require('@opentelemetry/resources');
+  const { ATTR_SERVICE_NAME } = require('@opentelemetry/semantic-conventions');
   const { OTLPTraceExporter } = require(`@opentelemetry/exporter-trace-otlp-${config.protocol}`);
   let sdk = new NodeSDK();
   let channelCredentials = null;
   let traceExporter = new OTLPTraceExporter();
-
+  
   // Define the service name
   const serviceName = 'LogitNodeJSTestApp';
-
+  
   // Encode the username and password for Basic Authentication
   const auth = Buffer.from(`${config.username}:${config.password}`).toString('base64');
-
+  
   if (config.protocol === "grpc") {    
     const OTLP_ENDPOINT = `grpc://${config.endpoint}:${config.port}`;
     const grpc = require('@grpc/grpc-js');
@@ -272,10 +272,10 @@ If you only want to send logs, continue to the next section below.
     sdk = new NodeSDK({
       traceExporter,
       instrumentations: [getNodeAutoInstrumentations()],
-      resource: new Resource({
-      [SemanticResourceAttributes.SERVICE_NAME]: serviceName,
-      }),
-    });    
+      resource: resourceFromAttributes({
+          [ATTR_SERVICE_NAME]: serviceName,
+        }),
+    });
   } else {    
     const OTLP_ENDPOINT = `https://${config.endpoint}:${config.port}/v1/traces`;
     
@@ -289,14 +289,14 @@ If you only want to send logs, continue to the next section below.
     
     // Create a new Node SDK instance with automatic instrumentation
     sdk = new NodeSDK({
-    traceExporter,
-    instrumentations: [getNodeAutoInstrumentations()],
-    resource: new Resource({
-      [SemanticResourceAttributes.SERVICE_NAME]: serviceName,
-      }),
+      traceExporter,
+      instrumentations: [getNodeAutoInstrumentations()],
+      resource: resourceFromAttributes({
+          [ATTR_SERVICE_NAME]: serviceName,
+        }),
     });
   }
-
+  
   // Initialize the SDK and start the tracing
   sdk.start();
   ```
@@ -366,16 +366,13 @@ If you only want to send logs, continue to the next section below.
   You will see feedback from the app so that you know that is running, 
   the message should say "Server is running on http://localhost:3000".
 
-  The action of launching the NodeJS app will have sent traces 
-  to your stack which can now be viewed in Jaeger.
+  If you open your browser and enter http://localhost:3000 you will 
+  see that action of browsing to the page served by the NodeJS app 
+  will send traces to your stack.
   
   ### Launch Logit.io to view your traces
 
   <LaunchVisualizer type="apm" />
-
-  If you open your browser and enter http://localhost:3000 you will 
-  see that action of browsing to the page served by the NodeJS app 
-  will send further traces to your stack.
 
   ### How to diagnose no data in stack
 
