@@ -1,0 +1,67 @@
+---
+title: Getting started with AWS (Amazon Web Services)
+metaTitle: Learn about AWS (Amazon Web Services)
+description: Read Logit.io’s Getting Started with AWS article and learn how to ship logs and metrics from AWS
+stackTypes: logs, metrics
+---
+
+# Getting started if you’re running in AWS
+
+Amazon Web Services started out as a way to sell access to the platform Amazon had built to support its ecommerce operations and 
+now accounts a significant fraction of amazons profits.
+
+Amazon offer various built in tools to access and view your logs and metrics, if you want to go beyond what they can offer you will 
+usually need to send your data via one of three methods, unless you are running EKS or ECS instances when viewing the kubernetes, 
+linux or windows tutorials and collecting your data directly may be more appropriate. There is a fourth option where data can be 
+polled periodically from the cloudwatch API, this should be used sparingly as it generates lots of data, but rarely is most of it 
+helpful.
+
+### Data sent directly
+
+If you are running a kubernetes cluster (EKS) or virtual servers (ECS), generating and sending that data directly is likely the best option.
+
+[getting started with windows](getting-started-with-windows)
+
+[getting started with linux](getting-started-with-windows)
+
+[getting started with kubernetes](getting-started-with-kubernetes)
+
+### Via an S3 bucket
+
+S3 (simple storage service) was one of AWS’s earliest products and has become a common option for exporting data from other amazon services. 
+Log files get saved into an S3 bucket and then consumed from there into a Logit stack.
+
+As an example - if you wanted to log from cloudfront you would need to configure those logs to be saved into an S3 bucket, which you would then 
+tell Logit to read them from.
+
+[cloudfront]
+
+[add more example/links]
+
+### Via a Lambda function
+
+Lambda functions are part of AWS’s serverless platform, where all the hosting is handled by aws and the customer simply provides the code they want 
+to run.
+
+These could generate and send logs/metrics directly to Logit, or be called by a third service acting as a forwarder for messages, potentially 
+preprocessing messages or adding additional information to messages.
+
+[I assume there’s examples]
+
+### Via an SQS queue
+
+SQS (Services Simple Queue Service) is a message queue, messages are generated within AWS and consumed by Logit to transfer data to your stack.
+
+It is better suited to those situations where lower volumes of data with low latency requirements. Data sent via an S3 bucket often is batched and compressed, 
+which increases the latency between message generation and its availability in a Logit stack, but this also can result in reduced costs.
+
+[SQS doc]
+
+### From cloudwatch
+The cloudwatch API exposes lots of metrics from within AWS, it should be used sparingly to monitor specific functions and metrics. Attempting to consume 
+everything rarely provides meaningful insight, whereas monitoring and alerting on specific metrics can help identify issues before they interfere with normal 
+performance.
+
+[cloudwatch]
+
+

@@ -1,0 +1,34 @@
+---
+title: Getting started with Microsoft Azure
+metaTitle: Learn about Microsoft Azure
+description: Read Logit.io’s Getting Started with Microsoft Azure article and learn how to ship logs and metrics from Azure
+stackTypes: logs, metrics
+---
+
+# Getting started if you’re running in Azure
+
+Azure is Microsoft’s response to AWS, offering access to Microsoft built and managed infrastructure in multiple locations around the globe.
+
+Similar to AWS if you are running virtual servers or a kubernetes cluster on azure you may wish to send directly from those instances. 
+Otherwise integrations with Azure usually involve an Azure EventHub
+
+### Data sent directly
+
+If you are running a kubernetes cluster (AKS)  or virtual machine, generating and sending that data directly is likely the best option.
+Here are some guides to help you start sending data to Logit.io.
+
+[getting started with windows](getting-started-with-windows)
+
+[getting started with linux](getting-started-with-windows)
+
+[getting started with kubernetes](getting-started-with-kubernetes)
+
+### Via Azure EventHub
+
+EventHubs are a message queue similar in function to Apache Kafka, data is written to the eventhub within Azure and consumed by Logit into 
+your stack.
+
+[Azure logs](../integrations/azure/)
+
+[Azure metrics](../integrations/azure-metrics/)
+
