@@ -1,17 +1,25 @@
 ---
 title: Node.js
-metaTitle: Learn How to Integrate and Configure Node.js to Send Logs and Traces
+metaTitle: Learn How to Integrate and Configure Node.js to Send Logs and Traces to Logit.io
 pageTitle: Node.js Logging with Winston and Traces with OpenTelemetry
 subTitle: Ship data from your Node.js application to Logit.io
 logo: nodejs
 color: "#82bb26"
 stackTypes: logs, apm
-description: Send your node.js application logs to Logit.io via Logstash using the instructions below and begin searching your data
+description: Send your node.js application logs via Logstash and traces via OpenTelemetry to Logit.io using the instructions below and begin analysing your data
 sslPortType: tcp-ssl
 tags: Logs, NodeJS, Node.js, JavaScript, Node, Nodejs, Apm, Grpc, Http
 ---
 
-Follow the steps below to send your observability data to Logit.io
+For developers working with Node.js, seamlessly sending logs and traces to Logit.io can unlock valuable insights for debugging, 
+monitoring, and improving system reliability. This guide will help you configure your node.js application to send logs and traces
+to your Logit.io stack and analyse the data in OpenSearch Dashboards (for logs) or Jaeger (for traces). 
+
+The guide below will help you get started with sending logs and traces from your Node.js application to Logit.io. 
+
+If you only want to send APM data, you can skip to the [APM section](#apm).
+
+If you only want to send logs, continue to the next section below.
 
 <Steps>
   ## Logs
@@ -25,7 +33,7 @@ Follow the steps below to send your observability data to Logit.io
   ### Introduction
 
   The example code used in this guide has been setup using Node.js v20.18.0 (64-bit). 
-  Node Package Manager (npm) can be used to install the required `winston` (3.15.0) 
+  Node Package Manager (npm) can be used to install the required `winston` (3.17.0) 
   and `winston-logstash` (1.2.1) packages.
 
   These will allow you to send log data from your Node.js application, to 
@@ -41,18 +49,24 @@ Follow the steps below to send your observability data to Logit.io
   for creating an 'express' application to help get you up-and-running 
   [here](https://code.visualstudio.com/docs/nodejs/nodejs-tutorial#_an-express-application).
 
-  Inside your project directory, open a terminal of your choice and type the following (this will install
-  the latest version of Winston and winston-logstash):
+  We will be using this express application as a base for our example code.
+  
+  Once you have created the app, inside your project directory, open a terminal of your choice and enter the following commands in turn. 
+  This will use Node Package Manager to install the app dependencies and the latest version of Winston and winston-logstash:
 
   ```cmd copy
+  npm install
   npm install winston
   npm install winston-logstash
   ```
 
+  For additional information, the official Winston documentation can be found [here](https://github.com/winstonjs/winston).
+
   ### Sending Logs
 
-  To setup Winston, add the following code to your application before sending logs:
-         
+  To setup Winston, add a file called `logger.js` in the root directory of the application 
+  and paste the following code into it:
+
   ```javascript copy showLineNumbers /'@logstash.sslPort:strip_quotes'/ /@logstash.host/
 
   const winston = require('winston');
@@ -68,24 +82,94 @@ Follow the steps below to send your observability data to Logit.io
       })
     ]
   });
+
+  module.exports = logger;
   ```
   
-  You can then send logs using a Winston log method:
+  Update app.js to reference the logger.js file and add the logger to the application:
+
+  ```javascript copy
+  var createError = require('http-errors');
+  var express = require('express');
+  var path = require('path');
+  var cookieParser = require('cookie-parser');
+  var morganMiddleware = require('morgan');
+
+  var indexRouter = require('./routes/index');
+  var usersRouter = require('./routes/users');
+
+  const logger = require('./logger');
+
+  var app = express();
+
+  // view engine setup
+  app.set('views', path.join(__dirname, 'views'));
+  app.set('view engine', 'pug');
+
+  app.use(morganMiddleware('dev'));
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: false }));
+  app.use(cookieParser());
+  app.use(express.static(path.join(__dirname, 'public')));
+
+  app.use('/', indexRouter);
+  app.use('/users', usersRouter);
+
+  // catch 404 and forward to error handler
+  app.use(function(req, res, next) {
+    next(createError(404));
+  });
+
+  // error handler
+  app.use(function(err, req, res, next) {
+    logger.error(err.message, { metadata: err });
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error');
+  });
+
+  module.exports = app;
+  ```
+
+  You can then send logs using a Winston log method. For example, in the `index.js` file inside the `routes` folder,
+  you can add the following code to send a log message when navigating to the home page.
+
+  Replace the `index.js` content with the following code:
   
   ```javascript copy
-  logger.info('Hello, this is a log message!');
+  var express = require('express');
+  var router = express.Router();
+  const logger = require('../logger');
+
+  /* GET home page. */
+  router.get('/', function(req, res, next) {
+    logger.info('Hello, this is a log message from the index page!');
+    res.render('index', { title: 'Express' });
+  });
+
+  module.exports = router;
   ```
-    
+  
+  Run the application using the following command in the terminal:
+
+  ```cmd copy
+  npm start
+  ```
+
+  If you then navigate to the home page of the application (http://localhost:3000/), it will send the log message to your Logit.io stack.
+
   You can send different levels of log records by using different Winston log methods.
   Other log record levels and their corresponding winston methods include:
   
   ```javascript copy showLineNumbers
-  winston.log("This is a standard log message");
-  winston.error("This is an error log message");
-  winston.warn("This is a warning log message");
+  logger.log("This is a standard log message");
+  logger.error("This is an error log message");
+  logger.warn("This is a warning log message");
   ```
-
-  For additional information, the official Winston documentation can be found [here](https://github.com/winstonjs/winston).
 
   ### Launch Logs to View Your Data
 
@@ -99,7 +183,9 @@ Follow the steps below to send your observability data to Logit.io
 
 <Steps>
   ## APM
+
   ### Install Integration
+
   <InstallIntegration/>
   
   ### Install
@@ -145,22 +231,22 @@ Follow the steps below to send your observability data to Logit.io
 
   ```js copy showLineNumbers filename="tracing.js"
   const config = require('./config');
-
+  
   const { NodeSDK } = require('@opentelemetry/sdk-node');
   const { getNodeAutoInstrumentations } = require('@opentelemetry/auto-instrumentations-node');
-  const { Resource } = require('@opentelemetry/resources');
-  const { SemanticResourceAttributes } = require('@opentelemetry/semantic-conventions');
+  const { resourceFromAttributes } = require('@opentelemetry/resources');
+  const { ATTR_SERVICE_NAME } = require('@opentelemetry/semantic-conventions');
   const { OTLPTraceExporter } = require(`@opentelemetry/exporter-trace-otlp-${config.protocol}`);
   let sdk = new NodeSDK();
   let channelCredentials = null;
   let traceExporter = new OTLPTraceExporter();
-
+  
   // Define the service name
   const serviceName = 'LogitNodeJSTestApp';
-
+  
   // Encode the username and password for Basic Authentication
   const auth = Buffer.from(`${config.username}:${config.password}`).toString('base64');
-
+  
   if (config.protocol === "grpc") {    
     const OTLP_ENDPOINT = `grpc://${config.endpoint}:${config.port}`;
     const grpc = require('@grpc/grpc-js');
@@ -186,10 +272,10 @@ Follow the steps below to send your observability data to Logit.io
     sdk = new NodeSDK({
       traceExporter,
       instrumentations: [getNodeAutoInstrumentations()],
-      resource: new Resource({
-      [SemanticResourceAttributes.SERVICE_NAME]: serviceName,
-      }),
-    });    
+      resource: resourceFromAttributes({
+          [ATTR_SERVICE_NAME]: serviceName,
+        }),
+    });
   } else {    
     const OTLP_ENDPOINT = `https://${config.endpoint}:${config.port}/v1/traces`;
     
@@ -203,14 +289,14 @@ Follow the steps below to send your observability data to Logit.io
     
     // Create a new Node SDK instance with automatic instrumentation
     sdk = new NodeSDK({
-    traceExporter,
-    instrumentations: [getNodeAutoInstrumentations()],
-    resource: new Resource({
-      [SemanticResourceAttributes.SERVICE_NAME]: serviceName,
-      }),
+      traceExporter,
+      instrumentations: [getNodeAutoInstrumentations()],
+      resource: resourceFromAttributes({
+          [ATTR_SERVICE_NAME]: serviceName,
+        }),
     });
   }
-
+  
   // Initialize the SDK and start the tracing
   sdk.start();
   ```
@@ -280,16 +366,13 @@ Follow the steps below to send your observability data to Logit.io
   You will see feedback from the app so that you know that is running, 
   the message should say "Server is running on http://localhost:3000".
 
-  The action of launching the NodeJS app will have sent traces 
-  to your stack which can now be viewed in Jaeger.
+  If you open your browser and enter http://localhost:3000 you will 
+  see that action of browsing to the page served by the NodeJS app 
+  will send traces to your stack.
   
   ### Launch Logit.io to view your traces
 
   <LaunchVisualizer type="apm" />
-
-  If you open your browser and enter http://localhost:3000 you will 
-  see that action of browsing to the page served by the NodeJS app 
-  will send further traces to your stack.
 
   ### How to diagnose no data in stack
 
