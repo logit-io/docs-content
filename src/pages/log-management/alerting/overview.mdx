@@ -24,8 +24,6 @@ dashboard using your existing OpenSearch queries. Not only does this protect
 your organisation and ensure you stay compliant, but it 
 helps everyone to sleep easy at night.
 
-
-## Rule Types
 ## Rule Types
 Several rule types with common monitoring paradigms are included with Logit.io:
 
@@ -68,9 +66,7 @@ Here is a repository with example alert YAML files that will help you create you
 https://salsa.debian.org/debian/elastalert/tree/master/example_rules
 
 ## Frequently Asked Questions
-## Frequently Asked Questions
 
-### My rule is not getting any hits?
 ### My rule is not getting any hits?
 
 If you write a rule and run it, but nothing happens or the query shows 0 hits 
@@ -104,7 +100,6 @@ filter:
 This will not match even if the original value for foo was exactly "Test Document". 
 Instead, you want to use `foo.raw`.
 
-### I got hits, why didn't I get an alert?
 ### I got hits, why didn't I get an alert?
 
 If you got logs that had `X query hits, 0 matches, 0 alerts sent`, it will depend 
@@ -140,7 +135,6 @@ to fire every one minute between alerts. If the rule is silenced you would see
 `Ignoring match for silenced rule` in the logs.
 
 ### Why did I only get one alert when I expected to get several?
-### Why did I only get one alert when I expected to get several?
 
 There is a setting called `realert` which is the minimum time between two 
 alerts for the same rule. Any alert that occurs within this time will simply be dropped. 
@@ -154,7 +148,6 @@ realert:
 
 You can also set it higher as well.
 
-### How can I prevent duplicate alerts?
 ### How can I prevent duplicate alerts?
 
 By setting `realert`, you will prevent the same rule from alerting twice in an amount of time.
@@ -174,7 +167,6 @@ query_key: user
 ```
 
 ### How can I make the alert come at a certain time?
-### How can I make the alert come at a certain time?
 
 The aggregation feature will take every alert that has occurred over a period of 
 time and send them together in one alert. You can use cron style syntax to send 
@@ -185,7 +177,6 @@ aggregation:
   schedule: '2 4 * * mon,fri'
 ```
 
-### I'm not using @timestamp, what do I do?
 ### I'm not using @timestamp, what do I do?
 
 You can use `timestamp_field` to change which field ElastAlert will use as 
@@ -200,7 +191,6 @@ If you have a second timestamp field other than @timestamp, you can use that ins
 timestamp_field: log-time
 ```
 
-## Getting Started with OpenSearch Alerting
 ## Getting Started with OpenSearch Alerting
 
 Logit.io provides extensive features and configurations to ingest, monitor, alert, 
