@@ -7,7 +7,10 @@ stackTypes: logs, metrics
 
 # Getting started if you’re running in Azure
 
-Azure is Microsoft’s response to AWS, offering access to Microsoft built and managed infrastructure in multiple locations around the globe.
+Microsoft Azure is a cloud computing platform and service offered by Microsoft that provides a wide range of solutions for building, 
+deploying, and managing applications and services. It offers compute, storage, databases, networking, artificial intelligence, analytics, 
+and more, accessible globally across its extensive network of data centers. Azure is Microsoft’s response to AWS, offering access to 
+Microsoft built and managed infrastructure in multiple locations around the globe.
 
 Similar to AWS if you are running virtual servers or a kubernetes cluster on azure you may wish to send directly from those instances. 
 Otherwise integrations with Azure usually involve an Azure EventHub
@@ -17,18 +20,31 @@ Otherwise integrations with Azure usually involve an Azure EventHub
 If you are running a kubernetes cluster (AKS)  or virtual machine, generating and sending that data directly is likely the best option.
 Here are some guides to help you start sending data to Logit.io.
 
-[getting started with windows](getting-started-with-windows)
+To get started with data sent directly from Windows click [here](getting-started-with-windows).
 
-[getting started with linux](getting-started-with-windows)
+To get started with data sent directly from Linux click [here](getting-started-with-windows).
 
-[getting started with kubernetes](getting-started-with-kubernetes)
+To get started with data sent directly from Kubernetes click [here](getting-started-with-kubernetes).
 
 ### Via Azure EventHub
 
-EventHubs are a message queue similar in function to Apache Kafka, data is written to the eventhub within Azure and consumed by Logit into 
-your stack.
+Azure Event Hubs is a fully managed, real-time data ingestion and event streaming service provided by Microsoft Azure. It enables the capture, 
+retention, and analysis of large volumes of data from various sources, such as applications, sensors, and IoT devices.EventHubs are a message 
+queue similar in function to Apache Kafka, data is written to the eventhub within Azure and consumed by Logit into your stack.
 
-[Azure logs](../integrations/azure/)
+__Azure Logs__
 
-[Azure metrics](../integrations/azure-metrics/)
+Azure Logs is a feature of Microsoft Azure that collects and stores log data from various Azure resources, services, and applications. It 
+provides insights into the performance, health, and security of your Azure environment. Logs include activity and diagnostic data, such as 
+resource usage, system events, and security audits.
+
+To get started with sending Azure Logs to Logit.io click [here](../integrations/azure/)
+
+__Azure Metrics__
+
+Azure Metrics is a feature within Microsoft Azure that provides real-time, numerical data on the performance and health of Azure resources and 
+services. It tracks key performance indicators (KPIs) such as CPU usage, memory consumption, disk I/O, network traffic, and more. Metrics are 
+collected at regular intervals, allowing users to gain insights into resource utilization and detect issues proactively.
+
+To get started with sending Azure Metrics to Logit.io click [here](../integrations/azure-metrics/)
 
