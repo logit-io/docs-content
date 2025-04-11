@@ -1,0 +1,15 @@
+{
+  "logit": "Logit.io",
+  "filebeat": "Filebeat",
+  "filebeat-modules": "Filebeat Modules",
+  "windows": "Windows",
+  "linux": "Linux",
+  "kubernetes": "Kubernetes",
+  "aws": "AWS (Amazon Web Services)",
+  "azure": "Microsoft Azure",
+  "jaeger": "Jaeger",
+  "monitoring-an-application": "Monitoring an Application",
+  "opentelemetry": "Opentelemetry",
+  "telegraf": "Telegraf",
+  "opensearch-dashboards": "OpenSearch Dashboards"
+}
