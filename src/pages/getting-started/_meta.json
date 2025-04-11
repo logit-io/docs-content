@@ -10,5 +10,6 @@
   "jaeger": "Jaeger",
   "monitoring-an-application": "Monitoring an Application",
   "opentelemetry": "Opentelemetry",
-  "telegraf": "Telegraf"
+  "telegraf": "Telegraf",
+  "opensearch-dashboards": "OpenSearch Dashboards"
 }
