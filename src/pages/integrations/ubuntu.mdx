@@ -1,23 +1,22 @@
 ---
 title: Ubuntu
-metaTitle: Learn How to Integrate and Configure Ubuntu to Send Logs
+metaTitle: Learn How to Integrate and Configure Filebeat to Send Logs in Ubuntu
 pageTitle: Ubuntu System Logs
 subTitle: Ship system log files from Ubuntu to Logstash
 logo: ubuntu
 color: "#e95521"
-description: Follow our configuration guide to send Ubuntu system logs and get started centralising your data using the Elastic Stack.
+description: Follow our integration guide to send Ubuntu system logs and get started centralising your data using Logit.io.
 stackTypes: logs
 sslPortType: beats-ssl
 tags: Logs, Ubuntu, System, Linux, Operating System
 dashboardIds: syslog
 ---
 
-Follow the steps below to send your observability data to Logit.io
+This guide will help you to configure Filebeat to ship logs from Ubuntu systems to Logit.io.
 
 <Steps>
-  ## Logs
 
-  Configure Filebeat to ship logs from Ubuntu Systems to Logstash and Elasticsearch.
+  ## Logs
   
   ### Install Integration
 
@@ -40,20 +39,22 @@ Follow the steps below to send your observability data to Logit.io
   ___If you have an x86_64 system___ download and install filebeat using the following commands:
 
   ```cmd copy
-  curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-8.15.2-amd64.deb
-  sudo dpkg -i filebeat-8.15.2-amd64.deb
+  curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-8.17.2-amd64.deb
+  sudo dpkg -i filebeat-8.17.2-amd64.deb
   ```
 
   ___If you have an aarch64 system___ download and install filebeat using the following commands:
 
   ```cmd copy
-  curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-8.15.2-arm64.deb
-  sudo dpkg -i filebeat-8.15.2-arm64.deb
+  curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-8.17.2-arm64.deb
+  sudo dpkg -i filebeat-8.17.2-arm64.deb
   ```
 
   ### Enable The System Module
 
-  There are several built in filebeat modules you can use. You will need to enable the system module.
+  For an overview of what Filebeat modules are, please see our Getting Started with Filebeat Modules guide [here](../getting-started/filebeat-modules/).
+
+  You will need to enable the Filebeat `system` module.
 
   Change directory to the location where filebeat was extracted and run the following commands:
 
@@ -137,15 +138,22 @@ processors:
   sudo filebeat test config -c /etc/filebeat/filebeat.yml
   ```
 
+  If you have updated the configuration file correctly, you should see the following output:
+
+  ```bash copy
+  yml
+  Config OK
+  ```
+
   ### Start Filebeat
   
-  To start Filebeat, run:
+  To start Filebeat and send your system logs to Logit.io, run:
 
   ```bash copy
   sudo service filebeat start
   ```
 
-  ### Check Logit.io for your logs
+  ### View Your Logs
 
   <LaunchVisualizer type="logs" />
 
