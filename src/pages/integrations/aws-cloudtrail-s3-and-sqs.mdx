@@ -1,0 +1,132 @@
+---
+title: Amazon logs using S3 and SQS
+metaTitle: Integrate and Configure AWS to Send AWS Logs using S3 and SQS
+subTitle: Inteligently ingest logs from an Amazon S3 bucket using ObjectCreated notifications to your Stack 
+logo: aws-s3
+color: "#759c3e"
+stackTypes: logs
+description: Inteligently ingest logs from an Amazon S3 bucket using ObjectCreated notifications to your Stack using the instructions below and begin analysing your data with ELK
+tags: Logs, AWS, Amazon, AWS S3, AWS SQS, Serverless Computing, Aws, CloudTrail
+---
+
+Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Logs
+  
+  We will be configuring one or more S3 buckets to generate notifications when Objects are created.
+  Then using those notifications to consume newly created objects without having to list the full contents of the S3 bucket.
+  
+  This particularly suits buckets containing a large number of objects eg cloudtrail logs
+  
+  ### Install Integration
+
+  <InstallIntegration/>
+  
+  ### Before you begin
+  
+  You will need the ARN for your S3 bucket and the SQS queue needs to be created in the same region as your bucket is hosted.
+  
+  ### Create SQS queue
+  
+  From within the AWS console, navigate to Simple Queue Service, then confirm your are in the same region as your S3 bucket
+  
+  Click 'Create queue'
+  
+  Type: Standard
+  Name: my-new-queue
+  Visibility timeout: 5 minutes 
+  Message retention period: 7 days
+  
+  Access policy - leave this default for now - we will ammend shortly
+  
+  ### Set SQS permissions
+  
+  Edit the policy below with the ARN for your SQS queue and S3 bucket
+  
+  ```
+  {
+    "Id": "Policy1744363477979",
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "Stmt1744363476147",
+        "Action": [
+          "sqs:SendMessage"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:sqs:<region>:<account number>:<queue name>",
+        "Condition": {
+          "ArnLike": {
+            "aws:SourceArn": "arn:aws:s3:::<s3 bucket>"
+          }
+        },
+        "Principal": "*"
+      }
+    ]
+  }
+  ```
+  
+  Edit your queue and set the policy, making sure to update the s3 and sqs details
+
+
+### configure the s3 bucket
+https://www.ibm.com/docs/en/dsm?topic=csqcson-creating-objectcreated-notifications
+
+### create iam user/policy
+
+```
+  {
+      "Version": "2012-10-17",
+      "Statement": [
+          {
+              "Effect": "Allow",
+              "Action": [
+                  "sqs:Get*",
+                  "sqs:List*",
+                  "sqs:ReceiveMessage",
+                  "sqs:ChangeMessageVisibility*",
+                  "sqs:DeleteMessage*"
+              ],
+              "Resource": [
+                  "arn:aws:sqs:us-east-1:123456789012:my-elb-log-queue"
+              ]
+          },
+          {
+              "Effect": "Allow",
+              "Action": [
+                  "s3:Get*",
+                  "s3:List*"
+              ],
+              "Resource": [
+                  "arn:aws:s3:::my-elb-logs",
+                  "arn:aws:s3:::my-elb-logs/*"
+              ]
+          }
+      ]
+  }
+```
+
+### populate the form (form needed to )
+
+
+input {
+  s3snssqs {
+    region => "eu-west-1"
+    queue => "s3inputtesting-queue"
+    queue_owner_aws_account_id => ""
+    access_key_id => ""
+    secret_access_key => "4Pw+"
+    from_sns => false
+    s3_options_by_bucket => [
+      {
+        bucket_name => "s3inputtesting"
+        access_key_id => ""
+        secret_access_key => "4Pw+"
+      }
+    ]
+  }
+}
+
+</Steps>
+
