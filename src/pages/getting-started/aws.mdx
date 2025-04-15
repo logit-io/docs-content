@@ -10,11 +10,7 @@ stackTypes: logs, metrics
 Amazon Web Services started out as a way to sell access to the platform Amazon had built to support its ecommerce operations and 
 now accounts a significant fraction of amazons profits.
 
-Amazon offer various built in tools to access and view your logs and metrics, if you want to go beyond what they can offer you will 
-usually need to send your data via one of three methods, unless you are running EKS or ECS instances when viewing the kubernetes, 
-linux or windows tutorials and collecting your data directly may be more appropriate. There is a fourth option where data can be 
-polled periodically from the cloudwatch API, this should be used sparingly as it generates lots of data, but rarely is most of it 
-helpful.
+Amazon provides built-in tools for accessing and viewing logs and metrics. For advanced needs, data is typically sent using one of three methods. However, if you're using Elastic Kubernetes Service (EKS) or Elastic Container Service (ECS), it may be better to collect data directly by following Kubernetes, Linux, or Windows tutorials. Alternatively, data can be periodically polled from the CloudWatch API, but this method should be used sparingly, as it generates excessive and often unnecessary data.
 
 ### Data sent directly
 
