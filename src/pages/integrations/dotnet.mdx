@@ -58,9 +58,9 @@ Follow the steps below to send your observability data to Logit.io.
 
   ### Configuring Serilog
 
-  Add Serilog settings to your `appsettings.json` file:       
+  Add `Serilog` settings to your `appsettings.json` file e.g. after the `AllowedHosts` setting:
 
-  ```json copy showLineNumbers
+  ```json copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
   "Serilog": {
   "Using": [ "Serilog.Sinks.Network" ],
   "MinimumLevel": "Debug",
@@ -73,6 +73,10 @@ Follow the steps below to send your observability data to Logit.io.
   "Enrich": [ "FromLogContext" ]
   }
   ```
+
+  Note that if you set the MinimumLevel to `Warning`, only logs of that level or higher will be sent to your stack. 
+  You can change this to `Debug` or `Information` if you want to send more logs including application startup and internal Application
+  process handling logs.
 
   ### Using Serilog
 
@@ -170,11 +174,11 @@ Follow the steps below to send your observability data to Logit.io.
                 
   ```xml copy
   <ItemGroup>
-    <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.10.0" />
-    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.10.0" />
-    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.10.0" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.9.0" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.10.0" />
+    <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.11.2" />
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.11.2" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.11.2" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.11.1" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.11.1" />
   </ItemGroup>
   ```
 
