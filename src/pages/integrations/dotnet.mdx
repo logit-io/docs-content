@@ -62,7 +62,7 @@ Follow the steps below to send your observability data to Logit.io.
   ```json copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
   "Serilog": {
   "Using": [ "Serilog.Sinks.Network" ],
-  "MinimumLevel": "Warning",
+  "MinimumLevel": "Debug",
   "WriteTo": [
     {
     "Name": "TCPSink",
