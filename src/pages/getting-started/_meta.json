@@ -11,5 +11,6 @@
   "monitoring-an-application": "Monitoring an Application",
   "opentelemetry": "Opentelemetry",
   "telegraf": "Telegraf",
-  "opensearch-dashboards": "OpenSearch Dashboards"
+  "opensearch-dashboards": "OpenSearch Dashboards",
+  "grafana-dashboards": "Grafana Dashboards"
 }
