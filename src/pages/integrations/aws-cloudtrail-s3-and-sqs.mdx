@@ -1,6 +1,6 @@
 ---
-title: Amazon logs using S3 and SQS
-metaTitle: Integrate and Configure AWS to Send AWS Logs using S3 and SQS
+title: Amazon CloudTrail logs using S3 and SQS
+metaTitle: Integrate and Configure AWS to Send AWS CloudTrail Logs using S3 and SQS
 subTitle: Inteligently ingest logs from an Amazon S3 bucket using ObjectCreated notifications to your Stack 
 logo: aws-s3
 color: "#759c3e"
@@ -70,63 +70,63 @@ Follow the steps below to send your observability data to Logit.io
   Edit your queue and set the policy, making sure to update the s3 and sqs details
 
 
-### configure the s3 bucket
-https://www.ibm.com/docs/en/dsm?topic=csqcson-creating-objectcreated-notifications
+  ### configure the s3 bucket
+  https://www.ibm.com/docs/en/dsm?topic=csqcson-creating-objectcreated-notifications
 
-### create iam user/policy
+  ### create iam user/policy
 
-```
-  {
-      "Version": "2012-10-17",
-      "Statement": [
-          {
-              "Effect": "Allow",
-              "Action": [
-                  "sqs:Get*",
-                  "sqs:List*",
-                  "sqs:ReceiveMessage",
-                  "sqs:ChangeMessageVisibility*",
-                  "sqs:DeleteMessage*"
-              ],
-              "Resource": [
-                  "arn:aws:sqs:us-east-1:123456789012:my-elb-log-queue"
-              ]
-          },
-          {
-              "Effect": "Allow",
-              "Action": [
-                  "s3:Get*",
-                  "s3:List*"
-              ],
-              "Resource": [
-                  "arn:aws:s3:::my-elb-logs",
-                  "arn:aws:s3:::my-elb-logs/*"
-              ]
-          }
+  ```
+    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Action": [
+                    "sqs:Get*",
+                    "sqs:List*",
+                    "sqs:ReceiveMessage",
+                    "sqs:ChangeMessageVisibility*",
+                    "sqs:DeleteMessage*"
+                ],
+                "Resource": [
+                    "arn:aws:sqs:us-east-1:123456789012:my-elb-log-queue"
+                ]
+            },
+            {
+                "Effect": "Allow",
+                "Action": [
+                    "s3:Get*",
+                    "s3:List*"
+                ],
+                "Resource": [
+                    "arn:aws:s3:::my-elb-logs",
+                    "arn:aws:s3:::my-elb-logs/*"
+                ]
+            }
+        ]
+    }
+  ```
+
+  ### populate the form (form needed to )
+
+  ```
+  input {
+    s3snssqs {
+      region => "eu-west-1"
+      queue => "s3inputtesting-queue"
+      queue_owner_aws_account_id => ""
+      access_key_id => ""
+      secret_access_key => "4Pw+"
+      from_sns => false
+      s3_options_by_bucket => [
+        {
+          bucket_name => "s3inputtesting"
+          access_key_id => ""
+          secret_access_key => "4Pw+"
+        }
       ]
+    }
   }
-```
-
-### populate the form (form needed to )
-
-
-input {
-  s3snssqs {
-    region => "eu-west-1"
-    queue => "s3inputtesting-queue"
-    queue_owner_aws_account_id => ""
-    access_key_id => ""
-    secret_access_key => "4Pw+"
-    from_sns => false
-    s3_options_by_bucket => [
-      {
-        bucket_name => "s3inputtesting"
-        access_key_id => ""
-        secret_access_key => "4Pw+"
-      }
-    ]
-  }
-}
-
+  ```
 </Steps>
 
