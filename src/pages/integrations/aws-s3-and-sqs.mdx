@@ -43,7 +43,7 @@ Follow the steps below to send your observability data to Logit.io
   **Make sure you update with Resouce details for your SQS queue and the name of your S3 bucket(s)**  
   If you only have one bucket, delete the 2nd line and remove trailing comma on the line above.
   
-  ```
+  ```json
     {
         "Version": "2012-10-17",
         "Statement": [
@@ -97,7 +97,7 @@ Follow the steps below to send your observability data to Logit.io
   **Make sure you update with Resouce details for your SQS queue and the name of your S3 bucket(s)**  
   If you only have one bucket, delete the 2nd bucket lines and remove trailing comma on the line above.
 
-  ```
+  ```json
     {
         "Version": "2012-10-17",
         "Statement": [
@@ -123,7 +123,7 @@ Follow the steps below to send your observability data to Logit.io
                 "Resource": [
                     "arn:aws:s3:::<1st bucket name>",
                     "arn:aws:s3:::<1st bucket name>/*",
-                    "arn:aws:s3:::<2nd bucket name>"
+                    "arn:aws:s3:::<2nd bucket name>",
                     "arn:aws:s3:::<2nd bucket name>/*"
                 ]
             }
