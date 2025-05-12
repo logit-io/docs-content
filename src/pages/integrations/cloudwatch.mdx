@@ -4,7 +4,7 @@ metaTitle: Integrate and Configure Amazon CloudWatch to Send Metrics
 subTitle: Ship logs from Amazon AWS to Logstash using the Logstash Cloudwatch plugin
 logo: aws_cloudwatch
 color: "#759c3e"
-stackTypes: metrics
+stackTypes: logs
 description: Use Logit.io's Amazon CloudWatch example configuration to easily forward and send your metrics to Logstash and Elasticsearch.
 tags: Metrics, AWS, Amazon, CloudWatch, EC2, Cloud Logs, Cloudwatch
 ---
@@ -99,11 +99,11 @@ On the left hand menu select instances and choose to create a new instance and f
 Once you've created your instance you can move onto the next step.
 
 ### Configure Logstash for Amazon CloudWatch
-<AddS3Input type="aws_cloudwatch" utmMedium="metrics" utmCampaign="awscloudwatch" />
+<AddS3Input type="aws_cloudwatch" stackType="logs" utmMedium="logs" utmCampaign="awscloudwatch" input="s3" buttonText="AWS" />
 
 ### Check Logit.io for your metrics
 
-<LaunchStack source="cloudwatch" utmMedium="metrics" utmCampaign="awscloudwatch" />
+<LaunchStack source="cloudwatch" utmMedium="logs" utmCampaign="awscloudwatch" />
 
 </Steps>
 

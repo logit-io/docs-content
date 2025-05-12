@@ -51,7 +51,8 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Configure Logstash for Amazon ELB Classic
 
-  <AddS3Input type="aws_elb_classic" utmMedium="logs" utmCampaign="awselbclassic" />
+  <AddS3Input type="aws_elb_classic" stackType="logs" utmMedium="logs" utmCampaign="awselbclassic" input="s3" buttonText="AWS" />
+
   
   ### Check Logit.io for your logs
 

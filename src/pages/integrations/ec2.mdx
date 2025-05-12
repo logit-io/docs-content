@@ -4,7 +4,7 @@ metaTitle: Integrate and Configure Logstash to Send Amazon EC2 Metrics
 subTitle: Ship Amazon EC2 Instance metrics to Logstash using the Logstash Cloudwatch plugin
 logo: aws
 color: "#ff9900"
-stackTypes: metrics
+stackTypes: logs
 description: Use Logit.io's Amazon EC2 logging example configuration to easily forward and send your metrics to Logstash and Elasticsearch.
 tags: Metrics, AWS, Amazon, CloudWatch, EC2, Cloud Metrics, Ec2
 ---
@@ -100,11 +100,12 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Configure Logstash for Amazon EC2
 
-  <AddS3Input type="aws_ec2" utmMedium="metrics" utmCampaign="awsec2" />
+  <AddS3Input type="aws_ec2" stackType="logs" utmMedium="logs" utmCampaign="awsec2" input="s3" buttonText="AWS" />
+  
 
   ### Check Logit.io for your metrics
 
-  <LaunchStack source="ec2_metrics" utmMedium="metrics" utmCampaign="awsec2" />
+  <LaunchStack source="ec2_metrics" utmMedium="logs" utmCampaign="awsec2" />
 
 </Steps>
 
