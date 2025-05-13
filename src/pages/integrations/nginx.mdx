@@ -373,36 +373,87 @@ This guide walks you through the process of integrating Filebeat and Telegraf wi
   <InstallTelegraf />
 
   ### Configure the Telegraf input plugin
+  <Tabs items={["Linux (Default installation)", "Windows/MacOS/Linux (Custom installation)"]}>
+    <Tab>
+      The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+      ```toml copy
+      # Read Nginx's basic status information (ngx_http_stub_status_module)
+      [[inputs.nginx]]
+      ## An array of Nginx stub_status URI to gather stats.
+        urls = ["http://localhost/server_status"]
 
-  ```toml copy
-  # Read Nginx's basic status information (ngx_http_stub_status_module)
-  [[inputs.nginx]]
-  ## An array of Nginx stub_status URI to gather stats.
-  urls = ["http://localhost/server_status"]
+        ## Optional TLS Config
+        # tls_ca = "/etc/telegraf/ca.pem"
+        # tls_cert = "/etc/telegraf/cert.pem"
+        # tls_key = "/etc/telegraf/key.pem"
+        ## Use TLS but skip chain & host verification
+        # insecure_skip_verify = false
 
-  ## Optional TLS Config
-  # tls_ca = "/etc/telegraf/ca.pem"
-  # tls_cert = "/etc/telegraf/cert.pem"
-  # tls_key = "/etc/telegraf/key.pem"
-  ## Use TLS but skip chain & host verification
-  # insecure_skip_verify = false
+        ## HTTP response timeout (default: 5s)
+        response_timeout = "5s"
 
-  ## HTTP response timeout (default: 5s)
-  response_timeout = "5s"
+      [[inputs.tail]]
+        name_override = "nginxlog"
+        files = ["/var/log/nginx/access.log"]
+        from_beginning = true
+        pipe = false
+        data_format = "grok"
+        grok_patterns = ["%{COMBINED_LOG_FORMAT}"]
 
-  [[inputs.disk]]
-  [[inputs.net]]
-  [[inputs.mem]]
-  [[inputs.system]]
-  [[inputs.cpu]]
 
-  percpu = false
-  totalcpu = true
-  collect_cpu_time = true
-  report_active = true
-  ```
+      [[inputs.disk]]
+      [[inputs.net]]
+      [[inputs.mem]]
+      [[inputs.system]]
+      [[inputs.cpu]]
+        percpu = false
+        totalcpu = true
+        collect_cpu_time = true
+        report_active = true
+      ```
+    </Tab>
+    <Tab>
+      The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `telegraf.conf` from the previous step.  
+      Remember to replace `<Nginx installation directory>` with the directory where your Nginx is located.
+      
+      ```toml copy
+      # Read Nginx's basic status information (ngx_http_stub_status_module)
+      [[inputs.nginx]]
+      ## An array of Nginx stub_status URI to gather stats.
+        urls = ["http://localhost/server_status"]
+
+        ## Optional TLS Config
+        # tls_ca = "/etc/telegraf/ca.pem"
+        # tls_cert = "/etc/telegraf/cert.pem"
+        # tls_key = "/etc/telegraf/key.pem"
+        ## Use TLS but skip chain & host verification
+        # insecure_skip_verify = false
+
+        ## HTTP response timeout (default: 5s)
+        response_timeout = "5s"
+
+      [[inputs.tail]]
+        name_override = "nginxlog"
+        files = ["<Nginx installation directory>/logs/access.log"]
+        from_beginning = true
+        pipe = false
+        data_format = "grok"
+        grok_patterns = ["%{COMBINED_LOG_FORMAT}"]
+
+
+      [[inputs.disk]]
+      [[inputs.net]]
+      [[inputs.mem]]
+      [[inputs.system]]
+      [[inputs.cpu]]
+        percpu = false
+        totalcpu = true
+        collect_cpu_time = true
+        report_active = true
+      ```
+    </Tab>
+  </Tabs>
 
   ### Configure the output plugin
 
