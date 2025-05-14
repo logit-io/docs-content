@@ -19,67 +19,67 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Install Integration
   <InstallIntegration/>
-### Install Telegraf
+  ### Install Telegraf
 
-<InstallTelegraf />
+  <InstallTelegraf />
 
-### Configure the Telegraf input plugin
+  ### Configure the Telegraf
 
-The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
-### Read Cassandra metrics through Jolokia
-[[inputs.cassandra]]
-  context = "/jolokia/read"
-  ## List of cassandra servers exposing jolokia read service
-  servers = ["myuser:mypassword@10.10.10.1:8778","10.10.10.2:8778",":8778"]
-  ## List of metrics collected on above servers
-  ## Each metric consists of a jmx path.
-  ## This will collect all heap memory usage metrics from the jvm and
-  ## ReadLatency metrics for all keyspaces and tables.
-  ## "type=Table" in the query works with Cassandra3.0. Older versions might
-  ## need to use "type=ColumnFamily"
-  metrics  = [
-    "/java.lang:type=Memory/HeapMemoryUsage",
-    "/org.apache.cassandra.metrics:type=Table,keyspace=*,scope=*,name=ReadLatency"
-  ]
+  ```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
+  ### Read Cassandra metrics through Jolokia
+  [[inputs.cassandra]]
+    context = "/jolokia/read"
+    ## List of cassandra servers exposing jolokia read service
+    servers = ["myuser:mypassword@10.10.10.1:8778","10.10.10.2:8778",":8778"]
+    ## List of metrics collected on above servers
+    ## Each metric consists of a jmx path.
+    ## This will collect all heap memory usage metrics from the jvm and
+    ## ReadLatency metrics for all keyspaces and tables.
+    ## "type=Table" in the query works with Cassandra3.0. Older versions might
+    ## need to use "type=ColumnFamily"
+    metrics  = [
+      "/java.lang:type=Memory/HeapMemoryUsage",
+      "/org.apache.cassandra.metrics:type=Table,keyspace=*,scope=*,name=ReadLatency"
+    ]
 
-### System metrics
-[[inputs.disk]]
-[[inputs.net]]
-[[inputs.mem]]
-[[inputs.system]]
-[[inputs.cpu]]
-  percpu = false
-  totalcpu = true
-  collect_cpu_time = true
-  report_active = true
+  ### System metrics
+  [[inputs.disk]]
+  [[inputs.net]]
+  [[inputs.mem]]
+  [[inputs.system]]
+  [[inputs.cpu]]
+    percpu = false
+    totalcpu = true
+    collect_cpu_time = true
+    report_active = true
 
-### Output
-[[outputs.http]]
-  url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
-  data_format = "prometheusremotewrite"
+  ### Output
+  [[outputs.http]]
+    url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+    data_format = "prometheusremotewrite"
 
-  [outputs.http.headers]
-    Content-Type = "application/x-protobuf"
-    Content-Encoding = "snappy"
+    [outputs.http.headers]
+      Content-Type = "application/x-protobuf"
+      Content-Encoding = "snappy"
 
-```
+  ```
 
-<Callout type="info">
-  Read more about how to configure data scraping and configuration options for [Apache Cassandra](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/cassandra)
-</Callout>
+  <Callout type="info">
+    Read more about how to configure data scraping and configuration options for [Apache Cassandra](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/cassandra)
+  </Callout>
 
-### Start Telegraf
+  ### Start Telegraf
 
-<StartTelegraf />
+  <StartTelegraf />
 
-### View your metrics
-<LaunchStack source="Apache_Cassandra_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-ApacheCassandra-metrics" />
+  ### View your metrics
+  <LaunchStack source="Apache_Cassandra_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-ApacheCassandra-metrics" />
 
-### How to diagnose no data in Stack
+  ### How to diagnose no data in Stack
 
-<DiagnoseNoData />
+  <DiagnoseNoData />
 
 </Steps>
 
