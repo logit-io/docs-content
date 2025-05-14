@@ -5,14 +5,14 @@ subTitle: Pull Container Activity logs from an Azure Event Hub to Logstash
 logo: azure
 color: "#0089d6"
 description: Ship your Azure container activity logs to Logit.io via Logstash using the instructions below and start analysing your data
-stackTypes: metrics
+stackTypes: logs
 tags: Microsoft, Azure, Event Hub, Azure Metrics, Azure Monitoring, Azure Diagnostics, Azure Monitor, Azure Container, Azure Activity Logs, Cloud Metrics
 ---
 
 Follow the steps below to send your observability data to Logit.io
 
 <Steps>
-  ## Metrics
+  ## Logs
 
   Learn how to ship Azure Container activity logs into the Logit.io ELK Stack via Logstash.
   
@@ -63,7 +63,7 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Configure Logstash For Azure Event Hub
 
-  <AzureInput stackType="metrics" utmMedium="logs" utmCampaign="azurecontaineractivitylogs" type="azure_container" />
+  <AzureInput stackType="logs" utmMedium="logs" utmCampaign="azurecontaineractivitylogs" type="azure_container" input="azure" buttonText="Azure Event Hub"/>
 
   ### Check Logit.io for your logs
   <LaunchStack utmMedium="logs" utmCampaign="azurecontaineractivitylogs" source="azurecontaineractivitylogs" />

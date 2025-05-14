@@ -5,7 +5,7 @@ subTitle: Pull Metrics from an Azure Event Hub to Logstash
 logo: azure
 color: "#0089d6"
 description: Send your Azure platform Metrics to logit.io via logstash using the instructions below and begin searching your data
-stackTypes: metrics
+stackTypes: logs
 sslPortType: beats-ssl
 tags: microsoft, azure, event hub, Azure Metrics, Azure Monitoring, Azure Diagnostics, Azure Insights, Azure Management, Azure Integration
 ---
@@ -41,7 +41,7 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Start Sending Metrics To A Stack
 
-  <AzureInput stackType="metrics" utmMedium="logs" utmCampaign="azuremetrics" type="azure_metrics" />
+  <AzureInput stackType="logs" utmMedium="logs" utmCampaign="azuremetrics" type="azure_metrics" input="azure" buttonText="Azure Event Hub"/>
 
   ### Check Logit.io for your logs
   <LaunchStack utmMedium="logs" utmCampaign="azuremetrics" source="azuremetrics" />

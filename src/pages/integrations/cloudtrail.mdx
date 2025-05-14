@@ -33,7 +33,7 @@ Follow the steps below to send your observability data to Logit.io
   - `s3:ListBucket` to check if the S3 bucket exists and list objects in it.
   - `s3:GetObject` to check object metadata and download objects from S3 buckets.
   
-  Below is how your permissions should appear:
+  Below is how your permissions should appear (remember to update the bucket name as appropriate):
 
   ```json copy showLineNumbers
   {
@@ -43,7 +43,7 @@ Follow the steps below to send your observability data to Logit.io
         "Sid": "SidID",
         "Effect": "Allow",
         "Action": ["s3:GetObject", "s3:ListBucket"],
-        "Resource": ["arn:aws:s3:::your-bucket/*"]
+        "Resource": ["arn:aws:s3:::<your-bucket>/*"]
       }
     ]
   }
@@ -51,7 +51,7 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Configure Logstash for Amazon Cloudtrail
 
-  <AddS3Input type="aws_cloudtrail" utmMedium="logs" utmCampaign="awscloudtrail" />
+  <AddS3Input type="aws_cloudtrail" stackType="logs" utmMedium="logs" utmCampaign="awscloudtrail" input="s3" buttonText="AWS" />
 
   ### Check Logit.io for your logs
 

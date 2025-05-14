@@ -32,7 +32,7 @@ Follow the steps below to send your observability data to Logit.io
   - `s3:ListBucket` to check if the S3 bucket exists and list objects in it.
   - `s3:GetObject` to check object metadata and download objects from S3 buckets.
   
-  Below is how your permissions should appear:
+  Below is how your permissions should appear (remember to update the bucket name as appropriate):
 
   ```json copy showLineNumbers
   {
@@ -46,7 +46,7 @@ Follow the steps below to send your observability data to Logit.io
                 "s3:ListBucket"
               ],
             "Resource": [
-                "arn:aws:s3:::your-bucket/*"
+                "arn:aws:s3:::<your-bucket>/*"
             ]
         }
     ]
@@ -55,7 +55,7 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Configure Logstash for Amazon Cloudfront
 
-  <AddS3Input type="aws_cloudfront" utmMedium="logs" utmCampaign="awscloudfront" />
+  <AddS3Input type="aws_cloudfront" stackType="logs" utmMedium="logs" utmCampaign="awscloudfront" input="s3" buttonText="AWS" />
 
   ### Check Logit.io for your logs
 
