@@ -56,13 +56,6 @@ Follow the steps below to ship ActiveMQ logs and metrics to your Logit.io stacks
     reload.enabled: false
     #reload.period: 10s
 
-  # ================================== Outputs ===================================
-  # ------------------------------ Logstash Output -------------------------------
-  output.logstash:
-    hosts: ["@logstash.host:@logstash.sslPort"]
-    loadbalance: true
-    ssl.enabled: true
-
   # ================================= Processors =================================
   processors:
     - add_host_metadata:
@@ -70,6 +63,13 @@ Follow the steps below to ship ActiveMQ logs and metrics to your Logit.io stacks
     - add_cloud_metadata: ~
     - add_docker_metadata: ~
     - add_kubernetes_metadata: ~
+
+  # ================================== Outputs ===================================
+  # ------------------------------ Logstash Output -------------------------------
+  output.logstash:
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
   ```
 
   ### Validate Configuration
@@ -105,8 +105,8 @@ Follow the steps below to ship ActiveMQ logs and metrics to your Logit.io stacks
 
 The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-```toml copy
-# Gather ActiveMQ metrics
+```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
+### Gather ActiveMQ metrics
 [[inputs.activemq]]
   ## ActiveMQ WebConsole URL
   url = "http://127.0.0.1:8161"
@@ -132,15 +132,31 @@ The configuration file below is pre-configured to scrape the system metrics from
   # tls_key = "/etc/telegraf/key.pem"
   ## Use TLS but skip chain & host verification
   # insecure_skip_verify = false
+
+### System metrics
+[[inputs.disk]]
+[[inputs.net]]
+[[inputs.mem]]
+[[inputs.system]]
+[[inputs.cpu]]
+  percpu = false
+  totalcpu = true
+  collect_cpu_time = true
+  report_active = true
+
+### Output
+[[outputs.http]]
+  url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+  data_format = "prometheusremotewrite"
+
+  [outputs.http.headers]
+    Content-Type = "application/x-protobuf"
+    Content-Encoding = "snappy"
 ```
 
 <Callout type="info">
   Read more about how to configure data scraping and configuration options for [ActiveMQ](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/activemq)
 </Callout>
-
-### Configure The Output plugin
-
-<TelegrafOutputPlugin />
 
 ### Start Telegraf
 
