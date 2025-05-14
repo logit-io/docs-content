@@ -41,7 +41,7 @@ Follow the steps below to send your observability data to Logit.io
  
   This will grant the listed S3 buckets permission to send messages to the SQS queue.  
   **Make sure you update with Resource details for your SQS queue and the name of your S3 bucket(s)**  
-  If you only have one bucket, delete the 2nd line and remove the trailing comma on the line above.
+  If you only have one bucket, delete the 2nd entry from the aws:SourceArn condition key and remove the trailing comma on the line above.
   
   ```json
     {
