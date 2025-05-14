@@ -34,7 +34,7 @@ Follow the steps below to send your observability data to Logit.io
   - `s3:ListBucket` to check if the S3 bucket exists and list objects in it.
   - `s3:GetObject` to check object metadata and download objects from S3 buckets.
   
-  Below is how your permissions should appear:
+  Below is how your permissions should appear (remember to update the bucket name as appropriate):
 
   ```json copy showLineNumbers
   {
@@ -44,7 +44,7 @@ Follow the steps below to send your observability data to Logit.io
         "Sid": "SidID",
         "Effect": "Allow",
         "Action": ["s3:GetObject", "s3:ListBucket"],
-        "Resource": ["arn:aws:s3:::your-bucket/*"]
+        "Resource": ["arn:aws:s3:::<your-bucket>/*"]
       }
     ]
   }
