@@ -138,11 +138,11 @@ Follow the steps below to send your observability data to Logit.io
         slowlog:
           enabled: true
 
-        # The Redis hosts to connect to.
-        #var.hosts: ["localhost:6379"]
+          # The Redis hosts to connect to.
+          #var.hosts: ["localhost:6379"]
 
-        # Optional, the password to use when connecting to Redis.
-        #var.password:
+          # Optional, the password to use when connecting to Redis.
+          #var.password:
       ```
     </Tab>
     <Tab>
@@ -260,41 +260,41 @@ Follow the steps below to send your observability data to Logit.io
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
   ```toml copy
-# Read metrics from one or many redis servers
-[[inputs.redis]]
-  ## specify servers via a url matching:
-  ##  [protocol://][username:password]@address[:port]
-  ##  e.g.
-  ##    tcp://localhost:6379
-  ##    tcp://username:password@192.168.99.100
-  ##    unix:///var/run/redis.sock
-  ##
-  ## If no servers are specified, then localhost is used as the host.
-  ## If no port is specified, 6379 is used
-  servers = ["tcp://localhost:6379"]
+  # Read metrics from one or many redis servers
+  [[inputs.redis]]
+    ## specify servers via a url matching:
+    ##  [protocol://][username:password]@address[:port]
+    ##  e.g.
+    ##    tcp://localhost:6379
+    ##    tcp://username:password@192.168.99.100
+    ##    unix:///var/run/redis.sock
+    ##
+    ## If no servers are specified, then localhost is used as the host.
+    ## If no port is specified, 6379 is used
+    servers = ["tcp://localhost:6379"]
 
-  ## Optional. Specify redis commands to retrieve values
-  # [[inputs.redis.commands]]
-  #   # The command to run where each argument is a separate element
-  #   command = ["get", "sample-key"]
-  #   # The field to store the result in
-  #   field = "sample-key-value"
-  #   # The type of the result
-  #   # Can be "string", "integer", or "float"
-  #   type = "string"
+    ## Optional. Specify redis commands to retrieve values
+    # [[inputs.redis.commands]]
+    #   # The command to run where each argument is a separate element
+    #   command = ["get", "sample-key"]
+    #   # The field to store the result in
+    #   field = "sample-key-value"
+    #   # The type of the result
+    #   # Can be "string", "integer", or "float"
+    #   type = "string"
 
-  ## Specify username and password for ACL auth (Redis 6.0+). You can add this
-  ## to the server URI above or specify it here. The values here take
-  ## precidence.
-  # username = ""
-  # password = ""
+    ## Specify username and password for ACL auth (Redis 6.0+). You can add this
+    ## to the server URI above or specify it here. The values here take
+    ## precidence.
+    # username = ""
+    # password = ""
 
-  ## Optional TLS Config
-  # tls_ca = "/etc/telegraf/ca.pem"
-  # tls_cert = "/etc/telegraf/cert.pem"
-  # tls_key = "/etc/telegraf/key.pem"
-  ## Use TLS but skip chain & host verification
-  # insecure_skip_verify = true
+    ## Optional TLS Config
+    # tls_ca = "/etc/telegraf/ca.pem"
+    # tls_cert = "/etc/telegraf/cert.pem"
+    # tls_key = "/etc/telegraf/key.pem"
+    ## Use TLS but skip chain & host verification
+    # insecure_skip_verify = true
   ```
 
   Replacing the values for protocol, password, address and port as needed.
