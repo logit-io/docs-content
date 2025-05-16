@@ -3,7 +3,7 @@ title: Beanstalkd
 metaTitle: Integrate and Configure Telegraf to send Beanstalkd Metrics
 subTitle: Ship your Beanstalkd Metrics via Telegraf to your Logit.io Stack
 color: "#4d4d4d"
-description: Use our example to configure Telegraf to ship Beanstalkd metrics to your Logit.io stacks. Configure Telegraf to send Beanstalkd metrics to Logstash or Elastic.
+description: Use our example to configure Telegraf to ship Beanstalkd metrics to your Logit.io stacks.
 stackTypes: metrics
 sslPortType: beats-ssl
 tags: Telegraf, Metrics, Telemetry, OpenTelemetry, Health, Instrumentation, Beanstalkd, Prometheus, Message Queue, Job Queue
@@ -14,7 +14,7 @@ Follow the steps below to send your observability data to Logit.io
 <Steps>
   ## Metrics
 
-  Configure Telegraf to ship Beanstalkd metrics to your Logit.io stacks via Logstash.
+  Configure Telegraf to ship Beanstalkd metrics to your Logit.io stacks.
   
   ### Install Integration
   <InstallIntegration/>
@@ -27,8 +27,8 @@ Follow the steps below to send your observability data to Logit.io
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```toml copy
-  # Collects Beanstalkd server and tubes stats
+  ```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
+  ### Collects Beanstalkd server and tubes stats
   [[inputs.beanstalkd]]
     ## Server to collect data from
     server = "localhost:11300"
@@ -36,15 +36,31 @@ Follow the steps below to send your observability data to Logit.io
     ## List of tubes to gather stats about.
     ## If no tubes specified then data gathered for each tube on server reported by list-tubes command
     tubes = ["notifications"]
+
+  ### System metrics
+  [[inputs.disk]]
+  [[inputs.net]]
+  [[inputs.mem]]
+  [[inputs.system]]
+  [[inputs.cpu]]
+    percpu = false
+    totalcpu = true
+    collect_cpu_time = true
+    report_active = true
+
+  ### Output
+  [[outputs.http]]
+    url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+    data_format = "prometheusremotewrite"
+
+    [outputs.http.headers]
+      Content-Type = "application/x-protobuf"
+      Content-Encoding = "snappy"
   ```
 
   <Callout type="info">
     Read more about how to configure data scraping and configuration options for [Beanstalkd](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/beanstalkd)
   </Callout>
-
-  ### Configure The Output plugin
-
-  <TelegrafOutputPlugin />
 
   ### Start Telegraf
 

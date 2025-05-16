@@ -6,7 +6,7 @@ subTitle: Ship system log files from CentOS to Logstash
 logo: centos
 color: "#001a52"
 description: Use Filebeat to send Centos logs to your ELK stacks. Configure Filebeat to send Centos application logs to Logstash or Elasticsearch. 
-stackTypes: logs
+stackTypes: logs, metrics
 sslPortType: beats-ssl
 tags: logs, centos, linux, Centos
 dashboardIds: syslog
@@ -94,13 +94,6 @@ Follow the steps below to send your observability data to Logit.io
     reload.enabled: false
     #reload.period: 10s
 
-  # ================================== Outputs ===================================
-  # ------------------------------ Logstash Output -------------------------------
-  output.logstash:
-    hosts: ["@logstash.host:@logstash.sslPort"]
-    loadbalance: true
-    ssl.enabled: true
-
   # ================================= Processors =================================
   processors:
     - add_host_metadata:
@@ -108,11 +101,18 @@ Follow the steps below to send your observability data to Logit.io
     - add_cloud_metadata: ~
     - add_docker_metadata: ~
     - add_kubernetes_metadata: ~
+
+  # ================================== Outputs ===================================
+  # ------------------------------ Logstash Output -------------------------------
+  output.logstash:
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
   ```
 
   ### Validate Configuration
     
-  ```ps1 copy
+  ```bash copy
   sudo ./filebeat -e -c filebeat.yml --strict.perms=false
   ```
 
@@ -154,6 +154,102 @@ Follow the steps below to send your observability data to Logit.io
 
   <LogstashPipeline />
             
+</Steps>
+<Steps>
+  ## Metrics
+
+  Configure Telegraf to ship your system metrics to Logit.io.
+  
+  ### Install Integration
+
+  <InstallIntegration/>
+
+  ### Install Telegraf
+
+  <InstallTelegraf />
+
+  ### Configure the plugin
+
+  The default `telegraf.conf` configuration file is thousands of lines long so, for simplicity, we will create a new
+  configuration file for this guide.
+  Create a new text file and copy the configuration details below into it and save it as `telegraf-demo.conf` in 
+  the directory where Telegraf has been installed.
+
+  The configuration below will scrape a selection of system metrics from the machine you have installed Telegraf 
+  on and these will be sent to your Logit.io stack. Metrics include CPU, memory and disk usage and system metrics 
+  such as system load and uptime.
+
+
+  ```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
+  # Read metrics about cpu usage
+  [[inputs.cpu]]
+    ## Whether to report per-cpu stats or not
+    percpu = true
+    ## Whether to report total system cpu stats or not
+    totalcpu = true
+    ## If true collect raw cpu time metrics
+    collect_cpu_time = true
+    ## If true compute and report the sum of all non-idle cpu states
+    report_active = true
+  
+  # Read metrics about memory usage
+  [[inputs.mem]]
+  
+  # Read metrics about system load & uptime
+  [[inputs.system]]
+    namepass = ["system"]
+  
+  # Read metrics about disk usage by mount point
+  [[inputs.disk]]
+    ## By default, telegraf gather stats for all mountpoints.
+    ## Setting mountpoints will restrict the stats to the specified mountpoints.
+    # mount_points = ["/"]
+
+    ## Ignore some mountpoints by filesystem type. For example (dev)tmpfs (usually
+    ## present on /run, /var/run, /dev/shm or /dev).
+    ignore_fs = ["tmpfs", "devtmpfs"]
+  
+  [[outputs.http]]
+    url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+    data_format = "prometheusremotewrite"
+  
+    [outputs.http.headers]
+      Content-Type = "application/x-protobuf"
+      Content-Encoding = "snappy"
+  ```
+
+  ### Start Telegraf
+
+  <StartTelegraf />
+
+  ### Launch Metrics to View Data
+
+  Click the 'Launch Metrics' button below to open the infrastructure metrics visualizer. 
+  
+  <LaunchVisualizer type="metrics" />
+  
+  Now, as a simple demonstration we will use Grafana to view some metrics data that is being sent to your Logit.io stack. 
+
+  Once Grafana has been opened, click on the Explore option in the left-hand menu:
+  ![Grafana Explore](@/images/integrations/system-metrics/grafana-explore.png)
+  
+  Under the Metric header you will see 'Select metric'. Open the drop-down menu 
+  and scroll to and select 'mem_available':
+
+  ![Grafana Select Metric](@/images/integrations/system-metrics/grafana-metrics-mem.png)
+
+  Click on the blue Run query button near the top-right of the screen:
+
+  ![Grafana Run Query](@/images/integrations/system-metrics/grafana-run-query.png)
+
+  You will now see the metric data displayed and if you click on the blue Run query button this will be updated.
+  You can set this to automatically update by clicking on the arrow on the blue button and chosing the interval 
+  at which you want the data to be updated.
+
+  When you want to stop Telegraf sending metric data press Ctrl + C in the terminal app / Powershell.
+
+  To learn more about Grafana Dashboard click [here](../getting-started/grafana-dashboards/).
+
 </Steps>
 
 ### CentOS Overview

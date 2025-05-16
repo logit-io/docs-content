@@ -4,7 +4,7 @@ metaTitle: Learn How to Integrate and Configure Telegraf to Send Burrow Metrics
 subTitle: Ship your Burrow Metrics via Telegraf to your Logit.io Stack
 logo: kafka
 color: "#4d4d4d"
-description: Use our example to configure Telegraf to ship Burrow metrics to your Logit.io stacks. Configure Telegraf to send Burrow metrics to Logstash or Elastic.
+description: Use our example to configure Telegraf to ship Burrow metrics to your Logit.io stacks.
 stackTypes: metrics
 sslPortType: beats-ssl
 tags: Telegraf, Metrics, Telemetry, OpenTelemetry, Health, Instrumentation, Burrow, Prometheus, Kafka Consumer Lag
@@ -28,8 +28,8 @@ Follow the steps below to send your observability data to Logit.io
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```toml copy
-  # Collect Kafka topics and consumers status from Burrow HTTP API.
+  ```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
+  ### Collect Kafka topics and consumers status from Burrow HTTP API.
   [[inputs.burrow]]
     ## Burrow API endpoints in format "schema://host:port".
     ## Default is "http://localhost:8000".
@@ -70,15 +70,31 @@ Follow the steps below to send your observability data to Logit.io
     # ssl_cert = "/etc/telegraf/cert.pem"
     # ssl_key = "/etc/telegraf/key.pem"
     # insecure_skip_verify = false
+
+  ### System metrics
+  [[inputs.disk]]
+  [[inputs.net]]
+  [[inputs.mem]]
+  [[inputs.system]]
+  [[inputs.cpu]]
+    percpu = false
+    totalcpu = true
+    collect_cpu_time = true
+    report_active = true
+
+  ### Output
+  [[outputs.http]]
+    url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+    data_format = "prometheusremotewrite"
+
+    [outputs.http.headers]
+      Content-Type = "application/x-protobuf"
+      Content-Encoding = "snappy"
   ```
 
   <Callout type="info">
     Read more about how to configure data scraping and configuration options for [Burrow](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/burrow)
   </Callout>
-
-  ### Configure The Output plugin
-
-  <TelegrafOutputPlugin />
 
   ### Start Telegraf
 

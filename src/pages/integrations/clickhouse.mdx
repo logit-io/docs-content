@@ -3,7 +3,7 @@ title: ClickHouse
 metaTitle: Integrate and Configure Telegraf to send ClickHouse Metrics
 subTitle: Ship your ClickHouse Metrics via Telegraf to your Logit.io Stack
 color: "#4d4d4d"
-description: Use our example to configure Telegraf to ship ClickHouse metrics to your Logit.io stacks. Configure Telegraf to send ClickHouse metrics to Logstash or Elastic.
+description: Use our example to configure Telegraf to ship ClickHouse metrics to your Logit.io stacks.
 stackTypes: metrics
 sslPortType: beats-ssl
 tags: Telegraf, Metrics, Telemetry, OpenTelemetry, Health, Instrumentation, ClickHouse, Prometheus, Columnar Database, Clickhouse
@@ -14,7 +14,7 @@ Follow the steps below to send your observability data to Logit.io
 <Steps>
   ## Metrics
 
-  Configure Telegraf to ship ClickHouse metrics to your Logit.io stacks via Logstash.
+  Configure Telegraf to ship ClickHouse metrics to your Logit.io stacks.
 
   ### Install Integration
   <InstallIntegration/>
@@ -27,8 +27,8 @@ Follow the steps below to send your observability data to Logit.io
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```toml copy
-  # Read metrics from one or many ClickHouse servers
+  ```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
+  ### Read metrics from one or many ClickHouse servers
   [[inputs.clickhouse]]
     ## Username for authorization on ClickHouse server
     username = "default"
@@ -90,16 +90,32 @@ Follow the steps below to send your observability data to Logit.io
     # tls_cert = "/etc/telegraf/cert.pem"
     # tls_key = "/etc/telegraf/key.pem"
     ## Use TLS but skip chain & host verification
-    # insecure_skip_verify = false 
+    # insecure_skip_verify = false
+
+  ### System metrics
+  [[inputs.disk]]
+  [[inputs.net]]
+  [[inputs.mem]]
+  [[inputs.system]]
+  [[inputs.cpu]]
+    percpu = false
+    totalcpu = true
+    collect_cpu_time = true
+    report_active = true
+
+  ### Output
+  [[outputs.http]]
+    url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+    data_format = "prometheusremotewrite"
+
+    [outputs.http.headers]
+      Content-Type = "application/x-protobuf"
+      Content-Encoding = "snappy"
   ```
 
   <Callout type="info">
     Read more about how to configure data scraping and configuration options for [ClickHouse](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/clickhouse)
   </Callout>
-
-  ### Configure The Output plugin
-
-  <TelegrafOutputPlugin />
 
   ### Start Telegraf
 

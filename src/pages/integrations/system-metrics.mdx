@@ -130,6 +130,8 @@ view them in Grafana.
         Instances = ["_Total"]
         Measurement = "win_swap"
 
+        ### Output
+
         [[outputs.http]]
         url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
         data_format = "prometheusremotewrite"
@@ -169,13 +171,14 @@ view them in Grafana.
         ## present on /run, /var/run, /dev/shm or /dev).
         ignore_fs = ["tmpfs", "devtmpfs"]
     
+    ### Output
     [[outputs.http]]
       url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
       data_format = "prometheusremotewrite"
     
-    [outputs.http.headers]
-    Content-Type = "application/x-protobuf"
-    Content-Encoding = "snappy"
+      [outputs.http.headers]
+        Content-Type = "application/x-protobuf"
+        Content-Encoding = "snappy"
     ```
   </Tab>
   

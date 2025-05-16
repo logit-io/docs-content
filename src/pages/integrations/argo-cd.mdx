@@ -3,7 +3,7 @@ title: Argo CD
 metaTitle: Integrate and Configure Telegraf to send Argo CD Metrics
 subTitle: Ship your Argo CD Metrics via Telegraf to your Logit.io Stack
 color: "#4d4d4d"
-description: Use our example to configure Telegraf to ship Argo CD metrics to your Logit.io stacks. Configure Telegraf to send Argo CD metrics to Logstash or Elastic.
+description: Use our example to configure Telegraf to ship Argo CD metrics to your Logit.io stacks.
 stackTypes: metrics
 sslPortType: beats-ssl
 tags: Telegraf, Metrics, Telemetry, OpenTelemetry, Health, Instrumentation, Prometheus, Argo CD, Continuous Delivery, GitOps, Cd
@@ -27,24 +27,40 @@ Follow the steps below to send your observability data to Logit.io
 
   Follow the instructions here to expose the [Argo CD Metrics](https://argo-cd.readthedocs.io/en/stable/operator-manual/metrics/) in the Prometheus format.
 
-  ### Configure the Telegraf input plugin
+  ### Configure the Telegraf
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```toml copy
-  # Read metrics from one or many prometheus clients
+  ```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
+  ### Read metrics from the argo metrics endpoint
   [[inputs.prometheus]]
     ## An array of urls to scrape metrics from.
-    urls = ["http://localhost:9100/metrics"]
+    urls = ["http://argocd-metrics:8082/metrics"]
+  
+  ### System metrics
+  [[inputs.disk]]
+  [[inputs.net]]
+  [[inputs.mem]]
+  [[inputs.system]]
+  [[inputs.cpu]]
+    percpu = false
+    totalcpu = true
+    collect_cpu_time = true
+    report_active = true
+
+  ### Output
+  [[outputs.http]]
+    url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+    data_format = "prometheusremotewrite"
+
+    [outputs.http.headers]
+      Content-Type = "application/x-protobuf"
+      Content-Encoding = "snappy"
   ```
 
   <Callout type="info">
     Read more about how to configure data scraping and configuration options for [Argo CD](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/prometheus)
   </Callout>
-
-  ### Configure The Output plugin
-
-  <TelegrafOutputPlugin />
 
   ### Start Telegraf
 
