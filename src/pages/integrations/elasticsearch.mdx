@@ -8,7 +8,7 @@ description: Filebeat allows you to send logs to your ELK stacks. Configure File
 stackTypes: logs, metrics
 sslPortType: beats-ssl
 tags: Logs, Logstash, Elasticsearch, Beats, Filebeat, Files, Log Files, Telegraf, Metrics, Telemetry, OpenTelemetry, Health, Instrumentation, Prometheus, Search, NoSQL
-dashboardIds: kafka
+dashboardIds: elasticsearch
 ---
 
 Follow the steps below to send your observability data to Logit.io
@@ -27,17 +27,17 @@ Follow the steps below to send your observability data to Logit.io
 
   <Tabs items={["Windows", "Linux", "macOS", "DEB", "RPM"]}>
     <Tab>
-      There are several built in filebeat modules you can use. You will need to enable the kafka module:
+      There are several built in filebeat modules you can use. You will need to enable the elasticsearch module:
 
       ```bash copy
       .\filebeat.exe modules list
-      .\filebeat.exe modules enable kafka
+      .\filebeat.exe modules enable elasticsearch
       ```
       In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
       
       ___Filesets are disabled by default___.
 
-      Copy the snippet below and replace the contents of the kafka.yml module file:
+      Copy the snippet below and replace the contents of the elasticsearch.yml module file:
 
       ```yaml copy
       - module: elasticsearch
@@ -74,17 +74,17 @@ Follow the steps below to send your observability data to Logit.io
       ```
     </Tab>
     <Tab>
-      There are several built in filebeat modules you can use. You will need to enable the kafka module:
+      There are several built in filebeat modules you can use. You will need to enable the elasticsearch module:
 
       ```bash copy
       sudo filebeat modules list
-      sudo filebeat modules enable kafka
+      sudo filebeat modules enable elasticsearch
       ```
       In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
       
       ___Filesets are disabled by default___.
 
-      Copy the snippet below and replace the contents of the kafka.yml module file:
+      Copy the snippet below and replace the contents of the elasticsearch.yml module file:
 
       ```yaml copy
       - module: elasticsearch
@@ -121,17 +121,17 @@ Follow the steps below to send your observability data to Logit.io
       ```
     </Tab>
     <Tab>
-      There are several built in filebeat modules you can use. You will need to enable the kafka module:
+      There are several built in filebeat modules you can use. You will need to enable the elasticsearch module:
 
       ```bash copy
       ./filebeat modules list
-      ./filebeat modules enable kafka
+      ./filebeat modules enable elasticsearch
       ```
       In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
       
       ___Filesets are disabled by default___.
 
-      Copy the snippet below and replace the contents of the kafka.yml module file:
+      Copy the snippet below and replace the contents of the elasticsearch.yml module file:
 
       ```yaml copy
       - module: elasticsearch
@@ -168,17 +168,17 @@ Follow the steps below to send your observability data to Logit.io
       ```
     </Tab>
     <Tab>
-      There are several built in filebeat modules you can use. You will need to enable the kafka module:
+      There are several built in filebeat modules you can use. You will need to enable the elasticsearch module:
 
       ```bash copy
       sudo filebeat modules list
-      sudo filebeat modules enable kafka
+      sudo filebeat modules enable elasticsearch
       ```
       In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
       
       ___Filesets are disabled by default___.
 
-      Copy the snippet below and replace the contents of the kafka.yml module file:
+      Copy the snippet below and replace the contents of the elasticsearch.yml module file:
 
       ```yaml copy
       - module: elasticsearch
@@ -215,17 +215,17 @@ Follow the steps below to send your observability data to Logit.io
       ```
     </Tab>
     <Tab>
-      There are several built in filebeat modules you can use. You will need to enable the kafka module:
+      There are several built in filebeat modules you can use. You will need to enable the elasticsearch module:
 
       ```bash copy
       sudo filebeat modules list
-      sudo filebeat modules enable kafka
+      sudo filebeat modules enable elasticsearch
       ```
       In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
       
       ___Filesets are disabled by default___.
       
-      Copy the snippet below and replace the contents of the kafka.yml module file:
+      Copy the snippet below and replace the contents of the elasticsearch.yml module file:
 
       ```yaml copy
       - module: elasticsearch

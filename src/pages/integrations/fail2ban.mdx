@@ -20,7 +20,7 @@ Follow the steps below to send your observability data to Logit.io
   <InstallIntegration/>
   ### Install Filebeat
 
-  <InstallFilebeat />
+  <InstallFilebeat items={["Linux", "macOS", "DEB", "RPM"]} />
 
   ### Configure Filebeat.yml
 
@@ -53,7 +53,7 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Validate Configuration
 
-  <ValidateBeat beatname="filebeat" />
+  <ValidateBeat beatname="filebeat" exclude={["Windows"]} />
 
   ### Start Filebeat
 
@@ -84,20 +84,36 @@ Follow the steps below to send your observability data to Logit.io
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```toml copy
-  # Read metrics from fail2ban.
+  ```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
+  ### Read metrics from fail2ban.
   [[inputs.fail2ban]]
     ## Use sudo to run fail2ban-client
     use_sudo = false
+
+  ### System metrics
+  [[inputs.disk]]
+  [[inputs.net]]
+  [[inputs.mem]]
+  [[inputs.system]]
+  [[inputs.cpu]]
+    percpu = false
+    totalcpu = true
+    collect_cpu_time = true
+    report_active = true
+
+  ### Output
+  [[outputs.http]]
+    url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+    data_format = "prometheusremotewrite"
+
+    [outputs.http.headers]
+      Content-Type = "application/x-protobuf"
+      Content-Encoding = "snappy"
   ```
 
   <Callout type="info">
     Read more about how to configure data scraping and configuration options for [Fail2ban](https://github.com/influxdata/telegraf/tree/release-1.18/plugins/inputs/fail2ban)
   </Callout>
-
-  ### Configure The Output plugin
-
-  <TelegrafOutputPlugin />
 
   ### Start Telegraf
 
