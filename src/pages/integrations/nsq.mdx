@@ -14,7 +14,7 @@ Follow the steps below to send your observability data to Logit.io
 <Steps>
   ## Metrics
 
-  Configure Telegraf to ship NSQ metrics to your Logit.io stacks via Logstash.
+  Configure Telegraf to ship NSQ metrics to your Logit.io stacks.
   
   ### Install Integration
   <InstallIntegration/>
@@ -26,8 +26,8 @@ Follow the steps below to send your observability data to Logit.io
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```toml copy
-  # Read NSQ topic and channel statistics.
+  ```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
+  ### Read NSQ topic and channel statistics.
   [[inputs.nsq]]
     ## An array of NSQD HTTP API endpoints
     endpoints  = ["http://localhost:4151"]
@@ -38,14 +38,31 @@ Follow the steps below to send your observability data to Logit.io
     # tls_key = "/etc/telegraf/key.pem"
     ## Use TLS but skip chain & host verification
     # insecure_skip_verify = false
+
+  ### System metrics
+  [[inputs.disk]]
+  [[inputs.net]]
+  [[inputs.mem]]
+  [[inputs.system]]
+  [[inputs.cpu]]
+    percpu = false
+    totalcpu = true
+    collect_cpu_time = true
+    report_active = true
+
+  ### Output
+  [[outputs.http]]
+    url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+    data_format = "prometheusremotewrite"
+
+    [outputs.http.headers]
+      Content-Type = "application/x-protobuf"
+      Content-Encoding = "snappy"
   ```
+
   <Callout type="info">
     Read more about how to configure data scraping and configuration options for [NSQ](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/nsq)
   </Callout>
-
-  ### Configure the output plugin
-
-  <TelegrafOutputPlugin />
 
   ### Start Telegraf
 

@@ -27,8 +27,8 @@ Follow the steps below to send your observability data to Logit.io
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```toml copy
-  # Subscribe and receive OpenConfig Telemetry data using JTI
+  ```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
+  ### Subscribe and receive OpenConfig Telemetry data using JTI
   [[inputs.jti_openconfig_telemetry]]
     ## List of device addresses to collect telemetry from
     servers = ["localhost:1883"]
@@ -84,15 +84,31 @@ Follow the steps below to send your observability data to Logit.io
 
     ## To treat all string values as tags, set this to true
     str_as_tags = false
+
+  ### System metrics
+  [[inputs.disk]]
+  [[inputs.net]]
+  [[inputs.mem]]
+  [[inputs.system]]
+  [[inputs.cpu]]
+    percpu = false
+    totalcpu = true
+    collect_cpu_time = true
+    report_active = true
+
+  ### Output
+  [[outputs.http]]
+    url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+    data_format = "prometheusremotewrite"
+
+    [outputs.http.headers]
+      Content-Type = "application/x-protobuf"
+      Content-Encoding = "snappy"
   ```
 
   <Callout type="info">
     Read more about how to configure data scraping and configuration options for [JTI OpenConfig](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/jti_openconfig_telemetry)
   </Callout>
-
-  ### Configure The Output plugin
-
-  <TelegrafOutputPlugin />
 
   ### Start Telegraf
 

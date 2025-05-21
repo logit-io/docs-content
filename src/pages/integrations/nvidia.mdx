@@ -27,7 +27,7 @@ Follow the steps below to send your observability data to Logit.io
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```toml copy
+  ```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
   # Pulls statistics from nvidia GPUs attached to the host
   [[inputs.nvidia_smi]]
     ## Optional: path to nvidia-smi binary, defaults "/usr/bin/nvidia-smi"
@@ -37,14 +37,30 @@ Follow the steps below to send your observability data to Logit.io
 
     ## Optional: timeout for GPU polling
     # timeout = "5s"
+
+  ### System metrics
+  [[inputs.disk]]
+  [[inputs.net]]
+  [[inputs.mem]]
+  [[inputs.system]]
+  [[inputs.cpu]]
+    percpu = false
+    totalcpu = true
+    collect_cpu_time = true
+    report_active = true
+
+  ### Output
+  [[outputs.http]]
+    url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+    data_format = "prometheusremotewrite"
+
+    [outputs.http.headers]
+      Content-Type = "application/x-protobuf"
+      Content-Encoding = "snappy"
   ```
   <Callout type="info">
     Read more about how to configure data scraping and configuration options for [Nvidia SMI](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/nvidia_smi)
   </Callout>
-
-  ### Configure the output plugin
-
-  <TelegrafOutputPlugin />
 
   ### Start Telegraf
 

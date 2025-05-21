@@ -15,7 +15,7 @@ Follow the steps below to send your observability data to Logit.io
 <Steps>
   ## Metrics
 
-  Configure Telegraf to ship Mailchimp metrics to your Logit.io stacks via Logstash.
+  Configure Telegraf to ship Mailchimp metrics to your Logit.io stacks.
   
   ### Install Integration
   <InstallIntegration/>
@@ -28,7 +28,7 @@ Follow the steps below to send your observability data to Logit.io
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
 
-  ```toml copy
+  ```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
   # Gathers metrics from the /3.0/reports MailChimp API
   [[inputs.mailchimp]]
     ## MailChimp API key
@@ -41,15 +41,20 @@ Follow the steps below to send your observability data to Logit.io
 
     ## Campaign ID to get, if empty gets all campaigns, this option overrides days_old
     # campaign_id = ""
+
+  ### Output
+  [[outputs.http]]
+    url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+    data_format = "prometheusremotewrite"
+
+    [outputs.http.headers]
+      Content-Type = "application/x-protobuf"
+      Content-Encoding = "snappy"
   ```
 
   <Callout type="info">
     Read more about how to configure data scraping and configuration options for [Mailchimp](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/mailchimp)
   </Callout>
-
-  ### Configure The Output plugin
-
-  <TelegrafOutputPlugin />
 
   ### Start Telegraf
 

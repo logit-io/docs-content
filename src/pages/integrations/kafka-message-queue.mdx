@@ -27,223 +27,47 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Update Your Configuration File
 
-  <Tabs items={["Windows", "Linux", "macOS", "DEB", "RPM"]}>
-    <Tab>
-      The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+  The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
 
-      __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ field in the Logstash outputs section are correctly populated.
-      If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
-      The ___'paths'___ field will need to be set to the location of the logs you want to send to your Stack.
-      
-      Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where 
-      you installed Filebeat in the previous step. If it is missing create a new file with that name and populate it with the configuration details below).
+  __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ field in the Logstash outputs section are correctly populated.
+  If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
+  The ___'paths'___ field will need to be set to the location of the logs you want to send to your Stack.
+  
+  Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where 
+  you installed Filebeat in the previous step. If it is missing create a new file with that name and populate it with the configuration details below).
 
-      ```yaml copy
-      ###################### Logit.io Filebeat Configuration ########################
-      # ============================== Filebeat inputs ==============================
-      filebeat.inputs:
-      - type: kafka
-        hosts:
-          - name-of-your-broker:your-broker-port
-        # - localhost:9092        (Example)
-        topics: ["name-of-your-topic", "name-of-another-topic"]
-        group_id: "filebeat"
+  ```yml copy filename="filebeat.yml" showLineNumbers /@logstash.host/ /@logstash.sslPort/
+  ###################### Logit.io Filebeat Configuration ########################
+  # ============================== Filebeat inputs ==============================
+  filebeat.inputs:
+  - type: kafka
+    hosts:
+      - name-of-your-broker:your-broker-port
+    # - localhost:9092        (Example)
+    topics: ["name-of-your-topic", "name-of-another-topic"]
+    group_id: "filebeat"
 
-      # ============================== Filebeat modules ==============================
-      filebeat.config.modules:
-        path: ${path.config}/modules.d/*.yml
-        reload.enabled: false
-        #reload.period: 10s
+  # ============================== Filebeat modules ==============================
+  filebeat.config.modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+    #reload.period: 10s
 
-      # ================================== Outputs ===================================
-      # ------------------------------ Logstash Output -------------------------------
-      output.logstash:
-        hosts: ["@logstash.host:@logstash.sslPort"]
-        loadbalance: true
-        ssl.enabled: true
+  # ================================= Processors =================================
+  processors:
+    - add_host_metadata:
+        when.not.contains.tags: forwarded
+    - add_cloud_metadata: ~
+    - add_docker_metadata: ~
+    - add_kubernetes_metadata: ~
 
-      # ================================= Processors =================================
-      processors:
-        - add_host_metadata:
-            when.not.contains.tags: forwarded
-        - add_cloud_metadata: ~
-        - add_docker_metadata: ~
-        - add_kubernetes_metadata: ~
-      ```
-    </Tab>
-    <Tab>
-      The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
-
-      __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ field in the Logstash outputs section are correctly populated.
-      If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
-      The ___'paths'___ field will need to be set to the location of the logs you want to send to your Stack.
-      
-      Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where 
-      you installed Filebeat in the previous step).
-
-      ```yaml copy
-      ###################### Logit.io Filebeat Configuration ########################
-      # ============================== Filebeat inputs ==============================
-      filebeat.inputs:
-      - type: kafka
-        hosts:
-          - name-of-your-broker:your-broker-port
-        # - localhost:9092        (Example)
-        topics: ["name-of-your-topic", "name-of-another-topic"]
-        group_id: "filebeat"
-
-      # ============================== Filebeat modules ==============================
-      filebeat.config.modules:
-        path: ${path.config}/modules.d/*.yml
-        reload.enabled: false
-        #reload.period: 10s
-
-      # ================================== Outputs ===================================
-      # ------------------------------ Logstash Output -------------------------------
-      output.logstash:
-        hosts: ["@logstash.host:@logstash.sslPort"]
-        loadbalance: true
-        ssl.enabled: true
-
-      # ================================= Processors =================================
-      processors:
-        - add_host_metadata:
-            when.not.contains.tags: forwarded
-        - add_cloud_metadata: ~
-        - add_docker_metadata: ~
-        - add_kubernetes_metadata: ~
-      ```
-    </Tab>
-    <Tab>
-      The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
-
-      __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ field in the Logstash outputs section are correctly populated.
-      If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
-      The ___'paths'___ field will need to be set to the location of the logs you want to send to your Stack.
-      
-      Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where 
-      you installed Filebeat in the previous step).
-
-      ```yaml copy
-      ###################### Logit.io Filebeat Configuration ########################
-      # ============================== Filebeat inputs ==============================
-      filebeat.inputs:
-      - type: kafka
-        hosts:
-          - name-of-your-broker:your-broker-port
-        # - localhost:9092        (Example)
-        topics: ["name-of-your-topic", "name-of-another-topic"]
-        group_id: "filebeat"
-
-      # ============================== Filebeat modules ==============================
-      filebeat.config.modules:
-        path: ${path.config}/modules.d/*.yml
-        reload.enabled: false
-        #reload.period: 10s
-
-      # ================================== Outputs ===================================
-      # ------------------------------ Logstash Output -------------------------------
-      output.logstash:
-        hosts: ["@logstash.host:@logstash.sslPort"]
-        loadbalance: true
-        ssl.enabled: true
-
-      # ================================= Processors =================================
-      processors:
-        - add_host_metadata:
-            when.not.contains.tags: forwarded
-        - add_cloud_metadata: ~
-        - add_docker_metadata: ~
-        - add_kubernetes_metadata: ~
-      ```
-    </Tab>
-    <Tab>
-      The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
-
-      __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ field in the Logstash outputs section are correctly populated.
-      If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
-      The ___'paths'___ field will need to be set to the location of the logs you want to send to your Stack.
-      
-      Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where 
-      you installed Filebeat in the previous step).
-
-      ```yaml copy
-      ###################### Logit.io Filebeat Configuration ########################
-      # ============================== Filebeat inputs ==============================
-      filebeat.inputs:
-      - type: kafka
-        hosts:
-          - name-of-your-broker:your-broker-port
-        # - localhost:9092        (Example)
-        topics: ["name-of-your-topic", "name-of-another-topic"]
-        group_id: "filebeat"
-
-      # ============================== Filebeat modules ==============================
-      filebeat.config.modules:
-        path: ${path.config}/modules.d/*.yml
-        reload.enabled: false
-        #reload.period: 10s
-
-      # ================================== Outputs ===================================
-      # ------------------------------ Logstash Output -------------------------------
-      output.logstash:
-        hosts: ["@logstash.host:@logstash.sslPort"]
-        loadbalance: true
-        ssl.enabled: true
-
-      # ================================= Processors =================================
-      processors:
-        - add_host_metadata:
-            when.not.contains.tags: forwarded
-        - add_cloud_metadata: ~
-        - add_docker_metadata: ~
-        - add_kubernetes_metadata: ~
-      ```
-    </Tab>
-    <Tab>
-      The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
-
-      __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ field in the Logstash outputs section are correctly populated.
-      If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
-      The ___'paths'___ field will need to be set to the location of the logs you want to send to your Stack.
-      
-      Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where 
-      you installed Filebeat in the previous step).
-
-      ```yaml copy
-      ###################### Logit.io Filebeat Configuration ########################
-      # ============================== Filebeat inputs ==============================
-      filebeat.inputs:
-      - type: kafka
-        hosts:
-          - name-of-your-broker:your-broker-port
-        # - localhost:9092        (Example)
-        topics: ["name-of-your-topic", "name-of-another-topic"]
-        group_id: "filebeat"
-
-      # ============================== Filebeat modules ==============================
-      filebeat.config.modules:
-        path: ${path.config}/modules.d/*.yml
-        reload.enabled: false
-        #reload.period: 10s
-
-      # ================================== Outputs ===================================
-      # ------------------------------ Logstash Output -------------------------------
-      output.logstash:
-        hosts: ["@logstash.host:@logstash.sslPort"]
-        loadbalance: true
-        ssl.enabled: true
-
-      # ================================= Processors =================================
-      processors:
-        - add_host_metadata:
-            when.not.contains.tags: forwarded
-        - add_cloud_metadata: ~
-        - add_docker_metadata: ~
-        - add_kubernetes_metadata: ~
-      ```
-    </Tab>
-  </Tabs>
+  # ================================== Outputs ===================================
+  # ------------------------------ Logstash Output -------------------------------
+  output.logstash:
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
+  ```
 
   ### Validate Configuration
 
