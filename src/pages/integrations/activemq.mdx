@@ -32,12 +32,12 @@ Follow the steps below to ship ActiveMQ logs and metrics to your Logit.io stacks
   ### Update your filebeat.yml file
 
   Filebeat does not currently have a module to process the ActiveMQ application logs.
-          
+
   Therefore we need to add the ActiveMQ application log location to the filebeat inputs. 
-  
+
   Add the following to the end of the log input example, before the `filebeat.config.modules` section.
 
-  ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+  ```yml copy filename="filebeat.yml" showLineNumbers /@logstash.host/ /@logstash.sslPort/
   ###################### Logit.io Filebeat Configuration ########################
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:

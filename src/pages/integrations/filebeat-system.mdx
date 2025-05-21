@@ -179,7 +179,7 @@ Follow the steps below to send your observability data to Logit.io
       discovers and handles input data.  
     </Callout>
     
-```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+```yml copy filename="filebeat.yml" showLineNumbers /@logstash.host/ /@logstash.sslPort/
   ###################### Logit.io Filebeat Configuration ########################
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
@@ -198,13 +198,6 @@ Follow the steps below to send your observability data to Logit.io
     reload.enabled: false
     #reload.period: 10s
 
-  # ================================== Outputs ===================================
-  # ------------------------------ Logstash Output -------------------------------
-  output.logstash:
-    hosts: ["@logstash.host:@logstash.sslPort"]
-    loadbalance: true
-    ssl.enabled: true
-
   # ================================= Processors =================================
   processors:
     - add_host_metadata:
@@ -212,6 +205,13 @@ Follow the steps below to send your observability data to Logit.io
     - add_cloud_metadata: ~
     - add_docker_metadata: ~
     - add_kubernetes_metadata: ~
+
+  # ================================== Outputs ===================================
+  # ------------------------------ Logstash Output -------------------------------
+  output.logstash:
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
   ```
     </Tab>
     <Tab>
@@ -225,7 +225,7 @@ Follow the steps below to send your observability data to Logit.io
         discovers and handles input data.  
       </Callout>
     
-```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+```yml copy filename="filebeat.yml" showLineNumbers /@logstash.host/ /@logstash.sslPort/
   ###################### Logit.io Filebeat Configuration ########################
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
@@ -244,13 +244,6 @@ Follow the steps below to send your observability data to Logit.io
     reload.enabled: false
     #reload.period: 10s
 
-  # ================================== Outputs ===================================
-  # ------------------------------ Logstash Output -------------------------------
-  output.logstash:
-    hosts: ["@logstash.host:@logstash.sslPort"]
-    loadbalance: true
-    ssl.enabled: true
-
   # ================================= Processors =================================
   processors:
     - add_host_metadata:
@@ -258,6 +251,13 @@ Follow the steps below to send your observability data to Logit.io
     - add_cloud_metadata: ~
     - add_docker_metadata: ~
     - add_kubernetes_metadata: ~
+
+  # ================================== Outputs ===================================
+  # ------------------------------ Logstash Output -------------------------------
+  output.logstash:
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
   ```
     </Tab>
     <Tab>
@@ -271,7 +271,7 @@ Follow the steps below to send your observability data to Logit.io
         discovers and handles input data.  
       </Callout>
     
-```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+```yml copy filename="filebeat.yml" showLineNumbers /@logstash.host/ /@logstash.sslPort/
   ###################### Logit.io Filebeat Configuration ########################
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
@@ -290,13 +290,6 @@ Follow the steps below to send your observability data to Logit.io
     reload.enabled: false
     #reload.period: 10s
 
-  # ================================== Outputs ===================================
-  # ------------------------------ Logstash Output -------------------------------
-  output.logstash:
-    hosts: ["@logstash.host:@logstash.sslPort"]
-    loadbalance: true
-    ssl.enabled: true
-
   # ================================= Processors =================================
   processors:
     - add_host_metadata:
@@ -304,6 +297,13 @@ Follow the steps below to send your observability data to Logit.io
     - add_cloud_metadata: ~
     - add_docker_metadata: ~
     - add_kubernetes_metadata: ~
+
+  # ================================== Outputs ===================================
+  # ------------------------------ Logstash Output -------------------------------
+  output.logstash:
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
   ```
     </Tab>
     <Tab>
@@ -317,7 +317,7 @@ Follow the steps below to send your observability data to Logit.io
         discovers and handles input data.  
       </Callout>
     
-```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+```yml copy filename="filebeat.yml" showLineNumbers /@logstash.host/ /@logstash.sslPort/
   ###################### Logit.io Filebeat Configuration ########################
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
@@ -336,13 +336,6 @@ Follow the steps below to send your observability data to Logit.io
     reload.enabled: false
     #reload.period: 10s
 
-  # ================================== Outputs ===================================
-  # ------------------------------ Logstash Output -------------------------------
-  output.logstash:
-    hosts: ["@logstash.host:@logstash.sslPort"]
-    loadbalance: true
-    ssl.enabled: true
-
   # ================================= Processors =================================
   processors:
     - add_host_metadata:
@@ -350,6 +343,13 @@ Follow the steps below to send your observability data to Logit.io
     - add_cloud_metadata: ~
     - add_docker_metadata: ~
     - add_kubernetes_metadata: ~
+
+  # ================================== Outputs ===================================
+  # ------------------------------ Logstash Output -------------------------------
+  output.logstash:
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
   ```
     </Tab>
   </Tabs>
