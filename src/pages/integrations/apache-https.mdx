@@ -1,16 +1,79 @@
 ---
 title: Apache HTTP Server
-metaTitle: Integrate and Configure Telegraf to send Apache HTTP Server Metrics
-subTitle: Ship your Apache HTTP Server Metrics via Telegraf to your Logit.io Stack
+metaTitle: Learn How to Integrate and Configure Filebeat to Send Apache Logs. Integrate and Configure Telegraf to send Apache HTTP Server Metrics
+subTitle: Ship Apache access and error logs along with your Server Metrics via Telegraf to your Logit.io Stack
 logo: apachehttp
 color: "#4d4d4d"
-description: Use our example to configure Telegraf to ship Apache HTTP Server metrics to Logit.io. Configure Telegraf to send Apache HTTP Server metrics to ELK.
-stackTypes: metrics
+description: Use our example to configure Filebeat and Telegraf to ship Apache HTTP Server logs and metrics to Logit.io.
+stackTypes: logs, metrics
 sslPortType: beats-ssl
-tags: Telegraf, Metrics, Telemetry, OpenTelemetry, Health, Instrumentation, Apache HTTP Server, Prometheus, Web Server, Http
+tags: logs, metrics, Apache, Apache2, HTTP, HTTPD, Web, WebServer, Telegraf, Metrics, Telemetry, OpenTelemetry, Health, Instrumentation, Apache HTTP Server, Prometheus, Web Server, Http
+dashboardIds: apache
 ---
 
 Follow the steps below to send your observability data to Logit.io
+
+<Steps>
+  ## Logs
+
+  Use Filebeat to ship access and error logs from Apache to your Logit.io Stack.
+
+  ### Install Integration
+  <InstallIntegration/>
+  ### Install Filebeat
+
+  <InstallFilebeat />
+
+  ### Update Your Configuration File
+
+  <UpdateFilebeatConfigFile />
+
+  ### Validate Configuration
+  
+  <ValidateBeat beatname="filebeat" />
+
+  ### Start filebeat
+
+  <StartFilebeat />
+
+  ### Module Configuration (Advanced)
+
+  Additional module configuration can be done using the per module config files located in the modules.d folder, most commonly this would be to read logs from a non-default location
+          
+  __deb/rpm__ `/etc/filebeat/modules.d/apache.yml`  
+  __mac/win__ `<EXTRACTED_ARCHIVE>/modules.d/apache.yml`
+
+  ```yml copy
+  - module: apache
+    # Access logs
+    access:
+      enabled: true
+
+    # Set custom paths for the log files. If left empty,
+    # Filebeat will choose the paths depending on your OS.
+    # var.paths: ["/custom/path/to/logs"]
+
+    # Error logs
+    error:
+      enabled: true
+
+    # Set custom paths for the log files. If left empty,
+    # Filebeat will choose the paths depending on your OS.
+    # var.paths: ["/custom/path/to/logs"]
+  ```
+  ### Check Logit.io for your logs
+  <LaunchStack utmMedium="logs" utmCampaign="apache" source="apache" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+
+  ### Apache Dashboard
+
+  The Apache module comes with predefined Kibana dashboards. To view your dashboards for any of your Logit.io stacks, launch Logs and choose Dashboards.
+  ![Predefined kibana dashboard screenshot](@/images/integrations/filebeat/apache.png)
+          
+</Steps>
 
 <Steps>
   ## Metrics
@@ -23,12 +86,12 @@ Follow the steps below to send your observability data to Logit.io
 
   <InstallTelegraf />
 
-  ### Configure the Telegraf input plugin
+  ### Configure Telegraf
 
-  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `telegraf.conf` from the previous step.
 
-  ```toml copy
-  # Read Apache status information (mod_status)
+  ```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
+  ### Read Apache status information (mod_status)
   [[inputs.apache]]
     ## An array of URLs to gather from, must be directed at the machine
     ## readable version of the mod_status page including the auto query string.
@@ -48,6 +111,26 @@ Follow the steps below to send your observability data to Logit.io
     # tls_key = "/etc/telegraf/key.pem"
     ## Use TLS but skip chain & host verification
     # insecure_skip_verify = false
+  
+  ### System metrics
+  [[inputs.disk]]
+  [[inputs.net]]
+  [[inputs.mem]]
+  [[inputs.system]]
+  [[inputs.cpu]]
+    percpu = false
+    totalcpu = true
+    collect_cpu_time = true
+    report_active = true
+
+  ### Output
+  [[outputs.http]]
+    url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+    data_format = "prometheusremotewrite"
+
+    [outputs.http.headers]
+      Content-Type = "application/x-protobuf"
+      Content-Encoding = "snappy"
   ```
 
   <Callout type="info">

@@ -24,12 +24,12 @@ Follow the steps below to send your observability data to Logit.io
 
   <InstallTelegraf />
 
-  ### Configure the Telegraf input plugin
+  ### Configure Telegraf
 
-  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `telegraf.conf` from the previous step.
 
-  ```toml copy
-  # Gather metrics from the Tomcat server status page.
+  ```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
+  ### Gather metrics from the Tomcat server status page.
   [[inputs.tomcat]]
     ## URL of the Tomcat server status
     # url = "http://127.0.0.1:8080/manager/status/all?XML=true"
@@ -47,15 +47,31 @@ Follow the steps below to send your observability data to Logit.io
     # tls_key = "/etc/telegraf/key.pem"
     ## Use TLS but skip chain & host verification
     # insecure_skip_verify = false
+
+  ### System metrics
+  [[inputs.disk]]
+  [[inputs.net]]
+  [[inputs.mem]]
+  [[inputs.system]]
+  [[inputs.cpu]]
+    percpu = false
+    totalcpu = true
+    collect_cpu_time = true
+    report_active = true
+
+  ### Output
+  [[outputs.http]]
+    url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+    data_format = "prometheusremotewrite"
+
+    [outputs.http.headers]
+      Content-Type = "application/x-protobuf"
+      Content-Encoding = "snappy"
   ```
 
   <Callout type="info">
     Read more about how to configure data scraping and configuration options for [Apache Tomcat](https://github.com/influxdata/telegraf/blob/release-1.18/plugins/inputs/tomcat/README.md)
   </Callout>
-
-  ### Configure The Output plugin
-
-  <TelegrafOutputPlugin />
 
   ### Start Telegraf
 

@@ -3,7 +3,7 @@ title: Ceph
 metaTitle: Learn How to Integrate and Configure Telegraf to Send Ceph Metrics
 subTitle: Ship your Ceph Metrics via Telegraf to your Logit.io Stack
 color: "#4d4d4d"
-description: Use our example to configure Telegraf to ship Ceph metrics to your Logit.io stacks. Configure Telegraf to send Ceph metrics to Logstash or Elastic.
+description: Use our example to configure Telegraf to ship Ceph metrics to your Logit.io stacks.
 stackTypes: metrics
 sslPortType: beats-ssl
 tags: Telegraf, Metrics, Telemetry, OpenTelemetry, Health, Instrumentation, Prometheus, Ceph, Distributed Storage
@@ -14,7 +14,7 @@ Follow the steps below to send your observability data to Logit.io
 <Steps>
   ## Metrics
 
-  Configure Telegraf to ship Ceph metrics to your Logit.io stacks via Logstash.
+  Configure Telegraf to ship Ceph metrics to your Logit.io stacks
   
   ### Install Integration
   <InstallIntegration/>
@@ -23,9 +23,9 @@ Follow the steps below to send your observability data to Logit.io
 
   <InstallTelegraf />
 
-  ### Configure the Telegraf input plugin
+  ### Configure Telegraf
 
-  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `telegraf.conf` from the previous step.
 
   ```toml copy
   # Collects performance metrics from the MON, OSD, MDS and RGW nodes
@@ -71,15 +71,31 @@ Follow the steps below to send your observability data to Logit.io
     ## Whether to gather statistics via ceph commands, requires ceph_user
     ## and ceph_config to be specified
     gather_cluster_stats = false
+
+  ### System metrics
+  [[inputs.disk]]
+  [[inputs.net]]
+  [[inputs.mem]]
+  [[inputs.system]]
+  [[inputs.cpu]]
+    percpu = false
+    totalcpu = true
+    collect_cpu_time = true
+    report_active = true
+
+  ### Output
+  [[outputs.http]]
+    url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+    data_format = "prometheusremotewrite"
+
+    [outputs.http.headers]
+      Content-Type = "application/x-protobuf"
+      Content-Encoding = "snappy"
   ```
 
   <Callout type="info">
     Read more about how to configure data scraping and configuration options for [Ceph](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/ceph)
   </Callout>
-
-  ### Configure The Output plugin
-
-  <TelegrafOutputPlugin />
 
   ### Start Telegraf
 

@@ -25,10 +25,10 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Configure the Telegraf input plugin
 
-  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `telegraf.conf` from the previous step.
 
-  ```toml copy
-  # Read metrics from one or many mcrouter servers.
+  ```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
+  ### Read metrics from one or many mcrouter servers.
   [[inputs.mcrouter]]
     ## An array of address to gather stats about. Specify an ip or hostname
     ## with port. ie tcp://localhost:11211, tcp://10.0.0.1:11211, etc.
@@ -36,15 +36,31 @@ Follow the steps below to send your observability data to Logit.io
 
     ## Timeout for metric collections from all servers.  Minimum timeout is "1s".
     # timeout = "5s"
+
+  ### System metrics
+  [[inputs.disk]]
+  [[inputs.net]]
+  [[inputs.mem]]
+  [[inputs.system]]
+  [[inputs.cpu]]
+    percpu = false
+    totalcpu = true
+    collect_cpu_time = true
+    report_active = true
+
+  ### Output
+  [[outputs.http]]
+    url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+    data_format = "prometheusremotewrite"
+
+    [outputs.http.headers]
+      Content-Type = "application/x-protobuf"
+      Content-Encoding = "snappy"
   ```
 
   <Callout type="info">
     Read more about how to configure data scraping and configuration options for [Mcrouter](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/mcrouter)
   </Callout>
-
-  ### Configure The Output plugin
-
-  <TelegrafOutputPlugin />
 
   ### Start Telegraf
 

@@ -26,10 +26,10 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Configure the Telegraf input plugin
 
-  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `telegraf.conf` from the previous step.
 
   ```toml copy
-  # Gather repository information from GitHub hosted repositories.
+  ### Gather repository information from GitHub hosted repositories.
   [[inputs.github]]
     ## List of repositories to monitor
     repositories = [
@@ -53,15 +53,20 @@ Follow the steps below to send your observability data to Logit.io
     ## Available fields are:
     ##  - pull-requests -- number of open and closed pull requests (2 API-calls per repository)
     # additional_fields = []
+
+  ### Output
+  [[outputs.http]]
+    url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+    data_format = "prometheusremotewrite"
+
+    [outputs.http.headers]
+      Content-Type = "application/x-protobuf"
+      Content-Encoding = "snappy"
   ```
 
   <Callout type="info">
     Read more about how to configure data scraping and configuration options for [Github](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/github/README.md)
   </Callout>
-
-  ### Configure The Output plugin
-
-  <TelegrafOutputPlugin />
 
   ### Start Telegraf
 

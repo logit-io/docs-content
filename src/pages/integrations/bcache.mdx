@@ -3,7 +3,7 @@ title: bCache
 metaTitle: Learn How to Integrate and Configure Telegraf to Send bCache Metrics
 subTitle: Ship your bCache Metrics via Telegraf to your Logit.io Stack
 color: "#4d4d4d"
-description: Use our example to configure Telegraf to ship bCache metrics to your Logit.io stacks. Configure Telegraf to send bCache metrics to Logstash or Elastic.
+description: Use our example to configure Telegraf to ship bCache metrics to your Logit.io stacks.
 stackTypes: metrics
 sslPortType: beats-ssl
 tags: Telegraf, Metrics, Telemetry, OpenTelemetry, Health, Instrumentation, bCache, Prometheus, Cache, Linux Cache, Bcache
@@ -14,7 +14,7 @@ Follow the steps below to send your observability data to Logit.io
 <Steps>
   ## Metrics
 
-  Configure Telegraf to ship bCache metrics to your Logit.io stacks via Logstash.
+  Configure Telegraf to ship bCache metrics to your Logit.io stacks
   
   ### Install Integration
   <InstallIntegration/>
@@ -23,31 +23,47 @@ Follow the steps below to send your observability data to Logit.io
 
   <InstallTelegraf />
 
-  ### Configure the Telegraf input plugin
+  ### Configure Telegraf
 
-  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `telegraf.conf` from the previous step.
 
-  ```toml copy
+  ```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
   # Read metrics of bcache from stats_total and dirty_data
   # This plugin ONLY supports Linux
   [[inputs.bcache]]
     ## Bcache sets path
     ## If not specified, then default is:
-    bcachePath = "/sys/fs/bcache"
+    # bcachePath = "/sys/fs/bcache"
 
     ## By default, Telegraf gather stats for all bcache devices
     ## Setting devices will restrict the stats to the specified
     ## bcache devices.
-    bcacheDevs = ["bcache0"]
+    # bcacheDevs = ["bcache0"]
+
+  ### System metrics
+  [[inputs.disk]]
+  [[inputs.net]]
+  [[inputs.mem]]
+  [[inputs.system]]
+  [[inputs.cpu]]
+    percpu = false
+    totalcpu = true
+    collect_cpu_time = true
+    report_active = true
+
+  ### Output
+  [[outputs.http]]
+    url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+    data_format = "prometheusremotewrite"
+
+    [outputs.http.headers]
+      Content-Type = "application/x-protobuf"
+      Content-Encoding = "snappy"
   ```
 
   <Callout type="info">
     Read more about how to configure data scraping and configuration options for [bCache](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/bcache)
   </Callout>
-
-  ### Configure The Output plugin
-
-  <TelegrafOutputPlugin />
 
   ### Start Telegraf
 

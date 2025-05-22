@@ -21,29 +21,34 @@ Follow the steps below to send your observability data to Logit.io
   
   ### Install Integration
   <InstallIntegration/>
-### Set up syslog server output
+  
+  ### Set up syslog server output
 
-Locate the registered servers page (under configuration) in McAfee Epolicy Orchestrator.
+  Locate the registered servers page (under configuration) in McAfee Epolicy Orchestrator.
 
-![Registered servers page](@/images/integrations/mcafee/syslog-server01.png)
+  ![Registered servers page](@/images/integrations/mcafee/syslog-server01.png)
 
-Now change the server type to syslog server and enter a suitable name for the connection, now hit next.
+  Now change the server type to syslog server and enter a suitable name for the connection, now hit next.
 
-![Change server to syslog server](@/images/integrations/mcafee/syslog-server02.png)
-Press next and you'll be presented with an option for the syslog server and syslog port.
+  ![Change server to syslog server](@/images/integrations/mcafee/syslog-server02.png)
+  Press next and you'll be presented with an option for the syslog server and syslog port.
 
-Enter your Logstash endpoint address @logstash.host and syslog-ssl port number @logstash.sslPort
+  Enter your Logstash endpoint address and syslog-ssl port number.
+  ```text /@logstash.host/ /@logstash.sslPort/
+  Server name:       @logstash.host
+  TCP port number:   @logstash.sslPort
+  ```
 
-![Enter logstash endpoint](@/images/integrations/mcafee/syslog-server03.png)
+  ![Enter logstash endpoint](@/images/integrations/mcafee/syslog-server03.png)
 
-Once you have entered the details you can test the connection using the button on screen.
+  Once you have entered the details you can test the connection using the button on screen.
 
-![Connect to server](@/images/integrations/mcafee/syslog-server04.png)
+  ![Connect to server](@/images/integrations/mcafee/syslog-server04.png)
 
-### Launch Logit.io to view your logs
-<LaunchStack utmMedium="logs" utmCampaign="mcafeeepo" source="McAfee_Epolicy_Orchestrator" />
+  ### Launch Logit.io to view your logs
+  <LaunchStack utmMedium="logs" utmCampaign="mcafeeepo" source="McAfee_Epolicy_Orchestrator" />
 
-### How to diagnose no data in Stack
+  ### How to diagnose no data in Stack
 
 <DiagnoseNoData />
 </Steps>

@@ -204,18 +204,6 @@ via [Logstash](/integrations/logstash).
 
     # Period on which files under path should be checked for changes
     #reload.period: 10s
-  # ======================= Elasticsearch template setting =======================
-  setup.template.settings:
-    index.number_of_shards: 1
-    index.codec: best_compression
-    #_source.enabled: false
-
-  # ================================== Outputs ===================================
-  # ------------------------------ Logstash Output -------------------------------
-  output.logstash:
-    hosts: ["@logstash.host:@logstash.sslPort"]
-    loadbalance: true
-    ssl.enabled: true
 
   # ================================= Processors =================================
   processors:
@@ -223,6 +211,13 @@ via [Logstash](/integrations/logstash).
     - add_cloud_metadata: ~
     - add_docker_metadata: ~
     - add_kubernetes_metadata: ~
+
+  # ================================== Outputs ===================================
+  # ------------------------------ Logstash Output -------------------------------
+  output.logstash:
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
   ```
 
   ### Validate Configuration

@@ -4,7 +4,7 @@ metaTitle: Integrate and Configure Telegraf to send CouchDB Metrics
 subTitle: Ship your CouchDB Metrics via Telegraf to your Logit.io Stack
 logo: couchdb
 color: "#4d4d4d"
-description: Use our example to configure Telegraf to ship CouchDB metrics to your Logit.io stacks. Configure Telegraf to send CouchDB metrics to Logstash or Elastic.
+description: Use our example to configure Telegraf to ship CouchDB metrics to your Logit.io stacks.
 stackTypes: metrics
 sslPortType: beats-ssl
 tags: Telegraf, Metrics, Telemetry, OpenTelemetry, Health, Instrumentation, CouchDB, Prometheus, NoSQL, Database, Couchdb
@@ -15,7 +15,7 @@ Follow the steps below to send your observability data to Logit.io
 <Steps>
   ## Metrics
 
-  Configure Telegraf to ship CouchDB metrics to your Logit.io stacks via Logstash.
+  Configure Telegraf to ship CouchDB metrics to your Logit.io stacks.
   
   ### Install Integration
   <InstallIntegration/>
@@ -26,10 +26,10 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Configure the Telegraf input plugin
 
-  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `telegraf.conf` from the previous step.
 
-  ```toml copy
-  # Read CouchDB Stats from one or more servers
+  ```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
+  ### Read CouchDB Stats from one or more servers
   [[inputs.couchdb]]
     ## Works with CouchDB stats endpoints out of the box
     ## Multiple Hosts from which to read CouchDB stats:
@@ -38,15 +38,31 @@ Follow the steps below to send your observability data to Logit.io
     ## Use HTTP Basic Authentication.
     # basic_username = "telegraf"
     # basic_password = "p@ssw0rd"
+
+  ### System metrics
+  [[inputs.disk]]
+  [[inputs.net]]
+  [[inputs.mem]]
+  [[inputs.system]]
+  [[inputs.cpu]]
+    percpu = false
+    totalcpu = true
+    collect_cpu_time = true
+    report_active = true
+
+  ### Output
+  [[outputs.http]]
+    url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+    data_format = "prometheusremotewrite"
+
+    [outputs.http.headers]
+      Content-Type = "application/x-protobuf"
+      Content-Encoding = "snappy"
   ```
 
   <Callout type="info">
     Read more about how to configure data scraping and configuration options for [CouchDB](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/couchdb/README.md)
   </Callout>
-
-  ### Configure The Output plugin
-
-  <TelegrafOutputPlugin />
 
   ### Start Telegraf
 

@@ -41,7 +41,7 @@ Follow the steps below to send your observability data to Logit.io
 
   <Tabs items={["DEB/RPM", "macOS/Windows"]}>
     <Tab>
-      ```ps1 copy
+      ```bash copy
       /etc/heartbeat/heartbeat.yml
       ```
     </Tab>
@@ -56,9 +56,9 @@ Follow the steps below to send your observability data to Logit.io
  
   The following example shows a basic configuration for each of the three different types of monitors, ICMP, TCP, and HTTP.
         
-  Copy the contents below and paste this into the heartbeat.yml file at line 39
+  Copy the contents below and paste this into the heartbeat.yml file
 
-  ```yaml copy
+  ```yaml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
   # Configure monitors inline
   heartbeat.monitors:
     - type: http
@@ -89,31 +89,18 @@ Follow the steps below to send your observability data to Logit.io
   #     check.response.status: 200
   # heartbeat.scheduler:
   #   limit: 10
-  ```
-
-  <Callout type="info">
-      There's also a full example configuration file called heartbeat.reference.yml that shows all the possible options.
-  </Callout>
-
-  ### Configure Output
   
-  We'll be shipping to Logstash so that we have the option to run filters before the data is indexed.  
-  Comment out the elasticsearch output block.
-
-  ```yaml copy
-  ## Comment out elasticsearch output
-  #output.elasticsearch:
-  #  hosts: ["localhost:9200"]
-  ```
-  
-  Uncomment and change the logstash output to match below:
-
-  ```yaml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+  # ================================== Outputs ===================================
+  # ------------------------------ Logstash Output -------------------------------  
   output.logstash:
     hosts: ["@logstash.host:@logstash.sslPort"]
     loadbalance: true
     ssl.enabled: true
   ```
+
+  <Callout type="info">
+      There's also a full example configuration file called heartbeat.reference.yml that shows all the possible options.
+  </Callout>
 
   ### Validate Configuration
 
@@ -123,13 +110,13 @@ Follow the steps below to send your observability data to Logit.io
 
   <Tabs items={["DEB/RPM", "macOS", "Windows"]}>
     <Tab>
-       ```ps1 copy
+       ```bash copy
         sudo systemctl enable heartbeat
         sudo systemctl start heartbeat
         ```
     </Tab>
     <Tab>
-      ```ps1 copy
+      ```bash copy
       sudo chown root heartbeat.yml 
       sudo chown root modules.d/{modulename}.yml 
       sudo ./heartbeat -e

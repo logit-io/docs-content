@@ -14,7 +14,7 @@ Follow the steps below to send your observability data to Logit.io
 <Steps>
   ## Metrics
 
-  Configure Telegraf to ship Neptune Apex metrics to your Logit.io stacks via Logstash.
+  Configure Telegraf to ship Neptune Apex metrics to your Logit.io stacks
   
   ### Install Integration
   <InstallIntegration/>
@@ -24,9 +24,9 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Configure the Telegraf input plugin
 
-  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `telegraf.conf` from the previous step.
 
-  ```toml copy
+  ```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
   # Neptune Apex data collector
   [[inputs.neptune_apex]]
     ## The Neptune Apex plugin reads the publicly available status.xml data from a local Apex.
@@ -38,15 +38,30 @@ Follow the steps below to send your observability data to Logit.io
 
     ## The response_timeout specifies how long to wait for a reply from the Apex.
     #response_timeout = "5s"
-  ```
 
+  ### System metrics
+  [[inputs.disk]]
+  [[inputs.net]]
+  [[inputs.mem]]
+  [[inputs.system]]
+  [[inputs.cpu]]
+    percpu = false
+    totalcpu = true
+    collect_cpu_time = true
+    report_active = true
+
+  ### Output
+  [[outputs.http]]
+    url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+    data_format = "prometheusremotewrite"
+
+    [outputs.http.headers]
+      Content-Type = "application/x-protobuf"
+      Content-Encoding = "snappy"
+  ```
   <Callout type="info">
     Read more about how to configure data scraping and configuration options for [Neptune Apex](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/neptune_apex)
   </Callout>
-
-  ### Configure the output plugin
-
-  <TelegrafOutputPlugin />
 
   ### Start Telegraf
 

@@ -23,26 +23,26 @@ Follow the steps below to send your observability data to Logit.io
 
   Antivirus Clients Unmanaged
           
-  ```cmd copy
+  ```
   C:\ProgramData\AVAST Software\Avast\log\
   C:\ProgramData\AVAST Software\Persistent Data\Avast\Logs\
   ```
 
   Antivirus Clients Managed
 
-  ```cmd copy
+  ```
   C:\Program Files (x86)\AVAST Software\Business Agent\log.txt
   C:\Program Files (x86)\AVAST Software\Business Agent\smbpol.db
   ```
 
   MacOS X
 
-  ```cmd copy
+  ```
   /var/log/system.log
   ```
 
   Component Logs
-  ```cmd copy
+  ```
   Avastsvc (core service log): C:\ProgramData\AVAST Software\Avast\log\AvastSvc.log
   Antivirus UI log (issues with UI start, popups etc listed here): C:\ProgramData\AVAST Software\Avast\log\AvastUI.log
   Antivirus UI javascript content: C:\ProgramData\AVAST Software\Avast\log\HtmlRemoteContent.log
@@ -74,7 +74,7 @@ Follow the steps below to send your observability data to Logit.io
 
   Copy and use the Filebeat configuration below.
 
-  ```yml copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
+  ```yml copy filename="filebeat.yml" showLineNumbers /@logstash.host/ /@logstash.sslPort/
   ####################### Logit.io Filebeat Configuration ########################
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
@@ -136,15 +136,15 @@ Follow the steps below to send your observability data to Logit.io
 
   filebeat.registry.path: 'C:\ProgramData\Filebeat'
 
+  # ================================= Processors =================================
+  processors:
+    - add_host_metadata:
+
   # ================================== Outputs ===================================
   output.logstash:
     hosts: ["@logstash.host:@logstash.sslPort"]
     loadbalance: true
     ssl.enabled: true
-
-  # ================================= Processors =================================
-  processors:
-    - add_host_metadata:
   ```
 
   ### Start filebeat

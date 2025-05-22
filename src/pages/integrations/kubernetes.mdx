@@ -1,13 +1,13 @@
 ---
 title: Kubernetes
-metaTitle: Learn How to Integrate and Configure Kubernetes to Ship Logs
+metaTitle: Learn How to Integrate and Configure Kubernetes to Ship Logs and Metrics
 pageTitle: Kubernetes Logging
 subTitle: Ship Kubernetes container logs to your hosted Logstash instance at Logit.io
 logo: kubernetes
 color: "#3a64ad"
 popular: true
 description: Use our example to learn how to send Kubernetes container logs to your Hosted ELK Logstash instance. Configure Filebeat to send data to Logit. 
-stackTypes: logs
+stackTypes: logs, metrics
 sslPortType: beats-ssl
 tags: Logs, Kubernetes, K8s, GKE, EKS, Cloud
 ---
@@ -263,6 +263,32 @@ Follow the steps below to send your observability data to Logit.io
   <LaunchStack utmMedium="logs" utmCampaign="kubernetes" source="kubernetes" />
 
 </Steps>
+<Steps>
+  ## Metrics
+  
+  Helm charts are a commonly used way to define and template a kubernetes application. This one will start a telegraf container running on each of your kubernetes nodes to collect metrics for that node.
+
+  ### Add the repository to helm
+
+  ```cmd copy 
+  helm repo add influxdata https://helm.influxdata.com/
+  ```
+
+  ### Install and configure the telegraf-ds chart
+
+  ```cmd copy /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
+  helm upgrade --install telegraf \
+  --set config.agent.interval="60s" \
+  --set config.outputs[0].http.url="https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write" \
+  --set config.outputs[0].http.data_format="prometheusremotewrite" \
+  --set config.outputs[0].http.headers.Content-Type="application/x-protobuf" \
+  --set config.outputs[0].http.headers.Content-Encoding="snappy" \
+  --set config.docker_endpoint=null \
+  influxdata/telegraf-ds
+  ```
+</Steps>
+
+
 
 ### Kubernetes Logging to OpenSearch Overview
 
