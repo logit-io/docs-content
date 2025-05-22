@@ -23,9 +23,9 @@ Follow the steps below to send your observability data to Logit.io
 
   <InstallTelegraf />
 
-  ### Configure the Telegraf input plugin
+  ### Configure Telegraf
 
-  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `/etc/telegraf/telegraf.conf` from the previous step.
+  The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `telegraf.conf` from the previous step.
 
   ```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
   ### Collect bond interface status, slaves statuses and failures count
