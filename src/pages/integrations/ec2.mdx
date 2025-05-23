@@ -102,10 +102,9 @@ Follow the steps below to send your observability data to Logit.io
 
   <AddS3Input type="aws_ec2" stackType="logs" utmMedium="logs" utmCampaign="awsec2" input="s3" buttonText="AWS" />
   
+  ### Launch OpenSearch Dashboards to View Your Data
 
-  ### Check Logit.io for your metrics
-
-  <LaunchStack source="ec2_metrics" utmMedium="logs" utmCampaign="awsec2" />
+  <LaunchVisualizer type="logs" />
 
 </Steps>
 

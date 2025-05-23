@@ -85,8 +85,9 @@ Follow the steps below to send your observability data to Logit.io
     Logit.io will verify your input before it is applied, we will contact you to confirm when this has been completed.
   </Callout>
 
-  ### Launch Logit.io to view your logs
-  <LaunchStack utmMedium="google" utmCampaign="googlecloudrun" source="pubsubbeat" />
+  ### Launch OpenSearch Dashboards to View Your Data
+
+  <LaunchVisualizer type="logs" />
 </Steps>
 
 <Steps>
@@ -118,8 +119,9 @@ Follow the steps below to send your observability data to Logit.io
 
   <StartTelegraf />
 
-  ### View your metrics
-  <LaunchStack stackType="metrics" source="Google_Cloud_Run_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-GoogleCloudRun-metrics" />
+  ### Launch Grafana to View Your Data
+
+  <LaunchVisualizer type="metrics" />
 
   ### How to diagnose no data in Stack
 

@@ -114,9 +114,9 @@ Follow the steps below to send your observability data to Logit.io
   We recommend removing that ```$ModLoad lmnsd_gtls``` option and relying on autoloading. If your ```lmnsd_gtls``` needs to be explicitly loaded, like because it is in a 
   non-default location, move the ```$DefaultNetstreamDriverCAFile``` config line above the ```$ModLoad``` line.
 
-  ### Check Logit.io for your logs
+  ### Launch OpenSearch Dashboards to View Your Data
 
-  <LaunchStack utmMedium="logs" utmCampaign="syslog" source="syslog" />
+  <LaunchVisualizer type="logs" />
 
   ### How to diagnose no data in Stack
 

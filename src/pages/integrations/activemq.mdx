@@ -80,9 +80,9 @@ Follow the steps below to ship ActiveMQ logs and metrics to your Logit.io stacks
 
   <StartFilebeat />
 
-  ### Launch Logit.io to view your logs
+  ### Launch OpenSearch Dashboards to View Your Data
 
-  <LaunchStack utmMedium="logs" utmCampaign="activemq" source="activemq" />
+  <LaunchVisualizer type="logs" />
 
   ### How to diagnose no data in Stack
 
@@ -162,8 +162,9 @@ Follow the steps below to ship ActiveMQ logs and metrics to your Logit.io stacks
 
   <StartTelegraf />
 
-  ### View your metrics
-  <LaunchStack source="ActiveMQ_Metrics_via_Telegraf" utmMedium="metrics" utmCampaign="telegraf-ActiveMQ-metrics" />
+  ### Launch Grafana to View Your Data
+
+  <LaunchVisualizer type="metrics" />
 
   ### How to diagnose no data in Stack
 
