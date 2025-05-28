@@ -1,5 +1,5 @@
 ---
-title: AWS logs from an S3 bucket using a SQS queue
+title: AWS S3 bucket with an SQS queue
 metaTitle: Integrate and Configure AWS to Send AWS Logs using S3 and SQS
 subTitle: Intelligently ingest logs from an Amazon S3 bucket using ObjectCreated notifications to your Stack
 logo: aws-s3
@@ -32,18 +32,20 @@ Follow the steps below to send your observability data to Logit.io
   From within the AWS console, navigate to **Simple Queue Service**, then confirm your are in the **same** region as your S3 bucket.
  
   Click **Create queue**
- 
+
+  ![SQS queue creation](@/images/integrations/aws-s3-and-sqs/sqs-queue.png)
+
   Type: Standard  
   Name: *Name of your queue*  
   Visibility timeout: 5 minutes  
   Message retention period: 7 days  
   Access policy: Choose **Advanced** and use the policy template below.
- 
+
   This will grant the listed S3 buckets permission to send messages to the SQS queue.  
   **Make sure you update with Resource details for your SQS queue and the name of your S3 bucket(s)**  
   If you only have one bucket, delete the 2nd entry from the aws:SourceArn condition key and remove the trailing comma on the line above.
   
-  ```json
+  ```json copy
     {
         "Version": "2012-10-17",
         "Statement": [
@@ -66,7 +68,9 @@ Follow the steps below to send your observability data to Logit.io
         ]
     }
   ```
- 
+  
+  ![SQS queue permissions](@/images/integrations/aws-s3-and-sqs/sqs-permissions.png)
+   
   Scroll to the bottom of the page and click **Save**
  
   ### Configure the S3 bucket
@@ -75,13 +79,19 @@ Follow the steps below to send your observability data to Logit.io
   From within the AWS console, navigate to **S3** and select your bucket.
  
   Click the **Properties** tab, scroll down to **Event notifications** and **Create event notification**
+  
+  ![S3 event notifications](@/images/integrations/aws-s3-and-sqs/s3-event-notification.png)
+
+  ![S3 event notification creation](@/images/integrations/aws-s3-and-sqs/s3-event-notification-creation.png)
  
   Event name: *Name of your Event*  
   Prefix + Suffix: *are optional and can be used to restrict notifications to only some object paths or names*  
   Events: *select* **All object create events**  
   *Scroll to near the bottom of the page*  
+  ![S3 event notification creation](@/images/integrations/aws-s3-and-sqs/s3-event-notification-queue.png)
   Destination: SQS queue  
   SQS queue: *Choose your queue from the drop down*  
+ 
  
   Make sure you **Save changes**
   
