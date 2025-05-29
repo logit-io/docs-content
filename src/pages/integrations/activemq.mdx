@@ -23,7 +23,7 @@ Follow the steps below to ship ActiveMQ logs and metrics to your Logit.io stacks
   <InstallIntegration/>
   ### Install Filebeat
 
-  <InstallFilebeat items={["DEB", "RPM"]} />
+  <InstallFilebeat include={["DEB", "RPM"]} />
 
   ### Locate Configuration File
 
@@ -34,8 +34,6 @@ Follow the steps below to ship ActiveMQ logs and metrics to your Logit.io stacks
   Filebeat does not currently have a module to process the ActiveMQ application logs.
 
   Therefore we need to add the ActiveMQ application log location to the filebeat inputs. 
-
-  Add the following to the end of the log input example, before the `filebeat.config.modules` section.
 
   ```yml copy filename="filebeat.yml" showLineNumbers /@logstash.host/ /@logstash.sslPort/
   ###################### Logit.io Filebeat Configuration ########################
@@ -74,11 +72,11 @@ Follow the steps below to ship ActiveMQ logs and metrics to your Logit.io stacks
 
   ### Validate Configuration
 
-  <ValidateBeat beatname="filebeat" />
+  <ValidateBeat beatname="filebeat" include={["DEB","RPM"]} />
   
   ### Start Filebeat
 
-  <StartFilebeat />
+  <StartFilebeat include={["DEB","RPM"]} />
 
   ### Launch OpenSearch Dashboards to View Your Data
 
