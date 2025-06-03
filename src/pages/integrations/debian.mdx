@@ -21,7 +21,7 @@ Follow the steps below to send your observability data to Logit.io
   <InstallIntegration/>
   ### Install Filebeat
 
-  <InstallFilebeat include={["DEB"]} />
+  <InstallFilebeat include={["Ubuntu & Debian"]} />
 
   ### Enable The System Module
 
@@ -99,22 +99,11 @@ output.logstash:
 
   ### Validate Configuration
 
-  ```bash copy
-  sudo filebeat -e -c /etc/filebeat/filebeat.yml
-  ```
-
-  <Callout type="info">   
-    If the yml file is invalid, filebeat will print an `error loading config file` error message with details on how to correct the problem. If you have 
-    issues starting filebeat see "How To Diagnose No Data In Stack" below to troubleshoot.
-  </Callout>
+  <ValidateBeat beatname="filebeat" include={["Ubuntu & Debian"]} />
 
   ### Start filebeat
 
-  To start Filebeat, run:
-
-  ```bash copy
-  sudo systemctl start filebeat
-  ```
+  <StartFilebeat include={["Ubuntu & Debian"]} />
 
   ### Launch OpenSearch Dashboards to View Your Data
 
@@ -140,7 +129,7 @@ output.logstash:
 
   ### Install Telegraf
 
-  <InstallTelegraf />
+  <InstallTelegraf include={["Ubuntu & Debian"]} />
 
   ### Configure the plugin
 
@@ -194,7 +183,7 @@ output.logstash:
 
   ### Start Telegraf
 
-  <StartTelegraf />
+  <StartTelegraf include={["Ubuntu & Debian"]} />
 
   ### Launch Metrics to View Data
 

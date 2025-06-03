@@ -23,11 +23,10 @@ Follow the steps below to send your observability data to Logit.io
   <InstallIntegration/>
   ### Install Filebeat
 
-  <InstallFilebeat include={["Linux", "macOS", "DEB", "RPM"]} />
+  <InstallFilebeat exclude={["Windows (Powershell)"]} />
 
   ### Enable the Auditd Module
-
-  <Tabs items={["Linux", "macOS", "DEB", "RPM"]}>
+  <Tabs items={["Ubuntu & Debian", "Red Hat & centOS", "macOS", "Linux binaries (64-bit)"]}>
     <Tab>
       There are several built in filebeat modules you can use. You will need to enable the auditd module:
 
@@ -36,67 +35,11 @@ Follow the steps below to send your observability data to Logit.io
       sudo filebeat modules enable auditd
       ```
 
-      In the module config under modules.d, change the module settings to match 
-      your environment. You must enable at least one fileset in the module. 
+      In the module config under modules.d, change the module settings to match your 
+      environment. You must enable at least one fileset in the module. 
       
       ___Filesets are disabled by default___.
-
-      Copy the snippet below and replace the contents of the auditd.yml module file:
-
-      ```yml copy
-      # Module: auditd
-      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-auditd.html
-
-      - module: auditd
-        log:
-          enabled: true
-
-        # Set custom paths for the log files. If left empty,
-        # Filebeat will choose the paths depending on your OS.
-        #var.paths:
-      ```
-    </Tab>
-    <Tab>
-      There are several built in filebeat modules you can use. You will need to enable the auditd module:
-
-      ```cmd copy
-      ./filebeat modules list
-      ./filebeat modules enable auditd
-      ```
-
-      In the module config under modules.d, change the module settings to match 
-      your environment. You must enable at least one fileset in the module. 
       
-      ___Filesets are disabled by default___.
-
-      Copy the snippet below and replace the contents of the auditd.yml module file:
-
-      ```yml copy
-      # Module: auditd
-      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-auditd.html
-
-      - module: auditd
-        log:
-          enabled: true
-
-          # Set custom paths for the log files. If left empty,
-          # Filebeat will choose the paths depending on your OS.
-          #var.paths:
-      ```
-    </Tab>
-    <Tab>
-      There are several built in filebeat modules you can use. You will need to enable the auditd module:
-
-      ```cmd copy
-      sudo filebeat modules list
-      sudo filebeat modules enable auditd
-      ```
-
-      In the module config under modules.d, change the module settings to match 
-      your environment. You must enable at least one fileset in the module. 
-      
-      ___Filesets are disabled by default___.
-
       Copy the snippet below and replace the contents of the auditd.yml module file:
 
       ```yml copy
@@ -140,61 +83,101 @@ Follow the steps below to send your observability data to Logit.io
           #var.paths:
       ```
     </Tab>
+    <Tab>
+      There are several built in filebeat modules you can use. You will need to enable the auditd module:
+
+      ```cmd copy
+      ./filebeat modules list
+      ./filebeat modules enable auditd
+      ```
+
+      In the module config under modules.d, change the module settings to match 
+      your environment. You must enable at least one fileset in the module. 
+      
+      ___Filesets are disabled by default___.
+
+      Copy the snippet below and replace the contents of the auditd.yml module file:
+
+      ```yml copy
+      # Module: auditd
+      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-auditd.html
+
+      - module: auditd
+        log:
+          enabled: true
+
+          # Set custom paths for the log files. If left empty,
+          # Filebeat will choose the paths depending on your OS.
+          #var.paths:
+      ```
+    </Tab>
+    <Tab>
+      There are several built in filebeat modules you can use. You will need to enable the auditd module:
+
+      ```cmd copy
+      ./filebeat modules list
+      ./filebeat modules enable auditd
+      ```
+
+      In the module config under modules.d, change the module settings to match 
+      your environment. You must enable at least one fileset in the module. 
+      
+      ___Filesets are disabled by default___.
+
+      Copy the snippet below and replace the contents of the auditd.yml module file:
+
+      ```yml copy
+      # Module: auditd
+      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-auditd.html
+
+      - module: auditd
+        log:
+          enabled: true
+
+          # Set custom paths for the log files. If left empty,
+          # Filebeat will choose the paths depending on your OS.
+          #var.paths:
+      ```
+    </Tab>
   </Tabs>
 
-  ### Update Your Configuration File
+  ### Update your filebeat.yml file
 
-  <UpdateFilebeatConfigFile />
+  Copy and use the Filebeat configuration below.
+
+  ```yml copy filename="filebeat.yml" showLineNumbers /@logstash.host/ /@logstash.sslPort/
+  ###################### Logit.io Filebeat Configuration ########################
+  # ============================== Filebeat inputs ==============================
+
+  # ============================== Filebeat modules ==============================
+  filebeat.config.modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+    #reload.period: 10s
+
+  # ================================= Processors =================================
+  processors:
+    - add_host_metadata:
+        when.not.contains.tags: forwarded
+    - add_cloud_metadata: ~
+    - add_docker_metadata: ~
+    - add_kubernetes_metadata: ~
+
+  # ================================== Outputs ===================================
+  # ------------------------------ Logstash Output -------------------------------
+  output.logstash:
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
+  ```
 
   ### Validate configuration
 
   <ValidateBeat beatname="filebeat" />
 
   ### Start filebeat
-  <Tabs items={["Linux", "macOS", "DEB", "RPM"]}>
-    <Tab>
-      To start Filebeat, run:
-
-      ```cmd copy
-      sudo chown root filebeat.yml 
-      sudo chown root modules.d/{modulename}.yml 
-      sudo ./filebeat -e
-      ```
-
-      You'll be running filebeat as root, so you need to __change ownership of the configuration file__ and 
-      any configurations enabled in the modules.d directory, or run filebeat with __--strict.perms=false__ as shown above. 
-
-      Read more about how to [change ownership](https://www.elastic.co/guide/en/beats/libbeat/master/config-file-permissions.html).
-    </Tab>
-    <Tab>
-      To start Filebeat, run:
-
-      ```cmd copy
-      sudo chown root filebeat.yml 
-      sudo chown root modules.d/{modulename}.yml 
-      sudo ./filebeat -e
-      ```
-
-      You'll be running filebeat as root, so you need to __change ownership of the configuration file__ 
-      and any configurations enabled in the modules.d directory, or run filebeat with __--strict.perms=false__ as shown above. 
-
-      Read more about how to [change ownership](https://www.elastic.co/guide/en/beats/libbeat/master/config-file-permissions.html).
-    </Tab>
-    <Tab>
-      To start Filebeat, run:
-
-      ```cmd copy
-      sudo service filebeat start
-      ```
-    </Tab>
-    <Tab>
-      To start Filebeat, run:
-
-      ```cmd copy
-      sudo service filebeat start
-      ```
-    </Tab>
-  </Tabs>
+  
+  <StartFilebeat exclude={["Windows (Powershell)"]} />
 
   ### Launch OpenSearch Dashboards to View Your Data
 

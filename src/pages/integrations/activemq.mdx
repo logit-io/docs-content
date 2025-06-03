@@ -23,11 +23,7 @@ Follow the steps below to ship ActiveMQ logs and metrics to your Logit.io stacks
   <InstallIntegration/>
   ### Install Filebeat
 
-  <InstallFilebeat include={["DEB", "RPM"]} />
-
-  ### Locate Configuration File
-
-  __deb/rpm__ `/etc/filebeat/filebeat.yml`
+  <InstallFilebeat exclude={["Windows (Powershell)", "macOS"]} />
 
   ### Update your filebeat.yml file
 
@@ -72,11 +68,11 @@ Follow the steps below to ship ActiveMQ logs and metrics to your Logit.io stacks
 
   ### Validate Configuration
 
-  <ValidateBeat beatname="filebeat" include={["DEB","RPM"]} />
+  <ValidateBeat beatname="filebeat" exclude={["Windows (Powershell)", "macOS"]} />
   
   ### Start Filebeat
 
-  <StartFilebeat include={["DEB","RPM"]} />
+  <StartFilebeat exclude={["Windows (Powershell)", "macOS"]} />
 
   ### Launch OpenSearch Dashboards to View Your Data
 

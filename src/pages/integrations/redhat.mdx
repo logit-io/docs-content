@@ -23,7 +23,7 @@ Follow the steps below to send your observability data to Logit.io
   <InstallIntegration/>
   ### Install Filebeat
 
-  <InstallFilebeat include={["RPM"]} />
+  <InstallFilebeat include={["Red Hat & centOS"]} />
 
   ### Enable The System Module
 
@@ -110,7 +110,7 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Validate Configuration
     
-  ```ps1 copy
+  ```bash copy
   sudo ./filebeat -e -c filebeat.yml --strict.perms=false
   ```
 
