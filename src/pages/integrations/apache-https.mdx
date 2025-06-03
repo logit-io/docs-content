@@ -91,7 +91,7 @@ Follow the steps below to send your observability data to Logit.io
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `telegraf.conf` from the previous step.
 
-  ```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
+  ```toml copy filename="telegraf.conf" showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
   ### Read Apache status information (mod_status)
   [[inputs.apache]]
     ## An array of URLs to gather from, must be directed at the machine
@@ -137,10 +137,6 @@ Follow the steps below to send your observability data to Logit.io
   <Callout type="info">
     Read more about how to configure data scraping and configuration options for [Apache HTTP Server](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/apache)
   </Callout>
-
-  ### Configure The Output plugin
-
-  <TelegrafOutputPlugin />
 
   ### Start Telegraf
 
