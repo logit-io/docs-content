@@ -25,6 +25,7 @@ Follow the steps below to send your observability data to Logit.io
 
   <InstallFilebeat />
 
+  ### Enable The Elasticsearch Module
   <Tabs items={["Windows", "Linux", "macOS", "DEB", "RPM"]}>
     <Tab>
       There are several built in filebeat modules you can use. You will need to enable the elasticsearch module:
@@ -288,7 +289,7 @@ Follow the steps below to send your observability data to Logit.io
 <Steps>
   ## Metrics
 
-  Configure Telegraf to ship Elasticsearch metrics to your Logit.io stacks via Logstash.
+  Configure Telegraf to ship Elasticsearch metrics to your Logit.io stack.
 
   ### Install Integration
   <InstallIntegration/>
@@ -301,7 +302,7 @@ Follow the steps below to send your observability data to Logit.io
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `telegraf.conf` from the previous step.
 
-  ```toml copy
+  ```toml copy filename="telegraf.conf" showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
   [[inputs.elasticsearch]]
     ## specify a list of one or more Elasticsearch servers
     ## you can add username and password to your url to use basic authentication:
@@ -358,15 +359,31 @@ Follow the steps below to send your observability data to Logit.io
     ## Sets the number of most recent indices to return for indices that are configured with a date-stamped suffix.
     ## Each 'indices_include' entry ending with a wildcard (*) or glob matching pattern will group together all indices that match it, and ## sort them by the date or number after the wildcard. Metrics then are gathered for only the 'num_most_recent_indices' amount of most ## recent indices.
     # num_most_recent_indices = 0
+
+  ### System metrics
+  [[inputs.disk]]
+  [[inputs.net]]
+  [[inputs.mem]]
+  [[inputs.system]]
+  [[inputs.cpu]]
+    percpu = false
+    totalcpu = true
+    collect_cpu_time = true
+    report_active = true
+
+  ### Output
+  [[outputs.http]]
+    url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+    data_format = "prometheusremotewrite"
+
+    [outputs.http.headers]
+      Content-Type = "application/x-protobuf"
+      Content-Encoding = "snappy"
   ```
 
   <Callout type="info">
     Read more about how to configure data scraping and configuration options for [Elasticsearch](https://github.com/influxdata/telegraf/blob/release-1.18/plugins/inputs/elasticsearch/README.md)
   </Callout>
-
-  ### Configure The Output plugin
-
-  <TelegrafOutputPlugin />
 
   ### Start Telegraf
 
