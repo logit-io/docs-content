@@ -62,9 +62,8 @@ Follow the steps below to send your observability data to Logit.io
 
   The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
 
-  __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ field in the Logstash outputs section are correctly populated.
+  __Note__: Please make sure the ___'hosts'___ field in the Logstash outputs section is correctly populated.
   If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
-  The ___'paths'___ field will need to be set to the location of the logs you want to send to your Stack.
   
   Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
 
@@ -73,7 +72,7 @@ Follow the steps below to send your observability data to Logit.io
 # ============================== Filebeat inputs ==============================
 filebeat.inputs:
 - type: journald
-  id: everything
+  id: journald
 
 # ============================== Filebeat modules ==============================
 filebeat.config.modules:
@@ -133,17 +132,12 @@ output.logstash:
 
   ### Configure the plugin
 
-  The default `telegraf.conf` configuration file is thousands of lines long so, for simplicity, we will create a new
-  configuration file for this guide.
-  Create a new text file and copy the configuration details below into it and save it as `telegraf-demo.conf` in 
-  the directory where Telegraf has been installed.
-
   The configuration below will scrape a selection of system metrics from the machine you have installed Telegraf 
   on and these will be sent to your Logit.io stack. Metrics include CPU, memory and disk usage and system metrics 
   such as system load and uptime.
 
 
-  ```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
+  ```toml copy filename="telegraf.conf" showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
   # Read metrics about cpu usage
   [[inputs.cpu]]
     ## Whether to report per-cpu stats or not

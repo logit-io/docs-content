@@ -142,7 +142,7 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Install Telegraf
 
-  <InstallTelegraf />
+  <InstallTelegraf include={["Red Hat & centOS"]}/>
 
   ### Configure the plugin
 
@@ -156,7 +156,7 @@ Follow the steps below to send your observability data to Logit.io
   such as system load and uptime.
 
 
-  ```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
+  ```toml copy filename="telegraf.conf" showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
   # Read metrics about cpu usage
   [[inputs.cpu]]
     ## Whether to report per-cpu stats or not
@@ -196,7 +196,7 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Start Telegraf
 
-  <StartTelegraf />
+  <StartTelegraf include={["Red Hat & centOS"]}/>
 
   ### Launch Metrics to View Data
 
