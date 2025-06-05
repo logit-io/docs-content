@@ -177,6 +177,7 @@ Use OpenTelemetry to easily send Go traces to your Logit.io Stack.
     fullEndpoint := fmt.Sprintf("%s:%s", config.Endpoint, config.Port)
     
     if config.Protocol == "https"{
+      fullEndpoint := fullEndpoint + "/v1/traces"
       // Initialize the tracer
       shutdown := initHTTPSTracer(fullEndpoint, config.Username, config.Password, serviceName)
       defer func() {
