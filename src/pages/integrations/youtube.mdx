@@ -4,7 +4,7 @@ metaTitle: Integrate and Configure Telegraf to send YouTube Metrics
 subTitle: Ship your YouTube Metrics via Telegraf to your Logit.io Stack
 logo: youtube
 color: "#4d4d4d"
-description: Use our example to configure Telegraf to ship YouTube metrics to your Logit.io stacks. Configure Telegraf to send YouTube metrics to Logstash or Elastic.
+description: Use our example to configure Telegraf to ship YouTube metrics to your Logit.io stacks. Configure Telegraf to send YouTube metrics.
 stackTypes: metrics
 sslPortType: beats-ssl
 tags: Telegraf, Metrics, Telemetry, OpenTelemetry, Health, Instrumentation, YouTube, Video, Youtube
@@ -15,7 +15,7 @@ Follow the steps below to send your observability data to Logit.io
 <Steps>
   ## Metrics
 
-  Configure Telegraf to ship YouTube metrics to your Logit.io stacks via Logstash.
+  Configure Telegraf to ship YouTube metrics to your Logit.io stacks.
   
   ### Install Integration
   <InstallIntegration/>
@@ -27,31 +27,38 @@ Follow the steps below to send your observability data to Logit.io
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `telegraf.conf` from the previous step.
 
-  ```toml copy
+  ```toml copy filename="telegraf.conf" showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
   [[inputs.youtube]]
-  ## List of channels to monitor.
-  channels = [
-    "UCBR8-60-B28hp2BmDPdntcQ",
-    "UCnrgOD6G0y0_rcubQuICpTQ"
-  ]
+    ## List of channels to monitor.
+    channels = [
+      "UCBR8-60-B28hp2BmDPdntcQ",
+      "UCnrgOD6G0y0_rcubQuICpTQ"
+    ]
 
-  ## List of videos to monitor.
-  videos = [
-    "gjoHHYnXdqs",
-    "OoCsY8odmpM"
-  ]
+    ## List of videos to monitor.
+    videos = [
+      "gjoHHYnXdqs",
+      "OoCsY8odmpM"
+    ]
 
-  ## YouTube API key.
-  # api_key = ""
+    ## YouTube API key.
+    # api_key = ""
+  
+  ### Output
+  [[outputs.http]]
+    url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+    data_format = "prometheusremotewrite"
+
+    [outputs.http.headers]
+      Content-Type = "application/x-protobuf"
+      Content-Encoding = "snappy"
   ```
 
   <Callout type="info">
     Read more about how to configure data scraping and configuration options for [YouTube](https://github.com/inabagumi/youtube-telegraf-plugin)
   </Callout>
 
-  ### Configure the output plugin
 
-  <TelegrafOutputPlugin />
 
   ### Start Telegraf
 
