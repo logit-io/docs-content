@@ -39,7 +39,7 @@ Use OpenTelemetry to easily send Erlang traces to your Logit.io Stack.
     {opentelemetry_exporter,
       [{otlp_protocol, http_protobuf},
       {otlp_headers, [{"authorization", "Basic @opentelemetry.base64encodedAuthString"}]}
-      {otlp_endpoint, "https://@opentelemetry.endpointAddress:@opentelemetry.httpsPort"}]}]}
+      {otlp_endpoint, "https://@opentelemetry.endpointAddress:@opentelemetry.httpsPort/v1/traces"}]}]}
     ].
     ```
 
