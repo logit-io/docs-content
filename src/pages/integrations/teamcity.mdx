@@ -15,7 +15,7 @@ Follow the steps below to send your observability data to Logit.io
 <Steps>
   ## Metrics
 
-  Configure Telegraf to ship TeamCity Server metrics to your Logit.io stacks via Logstash.
+  Configure Telegraf to ship TeamCity Server metrics to your Logit.io stacks.
   
   ### Install Integration
   <InstallIntegration/>
@@ -23,23 +23,38 @@ Follow the steps below to send your observability data to Logit.io
 
   <InstallTelegraf />
 
-  ### Configure the Telegraf input plugin
-
+  ### Configure Telegraf
+  
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `telegraf.conf` from the previous step.
 
-```toml copy
-[[inputs.prometheus]]
+  ```toml copy filename="telegraf.conf" showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
+  [[inputs.prometheus]]
+    urls = ["https://<teamcity_server_url>/app/metrics?experimental=true"]
 
-  urls = ["https://<teamcity_server_url>/app/metrics?experimental=true"]
+    ## optional basic auth credentials
+    username = "<your-username>"
+    password = "<your-password>"
+  
+  ### System metrics
+  [[inputs.disk]]
+  [[inputs.net]]
+  [[inputs.mem]]
+  [[inputs.system]]
+  [[inputs.cpu]]
+    percpu = false
+    totalcpu = true
+    collect_cpu_time = true
+    report_active = true
 
-  ## optional basic auth credentials
-  username = "<your-username>"
-  password = "<your-password>"
-```
+  ### Output
+  [[outputs.http]]
+    url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+    data_format = "prometheusremotewrite"
 
-  ### Configure the output plugin
-
-  <TelegrafOutputPlugin />
+    [outputs.http.headers]
+      Content-Type = "application/x-protobuf"
+      Content-Encoding = "snappy"
+  ```
 
   ### Start Telegraf
 

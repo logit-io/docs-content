@@ -15,7 +15,7 @@ You will need to use a specific integration guide for the type of metrics you wa
 <Steps>
   ## Metrics
 
-  Configure Telegraf to ship Nginx metrics to your Logit.io stacks via Logstash.
+  Configure Telegraf to ship metrics to your Logit.io stacks.
 
   ### Install Telegraf
 
@@ -29,9 +29,31 @@ You will need to use a specific integration guide for the type of metrics you wa
   type of metrics you want to send. For example, if you are sending Nginx metrics to Logit.io, you can find the 
   instructions [here](..\integrations\nginx.mdx).
 
-  ### Configure the output plugin
+  ### Example Telegraf configuration file
+  
+  The example below would collect system metrics and send them to Logit
+  
+  ```toml copy filename="telegraf.conf" showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
+  ### System metrics
+  [[inputs.disk]]
+  [[inputs.net]]
+  [[inputs.mem]]
+  [[inputs.system]]
+  [[inputs.cpu]]
+    percpu = false
+    totalcpu = true
+    collect_cpu_time = true
+    report_active = true
 
-  <TelegrafOutputPlugin />
+  ### Output
+  [[outputs.http]]
+    url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+    data_format = "prometheusremotewrite"
+
+    [outputs.http.headers]
+      Content-Type = "application/x-protobuf"
+      Content-Encoding = "snappy"
+  ```
 
   ### Start Telegraf
 

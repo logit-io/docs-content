@@ -378,7 +378,7 @@ This guide walks you through the process of integrating Filebeat and Telegraf wi
     <Tab>
       The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `telegraf.conf` from the previous step.
 
-      ```toml copy
+      ```toml copy filename="telegraf.conf" showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
       ### Read Nginx's basic status information (ngx_http_stub_status_module)
       [[inputs.nginx]]
       ## An array of Nginx stub_status URI to gather stats.
@@ -428,7 +428,7 @@ This guide walks you through the process of integrating Filebeat and Telegraf wi
       The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `telegraf.conf` from the previous step.  
       Remember to replace `<Nginx installation directory>` with the directory where your Nginx is located.
       
-      ```toml copy
+      ```toml copy filename="telegraf.conf" showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
       # Read Nginx's basic status information (ngx_http_stub_status_module)
       [[inputs.nginx]]
       ## An array of Nginx stub_status URI to gather stats.

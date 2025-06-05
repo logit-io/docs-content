@@ -28,7 +28,7 @@ Follow the steps below to send your observability data to Logit.io
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `telegraf.conf` from the previous step.
 
-  ```toml copy
+  ```toml copy filename="telegraf.conf" showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
   # # Read metrics from SQL queries
   [[inputs.sql]]
   #   ## Database Driver
@@ -106,17 +106,33 @@ Follow the steps below to send your observability data to Logit.io
   #     ## NOTE: We rely on the database driver to perform automatic datatype conversion.
   #     # field_columns_include = []
   #     # field_columns_exclude = []
+  
+  ### System metrics
+  [[inputs.disk]]
+  [[inputs.net]]
+  [[inputs.mem]]
+  [[inputs.system]]
+  [[inputs.cpu]]
+    percpu = false
+    totalcpu = true
+    collect_cpu_time = true
+    report_active = true
+
+  ### Output
+  [[outputs.http]]
+    url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+    data_format = "prometheusremotewrite"
+
+    [outputs.http.headers]
+      Content-Type = "application/x-protobuf"
+      Content-Encoding = "snappy"
   ```
 
-  Replace username:password with the correct details for your SQL database.
+  Replace connection and driver details with the correct details for your SQL database.
 
   <Callout type="info">
     Read more about how to configure data scraping and configuration options for [SQL Server](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/sql)
   </Callout>
-
-  ### Configure the output plugin
-
-  <TelegrafOutputPlugin />
 
   ### Start Telegraf
 

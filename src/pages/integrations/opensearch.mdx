@@ -15,7 +15,7 @@ Follow the steps below to send your observability data to Logit.io
 <Steps>
   ## Metrics
 
-  Configure Telegraf to ship OpenSearch metrics to your Logit.io stacks via Logstash.
+  Configure Telegraf to ship OpenSearch metrics to your Logit.io stacks.
   
   ### Install Integration
   <InstallIntegration/>
@@ -27,7 +27,7 @@ Follow the steps below to send your observability data to Logit.io
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `telegraf.conf` from the previous step.
 
-  ```toml copy
+  ```toml copy filename="telegraf.conf" showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
   # Derive metrics from aggregating OpenSearch query results
   [[inputs.opensearch_query]]
     ## OpenSearch cluster endpoint(s). Multiple urls can be specified as part
@@ -87,14 +87,30 @@ Follow the steps below to send your observability data to Logit.io
       ## String value of the tag when the tag does not exist
       ## Required when include_missing_tag is true
       # missing_tag_value = "null"
+
+  ### System metrics
+  [[inputs.disk]]
+  [[inputs.net]]
+  [[inputs.mem]]
+  [[inputs.system]]
+  [[inputs.cpu]]
+    percpu = false
+    totalcpu = true
+    collect_cpu_time = true
+    report_active = true
+
+  ### Output
+  [[outputs.http]]
+    url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+    data_format = "prometheusremotewrite"
+
+    [outputs.http.headers]
+      Content-Type = "application/x-protobuf"
+      Content-Encoding = "snappy"
   ```
   <Callout type="info">
     Read more about how to configure data scraping and configuration options for [OpenSearch](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/opensearch_query)
   </Callout>
-
-  ### Configure the output plugin
-
-  <TelegrafOutputPlugin />
 
   ### Start Telegraf
 

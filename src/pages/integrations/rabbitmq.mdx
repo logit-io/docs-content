@@ -26,244 +26,53 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Update Your Configuration File
 
-  <Tabs items={["Windows", "Linux", "macOS", "DEB", "RPM"]}>
-    <Tab>
-      The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+  The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
 
-      __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ 
-      field in the Logstash outputs section are correctly populated.
+  __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ 
+  field in the Logstash outputs section are correctly populated.
 
-      If you are logged into your Logit.io account the ___'hosts'___ field should have 
-      been pre-populated with the correct values. The ___'paths'___ field will need to be set 
-      to the location of the rabbitMQ logs you want to send to your Stack.
-      
-      Copy the configuration file below (making the above changes as necessary) and overwrite 
-      the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step. If it is missing create a new file with that name and populate it with the configuration details below).
+  If you are logged into your Logit.io account the ___'hosts'___ field should have 
+  been pre-populated with the correct values. The ___'paths'___ field will need to be set 
+  to the location of the rabbitMQ logs you want to send to your Stack.
+  
+  Copy the configuration file below (making the above changes as necessary) and overwrite 
+  the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step. If it is missing create a new file with that name and populate it with the configuration details below).
 
-      ```yml copy filename="filebeat.yml" showLineNumbers /@logstash.host/ /@logstash.sslPort/
-      ###################### Logit.io Filebeat Configuration ########################
-      # ============================== Filebeat inputs ==============================
-      filebeat.inputs:
-      - type: filestream
-        enabled: true
-        paths:
-          - /var/log/rabbitmq/*.log
-        fields:
-          type: rabbitmq
-          multiline.pattern: ^\=
-          multiline.match: before
-      
-      # ============================== Filebeat modules ==============================
-      filebeat.config.modules:
-        path: ${path.config}/modules.d/*.yml
-        reload.enabled: false
-        #reload.period: 10s
+  ```yml copy filename="filebeat.yml" showLineNumbers /@logstash.host/ /@logstash.sslPort/
+  ###################### Logit.io Filebeat Configuration ########################
+  # ============================== Filebeat inputs ==============================
+  filebeat.inputs:
+  - type: filestream
+    enabled: true
+    paths:
+      - /var/log/rabbitmq/*.log
+      # - C:\rabbitmq\*.log
+    fields:
+      type: rabbitmq
+      multiline.pattern: ^\=
+      multiline.match: before
+  
+  # ============================== Filebeat modules ==============================
+  filebeat.config.modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+    #reload.period: 10s
 
-      # ================================== Outputs ===================================
-      # ------------------------------ Logstash Output -------------------------------
-      output.logstash:
-        hosts: ["@logstash.host:@logstash.sslPort"]
-        loadbalance: true
-        ssl.enabled: true
+  # ================================== Outputs ===================================
+  # ------------------------------ Logstash Output -------------------------------
+  output.logstash:
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
 
-      # ================================= Processors =================================
-      processors:
-        - add_host_metadata:
-            when.not.contains.tags: forwarded
-        - add_cloud_metadata: ~
-        - add_docker_metadata: ~
-        - add_kubernetes_metadata: ~
-      ```
-    </Tab>
-    <Tab>
-      The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
-
-      __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ 
-      field in the Logstash outputs section are correctly populated.
-
-      If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
-      The ___'paths'___ field will need to be set to the location of the rabbitMQ logs you want to send to your Stack.
-      
-      Copy the configuration file below (making the above changes as necessary) and overwrite the 
-      contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
-
-      ```yml copy filename="filebeat.yml" showLineNumbers /@logstash.host/ /@logstash.sslPort/
-      ###################### Logit.io Filebeat Configuration ########################
-      # ============================== Filebeat inputs ==============================
-      filebeat.inputs:
-      - type: filestream
-        enabled: true
-        paths:
-          - /var/log/rabbitmq/*.log
-        fields:
-          type: rabbitmq
-          multiline.pattern: ^\=
-          multiline.match: before
-      
-      # ============================== Filebeat modules ==============================
-      filebeat.config.modules:
-        path: ${path.config}/modules.d/*.yml
-        reload.enabled: false
-        #reload.period: 10s
-
-      # ================================== Outputs ===================================
-      # ------------------------------ Logstash Output -------------------------------
-      output.logstash:
-        hosts: ["@logstash.host:@logstash.sslPort"]
-        loadbalance: true
-        ssl.enabled: true
-
-      # ================================= Processors =================================
-      processors:
-        - add_host_metadata:
-            when.not.contains.tags: forwarded
-        - add_cloud_metadata: ~
-        - add_docker_metadata: ~
-        - add_kubernetes_metadata: ~
-      ```
-    </Tab>
-    <Tab>
-      The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
-
-      __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ 
-      field in the Logstash outputs section are correctly populated.
-
-      If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
-      The ___'paths'___ field will need to be set to the location of the rabbitMQ logs you want to send to your Stack.
-      
-      Copy the configuration file below (making the above changes as necessary) and overwrite 
-      the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
-
-      ```yml copy filename="filebeat.yml" showLineNumbers /@logstash.host/ /@logstash.sslPort/
-      ###################### Logit.io Filebeat Configuration ########################
-      # ============================== Filebeat inputs ==============================
-      filebeat.inputs:
-      - type: filestream
-        enabled: true
-        paths:
-          - /var/log/rabbitmq/*.log
-        fields:
-          type: rabbitmq
-          multiline.pattern: ^\=
-          multiline.match: before
-
-      # ============================== Filebeat modules ==============================
-      filebeat.config.modules:
-        path: ${path.config}/modules.d/*.yml
-        reload.enabled: false
-        #reload.period: 10s
-
-      # ================================== Outputs ===================================
-      # ------------------------------ Logstash Output -------------------------------
-      output.logstash:
-        hosts: ["@logstash.host:@logstash.sslPort"]
-        loadbalance: true
-        ssl.enabled: true
-
-      # ================================= Processors =================================
-      processors:
-        - add_host_metadata:
-            when.not.contains.tags: forwarded
-        - add_cloud_metadata: ~
-        - add_docker_metadata: ~
-        - add_kubernetes_metadata: ~
-      ```
-    </Tab>
-    <Tab>
-      The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
-
-      __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ 
-      field in the Logstash outputs section are correctly populated.
-
-      If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
-      The ___'paths'___ field will need to be set to the location of the rabbitMQ logs you want to send to your Stack.
-      
-      Copy the configuration file below (making the above changes as necessary) and overwrite the 
-      contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
-
-      ```yml copy filename="filebeat.yml" showLineNumbers /@logstash.host/ /@logstash.sslPort/
-      ###################### Logit.io Filebeat Configuration ########################
-      # ============================== Filebeat inputs ==============================
-      filebeat.inputs:
-      - type: filestream
-        enabled: true
-        paths:
-          - /var/log/rabbitmq/*.log
-        fields:
-          type: rabbitmq
-          multiline.pattern: ^\=
-          multiline.match: before
-
-      # ============================== Filebeat modules ==============================
-      filebeat.config.modules:
-        path: ${path.config}/modules.d/*.yml
-        reload.enabled: false
-        #reload.period: 10s
-
-      # ================================== Outputs ===================================
-      # ------------------------------ Logstash Output -------------------------------
-      output.logstash:
-        hosts: ["@logstash.host:@logstash.sslPort"]
-        loadbalance: true
-        ssl.enabled: true
-
-      # ================================= Processors =================================
-      processors:
-        - add_host_metadata:
-            when.not.contains.tags: forwarded
-        - add_cloud_metadata: ~
-        - add_docker_metadata: ~
-        - add_kubernetes_metadata: ~
-      ```
-    </Tab>
-    <Tab>
-      The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
-
-      __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ 
-      field in the Logstash outputs section are correctly populated.
-
-      If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
-      The ___'paths'___ field will need to be set to the location of the rabbitMQ logs you want to send to your Stack.
-      
-      Copy the configuration file below (making the above changes as necessary) and overwrite the 
-      contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
-
-      ```yml copy filename="filebeat.yml" showLineNumbers /@logstash.host/ /@logstash.sslPort/
-      ###################### Logit.io Filebeat Configuration ########################
-      # ============================== Filebeat inputs ==============================
-      filebeat.inputs:
-      - type: filestream
-        enabled: true
-        paths:
-          - /var/log/rabbitmq/*.log
-        fields:
-          type: rabbitmq
-          multiline.pattern: ^\=
-          multiline.match: before
-
-      # ============================== Filebeat modules ==============================
-      filebeat.config.modules:
-        path: ${path.config}/modules.d/*.yml
-        reload.enabled: false
-        #reload.period: 10s
-
-      # ================================== Outputs ===================================
-      # ------------------------------ Logstash Output -------------------------------
-      output.logstash:
-        hosts: ["@logstash.host:@logstash.sslPort"]
-        loadbalance: true
-        ssl.enabled: true
-
-      # ================================= Processors =================================
-      processors:
-        - add_host_metadata:
-            when.not.contains.tags: forwarded
-        - add_cloud_metadata: ~
-        - add_docker_metadata: ~
-        - add_kubernetes_metadata: ~
-      ```
-    </Tab>
-  </Tabs>
+  # ================================= Processors =================================
+  processors:
+    - add_host_metadata:
+        when.not.contains.tags: forwarded
+    - add_cloud_metadata: ~
+    - add_docker_metadata: ~
+    - add_kubernetes_metadata: ~
+  ```
 
   ### Validate configuration
 
@@ -285,7 +94,7 @@ Follow the steps below to send your observability data to Logit.io
 <Steps>
   ## Metrics
 
-  Configure Telegraf to ship RabbitMQ metrics to your Logit.io stacks via Logstash.
+  Configure Telegraf to ship RabbitMQ metrics to your Logit.io stacks.
   
   ### Install Integration
   <InstallIntegration/>
@@ -297,7 +106,7 @@ Follow the steps below to send your observability data to Logit.io
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `telegraf.conf` from the previous step.
 
-  ```toml copy
+  ```toml copy filename="telegraf.conf" showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
   # Reads metrics from RabbitMQ servers via the Management Plugin
   [[inputs.rabbitmq]]
     ## Management Plugin url. (default: http://localhost:15672)
@@ -354,14 +163,30 @@ Follow the steps below to send your observability data to Logit.io
     ## exchange filters.
     # federation_upstream_include = []
     # federation_upstream_exclude = []
+
+  ### System metrics
+  [[inputs.disk]]
+  [[inputs.net]]
+  [[inputs.mem]]
+  [[inputs.system]]
+  [[inputs.cpu]]
+    percpu = false
+    totalcpu = true
+    collect_cpu_time = true
+    report_active = true
+
+  ### Output
+  [[outputs.http]]
+    url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+    data_format = "prometheusremotewrite"
+
+    [outputs.http.headers]
+      Content-Type = "application/x-protobuf"
+      Content-Encoding = "snappy"
   ```
   <Callout type="info">
     Read more about how to configure data scraping and configuration options for [RabbitMQ](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/rabbitmq)
   </Callout>
-
-  ### Configure the output plugin
-
-  <TelegrafOutputPlugin />
 
   ### Start Telegraf
 
