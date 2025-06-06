@@ -1,5 +1,5 @@
 ---
-title: VPC Flow Logs
+title: AWS VPC Flow Logs
 metaTitle: Learn How to Integrate and Configure AWS VPC Flow Logs to Send Logs
 pageTitle: VPC Flow Log Setup
 subTitle: Ship logs from VPC to Logstash
@@ -43,8 +43,14 @@ Follow the steps below to send your observability data to Logit.io
       {
         "Sid": "SidID",
         "Effect": "Allow",
-        "Action": ["s3:GetObject", "s3:ListBucket"],
-        "Resource": ["arn:aws:s3:::<your-bucket>/*"]
+        "Action": [
+          "s3:GetObject",
+          "s3:ListBucket"
+        ],
+        "Resource": [
+          "arn:aws:s3:::<your-bucket>",
+          "arn:aws:s3:::<your-bucket>/*"
+          ]
       }
     ]
   }

@@ -46,7 +46,8 @@ Follow the steps below to send your observability data to Logit.io
                 "s3:ListBucket"
               ],
             "Resource": [
-                "arn:aws:s3:::<your-bucket>/*"
+                "arn:aws:s3:::<your-bucket>/*",
+                "arn:aws:s3:::<your-bucket>"
             ]
         }
     ]

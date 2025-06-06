@@ -1,5 +1,5 @@
 ---
-title: RDS
+title: AWS RDS
 metaTitle: Learn How to Integrate and Configure AWS RDS to Send Logs
 subTitle: Ship logs from RDS to Logstash
 logo: AmazonRDS
@@ -42,14 +42,20 @@ Follow the steps below to send your observability data to Logit.io
       {
         "Sid": "SidID",
         "Effect": "Allow",
-        "Action": ["s3:GetObject", "s3:ListBucket"],
-        "Resource": ["arn:aws:s3:::<your-bucket>/*"]
+        "Action": [
+          "s3:GetObject",
+          "s3:ListBucket"
+        ],
+        "Resource": [
+          "arn:aws:s3:::<your-bucket>",
+          "arn:aws:s3:::<your-bucket>/*"
+          ]
       }
     ]
   }
   ```
 
-  ### Configure Logstash for Amazon ELB Classic
+  ### Configure Logstash for RDS
 
   <AddS3Input type="aws_rds" stackType="logs" utmMedium="logs" utmCampaign="awsrds" input="s3" buttonText="AWS" />
   

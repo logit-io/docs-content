@@ -22,7 +22,7 @@ Follow the steps below to send your observability data to Logit.io
   <InstallIntegration/>
   ### Install Filebeat
 
-  <InstallFilebeat items={["Linux", "macOS", "DEB", "RPM"]} />
+  <InstallFilebeat exclude={["Windows (Powershell)"]} />
 
   ### Setup HAProxy Configuration
 
@@ -49,7 +49,7 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Enable the Haproxy module
 
-  <Tabs items={["Linux", "macOS", "DEB", "RPM"]}>
+  <Tabs items={["Ubuntu & Debian", "Red Hat & centOS", "macOS", "Linux binaries (64-bit)"]}>
     <Tab>
       ```cmd copy
       sudo filebeat modules list
@@ -71,11 +71,41 @@ Follow the steps below to send your observability data to Logit.io
           enabled: true
 
           # Set which input to use between syslog (default) or file.
-          #var.input:
+          var.input: file
 
           # Set custom paths for the log files. If left empty,
           # Filebeat will choose the paths depending on your OS.
           #var.paths:
+      ```
+    </Tab>
+    <Tab>
+      There are several built in filebeat modules you can use. You will need to enable the haproxy module:
+
+      ```cmd copy
+      sudo filebeat modules list
+      sudo filebeat modules enable haproxy
+      ```
+      In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
+      
+      ___Filesets are disabled by default___.
+
+      Copy the snippet below and replace the contents of the haproxy.yml module file:
+
+      ```yml copy
+      # Module: haproxy
+      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-haproxy.html
+
+      - module: haproxy
+        # All logs
+        log:
+          enabled: true
+
+          # Set which input to use between syslog (default) or file.
+          # var.input:
+
+          # Set custom paths for the log files. If left empty,
+          # Filebeat will choose the paths depending on your OS.
+          # var.paths:
       ```
       Additional module configuration can be done using the per module config files located in the modules.d folder, for haproxy we want to configure the haproxy module to read from file, uncomment and edit the `var.input` line to say
 
@@ -122,48 +152,13 @@ Follow the steps below to send your observability data to Logit.io
       There are several built in filebeat modules you can use. You will need to enable the haproxy module:
 
       ```cmd copy
-      sudo filebeat modules list
-      sudo filebeat modules enable haproxy
+      ./filebeat modules list
+      ./filebeat modules enable haproxy
       ```
       In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
       
       ___Filesets are disabled by default___.
 
-      Copy the snippet below and replace the contents of the haproxy.yml module file:
-
-      ```yml copy
-      # Module: haproxy
-      # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.12/filebeat-module-haproxy.html
-
-      - module: haproxy
-        # All logs
-        log:
-          enabled: true
-
-          # Set which input to use between syslog (default) or file.
-          # var.input:
-
-          # Set custom paths for the log files. If left empty,
-          # Filebeat will choose the paths depending on your OS.
-          # var.paths:
-      ```
-      Additional module configuration can be done using the per module config files located in the modules.d folder, for haproxy we want to configure the haproxy module to read from file, uncomment and edit the `var.input` line to say
-
-      ```cmd copy
-      var.input: file
-      ```
-    </Tab>
-    <Tab>
-      There are several built in filebeat modules you can use. You will need to enable the haproxy module:
-
-      ```cmd copy
-      sudo filebeat modules list
-      sudo filebeat modules enable haproxy
-      ```
-      In the module config under modules.d, change the module settings to match your environment. You must enable at least one fileset in the module. 
-      
-      ___Filesets are disabled by default___.
-      
       Copy the snippet below and replace the contents of the haproxy.yml module file:
 
       ```yml copy
@@ -192,61 +187,42 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Update Your Configuration File
 
-  <UpdateFilebeatConfigFile />
+  The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
 
+  Copy the configuration file below and overwrite the contents of filebeat.yml.
+
+  ```yml copy filename="filebeat.yml" showLineNumbers /@logstash.host/ /@logstash.sslPort/
+  ###################### Logit.io Filebeat Configuration ########################
+  # ============================== Filebeat inputs ==============================
+
+  # ============================== Filebeat modules ==============================
+  filebeat.config.modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+    #reload.period: 10s
+
+  # ================================= Processors =================================
+  processors:
+    - add_host_metadata:
+        when.not.contains.tags: forwarded
+    - add_cloud_metadata: ~
+    - add_docker_metadata: ~
+    - add_kubernetes_metadata: ~
+
+  # ================================== Outputs ===================================
+  # ------------------------------ Logstash Output -------------------------------
+  output.logstash:
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
+  ```
   ### Validate Configuration
 
-  <ValidateBeat beatname="filebeat" />
+  <ValidateBeat beatname="filebeat" exclude={["Windows (Powershell)"]} />
   
   ### Start filebeat
 
-  <Tabs items={["Linux", "macOS", "DEB", "RPM"]}>
-    <Tab>
-      To start Filebeat, run:
-
-      ```bash copy
-      sudo chown root filebeat.yml 
-      sudo chown root modules.d/{modulename}.yml 
-      sudo ./filebeat -e
-      ```
-
-      You'll be running filebeat as root, so you need to __change ownership of the configuration file__ and any 
-      configurations enabled in the modules.d directory, or run filebeat with __--strict.perms=false__ as shown above. 
-
-      Read more about how to [change ownership](https://www.elastic.co/guide/en/beats/libbeat/master/config-file-permissions.html).
-    </Tab>
-
-    <Tab>
-      To start Filebeat, run:
-
-      ```bash copy
-      sudo chown root filebeat.yml 
-      sudo chown root modules.d/{modulename}.yml 
-      sudo ./filebeat -e
-      ```
-
-      You'll be running filebeat as root, so you need to __change ownership of the configuration file__ and any 
-      configurations enabled in the modules.d directory, or run filebeat with __--strict.perms=false__ as shown above. 
-      
-      Read more about how to [change ownership](https://www.elastic.co/guide/en/beats/libbeat/master/config-file-permissions.html).
-    </Tab>
-
-    <Tab>
-      To start Filebeat, run:
-
-      ```bash copy
-      sudo service filebeat start
-      ```
-    </Tab>
-
-    <Tab>
-      To start Filebeat, run:
-
-      ```bash copy
-      sudo service filebeat start
-      ```
-    </Tab>
-  </Tabs>
+  <StartFilebeat exclude={["Windows (Powershell)"]} />
 
   ### Launch OpenSearch Dashboards to View Your Data
 
@@ -264,20 +240,20 @@ Follow the steps below to send your observability data to Logit.io
 <Steps>
   ## Metrics
 
-  Configure Telegraf to ship HAproxy metrics to your Logit.io stacks via Logstash.
+  Configure Telegraf to ship HAproxy metrics to your Logit.io stacks.
   
   ### Install Integration
   <InstallIntegration/>
 
   ### Install Telegraf
 
-  <InstallTelegraf />
+  <InstallTelegraf exclude={["Windows (Powershell)"]} />
 
   ### Configure Telegraf
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `telegraf.conf` from the previous step.
 
-  ```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
+  ```toml copy filename="telegraf.conf" showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
   ### Read metrics of HAProxy, via stats socket or http endpoints
   [[inputs.haproxy]]
     ## List of stats endpoints. Metrics can be collected from both http and socket
@@ -332,7 +308,7 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Start Telegraf
 
-  <StartTelegraf />
+  <StartTelegraf exclude={["Windows (Powershell)"]} />
 
   ### Launch Grafana to View Your Data
 

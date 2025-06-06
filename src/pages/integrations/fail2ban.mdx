@@ -20,7 +20,7 @@ Follow the steps below to send your observability data to Logit.io
   <InstallIntegration/>
   ### Install Filebeat
 
-  <InstallFilebeat items={["Linux", "macOS", "DEB", "RPM"]} />
+  <InstallFilebeat exclude={["Windows (Powershell)"]} />
 
   ### Configure Filebeat.yml
 
@@ -53,11 +53,11 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Validate Configuration
 
-  <ValidateBeat beatname="filebeat" exclude={["Windows"]} />
+  <ValidateBeat beatname="filebeat" exclude={["Windows (Powershell)"]} />
 
   ### Start Filebeat
 
-  <StartFilebeat />
+  <StartFilebeat exclude={["Windows (Powershell)"]} />
 
   ### Launch OpenSearch Dashboards to View Your Data
 
@@ -71,20 +71,20 @@ Follow the steps below to send your observability data to Logit.io
 <Steps>
   ## Metrics
 
-  Configure Telegraf to ship Fail2ban metrics to your Logit.io stacks via Logstash.
+  Configure Telegraf to ship Fail2ban metrics to your Logit.io stacks.
   
   ### Install Integration
   <InstallIntegration/>
 
   ### Install Telegraf
 
-  <InstallTelegraf />
+  <InstallTelegraf exclude={["Windows (Powershell)"]} />
 
   ### Configure Telegraf
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `telegraf.conf` from the previous step.
 
-  ```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
+  ```toml copy filename="telegraf.conf" showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
   ### Read metrics from fail2ban.
   [[inputs.fail2ban]]
     ## Use sudo to run fail2ban-client
@@ -117,7 +117,7 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Start Telegraf
 
-  <StartTelegraf />
+  <StartTelegraf exclude={["Windows (Powershell)"]} />
 
   ### Launch Grafana to View Your Data
 

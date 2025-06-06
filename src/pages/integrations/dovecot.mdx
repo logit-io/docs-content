@@ -28,25 +28,25 @@ Follow the steps below to send your observability data to Logit.io
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `telegraf.conf` from the previous step.
 
-  ```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
+  ```toml copy filename="telegraf.conf" showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
   ### Read metrics about dovecot servers
-    [[inputs.dovecot]]
-      ## specify dovecot servers via an address:port list
-      ##  e.g.
-      ##    localhost:24242
-      ## or as an UDS socket
-      ##  e.g.
-      ##    /var/run/dovecot/old-stats
-      ##
-      ## If no servers are specified, then localhost is used as the host.
-      servers = ["localhost:24242"]
+  [[inputs.dovecot]]
+    ## specify dovecot servers via an address:port list
+    ##  e.g.
+    ##    localhost:24242
+    ## or as an UDS socket
+    ##  e.g.
+    ##    /var/run/dovecot/old-stats
+    ##
+    ## If no servers are specified, then localhost is used as the host.
+    servers = ["localhost:24242"]
 
-      ## Type is one of "user", "domain", "ip", or "global"
-      type = "global"
+    ## Type is one of "user", "domain", "ip", or "global"
+    type = "global"
 
-      ## Wildcard matches like "*.com". An empty string "" is same as "*"
-      ## If type = "ip" filters should be <IP/network>
-      filters = [""]
+    ## Wildcard matches like "*.com". An empty string "" is same as "*"
+    ## If type = "ip" filters should be <IP/network>
+    filters = [""]
 
 
   ### System metrics

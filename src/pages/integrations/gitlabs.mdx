@@ -37,32 +37,32 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Configure Filebeat.yml
 
-The configuration file below is pre-configured to send data to your Logit.io Stack.
-        
-Copy the configuration file below and overwrite the contents of the Filebeat 
-configuration file typically located at `/etc/filebeat/filebeat.yml`
+  The configuration file below is pre-configured to send data to your Logit.io Stack.
 
-```yml copy filename="filebeat.yml" showLineNumbers /@logstash.host/ /@logstash.sslPort/
-####################### Logit.io Filebeat Configuration #########################
-# ============================== Filebeat inputs ===============================
-filebeat.inputs:
-- type: filestream
-  enabled: true
-  paths:
-  - "/var/opt/gitlab/*.log"
+  Copy the configuration file below and overwrite the contents of the Filebeat 
+  configuration file.
+
+  ```yml copy filename="filebeat.yml" showLineNumbers /@logstash.host/ /@logstash.sslPort/
+  ####################### Logit.io Filebeat Configuration #########################
+  # ============================== Filebeat inputs ===============================
+  filebeat.inputs:
+  - type: filestream
+    enabled: true
+    paths:
+    - "/var/opt/gitlab/*.log"
   
-  fields:
-    type: "gitlabs"
-  fields_under_root: true
-  encoding: utf-8
-  ignore_older: 12h
+    fields:
+      type: "gitlabs"
+    fields_under_root: true
+    encoding: utf-8
+    ignore_older: 12h
 
-# ================================== Outputs ===================================
-output.logstash:
-  hosts: ["@logstash.host:@logstash.sslPort"]
-  loadbalance: true
-  ssl.enabled: true
-```
+  # ================================== Outputs ===================================
+  output.logstash:
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
+  ```
   ### Validate Configuration
 
   <ValidateBeat beatname="filebeat" />

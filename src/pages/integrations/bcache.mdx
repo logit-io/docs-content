@@ -21,13 +21,13 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Install Telegraf
 
-  <InstallTelegraf />
+  <InstallTelegraf exclude={["Windows (Powershell)", "macOS"]}/>
 
   ### Configure Telegraf
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `telegraf.conf` from the previous step.
 
-  ```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
+  ```toml copy filename="telegraf.conf" showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
   # Read metrics of bcache from stats_total and dirty_data
   # This plugin ONLY supports Linux
   [[inputs.bcache]]
@@ -67,7 +67,7 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Start Telegraf
 
-  <StartTelegraf />
+  <StartTelegraf exclude={["Windows (Powershell)", "macOS"]}/>
 
   ### Launch Grafana to View Your Data
 

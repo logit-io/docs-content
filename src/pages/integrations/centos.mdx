@@ -24,7 +24,7 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Install Filebeat
 
-  <InstallFilebeat items={["RPM"]} />
+  <InstallFilebeat include={["Red Hat & centOS"]} />
 
   ### Enable The System Module
 
@@ -112,35 +112,11 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Validate Configuration
     
-  ```bash copy
-  sudo ./filebeat -e -c filebeat.yml --strict.perms=false
-  ```
-
-  <Callout type="info">
-    If the yml file is invalid, filebeat will print an `error loading config file` 
-    error message with details on how to correct the problem. If you have issues 
-    starting filebeat see "How To Diagnose No Data In Stack" below to troubleshoot.
-  </Callout>
+  <ValidateBeat beatname="filebeat" include={["Red Hat & centOS"]} />
 
   ### Start filebeat
 
-  To start Filebeat, run:
-
-  ```bash copy
-  sudo chown root filebeat.yml 
-  ```
-
-  ```bash copy
-  sudo chown root modules.d/system.yml
-  sudo chown root module/system/syslog/manifest.yml
-  sudo chown root module/system/auth/manifest.yml
-  sudo ./filebeat -e
-  ```
-
-  You'll be running filebeat as root, so you need to __change ownership of the configuration file__ and any 
-  configurations enabled in the modules.d directory, or run filebeat with __--strict.perms=false__ as shown above. 
-
-  Read more about how to [change ownership](https://www.elastic.co/guide/en/beats/libbeat/master/config-file-permissions.html).
+  <StartFilebeat include={["Red Hat & centOS"]} />
 
   ### Launch OpenSearch Dashboards to View Your Data
 
@@ -166,7 +142,7 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Install Telegraf
 
-  <InstallTelegraf />
+  <InstallTelegraf include={["Red Hat & centOS"]}/>
 
   ### Configure the plugin
 
@@ -180,7 +156,7 @@ Follow the steps below to send your observability data to Logit.io
   such as system load and uptime.
 
 
-  ```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
+  ```toml copy filename="telegraf.conf" showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
   # Read metrics about cpu usage
   [[inputs.cpu]]
     ## Whether to report per-cpu stats or not
@@ -220,7 +196,7 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Start Telegraf
 
-  <StartTelegraf />
+  <StartTelegraf include={["Red Hat & centOS"]}/>
 
   ### Launch Metrics to View Data
 

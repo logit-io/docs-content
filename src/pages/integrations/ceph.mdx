@@ -21,13 +21,13 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Install Telegraf
 
-  <InstallTelegraf />
+  <InstallTelegraf exclude={["Windows (Powershell)", "macOS"]} />
 
   ### Configure Telegraf
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `telegraf.conf` from the previous step.
 
-  ```toml copy
+  ```toml copy filename="telegraf.conf" showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
   # Collects performance metrics from the MON, OSD, MDS and RGW nodes
   # in a Ceph storage cluster.
   [[inputs.ceph]]
@@ -99,7 +99,7 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Start Telegraf
 
-  <StartTelegraf />
+  <StartTelegraf exclude={["Windows (Powershell)", "macOS"]} />
 
   ### Launch Grafana to View Your Data
 

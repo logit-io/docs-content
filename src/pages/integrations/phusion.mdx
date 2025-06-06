@@ -3,7 +3,7 @@ title: Phusion Passenger
 metaTitle: Integrate and Configure Telegraf to send Phusion Passenger Metrics
 subTitle: Ship your Phusion Passenger Metrics via Telegraf to your Logit.io Stack
 color: "#4d4d4d"
-description: Use our example to configure Telegraf to ship Phusion Passenger metrics to Logit.io. Configure Telegraf to send Phusion Passenger metrics to ELK.
+description: Use our example to configure Telegraf to ship Phusion Passenger metrics to Logit.io. Configure Telegraf to send Phusion Passenger metrics.
 stackTypes: metrics
 sslPortType: beats-ssl
 tags: Telegraf, Metrics, Telemetry, OpenTelemetry, Health, Instrumentation, Phusion, Application Server, Monitoring, Web
@@ -14,7 +14,7 @@ Follow the steps below to send your observability data to Logit.io
 <Steps>
   ## Metrics
 
-  Configure Telegraf to ship Phusion Passenger metrics to your Logit.io stacks via Logstash.
+  Configure Telegraf to ship Phusion Passenger metrics to your Logit.io stacks.
   
   ### Install Integration
   <InstallIntegration/>
@@ -26,7 +26,7 @@ Follow the steps below to send your observability data to Logit.io
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `telegraf.conf` from the previous step.
 
-  ```toml copy
+  ```toml copy filename="telegraf.conf" showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
   # Read metrics of passenger using passenger-status
   [[inputs.passenger]]
     ## Path of passenger-status.
@@ -38,14 +38,30 @@ Follow the steps below to send your observability data to Logit.io
     ## If no path is specified, then the plugin simply execute passenger-status
     ## hopefully it can be found in your PATH
     command = "passenger-status -v --show=xml"
+  
+  ### System metrics
+  [[inputs.disk]]
+  [[inputs.net]]
+  [[inputs.mem]]
+  [[inputs.system]]
+  [[inputs.cpu]]
+    percpu = false
+    totalcpu = true
+    collect_cpu_time = true
+    report_active = true
+
+  ### Output
+  [[outputs.http]]
+    url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+    data_format = "prometheusremotewrite"
+
+    [outputs.http.headers]
+      Content-Type = "application/x-protobuf"
+      Content-Encoding = "snappy"
   ```
   <Callout type="info">
     Read more about how to configure data scraping and configuration options for [Phusion Passenger](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/passenger)
   </Callout>
-
-  ### Configure the output plugin
-
-  <TelegrafOutputPlugin />
 
   ### Start Telegraf
 
