@@ -14,72 +14,311 @@ Use OpenTelemetry to easily send Erlang traces to your Logit.io Stack.
 
 <Steps>
   ## APM
-  ### Install Integration
-  <InstallIntegration/>
+  <Callout type="info">
+  This sample app was created and tested with
 
-  ### Getting Started
+  `Erlang/OTP 28 [erts-16.0] [source] [64-bit]`
 
-  <Tabs items={["HTTPS", "gRPC"]}>
+  `rebar 3.25.0+build.5458.ref6a5805d8 on Erlang/OTP 28 Erts 16.0`
+  </Callout>
+
+  ### Install
+
+  Create a new directory for your project and name it `ErlangAPMTestApp`.
+
+  Open a Terminal window or Command Prompt and navigate into the new `ErlangAPMTestApp` folder.
+
+  Create a file in your project folder and call it `rebar.config`. Open the `rebar.config` file using your choice of text editor.
+  Copy and Paste the code below into the `rebar.config` file and then save.
+
+  ```erlang copy filename="rebar.config" showLineNumbers
+  {erl_opts, [debug_info]}.
+
+  {deps, [
+    {opentelemetry, "~> 1.3"},
+    {opentelemetry_api, "~> 1.2"},
+    {opentelemetry_exporter, "~> 1.6"},
+    {hackney, "~> 1.18"}
+  ] }.
+
+  {shell, [
+    {config, "config/sys.config"},
+    {apps, [otel_sample_app]}
+  ]}.
+  ```
+
+  Now we need to create two folders in the project folder and call them `src` and `config`. Navigate into the new `src` folder.
+
+  ### Configuring the App
+
+  Create three additional files in your project folder and call them `otel_sample_app.app.src`, `otel_sample_app.erl` and `otel_sample_worker.erl`. 
+  Open the `otel_sample_app.app.src` file using your text editor. Copy and Paste the code below into the `otel_sample_app.app.src` file and then save.
+
+  ```erlang copy filename="otel_sample_app.app.src" showLineNumbers
+  {application, otel_sample_app,
+    [{description, "OpenTelemetry Sample Application"},
+    {vsn, "0.1.0"},
+    {registered, []},
+    { applications, [
+        kernel,
+        stdlib,
+        opentelemetry,
+        opentelemetry_api,
+        opentelemetry_exporter,
+        hackney
+    ]},
+    {env, []},
+    {modules, []},
+    {licenses, ["Apache-2.0"]},
+    {links, []}
+  ]}.
+  ```
+
+  Now open the `otel_sample_app.erl` file with your text editor, Copy and Paste the code below into the `otel_sample_app.erl` file and then save.
+
+  ```erlang copy filename="otel_sample_app.erl" showLineNumbers /@opentelemetry.username/ /@opentelemetry.password/ /@opentelemetry.endpointAddress/ /@opentelemetry.httpsPort/
+  -module(otel_sample_app).
+  -export([start/0, stop/0, create_sample_trace/0]).
+
+  -include_lib("opentelemetry_api/include/otel_tracer.hrl").
+
+  %% Start the application
+  start() ->
+      application:ensure_all_started(hackney),
+      application:ensure_all_started(opentelemetry_exporter),
+      application:ensure_all_started(opentelemetry),
+      application:start(otel_sample_app),
+      io:format("OpenTelemetry Sample App started~n").
+
+  %% Stop the application
+  stop() ->
+      application:stop(otel_sample_app),
+      application:stop(opentelemetry),
+      application:stop(opentelemetry_exporter),
+      io:format("OpenTelemetry Sample App stopped~n").
+
+  %% Create a sample trace with spans
+
+  create_sample_trace() ->
+    
+      application:stop(opentelemetry),
+      application:stop(opentelemetry_exporter),
+    
+    % Configure OpenTelemetry
+    Username = "@opentelemetry.username",
+    Password = "@opentelemetry.password",
+    Endpoint = "@opentelemetry.endpointAddress",
+    Port = "@opentelemetry.httpsPort",
+    
+    AuthHeader = "Basic " ++ base64:encode_to_string(Username ++ ":" ++ Password),
+    
+      application:set_env(opentelemetry_exporter, otlp_endpoint, 
+          os:getenv("OTLP_ENDPOINT", "https://" ++ Endpoint ++ ":" ++ Port)),
+      application:set_env(opentelemetry_exporter, otlp_headers, [
+          {"authorization", AuthHeader},
+          {"content-type", "application/x-protobuf"}
+      ]),
+      
+      application:start(opentelemetry),
+      application:start(opentelemetry_exporter),
+    
+      % Create multiple traces
+      lists:foreach(fun(_) ->
+          create_trace_with_spans()
+      end, lists:seq(1, 3)).
+
+  create_trace_with_spans() ->
+      % Use the with_span macro to create a parent trace and its spans
+      ?with_span(<<"main-operation">>, #{kind => internal},
+          fun(_ParentSpanCtx) ->
+              % Get the trace ID from the parent span context
+              ParentSpanCtx = otel_tracer:current_span_ctx(),
+              TraceId = otel_span:trace_id(ParentSpanCtx),
+              io:format("Created trace with ID: ~p~n", [TraceId]),
+              
+              % Add attributes and an event to the main operation
+              ?set_attribute(<<"trace.name">>, <<"main-operation">>),
+              ?add_event(<<"trace.started">>, #{<<"timestamp">> => erlang:system_time(nanosecond)}),
+
+              % Simulate child spans for different operations
+              simulate_database_call(),
+              simulate_api_request(),
+              simulate_processing(),
+
+              % Finalize the trace
+              ?add_event(<<"trace.completed">>, #{<<"timestamp">> => erlang:system_time(nanosecond)}),
+              ok
+          end).
+
+  simulate_database_call() ->
+      ?with_span(<<"db-query">>, #{kind => internal},
+          fun(_SpanCtx) ->
+              ?set_attribute(<<"db.system">>, <<"postgresql">>),
+              ?set_attribute(<<"db.operation">>, <<"SELECT">>),
+              ?add_event(<<"db.query.start">>, #{<<"query">> => <<"SELECT * FROM users WHERE active = true;">>}),
+              timer:sleep(200), % Simulate query execution time
+              ?add_event(<<"db.query.end">>, #{<<"rows_returned">> => 42}),
+              ok
+          end).
+
+  simulate_api_request() ->
+      ?with_span(<<"api-request">>, #{kind => client},
+          fun(_SpanCtx) ->
+              ?set_attribute(<<"http.method">>, <<"GET">>),
+              ?set_attribute(<<"http.url">>, <<"https://api.example.com/data">>),
+              ?add_event(<<"http.request.start">>, #{<<"headers">> => #{<<"Authorization">> => <<"Bearer token">>}}),
+              timer:sleep(150), % Simulate API request time
+              ?add_event(<<"http.request.end">>, #{<<"status_code">> => 200}),
+              ok
+          end).
+
+  simulate_processing() ->
+      ?with_span(<<"data-processing">>, #{kind => internal},
+          fun(_SpanCtx) ->
+              ?set_attribute(<<"processing.step">>, <<"aggregation">>),
+              ?add_event(<<"processing.start">>, #{<<"input_records">> => 1000}),
+              timer:sleep(300), % Simulate processing time
+              ?add_event(<<"processing.end">>, #{<<"output_records">> => 900}),
+              ok
+          end).
+  ```
+
+  Now we need to update the final file in this folder. open the `otel_sample_worker.erl` file with your text editor, Copy and 
+  Paste the code below into the `otel_sample_worker.erl` file and then save.
+
+  ```erlang copy filename="otel_sample_worker.erl" showLineNumbers
+  -module(otel_sample_worker).
+  -export([start_link/0, simulate_work/0]).
+  -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
+
+  -behaviour(gen_server).
+  -include_lib("opentelemetry_api/include/otel_tracer.hrl").
+
+  start_link() ->
+      gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
+
+  init([]) ->
+      {ok, #{}}.
+
+  simulate_work() ->
+      gen_server:call(?MODULE, simulate_work).
+
+  handle_call(simulate_work, _From, State) ->
+      Result = ?with_span(<<"worker_task">>, #{}, fun() ->
+          otel_span:set_attributes([
+              {<<"worker.id">>, <<"worker_001">>},
+              {<<"task.type">>, <<"data_processing">>}
+          ]),
+          
+          % Simulate some processing
+          timer:sleep(200),
+          
+          % Add some events
+          otel_span:add_event(<<"processing_started">>, #{}),
+          
+          % Simulate different processing steps
+          lists:foreach(fun(Step) ->
+              ?with_span(list_to_binary("step_" ++ integer_to_list(Step)), #{}, fun() ->
+                  otel_span:set_attributes([
+                      {<<"step.number">>, Step},
+                      {<<"step.status">>, <<"processing">>}
+                  ]),
+                  timer:sleep(30),
+                  otel_span:set_attributes([{<<"step.status">>, <<"completed">>}]),
+                  ok
+              end)
+          end, lists:seq(1, 3)),
+          
+          otel_span:add_event(<<"processing_completed">>, #{
+              <<"items_processed">> => 100,
+              <<"duration_ms">> => 290
+          }),
+          
+          {ok, processed}
+      end),
+      
+      {reply, Result, State}.
+
+  handle_cast(_Msg, State) ->
+      {noreply, State}.
+
+  handle_info(_Info, State) ->
+      {noreply, State}.
+
+  terminate(_Reason, _State) ->
+      ok.
+
+  code_change(_OldVsn, State, _Extra) ->
+      {ok, State}.
+  ```
+
+  Now navigate back to the project folder and then navigate into the `config` folder that we created earlier.
+
+  Create a file in your `config` folder and call it `sys.config`. Open the `sys.config` file using your choice of text editor.
+  Copy and Paste the code below into the `rebar.config` file and then save.
+
+  ```erlang copy filename="sys.config" showLineNumbers
+  [
+      {opentelemetry, [
+        {resource, [
+          {service, #{name => <<"Open Telemetry Tracing - Test App">>, 
+                    version => <<"1.0.0">>}}
+      ]},
+      {span_processor, batch},
+      {traces_exporter, otlp}
+      ]},
+      {kernel, [
+          {logger_level, info}
+      ]}
+  ].
+  ```
+
+  We have now created the project structure so we need to navigate back to the project folder.
+
+  ### Run the PHP App
+
+  Run the following command in Terminal window or Command Prompt:
+
+  ```bash copy
+  rebar3 deps
+  ```
+
+  Run the following command to build the application:
+
+  ```bash copy
+  rebar3 compile
+  ```
+
+  Start the application with the following:
+
+  ```bash copy
+  rebar3 shell
+  ```
+
+  Wait until you see the following message: 
   
-  <Tab>
-    You can get help Getting Started with OpenTelemetry for Erlang by referring to the 
-    [official documentation](https://opentelemetry.io/docs/instrumentation/erlang/getting-started/). 
-    
-    You need to configure the OTLP exporter to ensure the trace data reaches your Logit.io Stack.
-    
-    OTLP HTTP/S Exporter settings:
+  __OTLP exporter successfully initialized__
 
-    ```erlang copy showLineNumbers filename="sys.config.src" /@opentelemetry.httpsPort/ /@opentelemetry.endpointAddress/ /@opentelemetry.base64encodedAuthString/
-    %% config/sys.config.src
-    [
-    {opentelemetry,
-      [{span_processor, batch},
-      {traces_exporter, otlp}]},
+  Inside the shell execute the following command:
 
-    {opentelemetry_exporter,
-      [{otlp_protocol, http_protobuf},
-      {otlp_headers, [{"authorization", "Basic @opentelemetry.base64encodedAuthString"}]}
-      {otlp_endpoint, "https://@opentelemetry.endpointAddress:@opentelemetry.httpsPort"}]}]}
-    ].
-    ```
+  ```bash copy
+  otel_sample_app:create_sample_trace().
+  ```
 
-    For more information about exporter configuration with Erlang please see the 
-    [documentation](https://opentelemetry.io/docs/instrumentation/erlang/exporters/).
-  </Tab>
+  You will see feedback from the app so that you know that is running. This will include messages starting with 'Created trace with ID:'.
 
-  <Tab>
-    You can get help Getting Started with OpenTelemetry for Erlang by referring to the 
-    [official documentation](https://opentelemetry.io/docs/instrumentation/erlang/getting-started/). 
-    
-    You need to configure the OTLP exporter to ensure the trace data reaches your Logit.io Stack.
-    
-    OTLP gRPC Exporter settings:
+  Traces will now have been sent to your stack.
 
-    ```erlang copy showLineNumbers filename="sys.config.src" /@opentelemetry.grpcPort/ /@opentelemetry.endpointAddress/ /@opentelemetry.base64encodedAuthString/
-    %% config/sys.config.src
-    [
-    {opentelemetry,
-      [{span_processor, batch},
-      {traces_exporter, otlp}]},
-
-    {opentelemetry_exporter,
-      [{otlp_protocol, grpc},
-      {otlp_headers, [{"authorization", "Basic @opentelemetry.base64encodedAuthString"}]}
-      {otlp_endpoint, "https://@opentelemetry.endpointAddress:@opentelemetry.grpcPort"}]}]}
-    ].
-    ```
-
-    For more information about exporter configuration with Erlang please see the 
-    [documentation](https://opentelemetry.io/docs/instrumentation/erlang/exporters/).
-  </Tab>
-
-  </Tabs>
-
-  ### Launch Jaeger to View Your Data
+  ### Launch Logit.io to view your traces
 
   <LaunchVisualizer type="apm" />
 
-  ### How to diagnose no data in Stack
+  ### How to diagnose no data in stack
 
   <DiagnoseNoData />
+
 </Steps>
+
+
+
+
