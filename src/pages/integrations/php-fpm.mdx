@@ -4,7 +4,7 @@ metaTitle: Integrate and Configure Telegraf to send PHP-FPM Metrics
 subTitle: PHP-FPM Metrics via Telegraf to your Logit.io Stack
 logo: php
 color: "#4d4d4d"
-description: Use our example to configure Telegraf to ship PHP-FPM metrics to your Logit.io stacks. Configure Telegraf to send PHP-FPM metrics to Logstash or Elastic.
+description: Use our example to configure Telegraf to ship PHP-FPM metrics to your Logit.io stacks. Configure Telegraf to send PHP-FPM metrics.
 stackTypes: metrics
 sslPortType: beats-ssl
 tags: Telegraf, Metrics, Telemetry, OpenTelemetry, Health, Instrumentation, PHP-FPM, PHP, Monitoring, Web, Application Server, Php, Fpm
@@ -15,7 +15,7 @@ Follow the steps below to send your observability data to Logit.io
 <Steps>
   ## Metrics
 
-  Configure Telegraf to ship PHP-FPM metrics to your Logit.io stacks via Logstash.
+  Configure Telegraf to ship PHP-FPM metrics to your Logit.io stack.
   
   ### Install Integration
   <InstallIntegration/>
@@ -27,7 +27,7 @@ Follow the steps below to send your observability data to Logit.io
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `telegraf.conf` from the previous step.
 
-  ```toml copy
+  ```toml copy filename="telegraf.conf" showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
   # Read metrics of phpfpm, via HTTP status page or socket
   [[inputs.phpfpm]]
     ## An array of addresses to gather stats about. Specify an ip or hostname
@@ -62,14 +62,30 @@ Follow the steps below to send your observability data to Logit.io
     # tls_key = "/etc/telegraf/key.pem"
     ## Use TLS but skip chain & host verification
     # insecure_skip_verify = false
+  
+  ### System metrics
+  [[inputs.disk]]
+  [[inputs.net]]
+  [[inputs.mem]]
+  [[inputs.system]]
+  [[inputs.cpu]]
+    percpu = false
+    totalcpu = true
+    collect_cpu_time = true
+    report_active = true
+
+  ### Output
+  [[outputs.http]]
+    url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+    data_format = "prometheusremotewrite"
+
+    [outputs.http.headers]
+      Content-Type = "application/x-protobuf"
+      Content-Encoding = "snappy"
   ```
   <Callout type="info">
     Read more about how to configure data scraping and configuration options for [PHP-FPM](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/phpfpm)
   </Callout>
-
-  ### Configure the output plugin
-
-  <TelegrafOutputPlugin />
 
   ### Start Telegraf
 

@@ -7,7 +7,7 @@ logo: ubuntu
 color: "#e95521"
 popular: true
 description: Follow our integration guide to send Ubuntu system logs and get started centralising your data using Logit.io.
-stackTypes: logs
+stackTypes: logs, metrics
 sslPortType: beats-ssl
 tags: Logs, Ubuntu, System, Linux, Operating System
 dashboardIds: syslog
@@ -15,47 +15,21 @@ dashboardIds: syslog
 
 This guide will help you to configure Filebeat to ship logs from Ubuntu systems to Logit.io.
 
-<Steps>
+Follow the steps below to send your observability data to Logit.io
 
+<Steps>
   ## Logs
+  This guide will help you to configure Filebeat to ship logs from Ubuntu systems to Logit.io.
   
   ### Install Integration
-
   <InstallIntegration/>
-
   ### Install Filebeat
 
-  To get started you will need to install filebeat. To do this you have two main options:
-
-  - Choose the AMD / Intel file (x86_64) or
-  - Choose the ARM file (aarch64)
-          
-  You can tell if you have a PC with an ARM CPU architecture by opening the Terminal 
-  application and running the `arch` command. If it displays ___arm64___ you have ARM architecture.
-
-  <Callout type="info">
-    To successfully install filebeat you will need to have root access. 
-  </Callout>
-          
-  ___If you have an x86_64 system___ download and install filebeat using the following commands:
-
-  ```cmd copy
-  curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-8.17.2-amd64.deb
-  sudo dpkg -i filebeat-8.17.2-amd64.deb
-  ```
-
-  ___If you have an aarch64 system___ download and install filebeat using the following commands:
-
-  ```cmd copy
-  curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-8.17.2-arm64.deb
-  sudo dpkg -i filebeat-8.17.2-arm64.deb
-  ```
+  <InstallFilebeat include={["Ubuntu & Debian"]} />
 
   ### Enable The System Module
 
-  For an overview of what Filebeat modules are, please see our Getting Started with Filebeat Modules guide [here](../getting-started/filebeat-modules/).
-
-  You will need to enable the Filebeat `system` module.
+  There are several built in filebeat modules you can use. You will need to enable the system module.
 
   Change directory to the location where filebeat was extracted and run the following commands:
 
@@ -66,35 +40,34 @@ This guide will help you to configure Filebeat to ship logs from Ubuntu systems 
 
   Navigate to the `modules.d` folder, copy the snippet below and replace the contents of the system.yml module file:
 
-  ```yml copy showLineNumbers
-   # Module: system
-   # Docs: https://www.elastic.co/guide/en/beats/filebeat/8.15.2/filebeat-module-system.html
+```yml copy filename="system.yml" showLineNumbers
+# Module: system
+# Docs: https://www.elastic.co/guide/en/beats/filebeat/8.15.2/filebeat-module-system.html
 
-  - module: system
-    # Syslog
-    syslog:
-      enabled: true
+- module: system
+  # Syslog
+  syslog:
+    enabled: true
 
-      # Set custom paths for the log files. If left empty,
-      # Filebeat will choose the paths depending on your OS.
-      #var.paths:
+    # Set custom paths for the log files. If left empty,
+    # Filebeat will choose the paths depending on your OS.
+    #var.paths:
 
-    # Authorization logs
-    auth:
-      enabled: true
+  # Authorization logs
+  auth:
+    enabled: true
 
-      # Set custom paths for the log files. If left empty,
-      # Filebeat will choose the paths depending on your OS.
-      #var.paths:
-  ```
+    # Set custom paths for the log files. If left empty,
+    # Filebeat will choose the paths depending on your OS.
+    #var.paths:
+```
 
   ### Update Your Configuration File
 
   The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
 
-  __Note__: Please make sure the ___'paths'___ field in the Filebeat inputs section and the ___'hosts'___ field in the Logstash outputs section are correctly populated.
+  __Note__: Please make sure the ___'hosts'___ field in the Logstash outputs section is correctly populated.
   If you are logged into your Logit.io account the ___'hosts'___ field should have been pre-populated with the correct values. 
-  The ___'paths'___ field will need to be set to the location of the logs you want to send to your Stack.
   
   Copy the configuration file below (making the above changes as necessary) and overwrite the contents of __filebeat.yml__ (this file can be found in the location where you installed Filebeat in the previous step).
 
@@ -102,14 +75,8 @@ This guide will help you to configure Filebeat to ship logs from Ubuntu systems 
 ####################### Logit.io Filebeat Configuration ########################
 # ============================== Filebeat inputs ==============================
 filebeat.inputs:
-- type: filestream
-  enabled: true
-  id: my_unique_id
-  paths:
-    # REQUIRED CHANGE TO YOUR LOGS PATH
-    - /var/log/*.log
-  fields:
-    type: logfile
+- type: journald
+  id: journald
 
 # ============================== Filebeat modules ==============================
 filebeat.config.modules:
@@ -135,26 +102,13 @@ output.logstash:
 
   ### Validate Configuration
 
-  ```cmd copy
-  sudo filebeat test config -c /etc/filebeat/filebeat.yml
-  ```
+  <ValidateBeat beatname="filebeat" include={["Ubuntu & Debian"]} />
 
-  If you have updated the configuration file correctly, you should see the following output:
+  ### Start filebeat
 
-  ```bash copy
-  yml
-  Config OK
-  ```
+  <StartFilebeat include={["Ubuntu & Debian"]} />
 
-  ### Start Filebeat
-  
-  To start Filebeat and send your system logs to Logit.io, run:
-
-  ```bash copy
-  sudo service filebeat start
-  ```
-
-  ### View Your Logs
+  ### Launch OpenSearch Dashboards to View Your Data
 
   <LaunchVisualizer type="logs" />
 
@@ -165,5 +119,96 @@ output.logstash:
   ### (Optional) Update Logstash Pipelines
 
   <LogstashPipeline />
+
+</Steps>
+<Steps>
+  ## Metrics
+
+  Configure Telegraf to ship your system metrics to Logit.io.
+  
+  ### Install Integration
+
+  <InstallIntegration/>
+
+  ### Install Telegraf
+
+  <InstallTelegraf include={["Ubuntu & Debian"]} />
+
+  ### Configure the plugin
+
+  The configuration below will scrape a selection of system metrics from the machine you have installed Telegraf 
+  on and these will be sent to your Logit.io stack. Metrics include CPU, memory and disk usage and system metrics 
+  such as system load and uptime.
+
+
+  ```toml copy filename="telegraf.conf" showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
+  # Read metrics about cpu usage
+  [[inputs.cpu]]
+    ## Whether to report per-cpu stats or not
+    percpu = true
+    ## Whether to report total system cpu stats or not
+    totalcpu = true
+    ## If true collect raw cpu time metrics
+    collect_cpu_time = true
+    ## If true compute and report the sum of all non-idle cpu states
+    report_active = true
+  
+  # Read metrics about memory usage
+  [[inputs.mem]]
+  
+  # Read metrics about system load & uptime
+  [[inputs.system]]
+    namepass = ["system"]
+  
+  # Read metrics about disk usage by mount point
+  [[inputs.disk]]
+    ## By default, telegraf gather stats for all mountpoints.
+    ## Setting mountpoints will restrict the stats to the specified mountpoints.
+    # mount_points = ["/"]
+
+    ## Ignore some mountpoints by filesystem type. For example (dev)tmpfs (usually
+    ## present on /run, /var/run, /dev/shm or /dev).
+    ignore_fs = ["tmpfs", "devtmpfs"]
+  
+  [[outputs.http]]
+    url = "https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write"
+    data_format = "prometheusremotewrite"
+  
+    [outputs.http.headers]
+      Content-Type = "application/x-protobuf"
+      Content-Encoding = "snappy"
+  ```
+
+  ### Start Telegraf
+
+  <StartTelegraf include={["Ubuntu & Debian"]} />
+
+  ### Launch Metrics to View Data
+
+  Click the 'Launch Metrics' button below to open the infrastructure metrics visualizer. 
+  
+  <LaunchVisualizer type="metrics" />
+  
+  Now, as a simple demonstration we will use Grafana to view some metrics data that is being sent to your Logit.io stack. 
+
+  Once Grafana has been opened, click on the Explore option in the left-hand menu:
+  ![Grafana Explore](@/images/integrations/system-metrics/grafana-explore.png)
+  
+  Under the Metric header you will see 'Select metric'. Open the drop-down menu 
+  and scroll to and select 'mem_available':
+
+  ![Grafana Select Metric](@/images/integrations/system-metrics/grafana-metrics-mem.png)
+
+  Click on the blue Run query button near the top-right of the screen:
+
+  ![Grafana Run Query](@/images/integrations/system-metrics/grafana-run-query.png)
+
+  You will now see the metric data displayed and if you click on the blue Run query button this will be updated.
+  You can set this to automatically update by clicking on the arrow on the blue button and chosing the interval 
+  at which you want the data to be updated.
+
+  When you want to stop Telegraf sending metric data press Ctrl + C in the terminal app / Powershell.
+
+  To learn more about Grafana Dashboard click [here](../getting-started/grafana-dashboards/).
 
 </Steps>

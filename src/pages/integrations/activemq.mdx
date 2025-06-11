@@ -23,19 +23,13 @@ Follow the steps below to ship ActiveMQ logs and metrics to your Logit.io stacks
   <InstallIntegration/>
   ### Install Filebeat
 
-  <InstallFilebeat items={["DEB", "RPM"]} />
-
-  ### Locate Configuration File
-
-  __deb/rpm__ `/etc/filebeat/filebeat.yml`
+  <InstallFilebeat exclude={["Windows (Powershell)", "macOS"]} />
 
   ### Update your filebeat.yml file
 
   Filebeat does not currently have a module to process the ActiveMQ application logs.
 
   Therefore we need to add the ActiveMQ application log location to the filebeat inputs. 
-
-  Add the following to the end of the log input example, before the `filebeat.config.modules` section.
 
   ```yml copy filename="filebeat.yml" showLineNumbers /@logstash.host/ /@logstash.sslPort/
   ###################### Logit.io Filebeat Configuration ########################
@@ -74,11 +68,11 @@ Follow the steps below to ship ActiveMQ logs and metrics to your Logit.io stacks
 
   ### Validate Configuration
 
-  <ValidateBeat beatname="filebeat" />
+  <ValidateBeat beatname="filebeat" exclude={["Windows (Powershell)", "macOS"]} />
   
   ### Start Filebeat
 
-  <StartFilebeat />
+  <StartFilebeat exclude={["Windows (Powershell)", "macOS"]} />
 
   ### Launch OpenSearch Dashboards to View Your Data
 
@@ -92,20 +86,20 @@ Follow the steps below to ship ActiveMQ logs and metrics to your Logit.io stacks
 <Steps>
   ## Metrics
 
-  Configure Telegraf to ship ActiveMQ metrics to your Logit.io stacks via Logstash.
+  Configure Telegraf to ship ActiveMQ metrics to your Logit.io stacks.
 
   ### Install Integration
   <InstallIntegration/>
 
   ### Install Telegraf
 
-  <InstallTelegraf />
+  <InstallTelegraf exclude={["Windows (Powershell)", "macOS"]} />
 
   ### Configure Telegraf
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `telegraf.conf` from the previous step.
 
-  ```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
+  ```toml copy filename="telegraf.conf" showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
   ### Gather ActiveMQ metrics
   [[inputs.activemq]]
     ## ActiveMQ WebConsole URL
@@ -160,7 +154,7 @@ Follow the steps below to ship ActiveMQ logs and metrics to your Logit.io stacks
 
   ### Start Telegraf
 
-  <StartTelegraf />
+  <StartTelegraf exclude={["Windows (Powershell)", "macOS"]} />
 
   ### Launch Grafana to View Your Data
 
