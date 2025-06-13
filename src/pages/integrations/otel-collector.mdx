@@ -56,7 +56,7 @@ The OpenTelemetry Collector allows you to send logs, metrics and traces to your 
 
   Copy the configuration file below (making the above changes if necessary) and overwrite the contents of otelcol-config.yml (this file can be found in the otelcollector folder where you installed the OpenTelemetry Collector demo application e.g. opentelemetry-demo/src/otelcollector/otelcol-config.yml).
 
-    ```yaml copy showLineNumbers /@opentelemetry.username:strip_quotes/ /@opentelemetry.password:strip_quotes/ /@elasticsearch.username:strip_quotes/ /@elasticsearch.password:strip_quotes/ /@logs_id-es.logit.io/ /@metricsUsername/ /@metricsPassword/ /metrics_id-vm.logit.io/ /@vmAgentPort/ /@opentelemetry.endpointAddress:strip_quotes/ /@opentelemetry.grpcPort:strip_quotes/
+    ```yaml copy showLineNumbers /@opentelemetry.username:strip_quotes/ /@opentelemetry.password:strip_quotes/ /@elasticsearch.username:strip_quotes/ /@elasticsearch.password:strip_quotes/ /@logs_id-es.logit.io/ /@metricsUsername/ /@metricsPassword/ /@metrics_id-vm.logit.io/ /@vmAgentPort/ /@opentelemetry.endpointAddress:strip_quotes/ /@opentelemetry.grpcPort/
   extensions:
     basicauth/apm:
       client_auth:
@@ -126,15 +126,15 @@ The OpenTelemetry Collector allows you to send logs, metrics and traces to your 
 
   You can now view the Demo App: [http://localhost:8080/](http://localhost:8080/) and Logs, Metrics and Traces are being sent to your stacks.
 
-  ### Launch OpenSearch Dashboards to View Your Datas
+  ### Launch OpenSearch Dashboards to View Your Log Data
 
   <LaunchVisualizer type="logs" />
 
-  ### Launch Grafana to View Your Data
+  ### Launch Grafana to View Your Metric Data
 
   <LaunchVisualizer type="metrics" />
 
-  ### Launch Jaeger to View Your Data
+  ### Launch Jaeger to View Your Trace Data
 
   <LaunchVisualizer type="apm" />
 
