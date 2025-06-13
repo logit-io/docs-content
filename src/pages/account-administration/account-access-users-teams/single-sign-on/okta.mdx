@@ -27,7 +27,7 @@ This will bring up the **Create a new app integration** dialog box. In the **Sig
 ![Select Integration Type](@/images/sso/okta/okta-select-integration.png)
 
 You will be redirected to the **New Web App Integration** screen. Give your new application a name to identify it e.g. **Logit.io**. 
-You can download the Logo from our CDN <a href="https://cdn.logit.io/content/images/logo.png" download target="_blank">Here</a> or use the url below
+You can download the Logo from our CDN <a href="https://cdn.logit.io/content/images/logo.png" download target="_blank">Here</a> or use the url below.
 
 ```text copy 
 curl -O https://cdn.logit.io/content/images/logo.png || wget https://cdn.logit.io/content/images/logo.png
@@ -56,6 +56,26 @@ required later.
 
 ![Get App Credentials](@/images/sso/okta/okta-credentials.png)
 
+Scroll down to the __General Settings__ section and click "Edit".
+
+![General Settings](@/images/sso/okta/general-settings.png)
+
+We need to fill in the __LOGIN__ section of the __General Settings__.
+
+We already filled in the __Sign-in redirect URIs__ when we created the app and the __Sign-out redirect URIs__ can be left as it is.
+
+For the __Login initiated by__ property set the dropdown value to be __Either Okta or App__.
+
+For the __Application visibility__ property, select __Display application icon to users__.
+
+For the __Login flow__ property select __Redirect to app to initiate login (OIDC Compliant)__
+
+The final property is __Initiate login URI__, this property will be left blank for now and Logit.io will send you this URI when configuration has been completed.
+
+After setting the properties described above your settings should look the same as the screenshot below:
+
+![Login Settings](@/images/sso/okta/login-settings.png)
+
 Finally, you need your Okta Domain, if you do not know what this is you can get it by clicking on your username in the top right-hand 
 corner and copy it from here as shown below. Note you will need this later.
 
@@ -78,3 +98,22 @@ Okta Client Secret: @client_secret
 ```
 
 The email text should be replaced with the values that you stored during the OKTA app creation process.
+
+### Setup confirmation
+
+Once we have configured Okta for your Logit.io Account you will receive a confirmation email and this will include your __Initiate login URI__.
+
+You will need to sign into your OKTA account and then go to the Admin area and select the app that you created above.
+
+This will open you in the __General__ tab. In here you will need to  scroll down to the __General Settings__ section and click "Edit".
+
+![General Settings](@/images/sso/okta/general-settings.png)
+
+In the __LOGIN__ section find the __Initiate login URL__ property and paste in the URI that was sent to you and then save.
+
+![Initiate Login URI](@/images/sso/okta/initiate-login-uri.png)
+
+Now when you click on the Logit.io app in the __My Apps__ area of Okta you will be launched straight into the Logit.io website without needing to Authenticate again.
+
+![My Apps](@/images/sso/okta/my-apps.png)
+
