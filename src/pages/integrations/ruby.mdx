@@ -17,30 +17,72 @@ Follow the steps below to send your observability data to Logit.io
 <Steps>
   ## Logs
 
+  <Callout type="info">
+    This sample app was created and tested with
+    `ruby 3.4.4 (2025-05-14 revision a38531fd3f) +PRISM [x86_64-linux]`
+  </Callout>
+
   Get started quickly with Ruby logging using our configuration guide on how to easily ship Ruby logs to your hosted ELK Logstash.
   
   ### Install Integration
 
   <InstallIntegration/>
 
-  ### Simple Ruby Logging
+  ### Simple Ruby Logging Example
 
-  ```ruby copy showLineNumbers /@logstash.host/ /"@logstash.sslPort:strip_quotes"/
-  gem install logstash-logger
-  irb
+  If you have your own Ruby app ready to send logs to Logit.io, you just need to install the `logstash-logger` gem 
+  and make sure your logger object is set up with the correct `host` and `port` details.
+
+  The simple Ruby script created below demonstrates how to send logs to Logit.io using the `logstash-logger` gem.
+  
+  Create a new directory for your project and call the new directory `logging_example`.
+
+  Open a Terminal window or Command Prompt and navigate into the new `logging_example` directory. 
+  Then enter the following command.
+
+  ```bash copy
+  bundle init
+  ```
+
+  This Ruby command will create a new `Gemfile` in the current directory. Open the `Gemfile` and replace the contents with the following:
+  ```ruby copy
+  source "https://rubygems.org"
+
+  gem "logstash-logger"
+  ```
+
+  Create a new Ruby file in the same directory and call it `logger_test.rb` and paste the following code into it:
+
+  ```ruby copy filename="logger_test.rb" showLineNumbers /@logstash.host/ /"@logstash.sslPort:strip_quotes"/
   require 'logstash-logger'
 
   tcp_logger = LogStashLogger.new(
     type: :tcp,
     host: '@logstash.host',
     port: "@logstash.sslPort:strip_quotes",
-    ssl_enable: true
+    ssl_enable: true,
+    sync: true,
   )
 
   tcp_logger.error "This is logged as an error"
   tcp_logger.info "This is logged as info"
   tcp_logger.debug "This is logged as debug"
   tcp_logger.warn "This is logged as a warning"
+
+  tcp_logger.flush
+  sleep 1
+  ```
+
+  Install the `logstash-logger` gem by running the following command in your terminal:
+
+  ```bash copy
+  bundle install
+  ```
+
+  You can now run the Ruby script by executing the following command in your terminal:
+
+  ```bash copy
+  ruby logger_test.rb
   ```
 
   ### Launch OpenSearch Dashboards to View Your Data
