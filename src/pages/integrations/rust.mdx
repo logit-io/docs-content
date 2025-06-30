@@ -5,7 +5,8 @@ pageTitle: OpenTelemetry Rust Configuration
 subTitle: Ship traces from Rust to OpenSearch with OpenTelemetry
 logo: rust
 color: "#0f172a"
-stackTypes: apm
+stackTypes: apm, logs
+portType: tcp
 description: Read Logit.io's numerous Rust APM source integrations from Logit.io documentation to learn how to send Rust data to Logit.io
 tags: Rust, Systems Programming, Programming Language, Apm, Grpc, Http
 ---
@@ -56,7 +57,7 @@ Use Logstash and OpenTelemetry to easily send Rust logs and traces to your Logit
   chrono = "0.4"
   ```
 
-  ```rust copy filename="main.rs" showLineNumbers /@logstash.host/ /"@logstash.port:strip_quotes"/
+  ```rust copy filename="main.rs" showLineNumbers /@logstash.host/ /@logstash.port/
   use chrono::Utc;
   use log::{info};
   use serde_json::json;
