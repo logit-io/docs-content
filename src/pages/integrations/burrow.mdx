@@ -15,7 +15,7 @@ Follow the steps below to send your observability data to Logit.io
 <Steps>
   ## Metrics
 
-  Configure Telegraf to ship Burrow metrics to your Logit.io stacks via Logstash.
+  Configure Telegraf to ship Burrow metrics to your Logit.io stacks.
   
   ### Install Integration
   <InstallIntegration/>
@@ -28,7 +28,7 @@ Follow the steps below to send your observability data to Logit.io
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `telegraf.conf` from the previous step.
 
-  ```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
+  ```toml copy filename="telegraf.conf" showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
   ### Collect Kafka topics and consumers status from Burrow HTTP API.
   [[inputs.burrow]]
     ## Burrow API endpoints in format "schema://host:port".

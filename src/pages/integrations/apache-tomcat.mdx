@@ -4,7 +4,7 @@ metaTitle: Integrate and Configure Telegraf to send Apache Tomcat Metrics
 subTitle: Ship your Apache Tomcat Metrics via Telegraf to your Logit.io Stack
 logo: apachetomcat
 color: "#4d4d4d"
-description: Use our example to configure Telegraf to ship Apache Tomcat metrics to Logit.io. Configure Telegraf to send Apache Tomcat metrics to Logstash or Elastic.
+description: Use our example to configure Telegraf to ship Apache Tomcat metrics to Logit.io. Configure Telegraf to send Apache Tomcat metrics.
 stackTypes: metrics
 sslPortType: beats-ssl
 tags: Telegraf, Metrics, Telemetry, OpenTelemetry, Health, Instrumentation, Apache Tomcat, Prometheus, Application Server, Servlet Container
@@ -15,7 +15,7 @@ Follow the steps below to send your observability data to Logit.io
 <Steps>
   ## Metrics
 
-  Configure Telegraf to ship Apache Tomcat metrics to your Logit.io stacks via Logstash.
+  Configure Telegraf to ship Apache Tomcat metrics to your Logit.io stacks.
 
   ### Install Integration
   <InstallIntegration/>
@@ -28,7 +28,7 @@ Follow the steps below to send your observability data to Logit.io
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts, add the following code to the configuration file `telegraf.conf` from the previous step.
 
-  ```toml copy showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
+  ```toml copy filename="telegraf.conf" showLineNumbers /@metricsUsername/ /@metricsPassword/ /@metrics_id/ /@vmAgentPort/
   ### Gather metrics from the Tomcat server status page.
   [[inputs.tomcat]]
     ## URL of the Tomcat server status
