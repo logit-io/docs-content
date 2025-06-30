@@ -10,11 +10,63 @@ description: Read Logit.io's numerous Rust APM source integrations from Logit.io
 tags: Rust, Systems Programming, Programming Language, Apm, Grpc, Http
 ---
 
-Use OpenTelemetry to easily send Rust traces to your Logit.io Stack.
+Use Logstash and OpenTelemetry to easily send Rust logs and traces to your Logit.io Stack.
+<Steps>
+  ## Logs
 
+  ### Install Integration
+  
+  <InstallIntegration/>
+  
+  ### Getting Started
+
+  <Callout type="info">
+    This sample app was created and tested with
+    `rustc 1.88.0 (6b00bc388 2025-06-23)` and `cargo 1.88.0 (873a06493 2025-05-10)`
+  </Callout>
+
+  ### Simple Rust Logging Example
+
+  ```rust copy filename="main.rs" showLineNumbers /@logstash.host/ /"@logstash.port:strip_quotes"/
+  use chrono::Utc;
+  use log::{info};
+  use serde_json::json;
+  use std::io::Write;
+  use std::net::TcpStream;
+
+  fn send_to_logstash(json_log: String) {
+      // Replace with your actual Logstash TCP endpoint
+      if let Ok(mut stream) = TcpStream::connect("@logstash.host:@logstash.port") {
+          let _ = stream.write_all(json_log.as_bytes());
+          let _ = stream.write_all(b"\n"); // Logstash uses newline-delimited messages
+      } else {
+          eprintln!("Could not connect to Logstash");
+      }
+  }
+
+  fn main() {
+      env_logger::init();
+
+      let log_entry = json!({
+          "timestamp": Utc::now().to_rfc3339(),
+          "level": "INFO",
+          "message": "Hello from Rust!",
+          "application": "rust_logstash_logger"
+      });
+
+      send_to_logstash(log_entry.to_string());
+
+      // Also log to stdout for visibility
+      info!("Log sent to Logstash");
+  }
+  ```
+</Steps>
+  Get started quickly with OpenTelemetry for Rust using our configuration guide on how to easily ship Rust traces to your hosted OpenSearch.
 <Steps>
   ## APM
+
   ### Install Integration
+  
   <InstallIntegration/>
   
   ### Getting Started
