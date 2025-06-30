@@ -11,6 +11,7 @@ tags: Rust, Systems Programming, Programming Language, Apm, Grpc, Http
 ---
 
 Use Logstash and OpenTelemetry to easily send Rust logs and traces to your Logit.io Stack.
+
 <Steps>
   ## Logs
 
@@ -25,7 +26,35 @@ Use Logstash and OpenTelemetry to easily send Rust logs and traces to your Logit
     `rustc 1.88.0 (6b00bc388 2025-06-23)` and `cargo 1.88.0 (873a06493 2025-05-10)`
   </Callout>
 
-  ### Simple Rust Logging Example
+  ### Rust Logging Example
+
+  This example application demonstrates how to send logs from a Rust application to Logit.io via Logstash using TCP.
+
+  We will use cargo to manage our dependencies and build the application. 
+  The example uses the `log`, `env_logger`, `serde_json`, and `chrono` crates to handle logging, JSON formatting, and timestamps.
+
+  In the folder you want to create the application, run the following command to create a new Rust project:
+
+  ```bash
+  cargo new rust_logstash_logger
+  cd rust_logstash_logger
+  ```
+
+  Replace the contents of `Cargo.toml` and `src/main.rs` with the following code snippets. Make sure you are logged into your Logit.io account 
+  as this will populate the Logstash host and port details that will receive the log.
+
+  ```toml copy filename="Cargo.toml" showLineNumbers
+  [package]
+  name = "rust_logstash_logger"
+  version = "0.1.0"
+  edition = "2021"
+
+  [dependencies]
+  log = "0.4"
+  env_logger = "0.10"
+  serde_json = "1.0"
+  chrono = "0.4"
+  ```
 
   ```rust copy filename="main.rs" showLineNumbers /@logstash.host/ /"@logstash.port:strip_quotes"/
   use chrono::Utc;
@@ -35,10 +64,9 @@ Use Logstash and OpenTelemetry to easily send Rust logs and traces to your Logit
   use std::net::TcpStream;
 
   fn send_to_logstash(json_log: String) {
-      // Replace with your actual Logstash TCP endpoint
       if let Ok(mut stream) = TcpStream::connect("@logstash.host:@logstash.port") {
           let _ = stream.write_all(json_log.as_bytes());
-          let _ = stream.write_all(b"\n"); // Logstash uses newline-delimited messages
+          let _ = stream.write_all(b"\n");
       } else {
           eprintln!("Could not connect to Logstash");
       }
@@ -60,7 +88,19 @@ Use Logstash and OpenTelemetry to easily send Rust logs and traces to your Logit
       info!("Log sent to Logstash");
   }
   ```
+
+  To run the application, execute the following command in your terminal:
+
+  ```bash copy
+  cargo run
+  ```
+
+  ### Launch OpenSearch Dashboards to View Your Data
+
+  <LaunchVisualizer type="logs" />
+
 </Steps>
+
   Get started quickly with OpenTelemetry for Rust using our configuration guide on how to easily ship Rust traces to your hosted OpenSearch.
 <Steps>
   ## APM
