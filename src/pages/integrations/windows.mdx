@@ -87,12 +87,22 @@ If you are only interested in shipping metrics, you can skip the Logs section an
   Move the telegraf.exe and telegraf.conf files from C:\Program Files\InfluxData\telegraf\telegraf-1.33.0 
   to the parent directory C:\Program Files\InfluxData\telegraf
 
+  Now navigate to this folder in Powershell.
+
+  ```cmd copy
+  cd 'C:\Program Files\InfluxData\telegraf'
+  ```
+
   ### Configure the Telegraf input and output plugins
 
   The configuration file below is pre-configured to scrape the system metrics from your hosts. 
   Add the following to the configuration file (i.e. C:\Program Files\InfluxData\telegraf\telegraf.conf). 
   It includes plugins for both Windows Performance Counters and Windows Services and specifies the output configuration
   for sending your data to Logit.io.
+
+  __Note__: Please make sure the ___'metrics username'___ , ___'metrics password'___ , ___'metrics product Id'___ and  
+  ___'vm agent port'___ , fields in the __[[outputs.http]]__ section are correctly populated.
+  If you are logged into your Logit.io account the fields should have been pre-populated with the correct values. 
 
   ```toml copy
   # Input plugin to report Windows services info.
@@ -204,8 +214,9 @@ If you are only interested in shipping metrics, you can skip the Logs section an
 
   Run the following command to install Telegraf as a Windows service. 
   ```ps1 copy
-  .\telegraf.exe --service install `
-  --config "C:\Program Files\InfluxData\telegraf\telegraf.conf"
+  .\telegraf.exe `
+  --config "C:\Program Files\InfluxData\telegraf\telegraf.conf" `
+  service install
   ```
   To test that the installation works, enter the following command:
   ```ps1 copy
