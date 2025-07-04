@@ -16,35 +16,30 @@ Follow the steps below to send your observability data to Logit.io
 <Steps>
   ## Logs
 
-  This guide was created using `Ruby On Rails (v 2.2)` but you can use any version of ruby that is compatible. 
+  This guide was initially created using `Ruby (v 2.2)` / `Rails (v4.2)` and subsequently tested on `Ruby (v3.4.4)` / `Rails (v8.0.2)`. 
   This guide also uses `logstash-logger -v 0.26.1`. There are instructions for installing this gem in this guide.
   
   ### Install Integration
-  <InstallIntegration/>
-  ### (Optional) Creating an Application
 
-  A sample application will be created that will send logs to Logstash. 
-  Create a folder that will host your application on your machine.
-  Using your CMD prompt or Terminal Editor, enter the following command:
+  <InstallIntegration/>
+
+  ### Creating an Application (Optional)
+
+  A sample application will be created that will demonstrate sending logs to Logit.io 
+  Once you have installed Ruby and Rails (see the [official guide](https://guides.rubyonrails.org/install_ruby_on_rails.html) if you need assistance), 
+  create the application with the following command in your terminal:
 
   ```cmd copy
   rails new sample_app
-  ````
-
-  The new application, which is called `sample_app`, has been created. Navigate to the new application folder.
-  The final part of the setup is to enter the following command into CMD prompt or Terminal:
+  ```
+  Navigate to the new application folder.
 
   ```cmd copy
-  rails server
+  cd sample_app
   ```
 
-  This starts the server. Opening a browser and navigating to `http://localhost:3000` will 
-  display the Rails splash page, showing that the setup was successful. 
-
-  ### (Optional) Adding Sample Code
-
   The next step is to create a controller where the code will be entered for 
-  sending a log to Logstash. The following command, will create a controller called `pages`.
+  sending a log to Logit.io. The following command, will create a controller called `pages`.
   
   ```cmd copy
   rails generate controller pages
@@ -73,7 +68,7 @@ Follow the steps below to send your observability data to Logit.io
   ```
   
   Next a view needs to be created for the action. Copy the file `mailer.text.erb` 
-  from the app/views/layouts folder into the app/views/pages folder. 
+  from the `app/views/layouts` folder into the `app/views/pages` folder. 
 
   Rename the copied file to `home.html.erb`. Open the copied file with a text 
   editor, remove all existing content and replace with the following code:
@@ -89,16 +84,19 @@ Follow the steps below to send your observability data to Logit.io
   The `home.html.erb` file is a simple view that will be displayed after the 
   code in the home method of the pages controller has actioned. A root request 
   must be added to ensure that this happens and is to be added to `routes.rb` 
-  located in the config folder: `config/routes.rb`. Opening the file will reveal 
-  that currently there are comments within, any comments should be removed 
-  (they start with #) and replaced by the following:
+  located in the config folder: `config/routes.rb`. Replace the contents of the file with the following:
   
   ```rb copy
-  root to: 'pages#home'
+  Rails.application.routes.draw do
+    # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+
+    # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
+    # Can be used by load balancers and uptime monitors to verify that the app is live.
+    get "up" => "rails/health#show", as: :rails_health_check
+
+    root to: 'pages#home'
+  end
   ```
-  
-  A Refresh of the browser (or restart of the server if it was stopped previously, 
-  using the command: `rails server`) will display the new page.
 
   ### Setup Logstash Logger Plugin
 
@@ -133,7 +131,8 @@ Follow the steps below to send your observability data to Logit.io
 
   ### Add TCP-TLS Logging
 
-  The following code needs to be added to the `home` method in `pages_controller`, this code does the actual logging:
+  The following code needs to be added to the `home` method in `pages_controller`, this code does the actual logging. If you 
+  are logged into your Logit.io account, the host and port values will already be populated with the correct values for your stack.
         
   ```rb copy showLineNumbers /@logstash.host/ /"@logstash.sslPort:strip_quotes"/
   tcp_logger = LogStashLogger.new(
@@ -151,14 +150,10 @@ Follow the steps below to send your observability data to Logit.io
   tcp_logger.error message
   ```
 
-  The host value in the example above should be the Logstash endpoint and 
-  the port is the Port Number of the Stack where the logging data is required 
-  to be sent to. They are found in the Logstash Inputs area of Logstash.
-
   This code sets up an instance of the logstash server logger and also a 
   logstash file logger (which writes to a file called `logstashtest.log`). 
   The `message` variable, which is set earlier in the code, is sent to 
-  both the server and the file as an error message.
+  both the server and the file as an error message for demonstration purposes.
       
   Below is the full code for the `pages_controller` with the TCP-TLS logging now added:
       
@@ -188,9 +183,17 @@ Follow the steps below to send your observability data to Logit.io
   end
   ```
 
-  The user needs to start the server (`$ rails server`) and navigate to 
-  `http://localhost:3000`, a log is written to the `logstashtest.log` file 
-  and the stack on the server (which can be viewed using Kibana). The 
+  The final part of the setup is to enter the following command into your terminal:
+
+  ```cmd copy
+  rails server
+  ```
+
+  This starts the application. Opening a browser and navigating to `http://localhost:3000` will 
+  display a page with `Ruby logger test app! Logging test!` on it. 
+
+  The demo log (`Logging test!` defined earlier) is written to the `logstashtest.log` file 
+  and sent to your stack (which can be viewed using OpenSearch Dashboards). The 
   `logstashtest.log` file is found in the `sample_app\log` folder.
 
   ### Launch OpenSearch Dashboards to View Your Data

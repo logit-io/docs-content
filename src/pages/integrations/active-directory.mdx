@@ -22,12 +22,60 @@ follow these steps to send your Active Directory logs to Logstash and begin sear
 
  <InstallWindowsBeat
     beatname = "winlogbeat"
-    version = "8.12.2"
+    version = "9.0.2"
   />
 
   ### Update your configuration file
 
-  <WinlogBeatConfigFile />
+  The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
+
+  __Note__: Please make sure the 'hosts' field in the Logstash outputs section is correctly populated. If you are logged into your Logit.io account the 'hosts' field should 
+  have been pre-populated with the correct values.
+
+  Copy the configuration file below (making the above changes as necessary) and overwrite the contents of ___winlogbeat.yml___. 
+  (If you used the installer program to install winlogbeat the ___winlogbeat.yml___ file may not exist so you'll need to create it and add the details below).
+
+  ```yaml copy
+  ###################### Logit.io Winlogbeat Configuration ########################
+  winlogbeat.event_logs:
+    # Directory Service Events
+    - name: Directory Service
+      level: critical, error, warning, information
+
+    # Active Directory Domain Services Events
+    - name: Microsoft-Windows-ActiveDirectory_DomainService/Operational
+      level: critical, error, warning
+
+    # Security Events (Account and Authentication)
+    - name: Security
+      level: critical, error, warning
+
+    # DNS Server Events (AD-related DNS Activities)
+    - name: Microsoft-Windows-DNSServer/Operational
+      level: critical, error, warning, information
+
+    - name: DNS Server
+      level: critical, error, warning, information
+
+  fields:
+    type: ad_logs
+
+  fields_under_root: true  
+
+  # ================================== Outputs ===================================
+  # ------------------------------ Logstash Output -------------------------------
+  output.logstash:
+    hosts: ["@logstash.host:@logstash.sslPort"]
+    loadbalance: true
+    ssl.enabled: true
+
+    pipeline: "adlogbeat-%{[agent.version]}-routing"
+
+  # ================================= Processors =================================
+  processors:
+    - add_host_metadata: ~
+    - add_cloud_metadata: ~
+  ```
 
   ### Validate Configuration
 
