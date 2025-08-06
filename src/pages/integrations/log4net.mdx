@@ -10,6 +10,10 @@ portType: tcp
 tags: Logs, Dotnet, .NET, Log4net
 ---
 
+Log4net is a logging platform & framework for .NET that uses hierarchical logging. This allows users to 
+selectively control which log messages are sent to a particular output target so as to not overwhelm the 
+system.
+
 Follow the steps below to send your observability data to Logit.io
 
 <Steps>
@@ -25,7 +29,7 @@ Follow the steps below to send your observability data to Logit.io
 
   ```ps copy
   Install-Package log4net
-  Install-Package log4net.Logit
+  Install-Package Logit.Log4Net
   ```
 
   ### Configuring log4net
@@ -33,10 +37,11 @@ Follow the steps below to send your observability data to Logit.io
   Configuring log4net can be done in your application `app.config` or `web.config` or specific log4net configuration file.
   
   ```xml copy showLineNumbers
-  <appender name="LogitAppender" type="log4net.Logit.LogitAppender, log4net.Logit">
-    <apikey value="@apikey" />
+  <appender name="LogitAppender" type="Logit.Log4Net.LogitAppender, Logit.Log4net">
+    <Token value="@apikey"/>
+    <apiEndpoint value="@logitApiEndpoint"/>
     <layout type="log4net.Layout.PatternLayout">
-      <conversionpattern value="%property{log4net:HostName} %-5p %d %5rms %-22.22c{1} %-18.18M - %m%n" />
+      <param name="ConversionPattern" value="%d %logger %level% %m%n"/>
     </layout>
   </appender>
   
@@ -59,10 +64,6 @@ Follow the steps below to send your observability data to Logit.io
 </Steps>
 
 ## Log4Net Logger Overview
-
-Log4net is a logging platform & framework for [.NET](/integrations/dotnet) that uses 
-hierarchical logging. This allows users to selectively control which log messages are sent to a 
-particular output target so as to not overwhelm the system.
 
 Log4net is often mentioned in association with [Serilog](/integrations/serilog) & 
 [NLog](/integrations/nlog) as all three provide frameworks suitable for shipping 
