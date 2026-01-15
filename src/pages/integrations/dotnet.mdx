@@ -237,13 +237,13 @@ Follow the steps below to send your observability data to Logit.io.
   var greeterActivitySource = new ActivitySource("OtJa.Example");
 
   var config = builder.Configuration;
-  var openTelemetryCongfig = config.GetSection("OpenTelemetry");
-  var serviceName = openTelemetryCongfig.GetValue<string>("ServiceName");
-  var tracingOtlpEndpoint = openTelemetryCongfig.GetValue<string>("OTLP_ENDPOINT_URL");
-  var tracingOtlpProtocol = openTelemetryCongfig.GetValue<string>("Protocol");
-  var tracingOtlpPort = openTelemetryCongfig.GetValue<string>("Port");
-  var tracingUsername = openTelemetryCongfig.GetValue<string>("Username");
-  var tracingPassword = openTelemetryCongfig.GetValue<string>("Password");
+  var openTelemetryConfig = config.GetSection("OpenTelemetry");
+  var serviceName = openTelemetryConfig.GetValue<string>("ServiceName");
+  var tracingOtlpEndpoint = openTelemetryConfig.GetValue<string>("OTLP_ENDPOINT_URL");
+  var tracingOtlpProtocol = openTelemetryConfig.GetValue<string>("Protocol");
+  var tracingOtlpPort = openTelemetryConfig.GetValue<string>("Port");
+  var tracingUsername = openTelemetryConfig.GetValue<string>("Username");
+  var tracingPassword = openTelemetryConfig.GetValue<string>("Password");
 
   var otel = builder.Services.AddOpenTelemetry();
 
