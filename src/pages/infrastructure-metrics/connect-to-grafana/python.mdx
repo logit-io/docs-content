@@ -1,0 +1,314 @@
+---
+title: Connect to Grafana with Python
+metaTitle: Learn How to Connect to Grafana with Python
+description: Use the grafana-client Python library to interact with your Logit.io Grafana instance programmatically.
+pagination: false
+timestamp: false
+stackTypes: metrics
+---
+
+# Connect to Grafana with Python
+
+<Callout type="info">
+This guide uses the `grafana-client` library version 3.x or later and Python 3.8+.
+</Callout>
+
+Use the [grafana-client](https://pypi.org/project/grafana-client/) library to interact with your Logit.io Grafana instance from Python applications. This enables you to automate dashboard management, retrieve metrics data, and integrate Grafana into your workflows.
+
+## Prerequisites
+
+- Python 3.8 or later
+- pip package manager
+- Your Logit.io Grafana credentials from [Profile Settings](https://dashboard.logit.io/profile)
+
+<ProxyAuthPlaceholderWarning stackType="metrics" />
+
+<Steps>
+
+### Create a Virtual Environment
+
+Create and activate a virtual environment for your project:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy
+python3 -m venv grafana-env
+source grafana-env/bin/activate
+```
+
+</Tab>
+<Tab>
+
+```bash copy
+python -m venv grafana-env
+grafana-env\Scripts\activate
+```
+
+</Tab>
+</Tabs>
+
+### Install Dependencies
+
+Install the grafana-client library:
+
+```bash copy
+pip install grafana-client
+```
+
+Create a `requirements.txt` file for reproducibility:
+
+```txt copy filename="requirements.txt"
+grafana-client>=3.0.0
+```
+
+### Create the Python Script
+
+Create a file called `grafana_example.py` with the following code:
+
+```python copy /@proxyAuthSetting.username/ /@proxyAuthSetting.password/ /@metrics_id/ filename="grafana_example.py"
+from grafana_client import GrafanaApi
+from grafana_client.client import GrafanaClientError
+import json
+
+# Configuration - uses your Logit.io credentials
+GRAFANA_HOST = "grafana.logit.io"
+STACK_ID = "@metrics_id"
+USERNAME = "@proxyAuthSetting.username"
+PASSWORD = "@proxyAuthSetting.password"
+
+# Initialize the Grafana client
+grafana = GrafanaApi.from_url(
+    url=f"https://{GRAFANA_HOST}/s/{STACK_ID}",
+    credential=(USERNAME, PASSWORD)
+)
+
+
+def check_health():
+    """Check the health of your Grafana instance."""
+    try:
+        health = grafana.health.check()
+        print("✓ Grafana Health Check:")
+        print(f"  Version: {health.get('version', 'unknown')}")
+        print(f"  Database: {health.get('database', 'unknown')}")
+        return health
+    except GrafanaClientError as e:
+        print(f"✗ Health check failed: {e}")
+        return None
+
+
+def list_dashboards():
+    """List all dashboards in your Grafana instance."""
+    try:
+        dashboards = grafana.search.search_dashboards()
+        print(f"\n✓ Found {len(dashboards)} dashboards:")
+        for db in dashboards:
+            print(f"  - {db['title']} (uid: {db['uid']}, type: {db['type']})")
+        return dashboards
+    except GrafanaClientError as e:
+        print(f"✗ Failed to list dashboards: {e}")
+        return []
+
+
+def list_folders():
+    """List all folders in your Grafana instance."""
+    try:
+        folders = grafana.folder.get_all_folders()
+        print(f"\n✓ Found {len(folders)} folders:")
+        for folder in folders:
+            print(f"  - {folder['title']} (id: {folder['id']})")
+        return folders
+    except GrafanaClientError as e:
+        print(f"✗ Failed to list folders: {e}")
+        return []
+
+
+def create_folder(title):
+    """Create a new folder."""
+    try:
+        folder = grafana.folder.create_folder(title)
+        print(f"\n✓ Created folder: {folder['title']} (id: {folder['id']})")
+        return folder
+    except GrafanaClientError as e:
+        print(f"✗ Failed to create folder: {e}")
+        return None
+
+
+def get_dashboard(uid):
+    """Get a dashboard by UID."""
+    try:
+        dashboard = grafana.dashboard.get_dashboard(uid)
+        print(f"\n✓ Retrieved dashboard: {dashboard['dashboard']['title']}")
+        return dashboard
+    except GrafanaClientError as e:
+        print(f"✗ Failed to get dashboard: {e}")
+        return None
+
+
+def export_dashboard(uid, filename):
+    """Export a dashboard to a JSON file."""
+    try:
+        dashboard = grafana.dashboard.get_dashboard(uid)
+        with open(filename, "w") as f:
+            json.dump(dashboard["dashboard"], f, indent=2)
+        print(f"\n✓ Exported dashboard to {filename}")
+        return True
+    except GrafanaClientError as e:
+        print(f"✗ Failed to export dashboard: {e}")
+        return False
+    except IOError as e:
+        print(f"✗ Failed to write file: {e}")
+        return False
+
+
+def import_dashboard(filename, folder_id=0, overwrite=True):
+    """Import a dashboard from a JSON file."""
+    try:
+        with open(filename, "r") as f:
+            dashboard_json = json.load(f)
+        
+        # Remove id to create new dashboard, keep uid to update existing
+        if "id" in dashboard_json:
+            del dashboard_json["id"]
+        
+        result = grafana.dashboard.update_dashboard(
+            dashboard={
+                "dashboard": dashboard_json,
+                "folderId": folder_id,
+                "overwrite": overwrite
+            }
+        )
+        print(f"\n✓ Imported dashboard: {result['url']}")
+        return result
+    except GrafanaClientError as e:
+        print(f"✗ Failed to import dashboard: {e}")
+        return None
+    except (IOError, json.JSONDecodeError) as e:
+        print(f"✗ Failed to read file: {e}")
+        return None
+
+
+if __name__ == "__main__":
+    print("=" * 50)
+    print("Logit.io Grafana API Example")
+    print("=" * 50)
+    
+    # Run health check
+    check_health()
+    
+    # List existing dashboards
+    list_dashboards()
+    
+    # List existing folders
+    list_folders()
+    
+    print("\n" + "=" * 50)
+    print("Done!")
+```
+
+### Run the Script
+
+Execute the script to test your connection:
+
+```bash copy
+python grafana_example.py
+```
+
+You should see output similar to:
+
+```
+==================================================
+Logit.io Grafana API Example
+==================================================
+✓ Grafana Health Check:
+  Version: 10.0.0
+  Database: ok
+
+✓ Found 3 dashboards:
+  - System Metrics (uid: abc123, type: dash-db)
+  - Application Logs (uid: def456, type: dash-db)
+  - Network Monitor (uid: ghi789, type: dash-db)
+
+✓ Found 2 folders:
+  - General (id: 0)
+  - My Dashboards (id: 1)
+
+==================================================
+Done!
+```
+
+</Steps>
+
+## Additional Examples
+
+### Create a Dashboard Programmatically
+
+```python copy /@proxyAuthSetting.username/ /@proxyAuthSetting.password/ /@metrics_id/
+from grafana_client import GrafanaApi
+
+grafana = GrafanaApi.from_url(
+    url="https://grafana.logit.io/s/@metrics_id",
+    credential=("@proxyAuthSetting.username", "@proxyAuthSetting.password")
+)
+
+# Define a simple dashboard
+dashboard = {
+    "dashboard": {
+        "title": "My Python Dashboard",
+        "tags": ["python", "automated"],
+        "timezone": "browser",
+        "panels": [
+            {
+                "id": 1,
+                "title": "Sample Panel",
+                "type": "stat",
+                "gridPos": {"x": 0, "y": 0, "w": 6, "h": 4},
+                "targets": []
+            }
+        ],
+        "schemaVersion": 38
+    },
+    "folderId": 0,
+    "overwrite": True
+}
+
+# Create the dashboard
+result = grafana.dashboard.update_dashboard(dashboard)
+print(f"Dashboard created: {result['url']}")
+```
+
+### Search Dashboards by Tag
+
+```python copy /@proxyAuthSetting.username/ /@proxyAuthSetting.password/ /@metrics_id/
+from grafana_client import GrafanaApi
+
+grafana = GrafanaApi.from_url(
+    url="https://grafana.logit.io/s/@metrics_id",
+    credential=("@proxyAuthSetting.username", "@proxyAuthSetting.password")
+)
+
+# Search for dashboards with specific tag
+dashboards = grafana.search.search_dashboards(tag="metrics")
+for db in dashboards:
+    print(f"- {db['title']}")
+```
+
+## Error Handling
+
+The grafana-client library raises `GrafanaClientError` for API errors. Always wrap API calls in try-except blocks for production code:
+
+```python
+from grafana_client.client import GrafanaClientError
+
+try:
+    result = grafana.dashboard.get_dashboard("non-existent-uid")
+except GrafanaClientError as e:
+    print(f"API Error: {e}")
+```
+
+## Further Reading
+
+- [grafana-client Documentation](https://github.com/panodata/grafana-client)
+- [Grafana HTTP API Reference](https://grafana.com/docs/grafana/latest/developers/http_api/)
+- [Overview](./overview) - Authentication details and credential setup
+- [Dashboards as Code](./dashboards-as-code) - Learn about dashboard provisioning workflows

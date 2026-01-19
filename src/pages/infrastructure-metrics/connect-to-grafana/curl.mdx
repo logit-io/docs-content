@@ -1,0 +1,362 @@
+---
+title: Connect to Grafana with cURL
+metaTitle: Learn How to Access Grafana API with cURL
+description: Use cURL to interact with your Logit.io Grafana instance via REST API for quick testing and scripting.
+pagination: false
+timestamp: false
+stackTypes: metrics
+---
+
+# Connect to Grafana with cURL
+
+Use cURL to interact with your Logit.io Grafana instance via the REST API. This is ideal for quick testing, shell scripts, and CI/CD pipelines.
+
+## Prerequisites
+
+- cURL installed on your system
+- Your Logit.io Grafana credentials from [Profile Settings](https://dashboard.logit.io/profile)
+- Optional: [jq](https://stedolan.github.io/jq/) for JSON formatting
+
+<ProxyAuthPlaceholderWarning stackType="metrics" />
+
+## Authentication
+
+All API requests require authentication using either:
+- **Basic Auth Header** (recommended) - Pre-encoded Base64 string
+- **Username and Password** - cURL handles the encoding
+
+## Common API Operations
+
+### Health Check
+
+Verify your connection and credentials:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@proxyAuthSetting.basicAuthHeader/ /@metrics_id/
+curl -XGET -H "Content-Type: application/json" \
+  -H "Authorization: Basic @proxyAuthSetting.basicAuthHeader" \
+  "https://grafana.logit.io/s/@metrics_id/api/health"
+```
+
+</Tab>
+<Tab>
+
+```bash copy /@proxyAuthSetting.basicAuthHeader/ /@metrics_id/
+curl -XGET -H "Content-Type: application/json" ^
+  -H "Authorization: Basic @proxyAuthSetting.basicAuthHeader" ^
+  "https://grafana.logit.io/s/@metrics_id/api/health"
+```
+
+</Tab>
+</Tabs>
+
+**Example response:**
+
+```json
+{
+  "commit": "abc1234567",
+  "database": "ok",
+  "version": "10.0.0"
+}
+```
+
+---
+
+### List All Dashboards
+
+Search for all dashboards in your Grafana instance:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@proxyAuthSetting.basicAuthHeader/ /@metrics_id/
+curl -XGET -H "Content-Type: application/json" \
+  -H "Authorization: Basic @proxyAuthSetting.basicAuthHeader" \
+  "https://grafana.logit.io/s/@metrics_id/api/search?type=dash-db"
+```
+
+</Tab>
+<Tab>
+
+```bash copy /@proxyAuthSetting.basicAuthHeader/ /@metrics_id/
+curl -XGET -H "Content-Type: application/json" ^
+  -H "Authorization: Basic @proxyAuthSetting.basicAuthHeader" ^
+  "https://grafana.logit.io/s/@metrics_id/api/search?type=dash-db"
+```
+
+</Tab>
+</Tabs>
+
+**Example response:**
+
+```json
+[
+  {
+    "id": 1,
+    "uid": "abc123",
+    "title": "System Metrics",
+    "type": "dash-db",
+    "tags": ["metrics", "system"],
+    "folderTitle": "General"
+  }
+]
+```
+
+---
+
+### Get Dashboard by UID
+
+Retrieve a specific dashboard by its UID:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@proxyAuthSetting.basicAuthHeader/ /@metrics_id/
+curl -XGET -H "Content-Type: application/json" \
+  -H "Authorization: Basic @proxyAuthSetting.basicAuthHeader" \
+  "https://grafana.logit.io/s/@metrics_id/api/dashboards/uid/<DASHBOARD_UID>"
+```
+
+</Tab>
+<Tab>
+
+```bash copy /@proxyAuthSetting.basicAuthHeader/ /@metrics_id/
+curl -XGET -H "Content-Type: application/json" ^
+  -H "Authorization: Basic @proxyAuthSetting.basicAuthHeader" ^
+  "https://grafana.logit.io/s/@metrics_id/api/dashboards/uid/<DASHBOARD_UID>"
+```
+
+</Tab>
+</Tabs>
+
+---
+
+### Export Dashboard to JSON
+
+Export a dashboard and save it to a file (requires jq):
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@proxyAuthSetting.basicAuthHeader/ /@metrics_id/
+curl -XGET -H "Content-Type: application/json" \
+  -H "Authorization: Basic @proxyAuthSetting.basicAuthHeader" \
+  "https://grafana.logit.io/s/@metrics_id/api/dashboards/uid/<DASHBOARD_UID>" \
+  | jq '.dashboard' > my-dashboard.json
+```
+
+</Tab>
+<Tab>
+
+```bash copy /@proxyAuthSetting.basicAuthHeader/ /@metrics_id/
+curl -XGET -H "Content-Type: application/json" ^
+  -H "Authorization: Basic @proxyAuthSetting.basicAuthHeader" ^
+  "https://grafana.logit.io/s/@metrics_id/api/dashboards/uid/<DASHBOARD_UID>" ^
+  -o dashboard-response.json
+```
+
+Then extract the dashboard using a JSON tool or text editor.
+
+</Tab>
+</Tabs>
+
+---
+
+### Import Dashboard from JSON
+
+Import a dashboard from a JSON file:
+
+First, create an import payload file `import-payload.json`:
+
+```json copy filename="import-payload.json"
+{
+  "dashboard": {
+    "title": "My Imported Dashboard",
+    "tags": ["imported"],
+    "timezone": "browser",
+    "panels": [],
+    "schemaVersion": 38
+  },
+  "folderId": 0,
+  "overwrite": true
+}
+```
+
+Then import it:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@proxyAuthSetting.basicAuthHeader/ /@metrics_id/
+curl -XPOST -H "Content-Type: application/json" \
+  -H "Authorization: Basic @proxyAuthSetting.basicAuthHeader" \
+  -d @import-payload.json \
+  "https://grafana.logit.io/s/@metrics_id/api/dashboards/db"
+```
+
+</Tab>
+<Tab>
+
+```bash copy /@proxyAuthSetting.basicAuthHeader/ /@metrics_id/
+curl -XPOST -H "Content-Type: application/json" ^
+  -H "Authorization: Basic @proxyAuthSetting.basicAuthHeader" ^
+  -d @import-payload.json ^
+  "https://grafana.logit.io/s/@metrics_id/api/dashboards/db"
+```
+
+</Tab>
+</Tabs>
+
+**Example response:**
+
+```json
+{
+  "id": 5,
+  "uid": "new-uid-123",
+  "url": "/d/new-uid-123/my-imported-dashboard",
+  "status": "success",
+  "version": 1
+}
+```
+
+---
+
+### List Folders
+
+List all folders in your Grafana instance:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@proxyAuthSetting.basicAuthHeader/ /@metrics_id/
+curl -XGET -H "Content-Type: application/json" \
+  -H "Authorization: Basic @proxyAuthSetting.basicAuthHeader" \
+  "https://grafana.logit.io/s/@metrics_id/api/folders"
+```
+
+</Tab>
+<Tab>
+
+```bash copy /@proxyAuthSetting.basicAuthHeader/ /@metrics_id/
+curl -XGET -H "Content-Type: application/json" ^
+  -H "Authorization: Basic @proxyAuthSetting.basicAuthHeader" ^
+  "https://grafana.logit.io/s/@metrics_id/api/folders"
+```
+
+</Tab>
+</Tabs>
+
+---
+
+### Create Folder
+
+Create a new folder to organize dashboards:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@proxyAuthSetting.basicAuthHeader/ /@metrics_id/
+curl -XPOST -H "Content-Type: application/json" \
+  -H "Authorization: Basic @proxyAuthSetting.basicAuthHeader" \
+  -d '{"title": "My New Folder"}' \
+  "https://grafana.logit.io/s/@metrics_id/api/folders"
+```
+
+</Tab>
+<Tab>
+
+```bash copy /@proxyAuthSetting.basicAuthHeader/ /@metrics_id/
+curl -XPOST -H "Content-Type: application/json" ^
+  -H "Authorization: Basic @proxyAuthSetting.basicAuthHeader" ^
+  -d "{\"title\": \"My New Folder\"}" ^
+  "https://grafana.logit.io/s/@metrics_id/api/folders"
+```
+
+</Tab>
+</Tabs>
+
+**Example response:**
+
+```json
+{
+  "id": 2,
+  "uid": "folder-uid-123",
+  "title": "My New Folder",
+  "url": "/dashboards/f/folder-uid-123/my-new-folder"
+}
+```
+
+---
+
+### Delete Dashboard
+
+Delete a dashboard by UID:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@proxyAuthSetting.basicAuthHeader/ /@metrics_id/
+curl -XDELETE -H "Content-Type: application/json" \
+  -H "Authorization: Basic @proxyAuthSetting.basicAuthHeader" \
+  "https://grafana.logit.io/s/@metrics_id/api/dashboards/uid/<DASHBOARD_UID>"
+```
+
+</Tab>
+<Tab>
+
+```bash copy /@proxyAuthSetting.basicAuthHeader/ /@metrics_id/
+curl -XDELETE -H "Content-Type: application/json" ^
+  -H "Authorization: Basic @proxyAuthSetting.basicAuthHeader" ^
+  "https://grafana.logit.io/s/@metrics_id/api/dashboards/uid/<DASHBOARD_UID>"
+```
+
+</Tab>
+</Tabs>
+
+---
+
+## Using Username and Password
+
+As an alternative to the Basic Auth header, you can use the `-u` flag with username and password:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@proxyAuthSetting.username/ /@proxyAuthSetting.password/ /@metrics_id/
+curl -XGET -H "Content-Type: application/json" \
+  -u "@proxyAuthSetting.username:@proxyAuthSetting.password" \
+  "https://grafana.logit.io/s/@metrics_id/api/health"
+```
+
+</Tab>
+<Tab>
+
+```bash copy /@proxyAuthSetting.username/ /@proxyAuthSetting.password/ /@metrics_id/
+curl -XGET -H "Content-Type: application/json" ^
+  -u "@proxyAuthSetting.username:@proxyAuthSetting.password" ^
+  "https://grafana.logit.io/s/@metrics_id/api/health"
+```
+
+</Tab>
+</Tabs>
+
+## API Reference
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/health` | GET | Health check |
+| `/api/search` | GET | Search dashboards and folders |
+| `/api/dashboards/uid/{uid}` | GET | Get dashboard by UID |
+| `/api/dashboards/uid/{uid}` | DELETE | Delete dashboard |
+| `/api/dashboards/db` | POST | Create/update dashboard |
+| `/api/folders` | GET | List folders |
+| `/api/folders` | POST | Create folder |
+| `/api/folders/{uid}` | DELETE | Delete folder |
+
+## Further Reading
+
+- [Grafana HTTP API Documentation](https://grafana.com/docs/grafana/latest/developers/http_api/)
+- [Overview](./overview) - Authentication details and credential setup
+- [Dashboards as Code](./dashboards-as-code) - Learn about dashboard provisioning workflows

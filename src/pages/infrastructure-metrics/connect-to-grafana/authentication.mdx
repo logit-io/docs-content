@@ -1,0 +1,120 @@
+---
+title: Authentication
+metaTitle: Learn How to Authenticate with Grafana API
+description: Understand how to authenticate with your Logit.io Grafana instance using Basic Auth credentials for programmatic access.
+pagination: false
+timestamp: false
+stackTypes: metrics
+---
+
+# Authentication
+
+This guide explains how to authenticate with your Logit.io Grafana instance for programmatic access via the Grafana HTTP API.
+
+## Finding Your Credentials
+
+Your Grafana API credentials are available in your Logit.io dashboard:
+
+1. Navigate to your [Profile Settings](https://dashboard.logit.io/profile)
+2. Locate the **Proxy Settings** section
+3. You'll find three authentication options:
+   - **Username** and **Password** - For basic authentication
+   - **Basic Auth Header** - Pre-encoded Base64 header for convenience
+
+## Authentication Methods
+
+### Method 1: Basic Auth Header
+
+The simplest approach is using the pre-encoded Basic Auth header. This is already Base64 encoded and ready to use:
+
+<ProxyAuthPlaceholderWarning stackType="metrics" />
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@proxyAuthSetting.basicAuthHeader/ /@metrics_id/
+curl -XGET -H "Content-Type: application/json" \
+  -H "Authorization: Basic @proxyAuthSetting.basicAuthHeader" \
+  "https://grafana.logit.io/s/@metrics_id/api/health"
+```
+
+</Tab>
+<Tab>
+
+```bash copy /@proxyAuthSetting.basicAuthHeader/ /@metrics_id/
+curl -XGET -H "Content-Type: application/json" ^
+  -H "Authorization: Basic @proxyAuthSetting.basicAuthHeader" ^
+  "https://grafana.logit.io/s/@metrics_id/api/health"
+```
+
+</Tab>
+</Tabs>
+
+### Method 2: Username and Password
+
+Alternatively, you can use the username and password directly. Most HTTP clients will handle the Base64 encoding for you:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@proxyAuthSetting.username/ /@proxyAuthSetting.password/ /@metrics_id/
+curl -XGET -H "Content-Type: application/json" \
+  -u "@proxyAuthSetting.username:@proxyAuthSetting.password" \
+  "https://grafana.logit.io/s/@metrics_id/api/health"
+```
+
+</Tab>
+<Tab>
+
+```bash copy /@proxyAuthSetting.username/ /@proxyAuthSetting.password/ /@metrics_id/
+curl -XGET -H "Content-Type: application/json" ^
+  -u "@proxyAuthSetting.username:@proxyAuthSetting.password" ^
+  "https://grafana.logit.io/s/@metrics_id/api/health"
+```
+
+</Tab>
+</Tabs>
+
+## Base URL Pattern
+
+All Grafana API requests use the following base URL pattern:
+
+```txt copy /@metrics_id/
+https://grafana.logit.io/s/@metrics_id/api/
+```
+
+Common API endpoints include:
+
+| Endpoint | Description |
+|----------|-------------|
+| `/api/health` | Health check |
+| `/api/search` | Search dashboards and folders |
+| `/api/dashboards/uid/{uid}` | Get dashboard by UID |
+| `/api/dashboards/db` | Create/update dashboard |
+| `/api/folders` | List/create folders |
+
+## Verify Your Connection
+
+Run the health check command above to verify your credentials are working. A successful response looks like:
+
+```json
+{
+  "commit": "abc123",
+  "database": "ok",
+  "version": "10.0.0"
+}
+```
+
+## Using Credentials in Different Tools
+
+Each guide in this section shows how to use your credentials with specific tools:
+
+| Tool | Authentication Method |
+|------|----------------------|
+| [Terraform](./terraform) | Basic Auth Header via provider config |
+| [Python](./python) | Username/Password via grafana-client |
+| [cURL](./curl) | Basic Auth Header or `-u` flag |
+
+## Further Reading
+
+For a complete list of available API endpoints, see the official [Grafana HTTP API documentation](https://grafana.com/docs/grafana/latest/developers/http_api/).

@@ -1,4 +1,12 @@
 {
   "overview": "Overview",
-  "getting-started": "Getting Started"
+  "getting-started": "Getting Started",
+  "connect-to-grafana": "Connect to Grafana",
+  "ingestion-pipeline": "Sending Data",
+  "visualizers": "Visualizers",
+  "alerting": "Alerting",
+  "storage": "Storage",
+  "statistics": "Statistics",
+  "metrics-volume-count": "Metrics Volume Count",
+  "audit-log": "Audit Log"
 }

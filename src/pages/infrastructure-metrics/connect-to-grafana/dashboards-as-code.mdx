@@ -1,0 +1,438 @@
+---
+title: Dashboards as Code
+metaTitle: Learn How to Manage Grafana Dashboards as Code
+description: Version control your Grafana dashboards using JSON files, Terraform, and CI/CD pipelines for reproducible infrastructure.
+pagination: false
+timestamp: false
+stackTypes: metrics
+---
+
+# Dashboards as Code
+
+Managing Grafana dashboards as code enables version control, peer review, and automated deployments. This guide covers the complete workflow for exporting, storing, and deploying dashboards programmatically.
+
+## Benefits
+
+- **Version Control** - Track changes to dashboards over time with Git
+- **Peer Review** - Review dashboard changes before deployment
+- **Reproducibility** - Deploy identical dashboards across environments
+- **Disaster Recovery** - Quickly restore dashboards from code
+- **Automation** - Deploy dashboards via CI/CD pipelines
+
+<ProxyAuthPlaceholderWarning stackType="metrics" />
+
+## Project Structure
+
+We recommend organizing your dashboards repository like this:
+
+```
+grafana-dashboards/
+├── dashboards/
+│   ├── system/
+│   │   ├── cpu-metrics.json
+│   │   ├── memory-metrics.json
+│   │   └── disk-metrics.json
+│   ├── application/
+│   │   ├── api-performance.json
+│   │   └── error-rates.json
+│   └── network/
+│       └── traffic-overview.json
+├── terraform/
+│   ├── main.tf
+│   ├── variables.tf
+│   ├── provider.tf
+│   └── dashboards.tf
+├── scripts/
+│   ├── export-dashboard.sh
+│   └── import-dashboard.sh
+├── .github/
+│   └── workflows/
+│       └── deploy-dashboards.yml
+└── README.md
+```
+
+## Export Dashboards
+
+### Using cURL
+
+Export an existing dashboard to a JSON file:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@proxyAuthSetting.basicAuthHeader/ /@metrics_id/
+# Export dashboard by UID
+DASHBOARD_UID="your-dashboard-uid"
+
+curl -XGET -H "Content-Type: application/json" \
+  -H "Authorization: Basic @proxyAuthSetting.basicAuthHeader" \
+  "https://grafana.logit.io/s/@metrics_id/api/dashboards/uid/${DASHBOARD_UID}" \
+  | jq '.dashboard' > dashboards/my-dashboard.json
+```
+
+</Tab>
+<Tab>
+
+```bash copy /@proxyAuthSetting.basicAuthHeader/ /@metrics_id/
+set DASHBOARD_UID=your-dashboard-uid
+
+curl -XGET -H "Content-Type: application/json" ^
+  -H "Authorization: Basic @proxyAuthSetting.basicAuthHeader" ^
+  "https://grafana.logit.io/s/@metrics_id/api/dashboards/uid/%DASHBOARD_UID%" ^
+  -o dashboard-export.json
+```
+
+</Tab>
+</Tabs>
+
+### Export Script
+
+Create a reusable export script `scripts/export-dashboard.sh`:
+
+```bash copy /@proxyAuthSetting.basicAuthHeader/ /@metrics_id/ filename="scripts/export-dashboard.sh"
+#!/bin/bash
+# Export a Grafana dashboard to JSON
+# Usage: ./export-dashboard.sh <dashboard-uid> <output-file>
+
+DASHBOARD_UID=$1
+OUTPUT_FILE=$2
+
+if [ -z "$DASHBOARD_UID" ] || [ -z "$OUTPUT_FILE" ]; then
+    echo "Usage: ./export-dashboard.sh <dashboard-uid> <output-file>"
+    exit 1
+fi
+
+GRAFANA_URL="https://grafana.logit.io/s/@metrics_id"
+AUTH_HEADER="@proxyAuthSetting.basicAuthHeader"
+
+curl -s -XGET -H "Content-Type: application/json" \
+  -H "Authorization: Basic ${AUTH_HEADER}" \
+  "${GRAFANA_URL}/api/dashboards/uid/${DASHBOARD_UID}" \
+  | jq '.dashboard | del(.id) | del(.version)' > "${OUTPUT_FILE}"
+
+if [ $? -eq 0 ]; then
+    echo "✓ Exported dashboard to ${OUTPUT_FILE}"
+else
+    echo "✗ Failed to export dashboard"
+    exit 1
+fi
+```
+
+Make it executable:
+
+```bash copy
+chmod +x scripts/export-dashboard.sh
+```
+
+## Dashboard JSON Format
+
+When storing dashboards as code, clean up the exported JSON:
+
+- **Remove `id`** - Let Grafana assign a new ID on import
+- **Remove `version`** - Avoid version conflicts
+- **Keep `uid`** - Use a consistent UID for updates
+- **Use variables** - Make dashboards portable with template variables
+
+### Example Dashboard JSON
+
+```json copy filename="dashboards/system/cpu-metrics.json"
+{
+  "uid": "cpu-metrics-v1",
+  "title": "CPU Metrics Dashboard",
+  "description": "Monitor CPU usage across all hosts",
+  "tags": ["system", "cpu", "metrics"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "editable": true,
+  "panels": [
+    {
+      "id": 1,
+      "title": "CPU Usage Overview",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "expr": "100 - cpu_usage_idle{host=~\"$host\"}",
+          "legendFormat": "{{host}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 70 },
+              { "color": "red", "value": 90 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 2,
+      "title": "CPU Usage by Core",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "expr": "100 - cpu_usage_idle{host=~\"$host\", cpu!=\"cpu-total\"}",
+          "legendFormat": "{{host}} - {{cpu}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100
+        }
+      }
+    },
+    {
+      "id": 3,
+      "title": "System Load Average",
+      "type": "stat",
+      "gridPos": {
+        "x": 12,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "expr": "system_load1{host=~\"$host\"}",
+          "legendFormat": "{{host}}",
+          "refId": "A"
+        }
+      ]
+    }
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "host",
+        "label": "Host",
+        "type": "query",
+        "query": "label_values(cpu_usage_idle, host)",
+        "refresh": 1,
+        "multi": true,
+        "includeAll": true,
+        "allValue": ".*"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "refresh": "30s"
+}
+```
+
+## Import Dashboards
+
+### Using cURL
+
+Import a dashboard from a JSON file:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@proxyAuthSetting.basicAuthHeader/ /@metrics_id/
+# Create import payload
+cat dashboards/system/cpu-metrics.json | jq '{dashboard: ., folderId: 0, overwrite: true}' > /tmp/import-payload.json
+
+# Import dashboard
+curl -XPOST -H "Content-Type: application/json" \
+  -H "Authorization: Basic @proxyAuthSetting.basicAuthHeader" \
+  -d @/tmp/import-payload.json \
+  "https://grafana.logit.io/s/@metrics_id/api/dashboards/db"
+```
+
+</Tab>
+<Tab>
+
+```bash copy /@proxyAuthSetting.basicAuthHeader/ /@metrics_id/
+curl -XPOST -H "Content-Type: application/json" ^
+  -H "Authorization: Basic @proxyAuthSetting.basicAuthHeader" ^
+  -d @import-payload.json ^
+  "https://grafana.logit.io/s/@metrics_id/api/dashboards/db"
+```
+
+</Tab>
+</Tabs>
+
+### Import Script
+
+Create a reusable import script `scripts/import-dashboard.sh`:
+
+```bash copy /@proxyAuthSetting.basicAuthHeader/ /@metrics_id/ filename="scripts/import-dashboard.sh"
+#!/bin/bash
+# Import a Grafana dashboard from JSON
+# Usage: ./import-dashboard.sh <json-file> [folder-id]
+
+JSON_FILE=$1
+FOLDER_ID=${2:-0}
+
+if [ -z "$JSON_FILE" ]; then
+    echo "Usage: ./import-dashboard.sh <json-file> [folder-id]"
+    exit 1
+fi
+
+GRAFANA_URL="https://grafana.logit.io/s/@metrics_id"
+AUTH_HEADER="@proxyAuthSetting.basicAuthHeader"
+
+# Create import payload
+PAYLOAD=$(cat "$JSON_FILE" | jq "{dashboard: ., folderId: ${FOLDER_ID}, overwrite: true}")
+
+# Import dashboard
+RESPONSE=$(curl -s -XPOST -H "Content-Type: application/json" \
+  -H "Authorization: Basic ${AUTH_HEADER}" \
+  -d "$PAYLOAD" \
+  "${GRAFANA_URL}/api/dashboards/db")
+
+# Check result
+STATUS=$(echo "$RESPONSE" | jq -r '.status // "error"')
+
+if [ "$STATUS" = "success" ]; then
+    URL=$(echo "$RESPONSE" | jq -r '.url')
+    echo "✓ Imported dashboard: ${GRAFANA_URL}${URL}"
+else
+    echo "✗ Failed to import dashboard:"
+    echo "$RESPONSE" | jq .
+    exit 1
+fi
+```
+
+## Deploy with Terraform
+
+Use Terraform for declarative dashboard management. See the [Terraform guide](./terraform) for full setup.
+
+```hcl copy /@proxyAuthSetting.basicAuthHeader/ /@metrics_id/ filename="terraform/dashboards.tf"
+# Deploy all dashboards from the dashboards directory
+locals {
+  dashboard_files = fileset("${path.module}/../dashboards", "**/*.json")
+}
+
+resource "grafana_folder" "system" {
+  title = "System Dashboards"
+}
+
+resource "grafana_folder" "application" {
+  title = "Application Dashboards"
+}
+
+resource "grafana_dashboard" "dashboards" {
+  for_each = local.dashboard_files
+
+  folder      = startswith(each.key, "system/") ? grafana_folder.system.id : grafana_folder.application.id
+  config_json = file("${path.module}/../dashboards/${each.key}")
+}
+```
+
+## CI/CD with GitHub Actions
+
+Automate dashboard deployments with GitHub Actions:
+
+```yaml copy filename=".github/workflows/deploy-dashboards.yml"
+name: Deploy Grafana Dashboards
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'dashboards/**'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.5"
+
+      - name: Terraform Init
+        working-directory: ./terraform
+        run: terraform init
+
+      - name: Terraform Plan
+        working-directory: ./terraform
+        run: terraform plan -no-color
+        env:
+          TF_VAR_grafana_url: ${{ secrets.GRAFANA_URL }}
+          TF_VAR_grafana_auth: ${{ secrets.GRAFANA_AUTH }}
+
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main'
+        working-directory: ./terraform
+        run: terraform apply -auto-approve
+        env:
+          TF_VAR_grafana_url: ${{ secrets.GRAFANA_URL }}
+          TF_VAR_grafana_auth: ${{ secrets.GRAFANA_AUTH }}
+```
+
+### Required Secrets
+
+Add these secrets to your GitHub repository:
+
+| Secret | Value |
+|--------|-------|
+| `GRAFANA_URL` | `https://grafana.logit.io/s/<your-stack-id>` |
+| `GRAFANA_AUTH` | Your Basic Auth header from Profile Settings |
+
+## Best Practices
+
+1. **Use consistent UIDs** - Define a UID in each dashboard JSON to enable updates rather than duplicates
+
+2. **Remove auto-generated fields** - Strip `id`, `version`, and other auto-generated fields before committing
+
+3. **Use template variables** - Make dashboards portable with variables for hosts, services, and data sources
+
+4. **Organize by category** - Group dashboards into folders (system, application, network, etc.)
+
+5. **Review changes** - Use pull requests to review dashboard changes before merging
+
+6. **Test in staging** - Deploy to a staging environment before production if available
+
+7. **Document dashboards** - Add descriptions to dashboards and panels explaining what they monitor
+
+## Further Reading
+
+- [Terraform Guide](./terraform) - Full Terraform setup for Grafana
+- [cURL Guide](./curl) - API reference for dashboard operations
+- [Python Guide](./python) - Programmatic dashboard management with Python
+- [Grafana Dashboard JSON Model](https://grafana.com/docs/grafana/latest/dashboards/json-model/)

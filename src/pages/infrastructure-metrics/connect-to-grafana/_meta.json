@@ -1,0 +1,8 @@
+{
+  "overview": "Overview",
+  "authentication": "Authentication",
+  "terraform": "Terraform",
+  "python": "Python",
+  "curl": "cURL",
+  "dashboards-as-code": "Dashboards as Code"
+}
