@@ -94,6 +94,8 @@ Create a reusable export script `scripts/export-dashboard.sh`:
 # Export a Grafana dashboard to JSON
 # Usage: ./export-dashboard.sh <dashboard-uid> <output-file>
 
+set -o pipefail
+
 DASHBOARD_UID=$1
 OUTPUT_FILE=$2
 
@@ -105,15 +107,26 @@ fi
 GRAFANA_URL="https://grafana.logit.io/s/@metrics_id"
 AUTH_HEADER="@proxyAuthSetting.basicAuthHeader"
 
-curl -s -XGET -H "Content-Type: application/json" \
+# Export dashboard and check for errors
+HTTP_CODE=$(curl -s -o /tmp/dashboard-response.json -w "%{http_code}" \
+  -XGET -H "Content-Type: application/json" \
   -H "Authorization: Basic ${AUTH_HEADER}" \
-  "${GRAFANA_URL}/api/dashboards/uid/${DASHBOARD_UID}" \
-  | jq '.dashboard | del(.id) | del(.version)' > "${OUTPUT_FILE}"
+  "${GRAFANA_URL}/api/dashboards/uid/${DASHBOARD_UID}")
+
+if [ "$HTTP_CODE" -ne 200 ]; then
+    echo "✗ Failed to export dashboard: HTTP ${HTTP_CODE}"
+    cat /tmp/dashboard-response.json
+    exit 1
+fi
+
+# Process JSON and write to output file
+jq '.dashboard | del(.id) | del(.version)' /tmp/dashboard-response.json > "${OUTPUT_FILE}"
 
 if [ $? -eq 0 ]; then
     echo "✓ Exported dashboard to ${OUTPUT_FILE}"
+    rm -f /tmp/dashboard-response.json
 else
-    echo "✗ Failed to export dashboard"
+    echo "✗ Failed to process dashboard JSON"
     exit 1
 fi
 ```

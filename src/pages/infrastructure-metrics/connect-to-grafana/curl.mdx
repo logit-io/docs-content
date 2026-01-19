@@ -319,7 +319,48 @@ curl -XDELETE -H "Content-Type: application/json" ^
 
 ## Using Username and Password
 
-As an alternative to the Basic Auth header, you can use the `-u` flag with username and password:
+As an alternative to the Basic Auth header, you can use the `-u` flag with username and password. However, **be aware that inline credentials in command-line arguments can be visible in shell history and process lists**.
+
+<Callout type="warning">
+For production use, consider using environment variables or other secure methods to avoid exposing credentials in shell history.
+</Callout>
+
+### Using Environment Variables (Recommended)
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@proxyAuthSetting.username/ /@proxyAuthSetting.password/ /@metrics_id/
+# Set credentials as environment variables
+export GRAFANA_USER="@proxyAuthSetting.username"
+export GRAFANA_PASS="@proxyAuthSetting.password"
+
+# Use environment variables in curl command
+curl -XGET -H "Content-Type: application/json" \
+  -u "${GRAFANA_USER}:${GRAFANA_PASS}" \
+  "https://grafana.logit.io/s/@metrics_id/api/health"
+```
+
+</Tab>
+<Tab>
+
+```bash copy /@proxyAuthSetting.username/ /@proxyAuthSetting.password/ /@metrics_id/
+# Set credentials as environment variables
+set GRAFANA_USER=@proxyAuthSetting.username
+set GRAFANA_PASS=@proxyAuthSetting.password
+
+# Use environment variables in curl command
+curl -XGET -H "Content-Type: application/json" ^
+  -u "%GRAFANA_USER%:%GRAFANA_PASS%" ^
+  "https://grafana.logit.io/s/@metrics_id/api/health"
+```
+
+</Tab>
+</Tabs>
+
+### Using Inline Credentials (Not Recommended for Production)
+
+If you must use inline credentials, be aware they will appear in shell history:
 
 <Tabs items={["Linux / macOS", "Windows"]}>
 <Tab>

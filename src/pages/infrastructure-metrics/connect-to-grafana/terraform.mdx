@@ -10,7 +10,7 @@ stackTypes: metrics
 # Connect to Grafana with Terraform
 
 <Callout type="info">
-This guide uses the official Grafana Terraform provider version 2.x or later.
+This guide uses the official Grafana Terraform provider version 4.x or later.
 </Callout>
 
 Use the [Grafana Terraform provider](https://registry.terraform.io/providers/grafana/grafana/latest/docs) to manage your Logit.io Grafana instance as infrastructure as code. This allows you to version control dashboards, create folders, and automate your observability setup.
@@ -55,7 +55,7 @@ terraform {
   required_providers {
     grafana = {
       source  = "grafana/grafana"
-      version = "~> 2.0"
+      version = "~> 4.0"
     }
   }
 }
@@ -65,7 +65,7 @@ terraform {
 
 Create `variables.tf` with your Logit.io credentials:
 
-```hcl copy /@proxyAuthSetting.basicAuthHeader/ /@metrics_id/ filename="variables.tf"
+```hcl copy /@proxyAuthSetting.username/ /@proxyAuthSetting.password/ /@metrics_id/ filename="variables.tf"
 variable "grafana_url" {
   description = "Logit.io Grafana URL"
   type        = string
@@ -73,10 +73,10 @@ variable "grafana_url" {
 }
 
 variable "grafana_auth" {
-  description = "Basic Auth header from Logit.io Profile Settings"
+  description = "Grafana authentication in format 'username:password' or API token from Logit.io Profile Settings"
   type        = string
   sensitive   = true
-  default     = "@proxyAuthSetting.basicAuthHeader"
+  default     = "@proxyAuthSetting.username:@proxyAuthSetting.password"
 }
 ```
 
