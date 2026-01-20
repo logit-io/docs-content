@@ -1,0 +1,108 @@
+---
+title: Connect to Grafana Overview
+metaTitle: Learn How to Connect to Grafana Programmatically
+description: Overview of programmatic access methods for your Logit.io Grafana instance including Terraform, Python, cURL, and Dashboards as Code.
+pagination: false
+timestamp: false
+stackTypes: metrics
+---
+
+# Connect to Grafana Overview
+
+Connect to your Logit.io Grafana instance programmatically to automate dashboard management, integrate with your workflows, and manage your observability infrastructure as code.
+
+## Why Connect Programmatically?
+
+While the Grafana UI is great for interactive use, programmatic access enables:
+
+- **Automation** - Deploy dashboards automatically as part of your CI/CD pipeline
+- **Version Control** - Store dashboards as code in Git for tracking changes
+- **Reproducibility** - Deploy identical dashboards across environments
+- **Integration** - Connect Grafana to your existing tools and workflows
+- **Bulk Operations** - Manage multiple dashboards and folders efficiently
+
+## Available Guides
+
+### Authentication
+
+Before using any of the tools below, you'll need to set up authentication.
+
+**[Authentication Guide](./authentication)** - Learn where to find your credentials and how to authenticate with the Grafana API using Basic Auth.
+
+---
+
+### Terraform
+
+Use infrastructure as code to manage your Grafana resources declaratively.
+
+**[Terraform Guide](./terraform)** - Configure the Grafana Terraform provider to create and manage dashboards, folders, and other resources.
+
+**Best for:**
+- Infrastructure as Code workflows
+- GitOps deployments
+- Managing multiple dashboards declaratively
+- Team collaboration with state management
+
+---
+
+### Python
+
+Build custom integrations and automation scripts with Python.
+
+**[Python Guide](./python)** - Use the grafana-client library to interact with the Grafana API from Python applications.
+
+**Best for:**
+- Custom automation scripts
+- Integration with existing Python applications
+- Complex dashboard generation logic
+- Data-driven dashboard creation
+
+---
+
+### cURL
+
+Make direct API calls for quick testing and shell scripting.
+
+**[cURL Guide](./curl)** - Use command-line cURL to interact with the Grafana REST API.
+
+**Best for:**
+- Quick API testing
+- Shell scripts and automation
+- CI/CD pipeline integration
+- Debugging and troubleshooting
+
+---
+
+### Dashboards as Code
+
+Implement a complete workflow for managing dashboards in version control.
+
+**[Dashboards as Code Guide](./dashboards-as-code)** - Learn how to export, store, and deploy dashboards using JSON files, scripts, and CI/CD pipelines.
+
+**Best for:**
+- Version controlling dashboard changes
+- Peer review workflows
+- Disaster recovery
+- Multi-environment deployments
+
+## Quick Start
+
+1. **Get your credentials** - Visit [Profile Settings](https://dashboard.logit.io/profile) and find your Proxy Settings
+2. **Choose your tool** - Select the guide that matches your use case
+3. **Test your connection** - Run a health check to verify authentication
+4. **Start building** - Follow the examples to manage your dashboards
+
+## Comparison
+
+| Feature | Terraform | Python | cURL | Dashboards as Code |
+|---------|-----------|--------|------|-------------------|
+| Learning curve | Medium | Low | Low | Medium |
+| State management | ✓ | - | - | Via Terraform |
+| Version control | ✓ | ✓ | ✓ | ✓ |
+| CI/CD integration | ✓ | ✓ | ✓ | ✓ |
+| Complex logic | Limited | ✓ | Limited | ✓ |
+| Interactive testing | - | ✓ | ✓ | - |
+
+## Next Steps
+
+Start with the [Authentication Guide](./authentication) to set up your credentials, then choose the tool that best fits your workflow.

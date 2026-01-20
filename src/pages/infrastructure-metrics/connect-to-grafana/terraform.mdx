@@ -1,0 +1,246 @@
+---
+title: Connect to Grafana with Terraform
+metaTitle: Learn How to Manage Grafana with Terraform
+description: Use the Grafana Terraform provider to manage dashboards, folders, and other resources in your Logit.io Grafana instance.
+pagination: false
+timestamp: false
+stackTypes: metrics
+---
+
+# Connect to Grafana with Terraform
+
+<Callout type="info">
+This guide uses the official Grafana Terraform provider version 4.x or later.
+</Callout>
+
+Use the [Grafana Terraform provider](https://registry.terraform.io/providers/grafana/grafana/latest/docs) to manage your Logit.io Grafana instance as infrastructure as code. This allows you to version control dashboards, create folders, and automate your observability setup.
+
+## Prerequisites
+
+- [Terraform](https://www.terraform.io/downloads) v1.0 or later installed
+- Your Logit.io Grafana credentials from [Profile Settings](https://dashboard.logit.io/profile)
+
+<ProxyAuthPlaceholderWarning stackType="metrics" />
+
+<Steps>
+
+### Create Project Structure
+
+Create a new directory for your Terraform configuration:
+
+```bash
+mkdir grafana-terraform && cd grafana-terraform
+```
+
+Create the following file structure:
+
+```
+grafana-terraform/
+├── versions.tf
+├── variables.tf
+├── provider.tf
+├── main.tf
+└── dashboards/
+    └── cpu-metrics.json
+```
+
+### Configure Terraform Versions
+
+Create `versions.tf` to specify the required providers:
+
+```hcl copy filename="versions.tf"
+terraform {
+  required_version = ">= 1.0"
+
+  required_providers {
+    grafana = {
+      source  = "grafana/grafana"
+      version = "~> 4.0"
+    }
+  }
+}
+```
+
+### Define Variables
+
+Create `variables.tf` with your Logit.io credentials:
+
+```hcl copy /@proxyAuthSetting.username/ /@proxyAuthSetting.password/ /@metrics_id/ filename="variables.tf"
+variable "grafana_url" {
+  description = "Logit.io Grafana URL"
+  type        = string
+  default     = "https://grafana.logit.io/s/@metrics_id"
+}
+
+variable "grafana_auth" {
+  description = "Grafana authentication in format 'username:password' or API token from Logit.io Profile Settings"
+  type        = string
+  sensitive   = true
+  default     = "@proxyAuthSetting.username:@proxyAuthSetting.password"
+}
+```
+
+### Configure the Provider
+
+Create `provider.tf` to configure the Grafana provider:
+
+```hcl copy filename="provider.tf"
+provider "grafana" {
+  url  = var.grafana_url
+  auth = var.grafana_auth
+}
+```
+
+### Create Resources
+
+Create `main.tf` with your Grafana resources:
+
+```hcl copy filename="main.tf"
+# Create a folder to organize dashboards
+resource "grafana_folder" "my_app" {
+  title = "My Application Dashboards"
+}
+
+# Create a dashboard from a JSON file
+resource "grafana_dashboard" "cpu_metrics" {
+  folder      = grafana_folder.my_app.id
+  config_json = file("${path.module}/dashboards/cpu-metrics.json")
+}
+
+# Output the dashboard URL
+output "dashboard_url" {
+  value = grafana_dashboard.cpu_metrics.url
+}
+```
+
+### Create a Dashboard JSON
+
+Create `dashboards/cpu-metrics.json` with a sample dashboard:
+
+```json copy filename="dashboards/cpu-metrics.json"
+{
+  "title": "CPU Metrics Dashboard",
+  "tags": ["metrics", "cpu", "terraform"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "panels": [
+    {
+      "id": 1,
+      "title": "CPU Usage",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "expr": "100 - cpu_usage_idle{host=~\"$host\"}",
+          "legendFormat": "{{host}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100
+        }
+      }
+    },
+    {
+      "id": 2,
+      "title": "CPU Usage by Core",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "expr": "100 - cpu_usage_idle{host=~\"$host\", cpu!=\"cpu-total\"}",
+          "legendFormat": "{{host}} - {{cpu}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100
+        }
+      }
+    }
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "host",
+        "type": "query",
+        "query": "label_values(cpu_usage_idle, host)",
+        "refresh": 1,
+        "multi": true,
+        "includeAll": true
+      }
+    ]
+  }
+}
+```
+
+### Initialize and Apply
+
+Run Terraform to create your resources:
+
+```bash copy
+# Initialize Terraform
+terraform init
+
+# Preview changes
+terraform plan
+
+# Apply changes
+terraform apply
+```
+
+### Verify in Grafana
+
+After applying, Terraform will output the dashboard URL. You can also find your new folder and dashboard in your Logit.io Grafana instance by clicking **Launch Metrics** from your dashboard.
+
+</Steps>
+
+## Additional Resources
+
+### Import Existing Dashboards
+
+To manage existing dashboards with Terraform, use the import command:
+
+```bash copy
+terraform import grafana_dashboard.existing "<DASHBOARD_UID>"
+```
+
+### Useful Terraform Resources
+
+| Resource | Description |
+|----------|-------------|
+| `grafana_folder` | Create folders to organize dashboards |
+| `grafana_dashboard` | Create dashboards from JSON |
+| `grafana_data_source` | Configure data sources |
+| `grafana_notification_policy` | Set up alerting notification policies |
+| `grafana_contact_point` | Configure alert contact points |
+
+## Further Reading
+
+- [Grafana Terraform Provider Documentation](https://registry.terraform.io/providers/grafana/grafana/latest/docs)
+- [Dashboards as Code](./dashboards-as-code) - Learn more about managing dashboards as code
+- [Overview](./overview) - Authentication details and credential setup
