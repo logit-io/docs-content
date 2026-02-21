@@ -31,7 +31,7 @@ Use OpenTelemetry to easily send Elixir traces to your Logit.io Stack.
     ```elixir copy showLineNumbers /@opentelemetry.endpointAddress/ /@opentelemetry.httpsPort/ /@opentelemetry.base64encodedAuthString/
     config :opentelemetry_exporter,
     otlp_protocol: :http_protobuf,
-    otlp_endpoint: "https://@opentelemetry.endpointAddress:@opentelemetry.httpsPort",
+    otlp_endpoint: "https://@opentelemetry.endpointAddress:@opentelemetry.httpsPort/v1/traces",
     otlp_headers: [{"authorization", "Basic @opentelemetry.base64encodedAuthString" }]
     ```
 
