@@ -1,0 +1,92 @@
+---
+title: Generating API Clients
+metaTitle: Generate API Clients from the Logit.io OpenAPI Schema
+description: Use the Logit.io OpenAPI schema to generate typed API clients for TypeScript, Python, and other languages.
+---
+
+# Generating API Clients
+
+You can generate a typed API client from the Logit.io OpenAPI schema. This ensures your client stays in sync with the API and reduces integration effort.
+
+## Schema URL
+
+```text copy
+https://dashboard.logit.io/api/reference/v1/logit-api-schema.json
+```
+
+All endpoints require the `x-api-key` header (Dashboard API key). The schema defines this via the `DashboardApiKey` security scheme.
+
+## OpenAPI Generator (TypeScript)
+
+Generate a TypeScript client using the OpenAPI Generator CLI:
+
+```bash copy
+npx @openapitools/openapi-generator-cli generate \
+  -i https://dashboard.logit.io/api/reference/v1/logit-api-schema.json \
+  -g typescript-axios \
+  -o ./logit-client
+```
+
+Use the generated client:
+
+```typescript copy
+import { DefaultApi, Configuration } from './logit-client';
+
+const config = new Configuration({
+  basePath: 'https://dashboard.logit.io',
+  baseOptions: {
+    headers: {
+      'x-api-key': process.env.LOGIT_API_KEY,
+    },
+  },
+});
+
+const api = new DefaultApi(config);
+const profile = await api.getProfile();
+```
+
+## OpenAPI Generator (Python)
+
+Generate a Python client:
+
+```bash copy
+openapi-generator-cli generate \
+  -i https://dashboard.logit.io/api/reference/v1/logit-api-schema.json \
+  -g python \
+  -o ./logit-python-client
+```
+
+Or with Docker:
+
+```bash copy
+docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
+  -i https://dashboard.logit.io/api/reference/v1/logit-api-schema.json \
+  -g python \
+  -o /local/logit-python-client
+```
+
+## Orval (TypeScript / Axios)
+
+[Orval](https://orval.dev/) generates typed hooks and axios clients for React projects:
+
+```bash copy
+npx orval \
+  --input https://dashboard.logit.io/api/reference/v1/logit-api-schema.json \
+  --output ./src/api/generated.ts
+```
+
+Configure the base URL and auth in your axios instance or Orval config.
+
+## Fetching the Schema Locally
+
+For offline use or custom tooling, download the schema:
+
+```bash copy
+curl -s https://dashboard.logit.io/api/reference/v1/logit-api-schema.json -o logit-api-schema.json
+```
+
+You can then pass the local file path to OpenAPI Generator or other tools instead of the URL.
+
+## Authentication
+
+All generated clients must send the API key in the `x-api-key` header. Configure this according to your client's configuration options.

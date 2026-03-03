@@ -1,0 +1,55 @@
+---
+title: API Reference
+metaTitle: Logit.io Developer API Reference
+description: Full API reference for the Logit.io Developer API. Explore endpoints for account, stacks, alerting, pipeline, and more.
+---
+
+# API Reference
+
+The Logit.io Developer API provides endpoints for account management, stacks, log management, infrastructure metrics, ingestion statistics, and profile/API keys.
+
+## Interactive Reference
+
+View the full interactive API reference in the Logit.io Dashboard:
+
+[Open API Reference (dashboard.logit.io)](https://dashboard.logit.io/api/reference/index.html)
+
+You must be logged in to access the interactive reference. It includes request/response schemas, examples, and an "Authorize" option to try requests with your API key.
+
+## OpenAPI Schema
+
+The API is described by an OpenAPI 3.0 specification. Use the schema URL for code generation, documentation tooling, or API clients:
+
+```text copy
+https://dashboard.logit.io/api/reference/v1/logit-api-schema.json
+```
+
+To generate a typed client, see [Generating Clients](/developer-api/generating-clients).
+
+## Base URL and Authentication
+
+- **Base URL:** `https://dashboard.logit.io`
+- **Authentication:** All endpoints require the `x-api-key` header with your Logit.io API user key.
+
+## API Tags
+
+| Tag | Description |
+|-----|-------------|
+| **Me** | Profile and API keys |
+| **Account** | Account settings, users, teams, invoices, stacks |
+| **Stacks** | Stack operations (overview, connection details, statistics, audit log, alerting enable/disable/status) |
+| **Ingestion** | Ingestion statistics for logs, metrics, and spans |
+| **Log Management** | Pipeline config, security, diagnostics, upgrades, alert rules |
+| **Infrastructure Metrics** | AlertManager configuration and metrics alert rules |
+
+## Related Guides
+
+- [Getting Started](/developer-api/getting-started) — Make your first API request
+- [Authentication](/developer-api/authentication) — API key setup and security
+- [Profile and API Keys via API](/developer-api/profile-and-api-keys) — Profile, create/revoke keys, proxy credentials
+- [Account Management via API](/developer-api/account-management) — Accounts, users, teams, settings, invoices
+- [Managing Stacks via API](/developer-api/managing-stacks) — List stacks, connection details, upgrades
+- [Ingestion Statistics via API](/developer-api/ingestion-statistics) — Ingestion events, history, latency, metrics, spans
+- [Alerting via API](/developer-api/alerting-via-api) — Enable, configure, and manage alerts
+- [Pipeline Configuration via API](/developer-api/pipeline-configuration) — Logstash pipeline management
+- [Security and Diagnostics via API](/developer-api/security-and-diagnostics) — Firewall rules, diagnostic logs

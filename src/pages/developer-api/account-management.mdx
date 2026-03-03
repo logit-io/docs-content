@@ -1,0 +1,151 @@
+---
+title: Account Management via API
+metaTitle: Manage Logit.io Accounts via the Developer API
+description: List accounts, users, teams, settings, and invoices using the Logit.io Developer API.
+---
+
+# Account Management via API
+
+Manage account information, users, teams, settings, and invoices using the Logit.io Developer API. These endpoints support multi-account workflows, billing automation, and access control.
+
+## List Accounts
+
+Get a list of accounts accessible to the authenticated user. You can filter by enabled and paying status:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+# Get all accounts
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/accounts
+
+# Filter by enabled status (true, false, or omit for no filter)
+curl -H "x-api-key: @dashboardApiKey" "https://dashboard.logit.io/api/accounts?Enabled=true"
+
+# Filter by paying status
+curl -H "x-api-key: @dashboardApiKey" "https://dashboard.logit.io/api/accounts?Paying=true"
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+# Get all accounts
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/accounts
+
+# Filter by enabled status (true, false, or omit for no filter)
+curl -H "x-api-key: @dashboardApiKey" "https://dashboard.logit.io/api/accounts?Enabled=true"
+
+# Filter by paying status
+curl -H "x-api-key: @dashboardApiKey" "https://dashboard.logit.io/api/accounts?Paying=true"
+```
+</Tab>
+</Tabs>
+
+The response includes account IDs, display names, and status for each account.
+
+## Get Account Stacks
+
+Retrieve all stacks (Logs, Metrics, APM) grouped by subscription for an account:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/account/ACCOUNT_ID/stacks
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/account/ACCOUNT_ID/stacks
+```
+</Tab>
+</Tabs>
+
+Replace `ACCOUNT_ID` with the account GUID. Use this to discover stacks before calling stack-specific endpoints.
+
+## Get Account Users
+
+List all users belonging to an account:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/account/ACCOUNT_ID/users
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/account/ACCOUNT_ID/users
+```
+</Tab>
+</Tabs>
+
+## Get Account Teams
+
+List all teams belonging to an account:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/account/ACCOUNT_ID/teams
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/account/ACCOUNT_ID/teams
+```
+</Tab>
+</Tabs>
+
+The response includes team IDs, names, and member counts. For managing teams and permissions in the UI, see [Roles and Access](/account-administration/account-access-users-teams/roles-access).
+
+## Get Account Settings
+
+Retrieve account settings including plan and payment status:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/account/ACCOUNT_ID/settings
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/account/ACCOUNT_ID/settings
+```
+</Tab>
+</Tabs>
+
+The response includes display name, enabled status, paying status, and 2FA enforcement.
+
+## Get Account Invoices
+
+Retrieve payment and invoice information for an account:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/account/ACCOUNT_ID/invoices
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/account/ACCOUNT_ID/invoices
+```
+</Tab>
+</Tabs>
+
+Returns billing status, Stripe linkage, and related payment details. For billing in the UI, see [Subscriptions, Management & Usage](/account-administration/subscriptions-management-usage).
+
+## Full API Reference
+
+See the [API Reference](/developer-api/api-reference) for complete endpoint documentation and response schemas.

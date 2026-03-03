@@ -1,0 +1,105 @@
+---
+title: Profile and API Keys via API
+metaTitle: Manage Profile and API Keys via the Logit.io Developer API
+description: Get profile, create and revoke API keys, and retrieve proxy credentials programmatically.
+---
+
+# Profile and API Keys via API
+
+Manage your profile and API keys programmatically using the Logit.io Developer API. These endpoints support automation of key lifecycle management and retrieval of proxy credentials for visualizers.
+
+## Get Profile
+
+Returns the current user's profile and a summary of API keys:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/me/profile
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/me/profile
+```
+</Tab>
+</Tabs>
+
+The response includes `userId`, `name`, `email`, and an `apiKeys` array with masked keys, descriptions, creation dates, and last-used timestamps.
+
+## Create an API Key
+
+Creates a new API key for the authenticated user. Store the returned key securely:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+curl -X POST -H "x-api-key: @dashboardApiKey" -H "Content-Type: application/json" \
+  -d '{"description": "CI/CD pipeline"}' \
+  https://dashboard.logit.io/api/me/api-keys
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+curl -X POST -H "x-api-key: @dashboardApiKey" -H "Content-Type: application/json" ^
+  -d "{\"description\": \"CI/CD pipeline\"}" ^
+  https://dashboard.logit.io/api/me/api-keys
+```
+</Tab>
+</Tabs>
+
+The optional `description` helps identify the key's purpose. The response includes the new `apiKey` value.
+
+## Revoke an API Key
+
+Revokes an API key by ID. Use the key ID from your profile or from a previous create response:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+curl -X DELETE -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/me/api-keys/KEY_ID
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+curl -X DELETE -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/me/api-keys/KEY_ID
+```
+</Tab>
+</Tabs>
+
+Replace `KEY_ID` with the key identifier. Revoked keys fail authentication immediately.
+
+## Get Proxy Credentials
+
+Returns the authenticated user's proxy credentials and basic auth header for use with Kibana, OpenSearch Dashboards, Grafana, and Jaeger:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/me/proxy-credentials
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/me/proxy-credentials
+```
+</Tab>
+</Tabs>
+
+The response includes `userId`, `password` (proxy API key), `basicAuthHeader` (Base64-encoded for Basic auth), and optional `curlExamples` per stack type.
+
+Use these credentials when calling the [OpenSearch Dashboards](/log-management/opensearch/opensearch-dashboards/api), [Kibana](/log-management/kibana/api), [Grafana](/log-management/grafana/api), or [Jaeger](/application-performance-monitoring/jaeger/api) REST APIs via the Logit.io proxy.
+
+Returns `204 No Content` if no proxy credentials are available for your account.
+
+## Full API Reference
+
+See the [API Reference](/developer-api/api-reference) for complete endpoint documentation and response schemas.

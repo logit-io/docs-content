@@ -1,0 +1,176 @@
+---
+title: Managing Stacks via API
+metaTitle: Manage Logit.io Stacks via the Developer API
+description: List stacks, get connection details, and manage upgrades using the Logit.io Developer API.
+---
+
+# Managing Stacks via API
+
+Automate stack management using the Logit.io Developer API. This guide covers listing stacks, retrieving connection details, and requesting upgrades.
+
+## List Your Stacks
+
+First, get your account ID from `/api/accounts`, then fetch stacks for that account:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+# Get accounts
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/accounts
+
+# Get stacks for an account (replace ACCOUNT_ID with your account ID)
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/account/ACCOUNT_ID/stacks
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+# Get accounts
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/accounts
+
+# Get stacks for an account (replace ACCOUNT_ID with your account ID)
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/account/ACCOUNT_ID/stacks
+```
+</Tab>
+</Tabs>
+
+The response returns subscriptions and their associated stacks, including stack IDs and product names.
+
+## Get Stack Overview
+
+Retrieve overview information for a specific stack:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID
+```
+</Tab>
+</Tabs>
+
+Replace `STACK_ID` with your stack's GUID. The response includes stack name, type, and status.
+
+## Get Connection Details
+
+Fetch connection URLs and service information (e.g. Logstash endpoints, OpenSearch URLs) for a stack:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/connection-details
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/connection-details
+```
+</Tab>
+</Tabs>
+
+Use this to programmatically configure shippers or clients that send data to your stack.
+
+## Get Getting-Started Info
+
+Check whether a stack has received data and retrieve getting-started guidance:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/getting-started
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/getting-started
+```
+</Tab>
+</Tabs>
+
+## Get Stack Statistics
+
+Retrieve usage statistics (volume sent, plan limits) for a stack:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/statistics
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/statistics
+```
+</Tab>
+</Tabs>
+
+## Request a Stack Upgrade
+
+For Log Management stacks, you can check available versions and request upgrades:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+# Check upgrade options
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/upgrade
+
+# Request upgrade (POST with versionId in body)
+curl -X POST -H "x-api-key: @dashboardApiKey" -H "Content-Type: application/json" \
+  -d '{"versionId": "VERSION_ID"}' \
+  https://dashboard.logit.io/api/stacks/STACK_ID/upgrade/requests
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+# Check upgrade options
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/upgrade
+
+# Request upgrade (POST with versionId in body)
+curl -X POST -H "x-api-key: @dashboardApiKey" -H "Content-Type: application/json" ^
+  -d "{\"versionId\": \"VERSION_ID\"}" ^
+  https://dashboard.logit.io/api/stacks/STACK_ID/upgrade/requests
+```
+</Tab>
+</Tabs>
+
+For more on upgrades, see [Migrate or Upgrade Your Stack](/account-administration/subscriptions-management-usage/product/migrate-upgrade-your-stack).
+
+## Audit Log
+
+Search the audit log for stack activity:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" "https://dashboard.logit.io/api/stacks/STACK_ID/audit-log?Page=1&PageSize=20"
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" "https://dashboard.logit.io/api/stacks/STACK_ID/audit-log?Page=1&PageSize=20"
+```
+</Tab>
+</Tabs>
+
+Optional query parameters: `Search`, `Period`.
+
+## Full API Reference
+
+See the [API Reference](/developer-api/api-reference) for complete endpoint documentation, request/response schemas, and additional stack operations.

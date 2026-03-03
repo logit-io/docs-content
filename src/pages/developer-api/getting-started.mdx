@@ -6,18 +6,18 @@ description: Get started with the Logit.io Developer API in minutes. Create an A
 
 # Getting Started
 
-This quickstart walks you through making your first request to the Logit.io Developer API.
+This quickstart walks you through making your first request to the [Logit.io Developer API](/developer-api/overview).
 
 ## Prerequisites
 
 - A [Logit.io account](https://dashboard.logit.io/sign-up)
-- An API key from your [Profile](https://dashboard.logit.io/profile)
+- An API key from your [Profile](https://dashboard.logit.io/profile) (or create one via the [Profile and API Keys API](/developer-api/profile-and-api-keys) once you have a key)
 
 ## Step 1: Create an API Key
 
 1. Log in to the [Logit.io Dashboard](https://dashboard.logit.io).
-2. Go to **Profile** and find the **API Keys** section.
-3. Create a new API key and copy it (it is only shown once).
+2. Go to [Profile](https://dashboard.logit.io/profile) and find the **API Keys** section.
+3. Create a new API key and copy it (it is only shown once). See [Authentication](/developer-api/authentication) for usage and security tips.
 
 ## Step 2: Make Your First Request
 
@@ -29,28 +29,34 @@ Verify your setup by fetching your profile:
 ```bash copy /@dashboardApiKey/
 curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/me/profile
 ```
-
 </Tab>
 <Tab>
 
 ```cmd copy /@dashboardApiKey/
 curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/me/profile
 ```
-
 </Tab>
 </Tabs>
 
-A successful response returns your user profile and a summary of your API keys.
+A successful response returns your [user profile and a summary of your API keys](/developer-api/profile-and-api-keys#get-profile).
 
 ## Next Steps
 
-- [Authentication](/developer-api/authentication) — Learn more about API key security and usage
-- [Generating Clients](/developer-api/generating-clients) — Generate a typed API client from the OpenAPI schema
-- [API Reference](/developer-api/api-reference) — Explore all available endpoints
-- [Profile and API Keys via API](/developer-api/profile-and-api-keys) — Profile, create/revoke keys, proxy credentials
-- [Account Management via API](/developer-api/account-management) — Manage accounts, users, teams, settings, invoices
-- [Managing Stacks via API](/developer-api/managing-stacks) — List stacks and get connection details
-- [Ingestion Statistics via API](/developer-api/ingestion-statistics) — Ingestion events, history, latency, metrics, spans
-- [Alerting via API](/developer-api/alerting-via-api) — Enable, configure, and manage alert rules
-- [Pipeline Configuration via API](/developer-api/pipeline-configuration) — Manage your Logstash pipeline config
-- [Security and Diagnostics via API](/developer-api/security-and-diagnostics) — Firewall rules, diagnostic logs
+**Core guides**
+
+- [Authentication](/developer-api/authentication) — API key security and usage
+- [Profile and API Keys via API](/developer-api/profile-and-api-keys) — Get profile, create/revoke keys, proxy credentials
+- [API Reference](/developer-api/api-reference) — Interactive reference and OpenAPI schema
+
+**Automation & tooling**
+
+- [Generating Clients](/developer-api/generating-clients) — Generate a typed client from the OpenAPI schema
+
+**By feature**
+
+- [Account Management](/developer-api/account-management) — Accounts, users, teams, settings, invoices
+- [Managing Stacks](/developer-api/managing-stacks) — List stacks, connection details, statistics, audit log
+- [Ingestion Statistics](/developer-api/ingestion-statistics) — Ingestion events, history, latency, metrics, spans
+- [Alerting via API](/developer-api/alerting-via-api) — Enable/disable alerting, Log and Metrics rules, AlertManager
+- [Pipeline Configuration](/developer-api/pipeline-configuration) — Logstash pipeline get, validate, apply, restart
+- [Security and Diagnostics](/developer-api/security-and-diagnostics) — Firewall rules, diagnostic logs

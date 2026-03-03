@@ -1,0 +1,139 @@
+---
+title: Pipeline Configuration via API
+metaTitle: Manage Logstash Pipeline Configuration via the Logit.io Developer API
+description: Get, validate, apply, and restart the Logstash pipeline for your Log stack using the Logit.io Developer API.
+---
+
+# Pipeline Configuration via API
+
+Automate Logstash pipeline management for your Log stack using the Logit.io Developer API. This guide covers retrieving configuration, validating changes, applying updates, and restarting the pipeline.
+
+For background on ingestion pipelines, see [Log Management Ingestion Pipeline](/log-management/ingestion-pipeline/overview).
+
+## Get Pipeline Configuration
+
+Retrieve the current pipeline configuration and its status:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/pipeline-config
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/pipeline-config
+```
+</Tab>
+</Tabs>
+
+The response includes the configuration (filter YAML), last updated time, and whether it is stale.
+
+## Validate Pipeline Configuration
+
+Test a pipeline configuration before applying it. The API runs validation and returns the result.
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+# Start validation (POST with testConfiguration in body)
+curl -X POST -H "x-api-key: @dashboardApiKey" -H "Content-Type: application/json" \
+  -d '{"testConfiguration": "filter {\n  grok { ... }\n}"}' \
+  https://dashboard.logit.io/api/stacks/STACK_ID/pipeline-config/validation
+
+# Poll for validation result (GET)
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/pipeline-config/validation
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+# Start validation (POST with testConfiguration in body)
+curl -X POST -H "x-api-key: @dashboardApiKey" -H "Content-Type: application/json" ^
+  -d "{\"testConfiguration\": \"filter {\n  grok { ... }\n}\"}" ^
+  https://dashboard.logit.io/api/stacks/STACK_ID/pipeline-config/validation
+
+# Poll for validation result (GET)
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/pipeline-config/validation
+```
+</Tab>
+</Tabs>
+
+If validation is still running, the response may return `202 Accepted`. Poll until you get a final success or failure result.
+
+## Apply Pipeline Configuration
+
+After validating a test configuration, apply it to update the pipeline's filter configuration:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+curl -X PUT -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/pipeline-config/apply
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+curl -X PUT -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/pipeline-config/apply
+```
+</Tab>
+</Tabs>
+
+This updates the pipeline to match the validated test configuration.
+
+## Sync Pipeline Configuration
+
+Request the latest pipeline configuration from the server (useful if configuration may have changed elsewhere):
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+curl -X PUT -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/pipeline-config/sync
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+curl -X PUT -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/pipeline-config/sync
+```
+</Tab>
+</Tabs>
+
+## Restart the Pipeline
+
+Restart the Logstash Filter instance for the stack. This typically takes around 5 minutes to complete:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+curl -X POST -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/pipeline/restart
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+curl -X POST -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/pipeline/restart
+```
+</Tab>
+</Tabs>
+
+Use this after applying configuration changes or to recover from pipeline issues. The pipeline will process in-flight data before restarting.
+
+## Typical Workflow
+
+1. **Get** current config — `GET /pipeline-config`
+2. **Modify** locally — Edit the filter configuration
+3. **Validate** — `POST /pipeline-config/validation` with `testConfiguration`
+4. **Poll** — `GET /pipeline-config/validation` until complete
+5. **Apply** — `PUT /pipeline-config/apply` when validation succeeds
+6. **Restart** (optional) — `POST /pipeline/restart` if needed
+
+## Full API Reference
+
+See the [API Reference](/developer-api/api-reference) for complete endpoint details and schemas. For configuring Logstash inputs and filters in the UI, see [Configure Logstash Inputs](/log-management/ingestion-pipeline/configuration/configure-logstash-inputs) and the [Filter Editor](/log-management/ingestion-pipeline/overview).

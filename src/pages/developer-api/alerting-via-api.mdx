@@ -1,0 +1,220 @@
+---
+title: Alerting via API
+metaTitle: Configure Alerts via the Logit.io Developer API
+description: Enable, disable, and manage alert rules for Logs and Infrastructure Metrics using the Logit.io Developer API.
+---
+
+# Alerting via API
+
+Manage alerting for your Logs and Infrastructure Metrics stacks via the Logit.io Developer API. This guide covers enabling alerting, listing and creating alert rules, and configuring AlertManager (Metrics).
+
+For an overview of alerting concepts, see [Log Management Alerting](/log-management/alerting/overview) and [Infrastructure Metrics Alerting](/infrastructure-metrics/alerting/overview).
+
+## Enable or Disable Alerting
+
+For a stack with alerting available:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+# Enable alerting (provisions alerting server)
+curl -X POST -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/alerting/enable
+
+# Disable alerting (decommissions alerting server)
+curl -X POST -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/alerting/disable
+
+# Get alerting status
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/alerting/status
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+# Enable alerting (provisions alerting server)
+curl -X POST -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/alerting/enable
+
+# Disable alerting (decommissions alerting server)
+curl -X POST -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/alerting/disable
+
+# Get alerting status
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/alerting/status
+```
+</Tab>
+</Tabs>
+
+## Log Management Alert Rules
+
+### List Alert Rules
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/alerting/rules
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/alerting/rules
+```
+</Tab>
+</Tabs>
+
+Returns rule IDs and file names.
+
+### Create an Alert Rule
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+curl -X POST -H "x-api-key: @dashboardApiKey" -H "Content-Type: application/json" \
+  -d '{"newFileName": "my-alert.yaml", "templateFileName": "frequency"}' \
+  https://dashboard.logit.io/api/stacks/STACK_ID/alerting/rules
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+curl -X POST -H "x-api-key: @dashboardApiKey" -H "Content-Type: application/json" ^
+  -d "{\"newFileName\": \"my-alert.yaml\", \"templateFileName\": \"frequency\"}" ^
+  https://dashboard.logit.io/api/stacks/STACK_ID/alerting/rules
+```
+</Tab>
+</Tabs>
+
+Use `templateFileName` to start from an existing template, or omit it. The response includes the new rule ID.
+
+### Get, Update, Test, or Delete a Rule
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+# Get rule configuration
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/alerting/rules/RULE_ID
+
+# Get rule status
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/alerting/rules/RULE_ID/status
+
+# Test a rule
+curl -X POST -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/alerting/rules/RULE_ID/test
+
+# Delete a rule
+curl -X DELETE -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/alerting/rules/RULE_ID
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+# Get rule configuration
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/alerting/rules/RULE_ID
+
+# Get rule status
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/alerting/rules/RULE_ID/status
+
+# Test a rule
+curl -X POST -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/alerting/rules/RULE_ID/test
+
+# Delete a rule
+curl -X DELETE -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/alerting/rules/RULE_ID
+```
+</Tab>
+</Tabs>
+
+### Get Alert Rule Templates
+
+List available template file names for creating new rules:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/alert-rule-templates
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/alert-rule-templates
+```
+</Tab>
+</Tabs>
+
+## Infrastructure Metrics (AlertManager and Metrics Rules)
+
+For Metrics stacks, you can manage AlertManager configuration and metrics alert rules (Prometheus-style YAML).
+
+### AlertManager Configuration
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+# Get AlertManager config
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/alerting/alert-manager
+
+# Save AlertManager config (PUT with configYaml and optional templateContent)
+curl -X PUT -H "x-api-key: @dashboardApiKey" -H "Content-Type: application/json" \
+  -d '{"configYaml": "global:\n  resolve_timeout: 5m\nroute:\n  receiver: default", "templateContent": null}' \
+  https://dashboard.logit.io/api/stacks/STACK_ID/alerting/alert-manager
+
+# Test AlertManager config (POST), then poll test-results/TEST_RUN_ID
+# Apply after test succeeds (PUT /alert-manager/apply/TEST_RUN_ID)
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+# Get AlertManager config
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/alerting/alert-manager
+
+# Save AlertManager config (PUT with configYaml and optional templateContent)
+curl -X PUT -H "x-api-key: @dashboardApiKey" -H "Content-Type: application/json" ^
+  -d "{\"configYaml\": \"global:\n  resolve_timeout: 5m\nroute:\n  receiver: default\", \"templateContent\": null}" ^
+  https://dashboard.logit.io/api/stacks/STACK_ID/alerting/alert-manager
+
+# Test AlertManager config (POST), then poll test-results/TEST_RUN_ID
+# Apply after test succeeds (PUT /alert-manager/apply/TEST_RUN_ID)
+```
+</Tab>
+</Tabs>
+
+### Metrics Alert Rules
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+# List metrics rules
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/alerting/metrics-rules
+
+# Get or update a rule by file name (e.g. alerts.yml)
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/alerting/metrics-rules/alerts.yml
+curl -X PUT -H "x-api-key: @dashboardApiKey" -H "Content-Type: application/json" \
+  -d '{"rulesYaml": "groups:\n- name: example\n  rules:\n  - alert: HighErrorRate"}' \
+  https://dashboard.logit.io/api/stacks/STACK_ID/alerting/metrics-rules/alerts.yml
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+# List metrics rules
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/alerting/metrics-rules
+
+# Get or update a rule by file name (e.g. alerts.yml)
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/alerting/metrics-rules/alerts.yml
+curl -X PUT -H "x-api-key: @dashboardApiKey" -H "Content-Type: application/json" ^
+  -d "{\"rulesYaml\": \"groups:\n- name: example\n  rules:\n  - alert: HighErrorRate\"}" ^
+  https://dashboard.logit.io/api/stacks/STACK_ID/alerting/metrics-rules/alerts.yml
+```
+</Tab>
+</Tabs>
+
+Workflow for Metrics rules: save (PUT) → test (POST) → poll test-results → apply (PUT /apply/TEST_RUN_ID) when status is Success.
+
+## Full API Reference
+
+See the [API Reference](/developer-api/api-reference) for all alerting endpoints, request bodies, and response schemas.

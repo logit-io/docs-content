@@ -1,0 +1,56 @@
+---
+title: Authentication
+metaTitle: Logit.io Developer API Authentication
+description: Learn how to obtain and use Dashboard API keys to authenticate with the Logit.io Developer API.
+---
+
+# Authentication
+
+The [Logit.io Developer API](/developer-api/overview) uses API user keys for authentication. All requests must include your API key in the `x-api-key` header.
+
+## Obtaining an API Key
+
+1. Log in to your [Logit.io Dashboard](https://dashboard.logit.io).
+2. Go to [Profile](https://dashboard.logit.io/profile) (or Profile Settings).
+3. In the **API Keys** section, create a new API key.
+4. Copy the key immediately—it is only shown once.
+
+## Using the API Key
+
+Include the API key in the `x-api-key` header with every request. The example below [fetches your profile](/developer-api/profile-and-api-keys#get-profile):
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/me/profile
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/me/profile
+```
+</Tab>
+</Tabs>
+
+<Callout type="info">
+Never commit API keys to version control or share them publicly. Store them in environment variables or a secure secrets manager.
+</Callout>
+
+## Managing Keys via API
+
+To [create](/developer-api/profile-and-api-keys#create-an-api-key) or [revoke](/developer-api/profile-and-api-keys#revoke-an-api-key) API keys programmatically, see [Profile and API Keys via API](/developer-api/profile-and-api-keys).
+
+## Security
+
+- **Rotate keys regularly** — [Revoke](/developer-api/profile-and-api-keys#revoke-an-api-key) unused keys and create new ones as needed.
+- **Least privilege** — Use separate keys for different environments or purposes when possible.
+- **Revocation** — You can revoke an API key from the [Profile page](https://dashboard.logit.io/profile) or via the API at any time. Revoked keys fail authentication immediately.
+
+## Next Steps
+
+- [Getting Started](/developer-api/getting-started) — Quickstart and first request
+- [Profile and API Keys via API](/developer-api/profile-and-api-keys) — Get profile, create/revoke keys, proxy credentials
+- [API Reference](/developer-api/api-reference) — Interactive reference and schema
+- [Generating Clients](/developer-api/generating-clients) — Generate a typed client from the OpenAPI schema

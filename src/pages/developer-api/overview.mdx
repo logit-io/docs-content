@@ -1,0 +1,71 @@
+---
+title: Developer API Overview
+metaTitle: Logit.io Developer API | Control-Plane API Overview
+description: Use the Logit.io Developer API to automate account and stack management, alerting, pipeline configuration, and more.
+---
+
+# Developer API Overview
+
+The Logit.io Developer API (control-plane API) lets you programmatically manage your account, stacks, alerting, pipeline configuration, and ingestion statistics. Use it to automate workflows, integrate with your tooling, or build custom applications on top of Logit.io.
+
+## Base URL and Authentication
+
+- **Base URL:** `https://dashboard.logit.io`
+- **Authentication:** All endpoints require a Logit.io API user key, passed in the `x-api-key` header.
+
+When you are signed in and have Dashboard API keys, the docs replace `@dashboardApiKey` in the examples below with your first key so you can copy and run the request. When unauthenticated or without keys, it shows `<your-dashboard-api-key>`.
+
+Example request:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/me/profile
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/me/profile
+```
+</Tab>
+</Tabs>
+
+## API Scope
+
+The Developer API covers:
+
+- **Account** — Manage account settings, users, teams, invoices, and stacks
+- **Stacks** — Get stack overview, connection details, getting-started info, statistics, audit log
+- **Log Management** — Pipeline configuration, security rules, diagnostics, upgrades, alert rules
+- **Infrastructure Metrics** — AlertManager configuration and metrics alert rules
+- **Ingestion** — Retrieve ingestion statistics for logs, metrics, and spans
+- **Me** — Manage your profile and API keys
+
+## Guides
+
+| Guide | Covers |
+|-------|--------|
+| [Getting Started](/developer-api/getting-started) | First request, quickstart |
+| [Authentication](/developer-api/authentication) | API key setup and usage |
+| [Profile and API Keys](/developer-api/profile-and-api-keys) | Profile, create/revoke keys, proxy credentials |
+| [Account Management](/developer-api/account-management) | Accounts, users, teams, settings, invoices |
+| [Managing Stacks](/developer-api/managing-stacks) | Stacks, connection details, upgrades, audit log |
+| [Ingestion Statistics](/developer-api/ingestion-statistics) | Ingestion events, history, latency, metrics, spans |
+| [Alerting](/developer-api/alerting-via-api) | Enable/disable, Log and Metrics rules, AlertManager |
+| [Pipeline Configuration](/developer-api/pipeline-configuration) | Logstash pipeline get, validate, apply, restart |
+| [Security and Diagnostics](/developer-api/security-and-diagnostics) | Firewall rules, diagnostic logs |
+| [Generating Clients](/developer-api/generating-clients) | OpenAPI schema codegen |
+| [API Reference](/developer-api/api-reference) | Full reference and schema URL |
+
+## Other API Access
+
+For sending logs to your stack, see [JSON via HTTP/S](/integrations/http) to post logs to your Logit.io endpoint.
+
+For programmatic access to visualizers (OpenSearch Dashboards, Kibana, Grafana, Jaeger), see the REST API documentation for each:
+
+- [OpenSearch Dashboards REST API](/log-management/opensearch/opensearch-dashboards/api)
+- [Kibana REST API](/log-management/kibana/api)
+- [Grafana REST API](/log-management/grafana/api)
+- [Jaeger REST API](/application-performance-monitoring/jaeger/api)

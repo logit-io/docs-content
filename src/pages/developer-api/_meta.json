@@ -1,3 +1,14 @@
 {
-  "getting-started": "Getting Started"
+  "overview": "Overview",
+  "authentication": "Authentication",
+  "getting-started": "Getting Started",
+  "generating-clients": "Generating Clients",
+  "profile-and-api-keys": "Profile and API Keys via API",
+  "account-management": "Account Management via API",
+  "managing-stacks": "Managing Stacks via API",
+  "ingestion-statistics": "Ingestion Statistics via API",
+  "alerting-via-api": "Alerting via API",
+  "pipeline-configuration": "Pipeline Configuration via API",
+  "security-and-diagnostics": "Security and Diagnostics via API",
+  "api-reference": "API Reference"
 }

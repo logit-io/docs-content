@@ -1,0 +1,72 @@
+---
+title: Security and Diagnostics via API
+metaTitle: Security and Diagnostics via the Logit.io Developer API
+description: Retrieve firewall rules and diagnostic logs for your Log stacks.
+---
+
+# Security and Diagnostics via API
+
+Retrieve security (firewall) rules and diagnostic logs for your Log stacks using the Logit.io Developer API. Use these endpoints to audit configuration, troubleshoot pipeline issues, and integrate with monitoring tools.
+
+## Get Firewall Rules
+
+Returns firewall rules for a Log stack. Firewall rules restrict which IP addresses can send data to your Logstash endpoints:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/security
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/security
+```
+</Tab>
+</Tabs>
+
+The response includes `firewallRules` with rule IDs, names, descriptions, and whitelists. For configuring firewall rules in the UI, see [Whitelisted Hosts](/log-management/security/whitelisted-hosts).
+
+## Get Diagnostics
+
+Returns diagnostic log entries for a Log stack. Use this to troubleshoot pipeline issues, monitor component health, and search for errors:
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
+# Basic request (Page and PageSize required)
+curl -H "x-api-key: @dashboardApiKey" "https://dashboard.logit.io/api/stacks/STACK_ID/diagnostics?Page=1&PageSize=50"
+
+# With optional filters
+curl -H "x-api-key: @dashboardApiKey" "https://dashboard.logit.io/api/stacks/STACK_ID/diagnostics?Page=1&PageSize=50&Component=logstash&Level=error&SearchTerm=timeout"
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/
+# Basic request (Page and PageSize required)
+curl -H "x-api-key: @dashboardApiKey" "https://dashboard.logit.io/api/stacks/STACK_ID/diagnostics?Page=1&PageSize=50"
+
+# With optional filters
+curl -H "x-api-key: @dashboardApiKey" "https://dashboard.logit.io/api/stacks/STACK_ID/diagnostics?Page=1&PageSize=50&Component=logstash&Level=error&SearchTerm=timeout"
+```
+</Tab>
+</Tabs>
+
+| Parameter | Description |
+|-----------|-------------|
+| `Page` | Page number (required) |
+| `PageSize` | Number of entries per page (required) |
+| `Component` | Filter by component name |
+| `Level` | Filter by log level |
+| `SearchTerm` | Search within log messages |
+| `TimeRange` | Limit to a time range |
+
+The response includes `logEntries`, `totalLogs`, and `resultsSkipped`. Each entry has `timestamp`, `level`, `component`, and `message`.
+
+## Full API Reference
+
+See the [API Reference](/developer-api/api-reference) for complete endpoint documentation and response schemas.
