@@ -13,7 +13,7 @@ The [Logit.io Developer API](/developer-api/overview) uses API user keys for aut
 1. Log in to your [Logit.io Dashboard](https://dashboard.logit.io).
 2. Go to [Profile](https://dashboard.logit.io/profile) (or Profile Settings).
 3. In the **API Keys** section, create a new API key.
-4. Copy the key immediately—it is only shown once.
+4. Copy the key for use in your application.
 
 ## Using the API Key
 
@@ -25,17 +25,20 @@ Include the API key in the `x-api-key` header with every request. The example be
 ```bash copy /@dashboardApiKey/
 curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/me/profile
 ```
+
 </Tab>
 <Tab>
 
 ```cmd copy /@dashboardApiKey/
 curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/me/profile
 ```
+
 </Tab>
 </Tabs>
 
 <Callout type="info">
-Never commit API keys to version control or share them publicly. Store them in environment variables or a secure secrets manager.
+  Never commit API keys to version control or share them publicly. Store them in
+  environment variables or a secure secrets manager.
 </Callout>
 
 ## Managing Keys via API
