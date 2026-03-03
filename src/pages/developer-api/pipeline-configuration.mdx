@@ -10,7 +10,7 @@ Automate Logstash pipeline management for your Log stack using the Logit.io Deve
 
 For background on ingestion pipelines, see [Log Management Ingestion Pipeline](/log-management/ingestion-pipeline/overview).
 
-Use your Dashboard API key from the [Profile](https://dashboard.logit.io/profile) page in the `x-api-key` header. See [Authentication](/developer-api/authentication) for setup and security.
+Use your Dashboard API key from the [Profile](https://dashboard.logit.io/profile) page in the `x-api-key` header. See [Authentication](/developer-api/authentication) for setup and security. Examples use `@logs_id` for your Log stack (from your session/JWT when signed in).
 
 ## Get Pipeline Configuration
 
@@ -19,14 +19,14 @@ Retrieve the current pipeline configuration and its status:
 <Tabs items={["Linux / macOS", "Windows"]}>
 <Tab>
 
-```bash copy /@dashboardApiKey/
-curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/pipeline-config
+```bash copy /@dashboardApiKey/ /@logs_id/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/@logs_id/pipeline-config
 ```
 </Tab>
 <Tab>
 
-```cmd copy /@dashboardApiKey/
-curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/pipeline-config
+```cmd copy /@dashboardApiKey/ /@logs_id/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/@logs_id/pipeline-config
 ```
 </Tab>
 </Tabs>
@@ -35,36 +35,49 @@ The response includes the configuration (filter YAML), last updated time, and wh
 
 ## Validate Pipeline Configuration
 
-Test a pipeline configuration before applying it. The API runs validation and returns the result.
+Test a pipeline configuration before applying it. The API runs validation and returns the result. Start validation with POST, then poll the GET endpoint until you get a final success or failure (you may see `202 Accepted` while validation is running).
+
+### Start validation
+
+POST with `testConfiguration` in the body.
 
 <Tabs items={["Linux / macOS", "Windows"]}>
 <Tab>
 
-```bash copy /@dashboardApiKey/
-# Start validation (POST with testConfiguration in body)
+```bash copy /@dashboardApiKey/ /@logs_id/
 curl -X POST -H "x-api-key: @dashboardApiKey" -H "Content-Type: application/json" \
   -d '{"testConfiguration": "filter {\n  grok { ... }\n}"}' \
-  https://dashboard.logit.io/api/stacks/STACK_ID/pipeline-config/validation
-
-# Poll for validation result (GET)
-curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/pipeline-config/validation
+  https://dashboard.logit.io/api/stacks/@logs_id/pipeline-config/validation
 ```
 </Tab>
 <Tab>
 
-```cmd copy /@dashboardApiKey/
-# Start validation (POST with testConfiguration in body)
+```cmd copy /@dashboardApiKey/ /@logs_id/
 curl -X POST -H "x-api-key: @dashboardApiKey" -H "Content-Type: application/json" ^
   -d "{\"testConfiguration\": \"filter {\n  grok { ... }\n}\"}" ^
-  https://dashboard.logit.io/api/stacks/STACK_ID/pipeline-config/validation
-
-# Poll for validation result (GET)
-curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/pipeline-config/validation
+  https://dashboard.logit.io/api/stacks/@logs_id/pipeline-config/validation
 ```
 </Tab>
 </Tabs>
 
-If validation is still running, the response may return `202 Accepted`. Poll until you get a final success or failure result.
+### Get validation result
+
+Poll this endpoint until validation completes.
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/ /@logs_id/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/@logs_id/pipeline-config/validation
+```
+</Tab>
+<Tab>
+
+```cmd copy /@dashboardApiKey/ /@logs_id/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/@logs_id/pipeline-config/validation
+```
+</Tab>
+</Tabs>
 
 ## Apply Pipeline Configuration
 
@@ -73,14 +86,14 @@ After validating a test configuration, apply it to update the pipeline's filter 
 <Tabs items={["Linux / macOS", "Windows"]}>
 <Tab>
 
-```bash copy /@dashboardApiKey/
-curl -X PUT -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/pipeline-config/apply
+```bash copy /@dashboardApiKey/ /@logs_id/
+curl -X PUT -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/@logs_id/pipeline-config/apply
 ```
 </Tab>
 <Tab>
 
-```cmd copy /@dashboardApiKey/
-curl -X PUT -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/pipeline-config/apply
+```cmd copy /@dashboardApiKey/ /@logs_id/
+curl -X PUT -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/@logs_id/pipeline-config/apply
 ```
 </Tab>
 </Tabs>
@@ -94,14 +107,14 @@ Request the latest pipeline configuration from the server (useful if configurati
 <Tabs items={["Linux / macOS", "Windows"]}>
 <Tab>
 
-```bash copy /@dashboardApiKey/
-curl -X PUT -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/pipeline-config/sync
+```bash copy /@dashboardApiKey/ /@logs_id/
+curl -X PUT -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/@logs_id/pipeline-config/sync
 ```
 </Tab>
 <Tab>
 
-```cmd copy /@dashboardApiKey/
-curl -X PUT -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/pipeline-config/sync
+```cmd copy /@dashboardApiKey/ /@logs_id/
+curl -X PUT -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/@logs_id/pipeline-config/sync
 ```
 </Tab>
 </Tabs>
@@ -113,14 +126,14 @@ Restart the Logstash Filter instance for the stack. This typically takes around 
 <Tabs items={["Linux / macOS", "Windows"]}>
 <Tab>
 
-```bash copy /@dashboardApiKey/
-curl -X POST -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/pipeline/restart
+```bash copy /@dashboardApiKey/ /@logs_id/
+curl -X POST -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/@logs_id/pipeline/restart
 ```
 </Tab>
 <Tab>
 
-```cmd copy /@dashboardApiKey/
-curl -X POST -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/pipeline/restart
+```cmd copy /@dashboardApiKey/ /@logs_id/
+curl -X POST -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/@logs_id/pipeline/restart
 ```
 </Tab>
 </Tabs>

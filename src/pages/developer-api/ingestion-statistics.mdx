@@ -8,7 +8,7 @@ description: Get ingestion event, history, latency, metrics, and span statistics
 
 Retrieve ingestion statistics for your stacks using the Logit.io Developer API. These endpoints provide visibility into data flow, throughput, and latency for Logs, Infrastructure Metrics, and Application Performance Monitoring products.
 
-Use your Dashboard API key from the [Profile](https://dashboard.logit.io/profile) page in the `x-api-key` header. See [Authentication](/developer-api/authentication) for setup and security.
+Use your Dashboard API key from the [Profile](https://dashboard.logit.io/profile) page in the `x-api-key` header. See [Authentication](/developer-api/authentication) for setup and security. Use `@logs_id`, `@metrics_id`, or `@apm_id` depending on your stack type (from your session/JWT when signed in).
 
 ## Log Stack: Ingestion Events
 
@@ -17,14 +17,14 @@ Returns ingestion event statistics for a log stack (events per minute, receiving
 <Tabs items={["Linux / macOS", "Windows"]}>
 <Tab>
 
-```bash copy /@dashboardApiKey/
-curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/ingestion/events
+```bash copy /@dashboardApiKey/ /@logs_id/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/@logs_id/ingestion/events
 ```
 </Tab>
 <Tab>
 
-```cmd copy /@dashboardApiKey/
-curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/ingestion/events
+```cmd copy /@dashboardApiKey/ /@logs_id/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/@logs_id/ingestion/events
 ```
 </Tab>
 </Tabs>
@@ -38,14 +38,14 @@ Returns the pipeline ingestion history for a log stack as time-series points:
 <Tabs items={["Linux / macOS", "Windows"]}>
 <Tab>
 
-```bash copy /@dashboardApiKey/
-curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/ingestion/history
+```bash copy /@dashboardApiKey/ /@logs_id/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/@logs_id/ingestion/history
 ```
 </Tab>
 <Tab>
 
-```cmd copy /@dashboardApiKey/
-curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/ingestion/history
+```cmd copy /@dashboardApiKey/ /@logs_id/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/@logs_id/ingestion/history
 ```
 </Tab>
 </Tabs>
@@ -54,19 +54,19 @@ Use this for charts and monitoring of log ingestion over time.
 
 ## Ingestion Latency
 
-Returns ingestion latency health for any stack product (Logs, Metrics, APM):
+Returns ingestion latency health for any stack product (Logs, Metrics, APM). Use `@logs_id`, `@metrics_id`, or `@apm_id` as appropriate.
 
 <Tabs items={["Linux / macOS", "Windows"]}>
 <Tab>
 
-```bash copy /@dashboardApiKey/
-curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/ingestion/latency
+```bash copy /@dashboardApiKey/ /@logs_id/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/@logs_id/ingestion/latency
 ```
 </Tab>
 <Tab>
 
-```cmd copy /@dashboardApiKey/
-curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/ingestion/latency
+```cmd copy /@dashboardApiKey/ /@logs_id/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/@logs_id/ingestion/latency
 ```
 </Tab>
 </Tabs>
@@ -80,14 +80,14 @@ Returns ingestion metric statistics for a Metrics stack (Prometheus Remote Write
 <Tabs items={["Linux / macOS", "Windows"]}>
 <Tab>
 
-```bash copy /@dashboardApiKey/
-curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/ingestion/metrics
+```bash copy /@dashboardApiKey/ /@metrics_id/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/@metrics_id/ingestion/metrics
 ```
 </Tab>
 <Tab>
 
-```cmd copy /@dashboardApiKey/
-curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/ingestion/metrics
+```cmd copy /@dashboardApiKey/ /@metrics_id/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/@metrics_id/ingestion/metrics
 ```
 </Tab>
 </Tabs>
@@ -101,14 +101,14 @@ Returns ingestion span statistics for an Application Performance Monitoring stac
 <Tabs items={["Linux / macOS", "Windows"]}>
 <Tab>
 
-```bash copy /@dashboardApiKey/
-curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/ingestion/spans
+```bash copy /@dashboardApiKey/ /@apm_id/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/@apm_id/ingestion/spans
 ```
 </Tab>
 <Tab>
 
-```cmd copy /@dashboardApiKey/
-curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/STACK_ID/ingestion/spans
+```cmd copy /@dashboardApiKey/ /@apm_id/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/@apm_id/ingestion/spans
 ```
 </Tab>
 </Tabs>

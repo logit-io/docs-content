@@ -13,7 +13,7 @@ The Logit.io Developer API (control-plane API) lets you programmatically manage 
 - **Base URL:** `https://dashboard.logit.io`
 - **Authentication:** All endpoints require a Logit.io API user key, passed in the `x-api-key` header.
 
-When you are signed in and have Dashboard API keys, the docs replace `@dashboardApiKey` in the examples below with your first key so you can copy and run the request. When unauthenticated or without keys, it shows `<your-dashboard-api-key>`. Get your API key from the [Profile](https://dashboard.logit.io/profile) page; see [Authentication](/developer-api/authentication) for setup and security.
+When you are signed in and have Dashboard API keys, the docs replace `@dashboardApiKey` in the examples below with your first key so you can copy and run the request. When unauthenticated or without keys, it shows `<your-dashboard-api-key>`. Stack-scoped examples use `@logs_id`, `@metrics_id`, or `@apm_id` depending on stack type (Logs, Metrics, APM), replaced from your session (JWT) when signed in, or `<your-stack-id>` otherwise. Get your API key from the [Profile](https://dashboard.logit.io/profile) page; see [Authentication](/developer-api/authentication) for setup and security.
 
 Example request:
 

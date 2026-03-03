@@ -12,32 +12,56 @@ Use your Dashboard API key from the [Profile](https://dashboard.logit.io/profile
 
 ## List Accounts
 
-Get a list of accounts accessible to the authenticated user. You can filter by enabled and paying status:
+Get a list of accounts accessible to the authenticated user. You can filter by enabled and paying status.
+
+### Get all accounts
 
 <Tabs items={["Linux / macOS", "Windows"]}>
 <Tab>
 
 ```bash copy /@dashboardApiKey/
-# Get all accounts
 curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/accounts
+```
+</Tab>
+<Tab>
 
-# Filter by enabled status (true, false, or omit for no filter)
+```cmd copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/accounts
+```
+</Tab>
+</Tabs>
+
+### Filter by enabled status
+
+Use `Enabled=true`, `Enabled=false`, or omit for no filter.
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
 curl -H "x-api-key: @dashboardApiKey" "https://dashboard.logit.io/api/accounts?Enabled=true"
+```
+</Tab>
+<Tab>
 
-# Filter by paying status
+```cmd copy /@dashboardApiKey/
+curl -H "x-api-key: @dashboardApiKey" "https://dashboard.logit.io/api/accounts?Enabled=true"
+```
+</Tab>
+</Tabs>
+
+### Filter by paying status
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+<Tab>
+
+```bash copy /@dashboardApiKey/
 curl -H "x-api-key: @dashboardApiKey" "https://dashboard.logit.io/api/accounts?Paying=true"
 ```
 </Tab>
 <Tab>
 
 ```cmd copy /@dashboardApiKey/
-# Get all accounts
-curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/accounts
-
-# Filter by enabled status (true, false, or omit for no filter)
-curl -H "x-api-key: @dashboardApiKey" "https://dashboard.logit.io/api/accounts?Enabled=true"
-
-# Filter by paying status
 curl -H "x-api-key: @dashboardApiKey" "https://dashboard.logit.io/api/accounts?Paying=true"
 ```
 </Tab>
