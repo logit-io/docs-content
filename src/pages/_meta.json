@@ -18,6 +18,7 @@
   "opentelemetry": "OpenTelemetry",
   "integrations": "Integrations",
   "account-administration": "Account Administration",
+  "developer-api": "Developer API",
   "under-review": {
     "display": "hidden"
   }
