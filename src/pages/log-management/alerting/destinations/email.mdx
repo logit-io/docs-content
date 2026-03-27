@@ -1,0 +1,121 @@
+---
+title: Email
+metaTitle: "SMTP email alerts — Log Management | Logit.io"
+description: "Send email notifications from ElastAlert 2 on Logit.io: SMTP, TLS, HTML bodies, attachments, and a full rule YAML."
+stackTypes: logs
+---
+
+# Email
+
+The classic **email** destination delivers subjects and bodies built from your rule’s formatting settings over SMTP. Use `email` in `alert:` with `email` recipients and mail server options. Add `email` under `alert:` on your rule (you can combine destinations).
+
+Start with **[Options](#options)** when wiring credentials and endpoints—**[Full working example](#full-working-example)** shows how they fit in a complete rule.
+
+## Options
+
+Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_subject` apply as described in [Subject & body](/log-management/alerting/alert-subject-and-body). **Example fragments** from the ElastAlert 2 reference appear indented under the option they illustrate (add your own `name`, `type`, `index`, and `filter` to make a full rule).
+
+### Required
+
+- `email` — An address or list of addresses to sent the alert to.
+
+ **single address example**
+
+ ```yaml copy
+  email: "one@domain"
+  ```
+
+ **multiple address example**
+
+ ```yaml copy
+  email:
+    - "one@domain"
+    - "two@domain"
+  ```
+
+### Optional
+
+- `email_from_field` — Use a field from the document that triggered the alert as the recipient. If the field cannot be found, the `email` value will be used as a default. Note that this field will not be available in every rule type, for example, if you have `use_count_query` or if it's `type: flatline`. You can optionally add a domain suffix to the field to generate the address using `email_add_domain`. It can be a single recipient or list of recipients. For example, with the following settings
+
+- `smtp_host` — The SMTP host to use, defaults to localhost.
+
+- `smtp_port` — The port to use. Defaults to port 25 when SSL is not used, or 465 when SSL is used.
+
+- `smtp_ssl` — Connect the SMTP host using TLS, defaults to `false`. If `smtp_ssl` is not used, ElastAlert 2 will still attempt STARTTLS.
+
+- `smtp_auth_file` — The path to a file which contains SMTP authentication credentials. The path can be either absolute or relative to the given rule. It should be YAML formatted and contain two fields, `user` and `password`. If this is not present, no authentication will be attempted.
+
+- `smtp_cert_file` — Connect the SMTP host using the given path to a TLS certificate file, default to `None`.
+
+- `smtp_key_file` — Connect the SMTP host using the given path to a TLS key file, default to `None`.
+
+- `email_reply_to` — This sets the Reply-To header in the email. By default, the from address is ElastAlert@ and the domain will be set by the smtp server.
+
+- `from_addr` — This sets the From header in the email. By default, the from address is ElastAlert@ and the domain will be set by the smtp server.
+
+- `cc` — This adds the CC emails to the list of recipients. By default, this is left empty.
+
+ **single address example (2)**
+
+ ```yaml copy
+  cc: "one@domain"
+  ```
+
+ **multiple address example (2)**
+
+ ```yaml copy
+  cc:
+    - "one@domain"
+    - "two@domain"
+  ```
+
+- `bcc` — This adds the BCC emails to the list of recipients but does not show up in the email message. By default, this is left empty.
+
+ **single address example (3)**
+
+ ```yaml copy
+  bcc: "one@domain"
+  ```
+
+ **multiple address example (3)**
+
+ ```yaml copy
+  bcc:
+    - "one@domain"
+    - "two@domain"
+  ```
+
+- `email_format` — If set to 'html', the email's MIME type will be set to HTML, and HTML content should correctly render. If you use this, you need to put your own HTML into `alert_text` and use `alert_text_type: alert_text_jinja` Or `alert_text_type: alert_text_only`.
+
+- `assets_dir` — images dir. default to `/tmp`.
+
+ **Example assets_dir, email_image_keys, email_image_values**
+
+ ```yaml copy
+  assets_dir: "/opt/elastalert/email_images"
+  email_image_keys: ["img1"]
+  email_image_values: ["my_logo.png"]
+  ```
+
+- `email_image_keys` — mapping between images keys.
+
+- `email_image_values` — mapping between images values
+
+## Full working example
+
+```yaml copy
+name: Example alert for Email
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "email"
+email:
+  - "alerts@example.com"
+from_addr: "noreply@example.com"
+```
+
+See also [Subject & body](/log-management/alerting/alert-subject-and-body) and [Context & links](/log-management/alerting/alert-context-and-links).

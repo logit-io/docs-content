@@ -1,0 +1,69 @@
+---
+title: Zabbix
+metaTitle: "Zabbix trapper alerts — Logit.io"
+description: "Send Zabbix trapper items from ElastAlert 2 on Logit.io: zabbix, server host, keys, fields, and YAML."
+stackTypes: logs
+---
+
+# Zabbix
+
+Feed **Zabbix** with trapper-style data so log-derived events appear in monitoring. Configure `zabbix` with server, port, host key, and field mappings. Add `zabbix` under `alert:` on your rule (you can combine destinations).
+
+Skim **[Options](#options)** for required vs optional keys, then open **[Full working example](#full-working-example)** for runnable YAML including `index` and `filter`.
+
+## Options
+
+Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_subject` apply as described in [Subject & body](/log-management/alerting/alert-subject-and-body). **Example fragments** from the ElastAlert 2 reference appear indented under the option they illustrate (add your own `name`, `type`, `index`, and `filter` to make a full rule).
+
+### Required
+
+- `zbx_sender_host` — The address where zabbix server is running, defaults to `'localhost'`.
+
+ **Example usage**
+
+ ```yaml copy
+  alert:
+    - "zabbix"
+  zbx_sender_host: "zabbix-server"
+  zbx_sender_port: 10051
+  zbx_host: "test001"
+  zbx_key: "sender_load1"
+  ```
+
+ **Example usage (2)**
+
+ ```yaml copy
+  alert:
+    - "zabbix"
+  zbx_sender_host: "zabbix-server"
+  zbx_sender_port: 10051
+  zbx_host_from_field: True 
+  zbx_host: "hostname"
+  zbx_key: "sender_load1"
+  ```
+
+- `zbx_sender_port` — The port where zabbix server is listenning, defaults to `10051`.
+
+- `zbx_host_from_field` — This field allows to specify `zbx_host` value from the available terms. Defaults to `False`.
+
+- `zbx_host` — This field setup the host in zabbix that receives the value sent by ElastAlert 2.
+
+- `zbx_key` — This field setup the key in the host that receives the value sent by ElastAlert 2.
+
+## Full working example
+
+```yaml copy
+name: Example alert for Zabbix
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "zabbix"
+zbx_sender_host: "zabbix.example"
+zbx_sender_port: 10051
+zbx_host: "logstash"
+zbx_key: "elastalert.hits"
+```

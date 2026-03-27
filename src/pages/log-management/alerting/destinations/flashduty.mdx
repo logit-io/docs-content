@@ -1,0 +1,65 @@
+---
+title: Flashduty
+metaTitle: "Flashduty incident alerts — Logit.io"
+description: "Open Flashduty incidents from log rules with ElastAlert 2 on Logit.io: flashduty, API keys, routing, and YAML reference."
+stackTypes: logs
+---
+
+# Flashduty
+
+Feed **Flashduty** with structured incidents derived from OpenSearch queries. Configure `flashduty` with API credentials and routing fields your organisation requires. Add `flashduty` under `alert:` on your rule (you can combine destinations).
+
+Field reference lives under **[Options](#options)**; **[Full working example](#full-working-example)** at the end shows full YAML (`name`, `type`, `index`, `filter`, and this destination). For every supported key and payload shape, see [Flashduty’s ElastAlert 2 integration guide](https://docs.flashcat.cloud/en/flashduty/elastalert2-integration-guide).
+
+## Options
+
+Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_subject` apply as described in [Subject & body](/log-management/alerting/alert-subject-and-body). **Example fragments** from the ElastAlert 2 reference appear indented under the option they illustrate (add your own `name`, `type`, `index`, and `filter` to make a full rule).
+
+### Required
+
+- `flashduty_integration_key` — Flashduty integration key.
+
+ **Example usage**
+
+ ```yaml copy
+  alert_text: "**{0}** - ALERT on host {1}"
+  alert_text_args:
+    - name
+    - hostname
+  alert:
+    - flashduty
+  flashduty_integration_key: "xxx"
+  flashduty_title: "elastalert"
+  flashduty_event_status: "Warning"
+  flashduty_alert_key: "abc"
+  flashduty_description: "log error"
+  flashduty_check: "Too many occurrences of error logs"
+  flashduty_resource: "index_name"
+  flashduty_service: "service_name"
+  flashduty_metric: "The number of error logs is greater than 5"
+  flashduty_group: "sre"
+  flashduty_cluster: "k8s"
+  flashduty_app: "app"
+  flashduty_env: "dev"
+  ```
+
+- `flashduty_title` — Alert title, no more than 512 characters, will be truncated if exceeded. Default to `ElastAlert Alert`.
+
+- `flashduty_event_status` — Alert status. Can be `Info`, `Warning`, `Critical`, `Ok`. Defaults to `Info`.
+
+## Full working example
+
+```yaml copy
+name: Example alert for Flashduty
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "flashduty"
+flashduty_integration_key: "REPLACE"
+flashduty_title: "Logit alert"
+flashduty_event_status: "Warning"
+```

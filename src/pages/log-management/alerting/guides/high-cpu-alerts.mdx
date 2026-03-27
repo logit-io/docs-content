@@ -1,0 +1,92 @@
+---
+title: Configure High CPU OpenSearch Alerts for Logs
+description: Configure OpenSearch Alerting in Logit.io for high CPU: per-query monitor, Metricbeat metrics, and Slack notification.
+stackTypes: logs
+---
+
+# Configure OpenSearch notifications for high CPU (logs)
+
+## Alerting and notifications for log management
+
+Managing critical events in your OpenSearch environment is easier when **Alerting** is set up for your metrics. This guide focuses on a **high CPU** warning delivered through **Notifications** (for example Slack). It assumes you are already [shipping Metricbeat data](/integrations/metricbeat) (or similar host metrics) into the index you query.
+
+![Server High CPU Warning](@/images/help/log-management/alerting/high-cpu.png)
+
+*Example: a server high CPU alert in triggered state.*
+
+OpenSearch Alerting is organised into three areas—**Alerts**, **Monitors**, and **Notifications**—that work together: monitors evaluate data, alerts represent fired conditions, and notifications carry messages to channels you configure.
+
+## Alerts, monitors, and notifications
+
+### Alerts tab
+
+![Alerts Tab](@/images/help/log-management/alerting/alerts-tab.png)
+
+- **Overview** — Lists configured alerts, status, and last triggered time.
+- **Managing alerts** — Alerts fire from monitors; under **Monitor name**, open an alert for details.
+- **Alert status** — See which alerts are active, acknowledged, or resolved.
+
+### Monitors tab
+
+![Monitors Tab](@/images/help/log-management/alerting/monitors-tab.png)
+
+- **Overview** — Create and edit monitors that run on a schedule.
+- **Creating monitors** — Track conditions in your data; monitors can run without sending notifications until you attach triggers and actions.
+- **Monitoring metrics** — Execution frequency and performance of each monitor.
+- **Integration with alerts** — Triggers turn monitor results into alerts and drive notifications.
+
+### Notifications tab
+
+![Notifications Tab](@/images/help/log-management/alerting/notifications-tab.png)
+
+- **Overview** — Configure channels (email, Slack, webhooks) and message defaults.
+- **Creating notification channels** — Add the destinations alerts will use.
+- **Recipient settings** — Control who receives each channel’s messages.
+
+## Examples
+
+### High CPU warning (per-query monitor, visual editor)
+
+From the Logit.io dashboard, open **Launch logs**, then **Alerting** in the left menu and go to the **Monitors** tab. This example uses a **per-query monitor** with the **visual editor** and a **5 minute** run interval.
+
+![Creating a Server High CPU Alert](@/images/help/log-management/alerting/server-high-cpu-alert.png)
+
+Choose **Create monitor**.
+
+![Create Monitor](@/images/help/log-management/alerting/create-monitor.png)
+
+- **Monitor name** — A clear name for the monitor’s purpose.
+- **Monitor type** — **Per query monitor** (tracks a single query).
+- **Monitor defining method** — **Visual editor**.
+- **Schedule** — **Run every** — for example **5 minutes**.
+
+### Define the query
+
+- In the visual editor, pick the **index**, **time field** (usually `@timestamp`), and conditions.
+- Set **Time range for the last** to **1 minute** and add a **data filter**: `system.cpu.user.norm.pct` **greater than** `0.85` (adjust for your metric naming).
+- Use **Preview query and performance** to confirm hit counts.
+
+![Data Source](@/images/help/log-management/alerting/data-source.png)
+
+*Selecting the data source and time field.*
+
+![Query](@/images/help/log-management/alerting/query.png)
+
+### Set trigger conditions
+
+- Choose **Add trigger** and set a **severity** (for example High).
+- Set the trigger so an alert fires when the query matches; for a first test you can use a **trigger condition** of **0** hits as described in the UI, then tighten it for production.
+
+![Triggers](@/images/help/log-management/alerting/triggers.png)
+
+### Define actions
+
+- Under actions, open **Manage channels** to add Slack (or another channel), then select that channel for this monitor.
+- Optionally send a **test message** to verify delivery.
+
+![Define Actions](@/images/help/log-management/alerting/define-actions.png)
+
+### Save and activate
+
+- Click **Create** to save the monitor.
+- Activate it so scheduled runs begin against your query and triggers.

@@ -1,0 +1,88 @@
+---
+title: Tencent SMS
+metaTitle: "Tencent Cloud SMS alerts — Logit.io"
+description: "Send SMS through Tencent Cloud from ElastAlert 2 on Logit.io: tencent_sms, SDK app ID, signatures, templates, and YAML."
+stackTypes: logs
+---
+
+# Tencent SMS
+
+Deliver SMS in Tencent’s ecosystem using **Tencent Cloud SMS** APIs. Configure `tencent_sms` with application ID, template parameters, and phone number lists. Add `tencent_sms` under `alert:` on your rule (you can combine destinations).
+
+Skim **[Options](#options)** for required vs optional keys, then open **[Full working example](#full-working-example)** for runnable YAML including `index` and `filter`.
+
+## Options
+
+Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_subject` apply as described in [Subject & body](/log-management/alerting/alert-subject-and-body). **Example fragments** from the ElastAlert 2 reference appear indented under the option they illustrate (add your own `name`, `type`, `index`, and `filter` to make a full rule).
+
+### Required
+
+- `tencent_sms_secret_id` — `SecretID` is used to identify the API caller.
+
+- `tencent_sms_secret_key` — `SecretKey` is used to encrypt the string to sign that can be verified on the server. You should keep it private and avoid disclosure.
+
+- `tencent_sms_sdk_appid` — SMS application ID, which is the `SdkAppId` generated after an application is added in the SMS console, such as 1400006666
+
+- `tencent_sms_to_number` — Target mobile number in the E.164 standard (+[country/region code][mobile number]) Example: +8613711112222, which has a + sign followed by 86 (country/region code) and then by 13711112222 (mobile number). Up to 200 mobile numbers are supported
+
+- `tencent_sms_template_id` — Template ID. You must enter the ID of an approved template, which can be viewed in the SMS console. If you need to send SMS messages to global mobile numbers, you can only use a Global SMS template.
+
+ **Example rule fragment (`tencent_sms_template_parm`)**
+
+ ```yaml copy
+  tencent_sms_template_id: "1123835"
+  tencent_sms_template_parm:
+    - "/kubernetes/pod_name"
+  ```
+
+### Optional
+
+- `tencent_sms_sign_name` — Content of the SMS signature, which should be encoded in UTF-8. You must enter an approved signature, such as Tencent Cloud. The signature information can be viewed in the SMS console. Note: this parameter is required for Mainland China SMS.
+
+- `tencent_sms_region` — Region parameter, which is used to identify the region(Mainland China or Global ) to which the data you want to work with belongs.
+
+- `tencent_sms_template_parm` — The number of template parameters needs to be consistent with the number of variables of the template corresponding to TemplateId. this value format by rfc6901
+
+ **Example document and `tencent_sms_template_parm`**
+
+ ```json copy
+  {
+    "_index" : "tmec"
+    "_type" : "fluentd",
+    "_id" : "PeXLrnsBvusb3d0w6dUl",
+    "_score" : 1.0,
+    "_source" : {
+      "kubernetes" : {
+        "host" : "9.134.191.187",
+        "pod_id" : "66ba4e5a-1ad2-4655-9a8e-cffb6b942559",
+        "labels" : {
+          "release" : "nginx",
+          "pod-template-hash" : "6bd96d6f74"
+        },
+        "namespace_name" : "app",
+        "pod_name" : "app.nginx-6bd96d6f74-2ts4x"
+      },
+      "time" : "2021-09-04T03:13:24.192875Z",
+      "message" : "2021-09-03T14:34:08+0000|INFO|vector eps : 192.168.0.2:10000,",
+    }
+  }
+  ```
+
+## Full working example
+
+```yaml copy
+name: Example alert for Tencent SMS
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "tencent_sms"
+tencent_sms_secret_id: "REPLACE"
+tencent_sms_secret_key: "REPLACE"
+tencent_sms_sdk_appid: "REPLACE"
+tencent_sms_to_number: "+8613711112222"
+tencent_sms_template_id: "REPLACE"
+```

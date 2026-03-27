@@ -1,0 +1,97 @@
+---
+title: ServiceNow
+metaTitle: "ServiceNow incidents from logs — Logit.io"
+description: "Create ServiceNow incidents via ElastAlert 2 on Logit.io: servicenow, REST credentials, tables, fields, and YAML."
+stackTypes: logs
+---
+
+# ServiceNow
+
+Raise **ServiceNow** tickets with CMDB-aware fields when log thresholds trip. Use `servicenow` with instance URL, credentials, and table mappings. Add `servicenow` under `alert:` on your rule (you can combine destinations).
+
+Details for each key are in **[Options](#options)**; **[Full working example](#full-working-example)** ties the destination into a full ElastAlert 2 rule.
+
+## Options
+
+Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_subject` apply as described in [Subject & body](/log-management/alerting/alert-subject-and-body). **Example fragments** from the ElastAlert 2 reference appear indented under the option they illustrate (add your own `name`, `type`, `index`, and `filter` to make a full rule).
+
+### Required
+
+- `servicenow_rest_url` — The ServiceNow RestApi url, this will look like TableAPI.
+
+ **Example usage**
+
+ ```yaml copy
+  alert:
+    - "servicenow"
+  servicenow_rest_url: "servicenow rest url"
+  username: "user"
+  password: "password"
+  short_description: "xxxxxx"
+  comments: "xxxxxx"
+  assignment_group: "xxxxxx"
+  category: "xxxxxx"
+  subcategory: "xxxxxx"
+  cmdb_ci: "xxxxxx"
+  caller_id: "xxxxxx"
+  servicenow_impact: 1
+  servicenow_urgency: 3
+  ```
+
+- `username` — The ServiceNow Username to access the api.
+
+- `password` — The ServiceNow password to access the api.
+
+- `short_description` — The ServiceNow password to access the api.
+
+- `comments` — Comments to be attached to the incident, this is the equivilant of work notes.
+
+- `assignment_group` — The group to assign the incident to.
+
+- `category` — The category to attach the incident to, use an existing category.
+
+- `subcategory` — The subcategory to attach the incident to, use an existing subcategory.
+
+- `cmdb_ci` — The configuration item to attach the incident to.
+
+- `caller_id` — The caller id (email address) of the user that created the incident (elastalert@somewhere.com).
+
+### Optional
+
+- `servicenow_proxy` — By default ElastAlert 2 will not use a network proxy to send notifications to ServiceNow. Set this option using `hostname:port` if you need to use a proxy. only supports https.
+
+- `servicenow_impact` — An integer 1, 2, or 3 representing high, medium, and low respectively. This measures the effect of an incident on business processes.
+
+- `servicenow_urgency` — An integer 1, 2, or 3 representing high, medium, and low respecitvely. This measures how long this incident can be delayed until there is a significant business impact.
+
+ **Example usage (2)**
+
+ ```yaml copy
+  service_now_additional_fields:
+      u_affected_user: 'Sample User'
+      u_affected_site: 'Sample Location'
+  ```
+
+## Full working example
+
+```yaml copy
+name: Example alert for ServiceNow
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "servicenow"
+servicenow_rest_url: "https://instance.service-now.com/api/now/table/incident"
+username: "REPLACE"
+password: "REPLACE"
+short_description: "ElastAlert incident"
+comments: "Created from Logit.io"
+assignment_group: "REPLACE"
+category: "software"
+subcategory: "monitor"
+cmdb_ci: ""
+caller_id: "elastalert@example.com"
+```

@@ -1,0 +1,50 @@
+---
+title: Gitter
+metaTitle: "Gitter room messages — Logit.io"
+description: "Post to Gitter rooms from ElastAlert 2 on Logit.io: gitter, auth token, room, and example YAML (legacy integration)."
+stackTypes: logs
+---
+
+# Gitter
+
+Notify a **Gitter** room when a rule fires—useful for communities still on Gitter-style workflows. Add `gitter` under `alert:` with token and room identifiers.
+
+Skim **[Options](#options)** for required vs optional keys, then open **[Full working example](#full-working-example)** for runnable YAML including `index` and `filter`.
+
+## Options
+
+Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_subject` apply as described in [Subject & body](/log-management/alerting/alert-subject-and-body). **Example fragments** from the ElastAlert 2 reference appear indented under the option they illustrate (add your own `name`, `type`, `index`, and `filter` to make a full rule).
+
+### Required
+
+- `gitter_webhook_url` — The webhook URL that includes your auth data and the ID of the channel (room) you want to post to. Open **Integrations** on your Gitter room (for example `https://gitter.im/ORGA/CHANNEL#integrations`), choose **CUSTOM**, and copy the resulting URL.
+
+ **Example usage**
+
+ ```yaml copy
+  alert:
+    - "gitter"
+  gitter_webhook_url: "Your Gitter Webhook URL"
+  gitter_msg_level: "error"
+  ```
+
+### Optional
+
+- `gitter_msg_level` — By default the alert will be posted with the 'error' level. You can use 'info' if you want the messages to be black instead of red.
+
+- `gitter_proxy` — By default ElastAlert 2 will not use a network proxy to send notifications to Gitter. Set this option using `hostname:port` if you need to use a proxy. only supports https.
+
+## Full working example
+
+```yaml copy
+name: Example alert for Gitter
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "gitter"
+gitter_webhook_url: "https://webhooks.gitter.im/e/REPLACE"
+```

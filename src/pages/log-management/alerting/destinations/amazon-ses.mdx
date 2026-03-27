@@ -1,0 +1,132 @@
+---
+title: Amazon SES
+metaTitle: "AWS SES email alerts — Log Management | Logit.io"
+description: "Send alert emails through Amazon SES from ElastAlert 2 on Logit.io: ses, regions, credentials, CC/BCC, and a complete YAML rule."
+stackTypes: logs
+---
+
+# Amazon SES
+
+Deliver alert mail through **Amazon SES** instead of raw SMTP—ideal when you already standardise on AWS for outbound email. Set `alert: ses` and supply `ses_email`, `ses_from_addr`, and AWS auth as needed.
+
+Use **[Options](#options)** for key-by-key reference, then **[Full working example](#full-working-example)** for copy-paste YAML you can tailor to your stack.
+
+## Options
+
+Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_subject` apply as described in [Subject & body](/log-management/alerting/alert-subject-and-body). **Example fragments** from the ElastAlert 2 reference appear indented under the option they illustrate (add your own `name`, `type`, `index`, and `filter` to make a full rule).
+
+### Required
+
+- `ses_email` — An address or list of addresses to sent the alert to.
+
+ **single address example**
+
+ ```yaml copy
+  ses_email: "one@domain"
+  ```
+
+ **multiple address example**
+
+ ```yaml copy
+  ses_email:
+    - "one@domain"
+    - "two@domain"
+  ```
+
+- `ses_from_addr` — This sets the From header in the email.
+
+### Optional
+
+- `ses_aws_access_key` — An access key to connect to AWS SES with.
+
+ **Example When not using aws_profile usage**
+
+ ```yaml copy
+  alert:
+    - "ses"
+  ses_aws_access_key_id: "XXXXXXXXXXXXXXXXXX"
+  ses_aws_secret_access_key: "YYYYYYYYYYYYYYYYYYYY"
+  ses_aws_region: "us-east-1"
+  ses_from_addr: "xxxx1@xxx.com"
+  ses_email: "xxxx1@xxx.com"
+  ```
+
+- `ses_aws_secret_key` — The secret key associated with the access key.
+
+- `ses_aws_region` — The AWS region in which the AWS SES resource is located. Default is us-east-1
+
+- `ses_aws_profile` — The AWS profile to use. If none specified, the default will be used.
+
+ **Example When to use aws_profile usage**
+
+ ```yaml copy
+  # Create ~/.aws/credentials
+  
+  [default]
+  aws_access_key_id = xxxxxxxxxxxxxxxxxxxx
+  aws_secret_access_key = yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+  
+  # Create ~/.aws/config
+  
+  [default]
+  region = us-east-1
+  
+  # alert rule setting
+  
+  alert:
+    - "ses"
+  ses_aws_profile: "default"
+  ses_from_addr: "xxxx1@xxx.com"
+  ses_email: "xxxx1@xxx.com"
+  ```
+
+- `ses_email_reply_to` — This sets the Reply-To header in the email.
+
+- `ses_cc` — This adds the CC emails to the list of recipients. By default, this is left empty.
+
+ **single address example (2)**
+
+ ```yaml copy
+  ses_cc: "one@domain"
+  ```
+
+ **multiple address example (2)**
+
+ ```yaml copy
+  ses_cc:
+    - "one@domain"
+    - "two@domain"
+  ```
+
+- `ses_bcc` — This adds the BCC emails to the list of recipients but does not show up in the email message. By default, this is left empty.
+
+ **single address example (3)**
+
+ ```yaml copy
+  ses_bcc: "one@domain"
+  ```
+
+ **multiple address example (3)**
+
+ ```yaml copy
+  ses_bcc:
+    - "one@domain"
+    - "two@domain"
+  ```
+
+## Full working example
+
+```yaml copy
+name: Example alert for Amazon SES
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "ses"
+ses_email: "alerts@example.com"
+ses_from_addr: "noreply@example.com"
+ses_aws_region: "eu-west-1"
+```

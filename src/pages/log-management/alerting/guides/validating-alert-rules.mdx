@@ -1,0 +1,89 @@
+---
+title: Check Elastalert Rule is Configured Correctly
+metaTitle: Learn How to Check ElastAlert 2 Rules Are Configured Correctly
+description: Follow the steps in Logit.io's help article to validate ElastAlert 2 YAML rules, rule types, and alert destinations.
+stackTypes: logs
+---
+
+# How can I check my ElastAlert 2 rule is configured correctly?
+
+### Checking your YAML file
+
+All of the below points will prevent alerts from being fired but
+there may not be an error message associated with the problem. It
+is possible you may need to contact support to investigate this issue for you.
+
+- Issues with YAML spacing/formatting
+- Incorrect syntax
+- Required fields for rules that are missing
+- Two rules with the same name
+
+Make sure to proofread the rule you have written to ensure that it is
+what you expect to see as most of the issues regarding Elastalert not
+working correctly is related to the points above.
+
+Below is an example of a rule that has been misconfigured, it is
+currently missing the recipient's email address from the rule. This
+will not throw an error message but it will not work as intended.
+Ensure that all fields that are required for a rule to trigger an
+alert are in your YAML configuration.
+
+```yaml copy
+name: Log frequency rule
+type: frequency
+index: loginfo*
+is_enabled: false
+
+buffer_time:
+  minutes: 1
+run_every:
+  minutes: 1
+
+num_events: 30
+timeframe:
+  seconds: 30
+
+alert:
+  - "email"
+```
+
+### Rule types and alert destinations
+
+Each `type:` has **required** fields. Mis-spelled keys or wrong indentation usually show up when you run **Test only**; missing required fields may fail silently or never match.
+
+- See **[Rule types](/log-management/alerting/rule-types)** for one page per type (`any`, `frequency`, `spike`, `flatline`, `change`, `blacklist`, `whitelist`, `new_term`, `cardinality`, `metric_aggregation`, `spike_aggregation`, `percentage_match`) with full YAML examples.
+- See **[Destinations](/log-management/alerting/destinations)** for one page per `alert:` channel (email, Slack, Jira, PagerDuty, webhooks, and the rest) with required keys and examples.
+
+**Flatline note:** If your `timeframe` is 10 minutes but your query only looks at the last 10 minutes in a way that never completes a window, you can see odd `timeframe_elapsed` behaviour. Prefer the examples on the [flatline](/log-management/alerting/rule-types/flatline) page as a baseline.
+
+### Multiple alerters and YAML layout
+
+You can list several destinations:
+
+```yaml copy
+alert:
+  - email
+  - jira
+  - slack
+```
+
+Nested alerter settings must stay aligned under the correct list item, or YAML will throw a parse error (often `yaml.parser.ParserError` with a line number).
+
+### Email, Jira, and Slack
+
+- **Email** — top-level `email:` or per-entry overrides; see [Email destination](/log-management/alerting/destinations/email).
+- **Jira** — requires `jira_server`, `jira_project`, `jira_issuetype`, and `jira_account_file` pointing to a **YAML** credentials file (not plain text). Jira Cloud uses an API token as the `password` field.
+
+```yaml copy
+# jira_acct.yaml (readable only by the ElastAlert process)
+user: jira-user@example.com
+password: your-api-token
+```
+
+For self-hosted Jira with a personal access token, the file can contain only `apikey:...` per ElastAlert 2. Full options: [Jira destination](/log-management/alerting/destinations/jira).
+
+- **Slack** — `slack_webhook_url`; see [Slack destination](/log-management/alerting/destinations/slack).
+
+### ElastAlert execution logs
+
+When **Test only** or a live run behaves unexpectedly, check **execution output in your own Logs stack** (written to the **elastalert** index). In the dashboard, open **Diagnostic logs** at **`/logs-settings/logfile`** for the stack to correlate rule name, errors, silenced matches, and whether alerters ran. See also [Overview — ElastAlert execution logs](/log-management/alerting/overview#elastalert-execution-logs-in-your-stack).

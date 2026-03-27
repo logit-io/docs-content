@@ -1,0 +1,90 @@
+---
+title: Blacklist rule type
+metaTitle: "Blacklist rule — deny-list field values — Logit.io"
+description: "Alert when a field equals a forbidden value using ElastAlert 2 type: blacklist on Logit.io: compare_key, list values, and YAML."
+stackTypes: logs
+---
+
+# Blacklist rule type
+
+The **blacklist** rule matches when `compare_key` appears in your deny list—common for status codes, IPs, or policy violations.
+
+Use **[Options](#options)** for field-by-key reference, then **[Full working example](#full-working-example)** for copy-paste YAML including `filter` and `alert`.
+
+
+
+<Callout type="info">
+ On Logit.io you typically inline list values in YAML rather than host-specific file paths unless your deployment supports them.
+</Callout>
+
+## Options
+
+### Fields every rule needs
+
+Regardless of `type`, each ElastAlert 2 rule must include:
+
+- **`name`** — unique identifier for the rule.
+- **`index`** — OpenSearch index pattern (for example `*-*` for stack logs).
+- **`type`** — the rule type; it must match this page.
+- **`filter`** — at least one filter clause so ElastAlert knows which documents to evaluate.
+- **`alert`** — one or more notification types (for example `email`, `slack`) and their configuration.
+
+Common optional keys such as `buffer_time`, `run_every`, `realert`, `is_enabled`, and Discover link fields apply to every type; see the [Full Reference](/log-management/alerting/alert-reference). For the Logit.io editor workflow, see [Create a rule](/log-management/alerting/creating-alerts).
+
+The **Required for this type** and **Optional** subsections below list only the keys specific to **`type: blacklist`**. Global options—`buffer_time`, `run_every`, `realert`, `is_enabled`, Discover links, and the rest of the YAML surface—are in the [Full Reference](/log-management/alerting/alert-reference). For notification wording and destinations, see [Subject & body](/log-management/alerting/alert-subject-and-body), [Context & links](/log-management/alerting/alert-context-and-links), and [Destinations](/log-management/alerting/destinations).
+
+### Required for this type
+
+- `compare_key` — field to test (for example `http.response.status_code`).
+- `blacklist` — list of forbidden values.
+
+### Optional
+- File-backed entries in upstream ElastAlert 2 use `- "!file /path/to/list.txt"` entries inside `blacklist`.
+
+## Full working example
+
+```yaml copy
+name: Blacklisted status codes
+type: blacklist
+index: "*-*"
+compare_key: http.response.status_code
+blacklist:
+  - "401"
+  - "403"
+filter:
+  - query:
+      query_string:
+        query: "event.dataset:nginx.access OR event.module:nginx"
+alert:
+  - "email"
+email:
+  - "security@example.com"
+```
+
+## Real-world example: known-malicious IPs to PagerDuty
+
+SOC maintains a short list of **known bad** client addresses. Any hit on nginx or firewall logs should open an incident.
+
+```yaml copy
+name: Deny-listed source IPs observed
+type: blacklist
+index: "*-*"
+compare_key: "source.ip"
+blacklist:
+  - "203.0.113.50"
+  - "198.51.100.22"
+filter:
+  - query:
+      query_string:
+        query: "event.category:network OR event.dataset:nginx.access"
+alert_subject: "Deny-listed IP {0} seen in logs"
+alert_subject_args:
+  - "source.ip"
+alert:
+  - "pagerduty"
+pagerduty_service_key: "REPLACE_ROUTING_KEY"
+pagerduty_client_name: "logit-security"
+pagerduty_event_type: trigger
+```
+
+See [PagerDuty](/log-management/alerting/destinations/pagerduty). If counts are `.keyword` only in your mapping, set `compare_key` to `source.ip.keyword` (or the equivalent field).

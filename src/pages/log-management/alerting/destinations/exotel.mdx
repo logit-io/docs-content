@@ -1,0 +1,59 @@
+---
+title: Exotel
+metaTitle: "Exotel voice/SMS alerts — Logit.io"
+description: "Trigger Exotel calls or SMS when logs match using ElastAlert 2 on Logit.io: exotel, SID, tokens, and sample YAML."
+stackTypes: logs
+---
+
+# Exotel
+
+Escalate with a phone call or SMS through **Exotel**’s telephony APIs. Add `exotel` to `alert:` with your account SID, token, and destination numbers. Add `exotel` under `alert:` on your rule (you can combine destinations).
+
+**[Options](#options)** covers each YAML field—required first—with snippets under some keys. **[Full working example](#full-working-example)** at the bottom is a complete rule for the Logit.io alert editor.
+
+## Options
+
+Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_subject` apply as described in [Subject & body](/log-management/alerting/alert-subject-and-body). **Example fragments** from the ElastAlert 2 reference appear indented under the option they illustrate (add your own `name`, `type`, `index`, and `filter` to make a full rule).
+
+### Required
+
+- `exotel_account_sid` — The SID of your Exotel account.
+
+ **Example usage**
+
+ ```yaml copy
+  alert:
+    - "exotel"
+  exotel_account_sid: "Exotel Account SID"
+  exotel_auth_token: "Exotel Auth token"
+  exotel_to_number: "Exotel to number"
+  exotel_from_number: "Exotel from number"
+  ```
+
+- `exotel_auth_token` — The auth token associated with your Exotel account. Instructions for finding the SID and token are in [Exotel’s developer documentation](https://developer.exotel.com/).
+
+- `exotel_to_number` — The phone number to which you would like to send the alert.
+
+- `exotel_from_number` — The ExoPhone number from which the alert will be sent.
+
+### Optional
+
+- `exotel_message_body` — The contents of the SMS. If you don't specify this argument, only the rule name is sent.
+
+## Full working example
+
+```yaml copy
+name: Example alert for Exotel
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "exotel"
+exotel_account_sid: "REPLACE"
+exotel_auth_token: "REPLACE"
+exotel_to_number: "+91xxxxxxxxxx"
+exotel_from_number: "+91xxxxxxxxxx"
+```

@@ -1,3 +1,11 @@
 {
-  "overview": "Overview"
+  "overview": "Overview",
+  "creating-alerts": "Create a rule",
+  "alert-subject-and-body": "Subject & body",
+  "alert-context-and-links": "Context & links",
+  "rule-types": "Rule types",
+  "destinations": "Destinations",
+  "alert-reference": "Full Reference",
+  "opensearch-alerting-monitors": "OpenSearch Alerting",
+  "guides": "Guides"
 }

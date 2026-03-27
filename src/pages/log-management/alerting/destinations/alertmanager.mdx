@@ -1,0 +1,118 @@
+---
+title: Alertmanager
+metaTitle: "Prometheus Alertmanager from ElastAlert 2 — Logit.io"
+description: "Forward Log Management alerts to Prometheus Alertmanager via ElastAlert 2: labels, annotations, alertmanager YAML, and a working rule for Logit.io."
+stackTypes: logs
+---
+
+# Alertmanager
+
+Push log-derived incidents into **Alertmanager** for silencing, routing, and inhibition alongside metrics alerts. Use `alertmanager` in the `alert` list and map labels and annotations to your receivers.
+
+Field reference lives under **[Options](#options)**; **[Full working example](#full-working-example)** at the end shows full YAML (`name`, `type`, `index`, `filter`, and this destination).
+
+## Options
+
+Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_subject` apply as described in [Subject & body](/log-management/alerting/alert-subject-and-body). **Example fragments** from the ElastAlert 2 reference appear indented under the option they illustrate (add your own `name`, `type`, `index`, and `filter` to make a full rule).
+
+### Required
+
+- `alertmanager_hosts` — The list of hosts pointing to the Alertmanager.
+
+ **Example usage**
+
+ ```yaml copy
+  alert:
+    - "alertmanager"
+  alertmanager_hosts:
+    - "http://alertmanager:9093"
+  alertmanager_alertname: "Title"
+  alertmanager_annotations:
+    severity: "error"
+  alertmanager_resolve_time:
+    minutes: 10
+  alertmanager_labels:
+    source: "elastalert"
+  alertmanager_fields:
+    msg: "message"
+    log: "@log_name"
+  ```
+
+### Optional
+
+- `alertmanager_api_version` — Defaults to `v1`. Set to `v2` to enable the Alertmanager V2 API postAlerts.
+
+- `alertmanager_alertname` — `alertname` is the only required label. Defaults to using the rule name of the alert.
+
+- `alertmanager_labels` — Key:value pairs of arbitrary labels to be attached to every alert. Keys should match the regular expression `^[a-zA-Z_][a-zA-Z0-9_]*$`. Jinja2 templating, such as `{{ field }}`, can be used in the value to reference any field in the matched events. When field names use dot notation or reserved characters, `_data` can be used to access these fields. If `_data` conflicts with your top level data, use `jinja_root_name` to change its name.
+
+ **Example `alertmanager_labels`**
+
+ ```yaml copy
+  alertmanager_labels:
+    someStaticLabel: "Verify this issue"
+    someTemplatedLabel: "{{ someElasticFieldName }}"
+    someOtherTemplatedLabel: "{{ someElasticFieldName }}:{{ _data["some.elastic.field.name"] }}"
+  ```
+
+- `alertmanager_annotations` — Key:value pairs of arbitrary annotations to be attached to every alert. Keys should match the regular expression `^[a-zA-Z_][a-zA-Z0-9_]*$`. Jinja2 templating, such as `{{ field }}`, can be used in the value to reference any field in the matched events. When field names use dot notation or reserved characters, `_data` can be used to access these fields. If `_data` conflicts with your top level data, use `jinja_root_name` to change its name.
+
+ **Example `alertmanager_annotations` with `alert_subject` / `alert_text`**
+
+ ```yaml copy
+  alertmanager_annotations:
+    someStaticAnnotation: "This is a static annotation value, it never changes"
+    someTemplatedAnnotation: "This is a templated annotation value: {{ someElasticFieldName }}"
+  
+  alertmanager_alert_subject_labelname: myCustomAnnotationName1
+  alertmanager_alert_text_labelname: myCustomAnnotationName2
+  
+  alert_subject: "Host {0} has status {1}"
+  alert_subject_args:
+  - http_host
+  - status
+  
+  alert_text: "URL {0} has {1} matches"
+  alert_text_type: alert_text_only
+  alert_text_args:
+  - uri
+  - num_matches
+  ```
+
+- `alertmanager_fields` — Key:value pairs of labels and corresponding match fields. When using `alertmanager_fields` you can access nested fields and index into arrays the same way as with `alert_text_args`. Keys should match the regular expression `^[a-zA-Z_][a-zA-Z0-9_]*$`. This dictionary will be merged with the `alertmanager_labels`.
+
+- `alertmanager_alert_subject_labelname` — Rename the annotations' label name for `alert_subject`. Default is `summary`.
+
+- `alertmanager_alert_text_labelname` — Rename the annotations' label name for `alert_text`. Default is `description`.
+
+- `alertmanager_proxy` — By default ElastAlert 2 will not use a network proxy to send notifications to Alertmanager. Set this option using `hostname:port` if you need to use a proxy. only supports https.
+
+- `alertmanager_ca_certs` — Set this option to `True` or a path to a CA cert bundle or directory (eg: `/etc/ssl/certs/ca-certificates.crt`) to validate the SSL certificate.
+
+- `alertmanager_ignore_ssl_errors` — By default ElastAlert 2 will verify SSL certificate. Set this option to `True` if you want to ignore SSL errors.
+
+- `alertmanager_timeout` — You can specify a timeout value, in seconds, for making communicating with Alertmanager. The default is 10. If a timeout occurs, the alert will be retried next time ElastAlert 2 cycles.
+
+- `alertmanager_resolve_time` — Optionally provide an automatic resolution timeframe. If no further alerts arrive within this time period alertmanager will automatically mark the alert as resolved. If not defined it will use Alertmanager's default behavior.
+
+- `alertmanager_basic_auth_login` — Basic authentication username.
+
+- `alertmanager_basic_auth_password` — Basic authentication password.
+
+## Full working example
+
+```yaml copy
+name: Example alert for Alertmanager
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "alertmanager"
+alertmanager_hosts:
+  - "http://alertmanager:9093"
+alertmanager_labels:
+  service: logit
+```

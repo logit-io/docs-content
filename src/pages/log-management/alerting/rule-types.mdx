@@ -1,0 +1,24 @@
+---
+title: Rule types
+metaTitle: ElastAlert 2 Rule Types for Log Management
+description: One reference page per ElastAlert 2 rule type with required options and a full working YAML example for Logit.io managed alerting.
+stackTypes: logs
+pagination: false
+timestamp: false
+---
+
+# ElastAlert 2 rule types
+
+Each alerting rule sets `type:` to choose how matches are detected. Every type guide opens with a short overview, then an **Options** section: first **Fields every rule needs** (the YAML skeleton common to all types), then **Required for this type** and optional keys for that `type`, followed by a **Full working example** and usually a **real-world example**. Cross-rule options such as `buffer_time`, `run_every`, `realert`, and `is_enabled` are covered in the [Full Reference](/log-management/alerting/alert-reference) and [Create a rule](/log-management/alerting/creating-alerts).
+
+## Fields every rule needs
+
+Regardless of `type`, every ElastAlert 2 rule must define **`name`**, **`index`**, **`type`**, **`filter`**, and **`alert`** (plus the settings each destination needs under `alert:`). The per-type guides below add **Required for this type** only for keys that belong to that rule type.
+
+<Callout type="info">
+ Adjust `index` and queries to match your data.
+</Callout>
+
+For notification wording and Discover links across all types, see [Subject & body](/log-management/alerting/alert-subject-and-body) and [Context & links](/log-management/alerting/alert-context-and-links). For `alert:` channels, see [Destinations](/log-management/alerting/destinations).
+
+<FolderBrowser />

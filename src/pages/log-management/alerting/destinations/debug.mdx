@@ -1,0 +1,32 @@
+---
+title: Debug
+metaTitle: "Debug alerter — ElastAlert logging — Logit.io"
+description: "Trace ElastAlert 2 output with the debug destination on Logit.io: logger name, log level, and a minimal YAML rule."
+stackTypes: logs
+---
+
+# Debug
+
+Inspect match payloads and rule behaviour without leaving the platform. Add `debug` to `alert:` and watch the `elastalert` logger when troubleshooting rules. Add `debug` under `alert:` on your rule (you can combine destinations).
+
+Use **[Options](#options)** for key-by-key reference, then **[Full working example](#full-working-example)** for copy-paste YAML you can tailor to your stack.
+
+## Options
+
+Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_subject` apply as described in [Subject & body](/log-management/alerting/alert-subject-and-body). **Example fragments** from the ElastAlert 2 reference appear indented under the option they illustrate (add your own `name`, `type`, `index`, and `filter` to make a full rule).
+
+- No destination-specific YAML keys — add `debug` under `alert` only. Output is written to the Python logger named `elastalert` at INFO level.
+
+## Full working example
+
+```yaml copy
+name: Example alert for Debug
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "debug"
+```

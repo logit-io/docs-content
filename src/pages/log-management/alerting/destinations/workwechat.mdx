@@ -1,0 +1,47 @@
+---
+title: WeCom (Work WeChat)
+metaTitle: "WeCom enterprise messages — Logit.io"
+description: "Send WeCom (Work WeChat) app messages from ElastAlert 2 on Logit.io: workwechat, corp ID, agent ID, secrets, and YAML."
+stackTypes: logs
+---
+
+# WeCom (Work WeChat)
+
+Reach employees on **WeCom** through your enterprise application. Add `workwechat` with corporate credentials, agent ID, and user or party targets. Add `workwechat` under `alert:` on your rule (you can combine destinations).
+
+Field reference lives under **[Options](#options)**; **[Full working example](#full-working-example)** at the end shows full YAML (`name`, `type`, `index`, `filter`, and this destination).
+
+## Options
+
+Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_subject` apply as described in [Subject & body](/log-management/alerting/alert-subject-and-body). **Example fragments** from the ElastAlert 2 reference appear indented under the option they illustrate (add your own `name`, `type`, `index`, and `filter` to make a full rule).
+
+### Required
+
+- `work_wechat_bot_id` — WorkWechat bot id.
+
+ **Example usage**
+
+ ```yaml copy
+  alert:
+    - "workwechat"
+  work_wechat_bot_id: "your workwechat bot id"
+  work_wechat_msgtype: "text"
+  ```
+
+- `work_wechat_msgtype` — WorkWechat msgtype. default to `text`. `markdown`
+
+## Full working example
+
+```yaml copy
+name: Example alert for WeCom (Work WeChat)
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "workwechat"
+work_wechat_bot_id: "REPLACE"
+work_wechat_msgtype: markdown
+```

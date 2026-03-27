@@ -1,0 +1,71 @@
+---
+title: Google Chat
+metaTitle: "Google Chat webhook alerts — Logit.io"
+description: "Notify Google Chat spaces from ElastAlert 2 on Logit.io: googlechat, incoming webhooks, thread keys, and full YAML."
+stackTypes: logs
+---
+
+# Google Chat
+
+Send notifications to a **Google Chat** space by adding `googlechat` to the `alert` list and configuring a **webhook URL** from that space’s app configuration. The alert **body** comes from your rule’s normal text settings — see [Subject & body](/log-management/alerting/alert-subject-and-body).
+
+**[Options](#options)** lists every `googlechat_*` key; **[Full working example](#full-working-example)** at the bottom is a complete YAML rule for the Logit.io editor.
+
+## Options
+
+Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_subject` apply as described in [Subject & body](/log-management/alerting/alert-subject-and-body). **Example fragments** from the ElastAlert 2 reference appear indented under the option they illustrate (add your own `name`, `type`, `index`, and `filter` to make a full rule).
+
+### Required
+
+- `googlechat_webhook_url` — The webhook URL that includes the channel (room) you want to post to. Go to the Google Chat website and choose the channel in which you wish to receive the notifications. Select 'Configure Webhooks' to create a new webhook or to copy the URL from an existing one. You can use a list of URLs to send to multiple channels.
+
+### Optional
+
+- `googlechat_format` — Formatting for the notification. Can be either 'card' or 'basic' (default).
+
+- `googlechat_header_title` — Sets the text for the card header title. (Only used if format=card)
+
+- `googlechat_header_subtitle` — Sets the text for the card header subtitle. (Only used if format=card)
+
+- `googlechat_header_image` — URL for the card header icon. (Only used if format=card)
+
+- `googlechat_footer_kibanalink` — URL to Kibana to include in the card footer. (Only used if format=card)
+
+- `googlechat_proxy` — By default ElastAlert 2 will not use a network proxy to send notifications to GoogleChat. Set this option using `hostname:port` if you need to use a proxy. only supports https.
+
+## Full working example
+
+**Simple text message** (default format):
+
+```yaml copy
+name: Example alert for Google Chat
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "googlechat"
+googlechat_webhook_url: "https://chat.googleapis.com/v1/spaces/..."
+```
+
+**Card** with header and a link button:
+
+```yaml copy
+name: Google Chat card example
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "googlechat"
+googlechat_webhook_url: "https://chat.googleapis.com/v1/spaces/..."
+googlechat_format: card
+googlechat_header_title: "Logit.io alert"
+googlechat_header_subtitle: "Production logs"
+googlechat_header_image: "https://example.com/logo.png"
+googlechat_footer_kibanalink: "https://your-dashboards.example/app/discover#/"
+```

@@ -1,0 +1,52 @@
+---
+title: Datadog
+metaTitle: "Datadog Events from logs — Logit.io"
+description: "Create Datadog events from OpenSearch matches via ElastAlert 2 on Logit.io: datadog, API/app keys, tags, and YAML."
+stackTypes: logs
+---
+
+# Datadog
+
+Surface log-based incidents on your **Datadog** event stream for correlation with APM and infrastructure metrics. Use `datadog` in `alert:` with your API and application keys. Add `datadog` under `alert:` on your rule (you can combine destinations).
+
+Field reference lives under **[Options](#options)**; **[Full working example](#full-working-example)** at the end shows full YAML (`name`, `type`, `index`, `filter`, and this destination).
+
+## Options
+
+Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_subject` apply as described in [Subject & body](/log-management/alerting/alert-subject-and-body). **Example fragments** from the ElastAlert 2 reference appear indented under the option they illustrate (add your own `name`, `type`, `index`, and `filter` to make a full rule).
+
+### Required
+
+- `datadog_api_key` — your Datadog API key.
+
+ **Example usage**
+
+ ```yaml copy
+  alert:
+    - "datadog"
+  datadog_api_key: "Datadog API Key"
+  datadog_app_key: "Datadog APP Key"
+  datadog_api_url: "https://api.us5.datadoghq.com/api/v1/events"
+  ```
+
+- `datadog_app_key` — your Datadog application key.
+
+### Optional
+
+- `datadog_api_url` — The Datadog Events API endpoint URL. Defaults to ``. Override this to target a regional Datadog site, for example `` for US5.
+
+## Full working example
+
+```yaml copy
+name: Example alert for Datadog
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "datadog"
+datadog_api_key: "REPLACE_API_KEY"
+datadog_app_key: "REPLACE_APP_KEY"
+```

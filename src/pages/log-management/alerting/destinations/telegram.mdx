@@ -1,0 +1,61 @@
+---
+title: Telegram
+metaTitle: "Telegram bot alerts — Logit.io"
+description: "Message Telegram chats via bot API from ElastAlert 2 on Logit.io: telegram, token, proxies, parse modes, and YAML."
+stackTypes: logs
+---
+
+# Telegram
+
+Ping engineers on **Telegram** using a bot token and chat ID. Use `telegram` under `alert:` with optional proxy and formatting options.
+
+Use **[Options](#options)** for key-by-key reference, then **[Full working example](#full-working-example)** for copy-paste YAML you can tailor to your stack.
+
+## Options
+
+Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_subject` apply as described in [Subject & body](/log-management/alerting/alert-subject-and-body). **Example fragments** from the ElastAlert 2 reference appear indented under the option they illustrate (add your own `name`, `type`, `index`, and `filter` to make a full rule).
+
+### Required
+
+- `telegram_bot_token` — The token is a string along the lines of `110201543:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw` that will be required to authorize the bot and send requests to the Bot API. You can learn about obtaining tokens and generating new ones in this document
+
+ **Example usage**
+
+ ```yaml copy
+  alert:
+    - "telegram"
+  telegram_bot_token: "bot_token"
+  telegram_room_id: "chat_id"
+  ```
+
+- `telegram_room_id` — Unique identifier for the target chat or username of the target channel using telegram chat_id (in the format "-xxxxxxxx")
+
+### Optional
+
+- `telegram_api_url` — Custom domain to call Telegram Bot API. Default to api.telegram.org
+
+- `telegram_proxy` — By default ElastAlert 2 will not use a network proxy to send notifications to Telegram. Set this option using `hostname:port` if you need to use a proxy. only supports https.
+
+- `telegram_proxy_login` — The Telegram proxy auth username.
+
+- `telegram_proxy_pass` — The Telegram proxy auth password.
+
+- `telegram_parse_mode` — The Telegram parsing mode, which determines the format of the alert text body. Possible values are `markdown`, `markdownV2`, `html`. Defaults to `markdown`.
+
+- `telegram_thread_id` — Unique identifier for the target thread of supergroup/forum using telegram message_thread_id (Optional, positive integer value, no default).
+
+## Full working example
+
+```yaml copy
+name: Example alert for Telegram
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "telegram"
+telegram_bot_token: "REPLACE"
+telegram_room_id: "-1001234567890"
+```

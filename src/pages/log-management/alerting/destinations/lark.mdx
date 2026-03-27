@@ -1,0 +1,48 @@
+---
+title: Lark
+metaTitle: "Lark / Feishu bot alerts — Logit.io"
+description: "Send Lark (Feishu) bot messages from ElastAlert 2 on Logit.io: lark, webhook secrets, signing, and example YAML."
+stackTypes: logs
+---
+
+# Lark
+
+Notify collaboration hubs on **Lark** with signed webhook requests. Configure `lark` with your bot webhook and verification settings. Add `lark` under `alert:` on your rule (you can combine destinations).
+
+Details for each key are in **[Options](#options)**; **[Full working example](#full-working-example)** ties the destination into a full ElastAlert 2 rule.
+
+## Options
+
+Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_subject` apply as described in [Subject & body](/log-management/alerting/alert-subject-and-body). **Example fragments** from the ElastAlert 2 reference appear indented under the option they illustrate (add your own `name`, `type`, `index`, and `filter` to make a full rule).
+
+### Required
+
+- `lark_bot_id` — Lark bot id.
+
+ **Example usage**
+
+ ```yaml copy
+  alert:
+    - "lark"
+  lark_bot_id: "your lark bot id"
+  lark_msgtype: "text"
+  ```
+
+### Optional
+
+- `lark_msgtype` — Lark msgtype, currently only `text` supported.
+
+## Full working example
+
+```yaml copy
+name: Example alert for Lark
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "lark"
+lark_bot_id: "REPLACE"
+```

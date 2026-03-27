@@ -1,0 +1,7 @@
+{
+  "set-alert-volume-to-prevent-exceeding-stack-limit": "Log volume (YAML)",
+  "high-cpu-alerts": "High CPU (OpenSearch)",
+  "sending-alert-notifications": "Scenarios",
+  "validating-alert-rules": "Validation",
+  "using-html-in-email-alerts": "HTML in email"
+}

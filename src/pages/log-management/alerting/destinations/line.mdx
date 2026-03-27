@@ -1,0 +1,47 @@
+---
+title: LINE
+metaTitle: "LINE Notify alerts — Logit.io"
+description: "Deliver LINE push notifications from ElastAlert 2 on Logit.io: line, channel access token, user ID, and YAML."
+stackTypes: logs
+---
+
+# LINE
+
+Reach people on **LINE** when critical log patterns match. Add `line` to `alert:` with a channel access token and target user or group identifiers. Add `line` under `alert:` on your rule (you can combine destinations).
+
+Start with **[Options](#options)** when wiring credentials and endpoints—**[Full working example](#full-working-example)** shows how they fit in a complete rule.
+
+## Options
+
+Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_subject` apply as described in [Subject & body](/log-management/alerting/alert-subject-and-body). **Example fragments** from the ElastAlert 2 reference appear indented under the option they illustrate (add your own `name`, `type`, `index`, and `filter` to make a full rule).
+
+### Required
+
+- `line_channel_access_token` — channel access token
+
+ **Example usage**
+
+ ```yaml copy
+  alert:
+    - "line"
+  line_channel_access_token: "Your channel access token"
+  line_to: "Your user id"
+  ```
+
+- `line_to` — user id
+
+## Full working example
+
+```yaml copy
+name: Example alert for LINE
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "line"
+line_channel_access_token: "REPLACE"
+line_to: "REPLACE_USER_ID"
+```

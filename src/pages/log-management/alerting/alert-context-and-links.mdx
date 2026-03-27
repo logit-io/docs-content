@@ -1,0 +1,131 @@
+---
+title: Alert context and links
+metaTitle: ElastAlert 2 top counts, include fields, OpenSearch Discover links
+description: Add top field values, limit fetched fields, and generate OpenSearch Discover URLs in ElastAlert 2 rules on Logit.io managed alerting.
+stackTypes: logs
+---
+
+# Alert context and links
+
+Use these rule-level options to **enrich** notification text and to add **deep links** into OpenSearch Dashboards Discover. They work alongside [Subject & body](/log-management/alerting/alert-subject-and-body) and any [destination](/log-management/alerting/destinations) page.
+
+<Callout type="info">
+ Discover URLs need your real OpenSearch Dashboards base URL and the **index pattern (data view) ID** from saved objects.
+</Callout>
+
+## Limit fields (`include`)
+
+`include` restricts which fields are retrieved for each match. Only listed fields (plus `@timestamp`, `query_key`, `compare_key`, and `top_count_keys` when relevant) are passed to rule types and alerters. Use this to shrink payloads and avoid leaking large documents to webhooks.
+
+```yaml copy
+include:
+  - "host.name"
+  - "user.name"
+  - message
+  - "http.response.status_code"
+```
+
+## Top values (`top_count_keys`)
+
+When set, ElastAlert runs terms aggregations for each key and adds summaries to the alert context (for example how many of the matching events share each top value). Defaults to **5** terms per field unless you set `top_count_number`. By default ElastAlert appends `.keyword` for unanalysed counts; set `raw_count_keys: false` to use field names as given.
+
+```yaml copy
+top_count_keys:
+  - "user.name"
+  - "source.ip"
+top_count_number: 10
+```
+
+Pair with [Subject & body](/log-management/alerting/alert-subject-and-body) so recipients see human-readable text; many destinations include automatic match dumps, and top counts appear in that context.
+
+## OpenSearch Discover URL (`generate_opensearch_discover_url`)
+
+When `generate_opensearch_discover_url: true`, ElastAlert builds a variable `opensearch_discover_url` you can place in the body via `alert_text_args` or Jinja.
+
+You must set:
+
+- `opensearch_discover_app_url` — full URL to the Discover app, **or** a path relative to `opensearch_url` if you set that base.
+- `opensearch_discover_index_pattern_id` — UUID of the index pattern / data view (from the saved object URL or export).
+- `opensearch_discover_version` — required by ElastAlert (often your OpenSearch Dashboards major.minor, e.g. `2.11`).
+
+Optional tuning:
+
+- `opensearch_discover_columns` — column list in the generated link.
+- `opensearch_discover_from_timedelta` / `opensearch_discover_to_timedelta` — time window around the match.
+
+### Chat destinations and attachments
+
+Some chat alerters can attach the Discover link as a rich block (for example **Slack** `slack_attach_opensearch_discover_url`, **Microsoft Teams** `ms_teams_attach_opensearch_discover_url`, **Mattermost** `mattermost_attach_opensearch_discover_url`). Enable `generate_opensearch_discover_url` and the matching `*_attach_*` flag on the destination.
+
+---
+
+## Example: Top counts and Discover link in email
+
+```yaml copy
+name: Login failures — context + Discover
+type: frequency
+index: "*-*"
+num_events: 20
+timeframe:
+  minutes: 15
+filter:
+  - query:
+      query_string:
+        query: "event.action:failed-login OR event.outcome:failure"
+top_count_keys:
+  - "source.ip"
+  - "user.name"
+top_count_number: 5
+generate_opensearch_discover_url: true
+opensearch_discover_app_url: "https://your-dashboards.example/app/data-explorer/discover#/"
+opensearch_discover_index_pattern_id: "REPLACE_WITH_DATA_VIEW_UUID"
+opensearch_discover_version: "2.11"
+opensearch_discover_from_timedelta:
+  minutes: 20
+opensearch_discover_to_timedelta:
+  minutes: 5
+alert_subject: "Login failures spike — {0} events"
+alert_subject_args:
+  - num_hits
+alert_text: "Open in Discover: {0}"
+alert_text_type: alert_text_only
+alert_text_args:
+  - opensearch_discover_url
+alert:
+  - "email"
+email:
+  - "soc@example.com"
+```
+
+Replace `opensearch_discover_app_url` and `opensearch_discover_index_pattern_id` with values from **your** OpenSearch Dashboards deployment.
+
+---
+
+## Example: Slack with attached OpenSearch Discover URL
+
+```yaml copy
+name: Error volume — Slack + Discover button
+type: frequency
+index: "*-*"
+num_events: 100
+timeframe:
+  minutes: 10
+filter:
+  - query:
+      query_string:
+        query: "log.level:error OR level:error"
+generate_opensearch_discover_url: true
+opensearch_discover_app_url: "https://your-dashboards.example/app/data-explorer/discover#/"
+opensearch_discover_index_pattern_id: "REPLACE_WITH_DATA_VIEW_UUID"
+opensearch_discover_version: "2.11"
+alert_text_type: alert_text_only
+alert_text: "High error volume in the last 10 minutes."
+alert:
+  - "slack"
+slack_webhook_url: "https://hooks.slack.com/services/XXX/YYY/ZZZ"
+slack_attach_opensearch_discover_url: true
+slack_opensearch_discover_title: "Open in Discover"
+slack_opensearch_discover_color: "#c0392b"
+```
+
+See [Slack](/log-management/alerting/destinations/slack) for other Slack-specific keys.

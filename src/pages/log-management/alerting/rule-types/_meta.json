@@ -1,0 +1,14 @@
+{
+  "any": "Any",
+  "blacklist": "Blacklist",
+  "whitelist": "Whitelist",
+  "change": "Change",
+  "frequency": "Frequency",
+  "spike": "Spike",
+  "flatline": "Flatline",
+  "new-term": "New term",
+  "cardinality": "Cardinality",
+  "metric-aggregation": "Metric aggregation",
+  "spike-aggregation": "Spike aggregation",
+  "percentage-match": "Percentage match"
+}

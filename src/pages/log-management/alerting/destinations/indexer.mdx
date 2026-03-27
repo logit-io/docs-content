@@ -1,0 +1,119 @@
+---
+title: Indexer
+metaTitle: "Indexer alerter — write matches to OpenSearch — Logit.io"
+description: "Write ElastAlert 2 matches back into an OpenSearch index on Logit.io using indexer: connection, index name, and YAML."
+stackTypes: logs
+---
+
+# Indexer
+
+Archive or enrich data by indexing each match into a dedicated **OpenSearch** index for dashboards or downstream jobs. Use `indexer` with host, index, and type settings. Add `indexer` under `alert:` on your rule (you can combine destinations).
+
+Field reference lives under **[Options](#options)**; **[Full working example](#full-working-example)** at the end shows full YAML (`name`, `type`, `index`, `filter`, and this destination).
+
+## Options
+
+Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_subject` apply as described in [Subject & body](/log-management/alerting/alert-subject-and-body). **Example fragments** from the ElastAlert 2 reference appear indented under the option they illustrate (add your own `name`, `type`, `index`, and `filter` to make a full rule).
+
+### Required
+
+- `indexer_alert_config` — Configuration options for the alert, see example below for structure. `customFields` Fields must be manually added, all of them will exist in the newly created index. You can set own field or use existing field fron match (see example below for structure).
+
+- `indexer_alerts_name` — The index to use for creating the new alert records. One of below is required:
+
+- `indexer_connection` — Options the connection details to your server instance (see example below for the required syntax Example 1).
+
+ **Example 1 usage**
+
+ ```yaml copy
+  alert: indexer
+  
+  indexer_connection:
+    es_host: localhost
+    es_port: es_port
+    ssl_show_warn: False
+    use_ssl: True
+    verify_certs: False
+    es_username: user
+    es_password: password
+    indexer_alerts_name: elastalert2               # You can create own config or use global config just added ``indexer_alerts_name`` in global config
+  
+  indexer_alert_config:
+    #Existing fields from match alert
+    message: message
+    host.name: host.name
+    event.action: event.action
+    event.type: event.type
+    winlog.computer_name: winlog.computer_name
+    winlog.event_id: winlog.event_id
+    winlog.task: winlog.task
+    #Enrich existing event with additional fields
+    customFields:
+      - name: original_time
+        value: "@timestamp"
+      - name: severity
+        value: high
+      - name: risk_score
+        value: 73
+      - name: description
+        value: General description.
+  ```
+
+- `indexer_config` — Options for loading the connection details to your server instance from a file (see example below for the required syntax Example 2).
+
+ **Example 2 usage**
+
+ ```yaml copy
+  alert: indexer
+  
+  indexer_config: /opt/elastalert/config/config.yaml       # Uses the ElastAlert 2 global config, with an added ``indexer_alerts_name`` parameter
+  
+  indexer_alert_config:
+    #Existing fields from match alert
+    message: message
+    host.name: host.name
+    event.action: event.action
+    event.type: event.type
+    winlog.computer_name: winlog.computer_name
+    winlog.event_id: winlog.event_id
+    winlog.task: winlog.task
+    #Enrich existing event with additional fields
+    customFields:
+      - name: original_time
+        value: "@timestamp"
+      - name: severity
+        value: high
+      - name: risk_score
+        value: 73
+      - name: description
+        value: General description.
+  ```
+
+## Full working example
+
+```yaml copy
+name: Example alert for Indexer
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "indexer"
+indexer_connection:
+  es_host: opensearch.example.com
+  es_port: 443
+  use_ssl: true
+  es_username: REPLACE
+  es_password: REPLACE
+  indexer_alerts_name: "your-write-index"
+indexer_alert_config:
+  message: message
+  host.name: host.name
+  customFields:
+    - name: source
+      value: elastalert
+```
+
+Alternatively, omit `indexer_connection` and set `indexer_config` to a YAML file path whose contents use the same shape (including `indexer_alerts_name` and client settings).

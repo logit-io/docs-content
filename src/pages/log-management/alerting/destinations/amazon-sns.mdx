@@ -1,0 +1,79 @@
+---
+title: Amazon SNS
+metaTitle: "Amazon SNS notifications — Logit.io alerting"
+description: "Publish ElastAlert 2 matches to an Amazon SNS topic from Logit.io: sns, topic ARN, AWS keys, and an example rule YAML."
+stackTypes: logs
+---
+
+# Amazon SNS
+
+Fan out log alerts to email, SMS, Lambda, or queues by publishing to **SNS**. Add `sns` to `alert:` and set `sns_topic_arn` plus optional AWS credential keys. Add `sns` under `alert:` on your rule (you can combine destinations).
+
+Skim **[Options](#options)** for required vs optional keys, then open **[Full working example](#full-working-example)** for runnable YAML including `index` and `filter`.
+
+## Options
+
+Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_subject` apply as described in [Subject & body](/log-management/alerting/alert-subject-and-body). **Example fragments** from the ElastAlert 2 reference appear indented under the option they illustrate (add your own `name`, `type`, `index`, and `filter` to make a full rule).
+
+### Required
+
+- `sns_topic_arn` — The SNS topic's ARN. For example, `arn:aws:sns:us-east-1:123456789:somesnstopic`
+
+ **Example When not using aws_profile usage**
+
+ ```yaml copy
+  alert:
+    - sns
+  sns_topic_arn: 'arn:aws:sns:us-east-1:123456789:somesnstopic'
+  sns_aws_access_key_id: 'XXXXXXXXXXXXXXXXXX'
+  sns_aws_secret_access_key: 'YYYYYYYYYYYYYYYYYYYY'
+  sns_aws_region: 'us-east-1' # You must nest aws_region within your alert configuration so it is not used to sign AWS requests.
+  ```
+
+ **Example When to use aws_profile usage**
+
+ ```yaml copy
+  # Create ~/.aws/credentials
+  
+  [default]
+  aws_access_key_id = xxxxxxxxxxxxxxxxxxxx
+  aws_secret_access_key = yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+  
+  # Create ~/.aws/config
+  
+  [default]
+  region = us-east-1
+  
+  # alert rule setting
+  
+  alert:
+    - sns
+  sns_topic_arn: 'arn:aws:sns:us-east-1:123456789:somesnstopic'
+  sns_aws_profile: 'default'
+  ```
+
+### Optional
+
+- `sns_aws_access_key_id` — An access key to connect to SNS with.
+
+- `sns_aws_secret_access_key` — The secret key associated with the access key.
+
+- `sns_aws_region` — The AWS region in which the SNS resource is located. Default is us-east-1
+
+- `sns_aws_profile` — The AWS profile to use. If none specified, the default will be used.
+
+## Full working example
+
+```yaml copy
+name: Example alert for Amazon SNS
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "sns"
+sns_topic_arn: "arn:aws:sns:eu-west-1:123456789012:topic"
+sns_aws_region: "eu-west-1"
+```

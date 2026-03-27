@@ -1,14 +1,26 @@
 ---
 title: How Do I Create a New Alerting Rule?
 metaTitle: Learn How to Create a New Alerting Rule
-description: Discover the steps you need to take to create Elasticsearch alert rules in this help article from Logit.io.
+description: Step-by-step guide to creating ElastAlert 2 YAML rules on Logit.io, testing them, and choosing rule types and notification destinations.
 stackTypes: logs
 ---
 
-# How do I create a new Alerting rule?
+# How do I create a new alerting rule?
 
-### Provision Alerting for a Stack
+<Callout type="info">
+ See [Rule types](/log-management/alerting/rule-types) and [Destinations](/log-management/alerting/destinations) for full examples.
+</Callout>
+
+### Provision alerting for a stack
 To enable alerts for a stack, go to the `Alerting & Notifications` settings and then click the _Enable Alerting_ button.
+
+### Scheduling and enablement (per rule)
+
+You can tune how often a rule runs and how much history each query covers using optional keys in the YAML (they override service defaults when supported):
+
+- `run_every` — how frequently ElastAlert evaluates the rule.
+- `buffer_time` — width of the time window used for queries (ignored when `use_count_query` or `use_terms_query` is true on types that use those flags).
+- `is_enabled` — set to `false` to keep the rule saved but stop it from running.
 
 ### Create your Alerting Rule
 Once Alerting has been provisioned and you have clicked *Alerting* is ready you will see two sample YAML files that have default examples for alert rules.
@@ -35,8 +47,8 @@ name: New country login
 type: change
 
 # (Required)
-# Index to search, wildcard supported
-index: logstash-*
+# Index to search, wildcard supported (use the pattern that matches your stack, e.g. *-*)
+index: "*-*"
 
 # (Required, change specific)
 # The field to look for changes in
@@ -58,7 +70,6 @@ timeframe:
 # (Required)
 # A list of Elasticsearch filters used for find events
 # These filters are joined with AND and nested in a filtered query
-# For more info: http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl.html
 filter:
 - query:
     query_string:
@@ -96,13 +107,10 @@ The rule will be then added to your list of rules once you go back to the *Alert
 
 ![Alerts Tab](@/images/help/log-management/alerting/alerts-rule-tab.png)
 
-Several rule types that are common when creating your alert rule are:
-- **Frequency type:** Match where there are X events in Y time
-- **Spike type:** Match when the rate of events increases or decreases
-- **Flatline type:** Match when there are less than X events in Y time
-- **Blacklist type:** Match when a certain field matches a blacklist
-- **Whitelist type:** Match when a certain field matches a whitelist
-- **Any type:** Match on any event matching a given filter
-- **Change type:** Match when a field has two different values within some time
- 
-ElastAlert supports alert types of Command, Email, JIRA, OpsGenie, SNS, HipChat, Slack, Telegram, GoogleChat, Debug, Stomp, theHive which you can use for your alerts.
+### Rule types and where to notify
+
+- Every rule has a `type:` (for example `frequency`, `spike`, `change`). See **[Rule types](/log-management/alerting/rule-types)** for one guide per type, each with a full YAML example.
+- The `alert:` section chooses where notifications go (`email`, `slack`, `post`, `pagerduty`, and many more). See **[Destinations](/log-management/alerting/destinations)** for one guide per channel.
+- To customize **subjects, bodies, top counts, and Discover links**, see **[Subject & body](/log-management/alerting/alert-subject-and-body)** and **[Context & links](/log-management/alerting/alert-context-and-links)**.
+
+For troubleshooting validation and common mistakes, see [Check your ElastAlert rule](/log-management/alerting/guides/validating-alert-rules). Execution output from managed ElastAlert is also logged to your stack (**elastalert** index); see [Overview — ElastAlert execution logs](/log-management/alerting/overview#elastalert-execution-logs-in-your-stack).

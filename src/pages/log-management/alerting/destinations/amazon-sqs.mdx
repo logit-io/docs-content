@@ -1,0 +1,66 @@
+---
+title: Amazon SQS
+metaTitle: "Amazon SQS alert messages — Logit.io"
+description: "Enqueue log alerts on Amazon SQS with ElastAlert 2 on Logit.io: sqs, queue URL, boto credentials, and sample YAML."
+stackTypes: logs
+---
+
+# Amazon SQS
+
+Hand matches to workers or decoupled pipelines by writing JSON messages to **SQS**. Configure `sqs` with your queue URL and AWS access settings. Add `sqs` under `alert:` on your rule (you can combine destinations).
+
+Details for each key are in **[Options](#options)**; **[Full working example](#full-working-example)** ties the destination into a full ElastAlert 2 rule.
+
+## Options
+
+Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_subject` apply as described in [Subject & body](/log-management/alerting/alert-subject-and-body). **Example fragments** from the ElastAlert 2 reference appear indented under the option they illustrate (add your own `name`, `type`, `index`, and `filter` to make a full rule).
+
+### Required
+
+- `sqs_queue_url` — The URL of the SQS queue. For example, ``
+
+ **Example when not using aws_profile**
+
+ ```yaml copy
+  alert:
+    - sqs
+  sqs_queue_url: 'https://sqs.us-east-1.amazonaws.com/123456789012/my-queue'
+  sqs_aws_access_key_id: 'XXXXXXXXXXXXXXXXXX'
+  sqs_aws_secret_access_key: 'YYYYYYYYYYYYYYYYYYYY'
+  sqs_aws_region: 'us-east-1'
+  ```
+
+ **Example when using aws_profile**
+
+ ```yaml copy
+  alert:
+    - sqs
+  sqs_queue_url: 'https://sqs.us-east-1.amazonaws.com/123456789012/my-queue'
+  sqs_aws_profile: 'default'
+  ```
+
+### Optional
+
+- `sqs_aws_access_key_id` — An access key to connect to SQS with.
+
+- `sqs_aws_secret_access_key` — The secret key associated with the access key.
+
+- `sqs_aws_region` — The AWS region in which the SQS resource is located. Default is us-east-1
+
+- `sqs_aws_profile` — The AWS profile to use. If none specified, the default will be used.
+
+## Full working example
+
+```yaml copy
+name: Example alert for Amazon SQS
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "sqs"
+sqs_queue_url: "https://sqs.eu-west-1.amazonaws.com/123456789012/queue"
+sqs_aws_region: "eu-west-1"
+```

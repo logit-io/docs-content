@@ -1,0 +1,20 @@
+---
+title: Destinations
+metaTitle: ElastAlert 2 alert destinations for Log Management
+description: One reference page per ElastAlert 2 alerter with required options and a full working YAML example for Logit.io managed alerting.
+stackTypes: logs
+pagination: false
+timestamp: false
+---
+
+# Destinations
+
+Each rule lists one or more destinations under `alert:` (for example `email`, `slack`, `pagerduty`). Every destination page lists **one bullet per YAML option** (required and optional) with a short description; **example fragments** from the same ElastAlert 2 reference appear **indented under the option they illustrate**, followed by a **full working example** rule you can paste into the Logit.io editor. For exhaustive detail and cross-alerter behaviour (subjects, Jinja, etc.), use the [Full Reference](/log-management/alerting/alert-reference).
+
+**Custom HTTP webhooks:** To POST JSON to your own URL, use **`post`** ([Webhook (HTTP POST)](/log-management/alerting/destinations/post)) or **`post2`** ([Webhook (HTTP POST 2, Jinja)](/log-management/alerting/destinations/post2)) when you need templated payload or headers.
+
+**Shared formatting:** Subjects, bodies, Jinja templates, top counts, and OpenSearch Discover links are configured on the rule — see [Subject & body](/log-management/alerting/alert-subject-and-body) and [Context & links](/log-management/alerting/alert-context-and-links).
+
+Each destination page lists **what you must set** first, then **common options** with short explanations of what the values do. Key names follow standard ElastAlert 2 rules so examples from books, blog posts, or internal playbooks often work on Logit.io once you plug in your own index pattern, URLs, and secrets.
+
+<FolderBrowser />

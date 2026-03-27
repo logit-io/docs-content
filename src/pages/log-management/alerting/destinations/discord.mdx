@@ -1,0 +1,63 @@
+---
+title: Discord
+metaTitle: "Discord webhook alerts — Logit.io"
+description: "Post log alerts to Discord channels via webhook with ElastAlert 2 on Logit.io: discord, embeds, and a working YAML example."
+stackTypes: logs
+---
+
+# Discord
+
+Mirror incidents into a **Discord** server for developers and SREs. Add `discord` under `alert:` and supply the channel webhook URL and optional embed styling.
+
+Details for each key are in **[Options](#options)**; **[Full working example](#full-working-example)** ties the destination into a full ElastAlert 2 rule.
+
+## Options
+
+Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_subject` apply as described in [Subject & body](/log-management/alerting/alert-subject-and-body). **Example fragments** from the ElastAlert 2 reference appear indented under the option they illustrate (add your own `name`, `type`, `index`, and `filter` to make a full rule).
+
+### Required
+
+- `discord_webhook_url` — The webhook URL.
+
+ **Example usage**
+
+ ```yaml copy
+  alert:
+  - "discord"
+  discord_webhook_url: "Your discord webhook url"
+  discord_emoji_title: ":lock:"
+  discord_embed_color: 0xE24D42
+  discord_embed_footer: "Message sent by  from your computer"
+  discord_embed_icon_url: "https://humancoders-formations.s3.amazonaws.com/uploads/course/logo/38/thumb_bigger_formation-elasticsearch.png"
+  ```
+
+### Optional
+
+- `discord_emoji_title` — By default ElastAlert 2 will use the `:warning:` emoji when posting to the channel. You can use a different emoji per ElastAlert 2 rule. Any Apple emoji can be used; see [Emojipedia (Apple)](https://emojipedia.org/apple/) for names. If discord_embed_icon_url parameter is provided, emoji is ignored.
+
+- `discord_proxy` — By default ElastAlert 2 will not use a network proxy to send notifications to Discord. Set this option using `hostname:port` if you need to use a proxy. only supports https.
+
+- `discord_proxy_login` — The Discord proxy auth username.
+
+- `discord_proxy_password` — The Discord proxy auth username.
+
+- `discord_embed_color` — embed color. By default `0xffffff`.
+
+- `discord_embed_footer` — embed footer.
+
+- `discord_embed_icon_url` — You can provide icon_url to use custom image. Provide absolute address of the pciture.
+
+## Full working example
+
+```yaml copy
+name: Example alert for Discord
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "discord"
+discord_webhook_url: "https://discord.com/api/webhooks/REPLACE"
+```
