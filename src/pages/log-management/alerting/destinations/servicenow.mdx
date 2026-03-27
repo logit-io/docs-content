@@ -44,7 +44,7 @@ Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_sub
 
 - `short_description` — Short summary of the incident (the incident’s title-style description in ServiceNow).
 
-- `comments` — Comments to be attached to the incident, this is the equivilant of work notes.
+- `comments` — Comments to attach to the incident—the equivalent of work notes.
 
 - `assignment_group` — The group to assign the incident to.
 
@@ -58,11 +58,13 @@ Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_sub
 
 ### Optional
 
-- `servicenow_proxy` — By default ElastAlert 2 will not use a network proxy to send notifications to ServiceNow. Set this option using `hostname:port` if you need to use a proxy. only supports https.
+- `servicenow_proxy` — By default ElastAlert 2 does not use a network proxy to send notifications to ServiceNow. Set this option using `hostname:port` if you need a proxy. Only supports HTTPS.
 
 - `servicenow_impact` — An integer 1, 2, or 3 representing high, medium, and low respectively. This measures the effect of an incident on business processes.
 
-- `servicenow_urgency` — An integer 1, 2, or 3 representing high, medium, and low respecitvely. This measures how long this incident can be delayed until there is a significant business impact.
+- `servicenow_urgency` — An integer 1, 2, or 3 representing high, medium, and low respectively. This measures how long this incident can be delayed until there is a significant business impact.
+
+- `service_now_additional_fields` — Optional flat map of extra incident columns: each key is a ServiceNow **column name** (not the display label; custom fields often use a `u_` prefix such as `u_affected_user`), each value is a string, number, or boolean written to that field when the incident is created. Keys map directly to fields on the record. Stick to simple scalars unless your table’s API expects otherwise (complex or multi-value fields may need encoding per your instance’s REST rules). See **Example usage (2)** below.
 
  **Example usage (2)**
 

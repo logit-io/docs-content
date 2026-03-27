@@ -1069,13 +1069,13 @@ Required:
 
 Optional:
 
-`http_post2_payload`: A JSON string or list of keys:values to use for the payload of the HTTP Post. You can use `{{ field }}` (Jinja2 template) in the key and the value to reference any field in the matched events (works for nested ES fields and nested payload keys). If not defined, all the Elasticsearch keys will be sent. Ex: `"description_{{ my_field }}": "Type: {{ type }}\\nSubject: {{ title }}"`. When field names use dot notation or reserved characters, _data can be used to access these fields. If _data conflicts with your top level data, use jinja_root_name to change its name.
+`http_post2_payload`: A JSON string or list of keys:values for the HTTP POST body. You can use `{{ field }}` (Jinja2) in keys and values to reference nested Elasticsearch fields and nested payload keys. If omitted, all match keys are sent. Ex: `"description_{{ my_field }}": "Type: {{ type }}\\nSubject: {{ title }}"`. When field names use dot notation or reserved characters, `_data` can access them. If `_data` clashes with your top-level data, set `jinja_root_name`.
 
-`http_post2_raw_fields`: List of keys:values to use as the content of the POST. Example - ip:clientip will map the value from the clientip field of Elasticsearch to JSON key named ip. This field overwrite the keys with the same name in `http_post2_payload`.
+`http_post2_raw_fields`: List of key:value pairs that define the POST body. Example: `ip: clientip` maps the Elasticsearch `clientip` field to JSON key `ip`. This field overwrites keys of the same name in `http_post2_payload`.
 
-`http_post2_headers`: A JSON string or list of keys:values to use for as headers of the HTTP Post. You can use `{{ field }}` (Jinja2 template) in the key and the value to reference any field in the matched events (works for nested fields). Ex: `"Authorization": "{{ user }}"`. Headers `"Content-Type": "application/json"` and `"Accept": "application/json;charset=utf-8"` are present by default, you can overwrite them if you think this is necessary. When field names use dot notation or reserved characters, _data can be used to access these fields. If _data conflicts with your top level data, use jinja_root_name to change its name.
+`http_post2_headers`: JSON string or list of key:value pairs to use as HTTP headers. You can use `{{ field }}` (Jinja2) in keys and values to reference nested fields in the match. Ex: `"Authorization": "{{ user }}"`. Headers `Content-Type: application/json` and `Accept: application/json;charset=utf-8` are set by default and may be overwritten. When field names use dot notation or reserved characters, `_data` can access them. If `_data` clashes with your top-level data, set `jinja_root_name`.
 
-`http_post2_proxy`: URL of proxy, if required. only supports https.
+`http_post2_proxy`: Proxy URL if required. Only supports HTTPS.
 
 `http_post2_all_values`: Boolean of whether or not to include every key value pair from the match in addition to those in http_post2_payload and http_post2_static_payload. Defaults to True if http_post2_payload is not specified, otherwise False.
 
@@ -1083,9 +1083,7 @@ Optional:
 
 `http_post2_ca_certs`: Set this option to `True` or a path to a CA cert bundle or directory (eg: `/etc/ssl/certs/ca-certificates.crt`) to validate the SSL certificate.
 
-`http_post2_ignore_ssl_errors`: By default ElastAlert 2 will verify SSL certificate. Set this option to `True` if you want to ignore SSL errors.
-
-> **Note:**
+`http_post2_ignore_ssl_errors`: By default ElastAlert 2 verifies the TLS certificate. Set to `True` to skip verification. **Note:** Disabling verification exposes the rule to man-in-the-middle risk on untrusted networks—use only for debugging or when you explicitly trust the endpoint (for example a private CA you control).
 
 Incorrect usage with double quotes
 
@@ -2125,7 +2123,7 @@ The alerter requires the following options:
 
 `short_description`: Short summary of the incident (the incident’s title-style description in ServiceNow).
 
-`comments`: Comments to be attached to the incident, this is the equivilant of work notes.
+`comments`: Comments to attach to the incident—the equivalent of work notes.
 
 `assignment_group`: The group to assign the incident to.
 
@@ -2139,11 +2137,13 @@ The alerter requires the following options:
 
 Optional:
 
-`servicenow_proxy`: By default ElastAlert 2 will not use a network proxy to send notifications to ServiceNow. Set this option using `hostname:port` if you need to use a proxy. only supports https.
+`servicenow_proxy`: By default ElastAlert 2 does not use a network proxy to send notifications to ServiceNow. Set this option using `hostname:port` if you need a proxy. Only supports HTTPS.
 
 `servicenow_impact`: An integer 1, 2, or 3 representing high, medium, and low respectively. This measures the effect of an incident on business processes.
 
-`servicenow_urgency`: An integer 1, 2, or 3 representing high, medium, and low respecitvely. This measures how long this incident can be delayed until there is a significant business impact.
+`servicenow_urgency`: An integer 1, 2, or 3 representing high, medium, and low respectively. This measures how long this incident can be delayed until there is a significant business impact.
+
+`service_now_additional_fields`: Optional flat map of extra incident columns: each key is a ServiceNow **column name** (not the display label; custom fields often use a `u_` prefix such as `u_affected_user`), each value is a string, number, or boolean written to that field when the incident is created. Keys map directly to fields on the record. Use simple scalars unless your table’s API expects otherwise (complex or multi-value fields may need encoding per your instance’s REST rules). See the example below.
 
 Example usage
 
@@ -2164,9 +2164,7 @@ servicenow_impact: 1
 servicenow_urgency: 3
 ```
 
-Arbitrary ServiceNow fields:
-
-ElastAlert 2 supports setting any arbitrary ServiceNow field that your ServiceNow instance supports. Additional fields must be specified in a `service_now_additional_fields` stanza. For example, if you had a custom field, called "Affected User", you can set it by providing that field name and value. The field needs to be specified using the Column Name not the Display Name. Custom fields in ServiceNow usually have the prefix `u_` to distinguish them from out of the box fields.
+Additional columns beyond the required keys above go under `service_now_additional_fields` (see the optional key description). Always use the **column name**, not the display name.
 
 Example usage
 
