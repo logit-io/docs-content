@@ -1,0 +1,75 @@
+---
+title: Twilio
+metaTitle: "Twilio SMS & voice alerts — Logit.io"
+description: "Trigger Twilio SMS or calls from ElastAlert 2 on Logit.io: twilio, Account SID, auth, From/To numbers, and YAML."
+stackTypes: logs
+---
+
+# Twilio
+
+Reach on-call staff via **Twilio**’s programmable messaging or voice APIs. Add `twilio` with account credentials and verified sender identifiers. Add `twilio` under `alert:` on your rule (you can combine destinations).
+
+Details for each key are in **[Options](#options)**; **[Full working example](#full-working-example)** ties the destination into a full ElastAlert 2 rule.
+
+## Options
+
+Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_subject` apply as described in [Subject & body](/log-management/alerting/alert-subject-and-body). **Example fragments** from the ElastAlert 2 reference appear indented under the option they illustrate (add your own `name`, `type`, `index`, and `filter` to make a full rule).
+
+### Required
+
+- `twilio_account_sid` — The SID of your Twilio account.
+
+- `twilio_auth_token` — Auth token associated with your Twilio account.
+
+- `twilio_to_number` — The destination phone number (recipient) for the alert.
+
+- `twilio_from_number` — Twilio phone number to send **from** when not using Copilot (`twilio_use_copilot: false`, the default).
+
+- `twilio_message_service_sid` — SID of your Twilio Messaging Service; use when sending via Copilot (`twilio_use_copilot: true`).
+
+Provide **exactly one** of `twilio_from_number` or `twilio_message_service_sid` as the sender—`twilio_from_number` for standard SMS, or `twilio_message_service_sid` when using Copilot.
+
+ **Example with SMS usage**
+
+ ```yaml copy
+  alert:
+    - "twilio"
+  twilio_to_number: "0123456789"
+  twilio_from_number: "9876543210"
+  twilio_auth_token: "abcdefghijklmnopqrstuvwxyz012345"
+  twilio_account_sid: "ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567"
+  ```
+
+### Optional
+
+- `twilio_use_copilot` — Whether or not to use Twilio Copilot, False by default.
+
+ **Example with Copilot usage**
+
+ ```yaml copy
+  alert:
+    - "twilio"
+  twilio_use_copilot: True
+  twilio_to_number: "0123456789"
+  twilio_auth_token: "abcdefghijklmnopqrstuvwxyz012345"
+  twilio_account_sid: "ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567"
+  twilio_message_service_sid: "ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567"
+  ```
+
+## Full working example
+
+```yaml copy
+name: Example alert for Twilio
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "twilio"
+twilio_account_sid: "REPLACE"
+twilio_auth_token: "REPLACE"
+twilio_to_number: "+441234567890"
+twilio_from_number: "+449876543210"
+```

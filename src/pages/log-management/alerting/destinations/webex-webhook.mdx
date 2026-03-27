@@ -1,0 +1,52 @@
+---
+title: Webex webhooks
+metaTitle: "Webex incoming webhook alerts — Logit.io"
+description: "Post to Webex spaces from ElastAlert 2 on Logit.io: webex_webhook, room IDs, bot tokens, and YAML."
+stackTypes: logs
+---
+
+# Webex webhooks
+
+Notify a **Webex** space when rules fire using an incoming webhook–style flow. Configure `webex_webhook` with room ID and bot authentication. Add `webex_webhook` under `alert:` on your rule (you can combine destinations).
+
+**[Options](#options)** covers each YAML field—required first—with snippets under some keys. **[Full working example](#full-working-example)** at the bottom is a complete rule for the Logit.io alert editor.
+
+## Options
+
+Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_subject` apply as described in [Subject & body](/log-management/alerting/alert-subject-and-body). **Example fragments** from the ElastAlert 2 reference appear indented under the option they illustrate (add your own `name`, `type`, `index`, and `filter` to make a full rule).
+
+### Required
+
+- `webex_webhook_id` — Webex webhook ID.
+
+ **Example usage**
+
+ ```yaml copy
+  alert_text: "**{0}** - ALERT on host {1}"
+  alert_text_args:
+    - name
+    - hostname
+  alert:
+    - webex_webhook
+  alert_text_type: alert_text_only
+  webex_webhook_id: "your webex incoming webhook id"
+  webex_webhook_msgtype: "markdown"
+  ```
+
+- `webex_webhook_msgtype` — Webex webhook message format. Can be `text` or `markdown`. Defaults to `text`.
+
+## Full working example
+
+```yaml copy
+name: Example alert for Webex webhooks
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "webex_webhook"
+webex_webhook_id: "REPLACE"
+webex_webhook_msgtype: markdown
+```

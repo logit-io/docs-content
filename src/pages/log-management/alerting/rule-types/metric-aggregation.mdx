@@ -1,0 +1,99 @@
+---
+title: Metric aggregation rule type
+metaTitle: "Metric aggregation rule — avg, max, sum thresholds — Logit.io"
+description: "Threshold metrics from OpenSearch aggregations with ElastAlert 2 type: metric_aggregation on Logit.io: metric_agg_key, thresholds, YAML."
+stackTypes: logs
+---
+
+# Metric aggregation rule type
+
+The **metric_aggregation** rule evaluates min, max, avg, sum, percentiles, and more over `metric_agg_key`, then compares to `max_threshold` / `min_threshold`.
+
+**[Options](#options)** lists type-specific keys (required and optional). **[Full working example](#full-working-example)** is a runnable rule for the Logit.io editor.
+
+
+
+<Callout type="info">
+ For `percentiles`, also set `percentile_range`. Match bodies include values such as `metric_<key>_<type>` for use in alert text.
+</Callout>
+
+## Options
+
+### Fields every rule needs
+
+Regardless of `type`, each ElastAlert 2 rule must include:
+
+- **`name`** — unique identifier for the rule.
+- **`index`** — OpenSearch index pattern (for example `*-*` for stack logs).
+- **`type`** — the rule type; it must match this page.
+- **`filter`** — at least one filter clause so ElastAlert knows which documents to evaluate.
+- **`alert`** — one or more notification types (for example `email`, `slack`) and their configuration.
+
+Common optional keys such as `buffer_time`, `run_every`, `realert`, `is_enabled`, and Discover link fields apply to every type; see the [Full Reference](/log-management/alerting/alert-reference). For the Logit.io editor workflow, see [Create a rule](/log-management/alerting/creating-alerts).
+
+The **Required for this type** and **Optional** subsections below list only the keys specific to **`type: metric_aggregation`**. Global options—`buffer_time`, `run_every`, `realert`, `is_enabled`, Discover links, and the rest of the YAML surface—are in the [Full Reference](/log-management/alerting/alert-reference). For notification wording and destinations, see [Subject & body](/log-management/alerting/alert-subject-and-body), [Context & links](/log-management/alerting/alert-context-and-links), and [Destinations](/log-management/alerting/destinations).
+
+### Required for this type
+
+- `metric_agg_key` — numeric field (or scripted metric name).
+- `metric_agg_type` — aggregation type.
+- At least one of `max_threshold` or `min_threshold`.
+
+### Optional
+- `query_key`, `metric_agg_script`, `min_doc_count`, `use_run_every_query_size`, `allow_buffer_time_overlap`, `bucket_interval`, `sync_bucket_interval`, `metric_format_string`.
+
+## Full working example
+
+```yaml copy
+name: High average CPU
+type: metric_aggregation
+index: "*-*"
+buffer_time:
+  minutes: 5
+metric_agg_key: system.cpu.total.norm.pct
+metric_agg_type: avg
+max_threshold: 0.85
+filter:
+  - query:
+      query_string:
+        query: "metricset.name:cpu AND agent.type:metricbeat"
+alert:
+  - "email"
+email:
+  - "alerts@example.com"
+```
+
+## Real-world example: sustained high CPU as a Jira task
+
+Infra metrics show **average normalised CPU** above policy for several minutes. Open a **Jira** task with the metric in the summary so capacity work is tracked.
+
+```yaml copy
+name: Host CPU above policy — Jira
+type: metric_aggregation
+index: "*-*"
+buffer_time:
+  minutes: 10
+metric_agg_key: system.cpu.total.norm.pct
+metric_agg_type: avg
+max_threshold: 0.9
+filter:
+  - query:
+      query_string:
+        query: "metricset.name:cpu AND agent.type:metricbeat"
+alert_subject: "High CPU on {0} — avg {1:.0%}"
+alert_subject_args:
+  - "host.name"
+  - "metric_system.cpu.total.norm.pct_avg"
+alert_text_type: alert_text_only
+alert_text: "Average normalised CPU over 10m exceeded 90%. Investigate host {0}."
+alert_text_args:
+  - "host.name"
+alert:
+  - "jira"
+jira_server: "https://your-domain.atlassian.net/"
+jira_project: "INFRA"
+jira_issuetype: "Task"
+jira_account_file: "/path/to/jira_acct.yaml"
+```
+
+Match bodies expose aggregated values as `metric_<field>_<agg>` (for example `metric_system.cpu.total.norm.pct_avg`). You can also set `metric_format_string`. See [Jira](/log-management/alerting/destinations/jira).

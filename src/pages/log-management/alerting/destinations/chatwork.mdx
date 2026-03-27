@@ -1,0 +1,55 @@
+---
+title: Chatwork
+metaTitle: "Chatwork room notifications — Logit.io"
+description: "Post ElastAlert 2 notifications to Chatwork from Logit.io managed log alerting: chatwork, API token, room ID, and example YAML."
+stackTypes: logs
+---
+
+# Chatwork
+
+Notify a **Chatwork** room when a rule fires so on-call teams see context in chat. Add `chatwork` under `alert:` with your API credentials and target room.
+
+Start with **[Options](#options)** when wiring credentials and endpoints—**[Full working example](#full-working-example)** shows how they fit in a complete rule.
+
+## Options
+
+Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_subject` apply as described in [Subject & body](/log-management/alerting/alert-subject-and-body). **Example fragments** from the ElastAlert 2 reference appear indented under the option they illustrate (add your own `name`, `type`, `index`, and `filter` to make a full rule).
+
+### Required
+
+- `chatwork_apikey` — Chatwork API KEY.
+
+ **Example usage**
+
+ ```yaml copy
+  alert:
+    - "chatwork"
+  chatwork_apikey: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  chatwork_room_id: "xxxxxxxxx"
+  ```
+
+- `chatwork_room_id` — The ID of the room you are talking to in Chatwork. How to find the room ID is the part of the number after "rid" at the end of the URL of the browser.
+
+### Optional
+
+- `chatwork_proxy` — By default ElastAlert 2 will not use a network proxy to send notifications to Chatwork. Set this option using `hostname:port` if you need to use a proxy. only supports https.
+
+- `chatwork_proxy_login` — The Chatwork proxy auth username.
+
+- `chatwork_proxy_pass` — The Chatwork proxy auth password.
+
+## Full working example
+
+```yaml copy
+name: Example alert for Chatwork
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "chatwork"
+chatwork_apikey: "REPLACE_API_KEY"
+chatwork_room_id: "REPLACE_ROOM_ID"
+```

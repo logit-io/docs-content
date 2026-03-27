@@ -1,0 +1,89 @@
+---
+title: Flatline rule type
+metaTitle: "Flatline rule — too few events — Logit.io"
+description: "Detect silence or missing heartbeats with ElastAlert 2 type: flatline on Logit.io: threshold, timeframe, query_key, and YAML."
+stackTypes: logs
+---
+
+# Flatline rule type
+
+The **flatline** rule fires when event counts in `timeframe` fall **below** `threshold`—ideal for pipelines and heartbeat logs.
+
+Details for each key are in **[Options](#options)**; **[Full working example](#full-working-example)** ties `type: flatline` into a full ElastAlert 2 rule.
+
+
+
+<Callout type="info">
+ With `query_key`, a flatline can fire per key once that key has been seen and then falls quiet.
+</Callout>
+
+## Options
+
+### Fields every rule needs
+
+Regardless of `type`, each ElastAlert 2 rule must include:
+
+- **`name`** — unique identifier for the rule.
+- **`index`** — OpenSearch index pattern (for example `*-*` for stack logs).
+- **`type`** — the rule type; it must match this page.
+- **`filter`** — at least one filter clause so ElastAlert knows which documents to evaluate.
+- **`alert`** — one or more notification types (for example `email`, `slack`) and their configuration.
+
+Common optional keys such as `buffer_time`, `run_every`, `realert`, `is_enabled`, and Discover link fields apply to every type; see the [Full Reference](/log-management/alerting/alert-reference). For the Logit.io editor workflow, see [Create a rule](/log-management/alerting/creating-alerts).
+
+The **Required for this type** and **Optional** subsections below list only the keys specific to **`type: flatline`**. Global options—`buffer_time`, `run_every`, `realert`, `is_enabled`, Discover links, and the rest of the YAML surface—are in the [Full Reference](/log-management/alerting/alert-reference). For notification wording and destinations, see [Subject & body](/log-management/alerting/alert-subject-and-body), [Context & links](/log-management/alerting/alert-context-and-links), and [Destinations](/log-management/alerting/destinations).
+
+### Required for this type
+
+- `threshold` — minimum events required to **avoid** alerting.
+- `timeframe` — evaluation window.
+
+### Optional
+- `use_count_query`, `use_terms_query`, `terms_size`, `query_key`, `forget_keys`.
+
+## Full working example
+
+```yaml copy
+name: Heartbeat flatline example
+type: flatline
+index: "*-*"
+threshold: 100
+timeframe:
+  minutes: 10
+filter:
+  - query:
+      query_string:
+        query: "message:heartbeat* OR event.action:heartbeat"
+use_count_query: true
+doc_type: _doc
+alert:
+  - "email"
+email:
+  - "alerts@example.com"
+```
+
+## Real-world example: application heartbeat stopped (PagerDuty)
+
+A service logs a **heartbeat** every minute. If counts drop near zero for fifteen minutes, page on-call — likely deploy, crash, or logging pipeline failure.
+
+```yaml copy
+name: App heartbeat flatline
+type: flatline
+index: "*-*"
+threshold: 5
+timeframe:
+  minutes: 15
+filter:
+  - query:
+      query_string:
+        query: 'service.name:"checkout-api" AND log.logger:heartbeat'
+use_count_query: true
+doc_type: _doc
+alert:
+  - "pagerduty"
+pagerduty_service_key: "REPLACE_ROUTING_KEY"
+pagerduty_client_name: "logit-production"
+pagerduty_event_type: trigger
+```
+
+See [PagerDuty](/log-management/alerting/destinations/pagerduty).

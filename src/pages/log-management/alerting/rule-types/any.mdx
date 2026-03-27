@@ -1,0 +1,86 @@
+---
+title: Any rule type
+metaTitle: "Any rule type — alert on every match — Logit.io"
+description: "Use ElastAlert 2 type: any on Logit.io to notify on every document that matches your filter, with realert, query_key, and YAML examples."
+stackTypes: logs
+---
+
+# Any rule type
+
+The **any** rule fires once per matching document—ideal when each hit should surface immediately, or when you throttle with `realert` and `query_key`.
+
+**[Options](#options)** starts with **Fields every rule needs**, then **Required for this type** and **Optional** for `any`. **[Full working example](#full-working-example)** is a runnable rule for the Logit.io editor.
+
+
+
+## Options
+
+### Fields every rule needs
+
+Regardless of `type`, each ElastAlert 2 rule must include:
+
+- **`name`** — unique identifier for the rule.
+- **`index`** — OpenSearch index pattern (for example `*-*` for stack logs).
+- **`type`** — the rule type; for this page it must be `any`.
+- **`filter`** — at least one filter clause so ElastAlert knows which documents to evaluate.
+- **`alert`** — one or more notification types (for example `email`, `slack`) and their configuration.
+
+Common optional keys such as `buffer_time`, `run_every`, `realert`, `is_enabled`, and Discover link fields apply to every type; see the [Full Reference](/log-management/alerting/alert-reference). For the Logit.io editor workflow, see [Create a rule](/log-management/alerting/creating-alerts).
+
+The **Required for this type** and **Optional** subsections below list only the keys specific to **`type: any`**. Global options—`buffer_time`, `run_every`, `realert`, `is_enabled`, Discover links, and the rest of the YAML surface—are in the [Full Reference](/log-management/alerting/alert-reference). For notification wording and destinations, see [Subject & body](/log-management/alerting/alert-subject-and-body), [Context & links](/log-management/alerting/alert-context-and-links), and [Destinations](/log-management/alerting/destinations).
+
+### Required for this type
+
+None—`type: any` does not add mandatory keys beyond the skeleton above.
+
+### Optional
+- `realert` — minimum time between alerts for this rule (default behaviour may drop rapid repeats).
+- `query_key` — scope deduplication or grouping per field value.
+- `timestamp_field` / `timestamp_type` — if not using `@timestamp`.
+
+## Full working example
+
+```yaml copy
+name: Any match example
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "log.level:error OR level:error"
+realert:
+  minutes: 5
+alert:
+  - "email"
+email:
+  - "alerts@example.com"
+```
+
+## Real-world example: critical events to Slack
+
+You want **every** high-severity security or availability event to appear in an incident channel immediately, but not more than once every few minutes per host.
+
+```yaml copy
+name: Critical severity — Slack incidents
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: 'log.level:critical OR log.level:CRITICAL OR event.severity:(9 OR 10)'
+query_key: "host.name"
+realert:
+  minutes: 10
+alert_subject: "CRITICAL on {0}"
+alert_subject_args:
+  - "host.name"
+alert_text_type: alert_text_only
+alert_text: "{0} — see elastalert index in your stack for run details."
+alert_text_args:
+  - "message"
+alert:
+  - "slack"
+slack_webhook_url: "https://hooks.slack.com/services/XXX/YYY/ZZZ"
+```
+
+See [Slack](/log-management/alerting/destinations/slack) and [Subject & body](/log-management/alerting/alert-subject-and-body).

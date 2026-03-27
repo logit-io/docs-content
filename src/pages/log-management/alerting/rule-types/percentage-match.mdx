@@ -1,0 +1,95 @@
+---
+title: Percentage match rule type
+metaTitle: "Percentage match rule — share of matching docs — Logit.io"
+description: "Alert when a subset exceeds a percentage of hits using ElastAlert 2 type: percentage_match on Logit.io: match_bucket_filter, SLO-style YAML."
+stackTypes: logs
+---
+
+# Percentage match rule type
+
+The **percentage_match** rule measures what fraction of documents in `filter` also match `match_bucket_filter`—classic error-rate and SLO patterns.
+
+Skim **[Options](#options)** for required vs optional fields, then open **[Full working example](#full-working-example)** for a complete `type: percentage_match` example.
+
+
+
+<Callout type="info">
+ Tune `filter` to the overall population and `match_bucket_filter` to the subset you care about (for example errors within a service).
+</Callout>
+
+## Options
+
+### Fields every rule needs
+
+Regardless of `type`, each ElastAlert 2 rule must include:
+
+- **`name`** — unique identifier for the rule.
+- **`index`** — OpenSearch index pattern (for example `*-*` for stack logs).
+- **`type`** — the rule type; it must match this page.
+- **`filter`** — at least one filter clause so ElastAlert knows which documents to evaluate.
+- **`alert`** — one or more notification types (for example `email`, `slack`) and their configuration.
+
+Common optional keys such as `buffer_time`, `run_every`, `realert`, `is_enabled`, and Discover link fields apply to every type; see the [Full Reference](/log-management/alerting/alert-reference). For the Logit.io editor workflow, see [Create a rule](/log-management/alerting/creating-alerts).
+
+The **Required for this type** and **Optional** subsections below list only the keys specific to **`type: percentage_match`**. Global options—`buffer_time`, `run_every`, `realert`, `is_enabled`, Discover links, and the rest of the YAML surface—are in the [Full Reference](/log-management/alerting/alert-reference). For notification wording and destinations, see [Subject & body](/log-management/alerting/alert-subject-and-body), [Context & links](/log-management/alerting/alert-context-and-links), and [Destinations](/log-management/alerting/destinations).
+
+### Required for this type
+
+- `match_bucket_filter` — query DSL fragment defining the subset.
+- At least one of `min_percentage` or `max_percentage`.
+
+### Optional
+- `query_key`, `use_run_every_query_size`, `allow_buffer_time_overlap`, `bucket_interval`, `sync_bucket_interval`, `percentage_format_string`, `min_denominator`.
+
+## Full working example
+
+```yaml copy
+name: High 5xx percentage
+type: percentage_match
+index: "*-*"
+buffer_time:
+  minutes: 15
+filter:
+  - query:
+      query_string:
+        query: "event.dataset:nginx.access"
+match_bucket_filter:
+  - range:
+      http.response.status_code:
+        gte: 500
+max_percentage: 20
+alert:
+  - "email"
+email:
+  - "alerts@example.com"
+```
+
+## Real-world example: error budget burn (5xx share) to Microsoft Teams
+
+Among all nginx access logs in the window, alert when **more than a set percentage** are **5xx** responses — classic error-budget / SLO style signal.
+
+```yaml copy
+name: High 5xx percentage — Teams
+type: percentage_match
+index: "*-*"
+buffer_time:
+  minutes: 15
+filter:
+  - query:
+      query_string:
+        query: "event.dataset:nginx.access"
+match_bucket_filter:
+  - range:
+      http.response.status_code:
+        gte: 500
+max_percentage: 5
+alert_text_type: alert_text_only
+alert_text: "More than 5% of requests in the window returned 5xx (observed {0:.1f}%)."
+alert_text_args:
+  - percentage
+alert:
+  - "ms_teams"
+ms_teams_webhook_url: "https://outlook.office.com/webhook/..."
+```
+
+The match includes a `percentage` value. Use `percentage_format_string` if you want a formatted copy in the body. See [Microsoft Teams](/log-management/alerting/destinations/ms-teams).

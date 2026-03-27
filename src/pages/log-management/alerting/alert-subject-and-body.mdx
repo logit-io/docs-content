@@ -1,0 +1,176 @@
+---
+title: Alert subject and body
+metaTitle: ElastAlert 2 alert subject, body, and formatting
+description: Customize notification titles and message bodies with Python-style formatting, Jinja2, missing-value handling, multiple destinations, and nested overrides on Logit.io.
+stackTypes: logs
+---
+
+# Alert subject and body
+
+ElastAlert 2 builds **subject** and **body** text from your rule YAML before each destination sends its notification. Many destinations reuse the same fields (`alert_subject`, `alert_text`, `alert_text_type`, and related keys). Channel-specific options (webhook URLs, Slack fields, and so on) live on each [Destinations](/log-management/alerting/destinations) page.
+
+For **top field summaries** and **OpenSearch Discover links** in the message, see [Context & links](/log-management/alerting/alert-context-and-links).
+
+## Subject line (`alert_subject`)
+
+Use `alert_subject` for any destination that supports a title or summary (email subject, chat title, PagerDuty description when set, and similar).
+
+**Python-style formatting** — placeholders `{0}`, `{1}`, … with `alert_subject_args` listing field names whose values are taken from the match (or from the rule when the match has no such key):
+
+```yaml copy
+alert_subject: "Errors on {0} at {1}"
+alert_subject_args:
+  - "host.name"
+  - "@timestamp"
+```
+
+**Quoting `@timestamp` in args** — YAML may interpret `@` specially; quote the token:
+
+```yaml copy
+alert_subject_args:
+  - "host.name"
+  - "@timestamp"
+```
+
+## Message body (`alert_text`)
+
+**Default** — If you omit `alert_text`, destinations use their built-in body (often a dump of match fields).
+
+**Python-style body** — Set `alert_text_type: alert_text_only` (this is the usual choice when using `alert_text_args`):
+
+```yaml copy
+alert_text: "Host {0} — {1} events in window. Top user: {2}"
+alert_text_type: alert_text_only
+alert_text_args:
+  - "host.name"
+  - num_hits
+  - username
+```
+
+**Keyword formatting** — `alert_text_kw` supplies a map of names used in `alert_text` with `{name}` placeholders (see ElastAlert 2 behaviour for interaction with `alert_text_args`).
+
+**Missing fields** — `alert_missing_value` is substituted when a referenced field is absent (default is `MISSING_VALUE`).
+
+## Jinja2 (`alert_text_type: alert_text_jinja`)
+
+Set `alert_text_type: alert_text_jinja` to use Jinja2 in both `alert_text` and `alert_subject`. Match fields are available as `{{ field_name }}`. For keys that contain dots, use `{{ _data['field.name'] }}`. If `_data` clashes with your data, rename it with `jinja_root_name`.
+
+```yaml copy
+alert_text_type: alert_text_jinja
+alert_subject: "{{ host.name }} — threshold exceeded"
+alert_text: |
+  Rule: {{ rule_name }}
+  Host: {{ host.name }}
+  Message: {{ message }}
+```
+
+Use single-quoted YAML scalars when a line mixes quotes and Jinja, or a literal block `|` as above.
+
+## Other `alert_text_type` values
+
+- `exclude_fields` — Body lists only fields not listed in `alert_text_kw['exclude']`.
+- `aggregation_summary_only` — Used with [aggregation](/log-management/alerting/overview) to send a summary instead of per-match bodies.
+- `alert_text_only` — Standard Python formatting via `alert_text` / args (default for many rules).
+
+## Referencing alerter options with `$property$`
+
+Some destinations let you pull values from the rule into their own keys using a `$field_name$` style (documented per alerter in ElastAlert 2). The referenced name is a **top-level rule property**, not a match field.
+
+## Multiple destinations and nested overrides
+
+List several channels under `alert:`:
+
+```yaml copy
+alert:
+  - email
+  - slack
+```
+
+Shared `alert_subject` / `alert_text` apply to all unless you override per entry using a **mapping** instead of a plain string:
+
+```yaml copy
+alert:
+  - email
+  - slack:
+      alert_subject: "URGENT: {0}"
+      alert_subject_args:
+        - "host.name"
+slack_webhook_url: "https://hooks.slack.com/services/XXX/YYY/ZZZ"
+email:
+  - "alerts@example.com"
+```
+
+Keys nested under `slack:` only affect that alerter.
+
+---
+
+## Example: Python-style subject and body with email
+
+Audit-style notification with explicit subject and body lines:
+
+```yaml copy
+name: Critical errors — email digest style
+type: frequency
+index: "*-*"
+num_events: 10
+timeframe:
+  minutes: 5
+filter:
+  - query:
+      query_string:
+        query: 'log.level:"error" OR level:error'
+alert_subject: "[{0}] {1} critical errors on {2}"
+alert_subject_args:
+  - "@timestamp"
+  - num_hits
+  - "host.name"
+alert_text: |
+  Time window: last 5 minutes.
+  Event count: {0}
+  Sample host: {1}
+alert_text_type: alert_text_only
+alert_text_args:
+  - num_hits
+  - "host.name"
+alert_missing_value: "(unknown)"
+alert:
+  - "email"
+email:
+  - "secops@example.com"
+from_addr: "alerts@example.com"
+```
+
+See [Email](/log-management/alerting/destinations/email) for more email keys.
+
+---
+
+## Example: Jinja body with Slack
+
+Chat-friendly template with multiline body:
+
+```yaml copy
+name: API 5xx burst — Slack
+type: spike
+index: "*-*"
+threshold_cur: 5
+timeframe:
+  minutes: 10
+spike_height: 2
+spike_type: up
+filter:
+  - query:
+      query_string:
+        query: 'http.response.status_code:[500 TO 599]'
+alert_text_type: alert_text_jinja
+alert_subject: "API 5xx spike — current window count {{ spike_count }}"
+alert_text: |
+  *Spike rule fired*
+  Current window: {{ spike_count }}
+  Reference window: {{ reference_count }}
+  Add generate_opensearch_discover_url on the rule for a Discover link (see the Context guide in alerting docs).
+alert:
+  - "slack"
+slack_webhook_url: "https://hooks.slack.com/services/XXX/YYY/ZZZ"
+```
+
+See [Slack](/log-management/alerting/destinations/slack) for `slack_username`, `slack_icon_url_override`, and other options.

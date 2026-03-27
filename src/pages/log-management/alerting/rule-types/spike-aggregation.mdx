@@ -1,0 +1,97 @@
+---
+title: Spike aggregation rule type
+metaTitle: "Spike aggregation rule — metric spikes — Logit.io"
+description: "Spike detection on aggregated metrics with ElastAlert 2 type: spike_aggregation on Logit.io: buffer_time, metric_agg_key, spike_height."
+stackTypes: logs
+---
+
+# Spike aggregation rule type
+
+**spike_aggregation** works like **spike** but on a **metric** (e.g. average latency) instead of raw document counts between windows.
+
+**[Options](#options)** covers what this rule type adds beyond shared rule fields; **[Full working example](#full-working-example)** shows it end-to-end.
+
+
+
+<Callout type="info">
+ `buffer_time` defines the window size used for current vs reference comparisons (see ElastAlert 2 behaviour for timing details).
+</Callout>
+
+## Options
+
+### Fields every rule needs
+
+Regardless of `type`, each ElastAlert 2 rule must include:
+
+- **`name`** — unique identifier for the rule.
+- **`index`** — OpenSearch index pattern (for example `*-*` for stack logs).
+- **`type`** — the rule type; it must match this page.
+- **`filter`** — at least one filter clause so ElastAlert knows which documents to evaluate.
+- **`alert`** — one or more notification types (for example `email`, `slack`) and their configuration.
+
+Common optional keys such as `buffer_time`, `run_every`, `realert`, `is_enabled`, and Discover link fields apply to every type; see the [Full Reference](/log-management/alerting/alert-reference). For the Logit.io editor workflow, see [Create a rule](/log-management/alerting/creating-alerts).
+
+The **Required for this type** and **Optional** subsections below list only the keys specific to **`type: spike_aggregation`**. Global options—`buffer_time`, `run_every`, `realert`, `is_enabled`, Discover links, and the rest of the YAML surface—are in the [Full Reference](/log-management/alerting/alert-reference). For notification wording and destinations, see [Subject & body](/log-management/alerting/alert-subject-and-body), [Context & links](/log-management/alerting/alert-context-and-links), and [Destinations](/log-management/alerting/destinations).
+
+### Required for this type
+
+- `metric_agg_key`, `metric_agg_type`
+- `spike_height`, `spike_type`
+- `buffer_time`
+
+### Optional
+- `query_key`, `metric_agg_script`, `threshold_ref`, `threshold_cur`, `min_doc_count`, `percentile_range` (when using `percentiles`).
+
+## Full working example
+
+```yaml copy
+name: Average response time spike
+type: spike_aggregation
+index: "*-*"
+buffer_time:
+  minutes: 15
+metric_agg_key: http.response.time
+metric_agg_type: avg
+spike_height: 2
+spike_type: up
+filter:
+  - query:
+      query_string:
+        query: "event.dataset:nginx.access"
+alert:
+  - "email"
+email:
+  - "alerts@example.com"
+```
+
+## Real-world example: API latency spike to Microsoft Teams
+
+Average **`http.response.time`** doubling versus the prior window often means dependency slowdown or saturation. Notify the platform channel.
+
+```yaml copy
+name: API latency spike (aggregated)
+type: spike_aggregation
+index: "*-*"
+buffer_time:
+  minutes: 10
+metric_agg_key: http.response.time
+metric_agg_type: avg
+spike_height: 2
+spike_type: up
+threshold_cur: 200
+threshold_ref: 50
+filter:
+  - query:
+      query_string:
+        query: "event.dataset:nginx.access"
+alert_text_type: alert_text_jinja
+alert_text: |
+  Average **http.response.time** spiked vs the prior window.
+  Current window value: {{ spike_count }}
+  Reference window: {{ reference_count }}
+alert:
+  - "ms_teams"
+ms_teams_webhook_url: "https://outlook.office.com/webhook/..."
+```
+
+`spike_count` / `reference_count` here refer to the **aggregated metric** in each window, not raw hit counts. See [Microsoft Teams](/log-management/alerting/destinations/ms-teams).

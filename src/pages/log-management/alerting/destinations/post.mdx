@@ -1,0 +1,70 @@
+---
+title: Webhook (HTTP POST, post)
+metaTitle: "Custom HTTP POST webhooks — ElastAlert post — Logit.io"
+description: "POST JSON alert payloads to any HTTPS URL with ElastAlert 2 post on Logit.io: field mapping, headers, static payload, and full YAML."
+stackTypes: logs
+---
+
+# Webhook (HTTP POST, post)
+
+This destination uses ElastAlert 2’s **`post`** alerter to send alert matches as **JSON POST** requests to any HTTPS URL—custom webhooks, Zapier, internal APIs, Squadcast, and similar. In your rule YAML, set `alert: post`, then configure `http_post_url` and any optional payload and header mappings.
+
+**[Options](#options)** documents every key; **[Full working example](#full-working-example)** at the bottom is end-to-end YAML for the Logit.io alert editor.
+
+## Options
+
+Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_subject` apply as described in [Subject & body](/log-management/alerting/alert-subject-and-body). **Example fragments** from the ElastAlert 2 reference appear indented under the option they illustrate (add your own `name`, `type`, `index`, and `filter` to make a full rule).
+
+### Required
+
+- `http_post_url` — The URL to POST.
+
+ **Example usage**
+
+ ```yaml copy
+  alert: post
+  http_post_url: "http://example.com/api"
+  http_post_payload:
+    ip: clientip
+  http_post_static_payload:
+    apikey: abc123
+  http_post_headers:
+    authorization: Basic 123dr3234
+  ```
+
+### Optional
+
+- `http_post_payload` — List of keys:values to use as the content of the POST. Example - ip:clientip will map the value from the clientip index of Elasticsearch to JSON key named ip. If not defined, all the Elasticsearch keys will be sent.
+
+- `http_post_static_payload` — Key:value pairs of static parameters to be sent, along with the Elasticsearch results. Put your authentication or other information here.
+
+- `http_post_headers` — Key:value pairs of headers to be sent as part of the request.
+
+- `http_post_proxy` — URL of proxy, if required. only supports https.
+
+- `http_post_all_values` — Boolean of whether or not to include every key value pair from the match in addition to those in http_post_payload and http_post_static_payload. Defaults to True if http_post_payload is not specified, otherwise False.
+
+- `http_post_timeout` — The timeout value, in seconds, for making the post. The default is 10. If a timeout occurs, the alert will be retried next time elastalert cycles.
+
+- `http_post_ca_certs` — Set this option to `True` or a path to a CA cert bundle or directory (eg: `/etc/ssl/certs/ca-certificates.crt`) to validate the SSL certificate.
+
+- `http_post_ignore_ssl_errors` — By default ElastAlert 2 will verify SSL certificate. Set this option to `True` if you want to ignore SSL errors.
+
+## Full working example
+
+```yaml copy
+name: Example custom webhook (HTTP POST)
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "post"
+http_post_url: "https://your-service.example/hooks/elastalert"
+http_post_static_payload:
+  source: logit
+http_post_headers:
+  Content-Type: application/json
+```

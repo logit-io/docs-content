@@ -1,0 +1,94 @@
+---
+title: Change rule type
+metaTitle: "Change rule — field changes per entity — Logit.io"
+description: "Detect when a field changes for the same user or host with ElastAlert 2 type: change on Logit.io: compare_key, query_key, timeframe."
+stackTypes: logs
+---
+
+# Change rule type
+
+The **change** rule compares the current value of `compare_key` to the last seen value for the same `query_key`—useful for geo, role, or config drift.
+
+**[Options](#options)** covers what this rule type adds beyond shared rule fields; **[Full working example](#full-working-example)** shows it end-to-end.
+
+
+
+<Callout type="info">
+ `compare_key` can be a list of field names in YAML; any of them changing can trigger a match.
+</Callout>
+
+## Options
+
+### Fields every rule needs
+
+Regardless of `type`, each ElastAlert 2 rule must include:
+
+- **`name`** — unique identifier for the rule.
+- **`index`** — OpenSearch index pattern (for example `*-*` for stack logs).
+- **`type`** — the rule type; it must match this page.
+- **`filter`** — at least one filter clause so ElastAlert knows which documents to evaluate.
+- **`alert`** — one or more notification types (for example `email`, `slack`) and their configuration.
+
+Common optional keys such as `buffer_time`, `run_every`, `realert`, `is_enabled`, and Discover link fields apply to every type; see the [Full Reference](/log-management/alerting/alert-reference). For the Logit.io editor workflow, see [Create a rule](/log-management/alerting/creating-alerts).
+
+The **Required for this type** and **Optional** subsections below list only the keys specific to **`type: change`**. Global options—`buffer_time`, `run_every`, `realert`, `is_enabled`, Discover links, and the rest of the YAML surface—are in the [Full Reference](/log-management/alerting/alert-reference). For notification wording and destinations, see [Subject & body](/log-management/alerting/alert-subject-and-body), [Context & links](/log-management/alerting/alert-context-and-links), and [Destinations](/log-management/alerting/destinations).
+
+### Required for this type
+
+- `compare_key` — field or list of fields to watch.
+- `ignore_null` — whether to ignore documents without those fields.
+- `query_key` — correlate events (for example `user.name` or `source.ip`).
+
+### Optional
+- `timeframe` — after this period, the previous value is forgotten so a change can alert again.
+
+## Full working example
+
+```yaml copy
+name: Country changed for same user
+type: change
+index: "*-*"
+compare_key: geo.country_name
+ignore_null: true
+query_key: user.name
+timeframe:
+  hours: 24
+filter:
+  - query:
+      query_string:
+        query: "event.category:authentication"
+alert:
+  - "email"
+email:
+  - "alerts@example.com"
+```
+
+## Real-world example: geo change for the same account to Slack
+
+Fraud or account takeover often shows up as the **same user** authenticating from a **new country** within a short window.
+
+```yaml copy
+name: Login country changed for same user
+type: change
+index: "*-*"
+compare_key: "source.geo.country_name"
+ignore_null: true
+query_key: user.name
+timeframe:
+  hours: 12
+filter:
+  - query:
+      query_string:
+        query: "event.category:authentication AND event.outcome:success"
+alert_text_type: alert_text_jinja
+alert_subject: "Geo change for {{ user.name }}"
+alert_text: |
+  User: {{ user.name }}
+  New country: {{ source.geo.country_name }}
+  Source IP: {{ source.ip }}
+alert:
+  - "slack"
+slack_webhook_url: "https://hooks.slack.com/services/XXX/YYY/ZZZ"
+```
+
+See [Slack](/log-management/alerting/destinations/slack). For ticket creation instead, see [Jira](/log-management/alerting/destinations/jira).

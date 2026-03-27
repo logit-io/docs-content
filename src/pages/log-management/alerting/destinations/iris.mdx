@@ -1,0 +1,87 @@
+---
+title: DFIR-IRIS
+metaTitle: "DFIR-IRIS incident alerts — Logit.io"
+description: "Raise DFIR-IRIS incidents from log rules with ElastAlert 2 on Logit.io: iris, API URL, SSL, custom fields, and YAML."
+stackTypes: logs
+---
+
+# DFIR-IRIS
+
+Push structured incidents into **IRIS** for digital forensics and IR workflows. Add `iris` under `alert:` with server URL, API key, and case metadata fields.
+
+Use **[Options](#options)** for key-by-key reference, then **[Full working example](#full-working-example)** for copy-paste YAML you can tailor to your stack.
+
+## Options
+
+Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_subject` apply as described in [Subject & body](/log-management/alerting/alert-subject-and-body). **Example fragments** from the ElastAlert 2 reference appear indented under the option they illustrate (add your own `name`, `type`, `index`, and `filter` to make a full rule).
+
+### Required
+
+- `iris_host` — Address of the Iris host. Exclude https:// For example: `iris.example.com`.
+
+- `iris_api_token` — The API key of the user you created, which will be used to initiate alerts and cases on behalf of this user.
+
+### Optional
+
+- `iris_customer_id` — This field represents the unique identifier of the customer for whom an incident/case will be created within the system. Configure and view the existing options in the section `Advanced -> Customers` of your IRIS instance. The default value is: `1`
+
+- `iris_ca_cert` — Path to custom CA certificate.
+
+- `iris_ignore_ssl_errors` — Ignore ssl error. The default value is: `False`.
+
+- `iris_description` — Description of the alert or case. If left blank and `iris_type` is `alert` (default value) description will automatically be generated utilizing the `alert_text`, and optionally `alert_text_args`/`alert_text_type`, field(s) to generate a description.
+
+- `iris_overwrite_timestamp` — Should the timestamp be overridden when creating an alert. By default, the alert's creation time will be the trigger time. If you want to use the event's timestamp as the ticket creation time, set this value to `True`. Default value is `False`.
+
+- `iris_type` — The type of object being created. It can be either `alert` or `case`. The default value is `alert`.
+
+- `iris_case_template_id` — Case template ID, if you want to apply a pre-prepared template.
+
+- `iris_alert_note` — Note for the alert.
+
+- `iris_alert_source` — Source of the alert. Default value is `ElastAlert2`.
+
+- `iris_alert_tags` — List of tags.
+
+- `iris_alert_status_id` — The alert status of the alert, default value is `2`. This parameter requires an integer input. - `1` - Unspecified - `2` - New - `3` - Assigned - `4` - In progress - `5` - Pending - `6` - Closed - `7` - Merged.
+
+- `iris_alert_source_link` — Your custom link, if needed.
+
+- `iris_alert_severity_id` — The severity level of the alert, default value is `1`. This parameter requires an integer input. - `1` - Unspecified - `2` - Informational - `3` - Low - `4` - Medium - `5` - High - `6` - Critical.
+
+- `iris_alert_context` — Include information from the match into the alert context. Working as key-value, where the key is your custom name and value - data from elasticsearch message.
+
+- `iris_iocs` — Description of the IOC to be added.
+
+ **Example usage `iris_iocs`**
+
+ ```yaml copy
+  iris_iocs:
+    - ioc_value: ip
+      ioc_description: Suspicious IP address
+      ioc_tlp_id: 2
+      ioc_type_id: 76
+      ioc_tags: ipv4, ip, suspicious
+    - ioc_value: username
+      ioc_description: Suspicious username
+      ioc_tlp_id: 1
+      ioc_type_id: 3
+      ioc_tags: username
+  ```
+
+## Full working example
+
+```yaml copy
+name: Example alert for DFIR-IRIS
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "iris"
+iris_host: iris.example.com
+iris_api_token: "REPLACE"
+iris_type: alert
+```

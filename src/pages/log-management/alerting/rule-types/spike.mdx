@@ -1,0 +1,99 @@
+---
+title: Spike rule type
+metaTitle: "Spike rule — volume vs previous window — Logit.io"
+description: "Compare current vs reference traffic with ElastAlert 2 type: spike on Logit.io: spike_height, spike_type, thresholds, and YAML."
+stackTypes: logs
+---
+
+# Spike rule type
+
+The **spike** rule compares two equal **timeframe** windows so you catch sudden surges or drops versus the prior period.
+
+Details for each key are in **[Options](#options)**; **[Full working example](#full-working-example)** ties `type: spike` into a full ElastAlert 2 rule.
+
+
+
+<Callout type="info">
+ The rule stays quiet until roughly **two** full timeframes have passed so a baseline exists, unless `alert_on_new_data` applies with `query_key`.
+</Callout>
+
+## Options
+
+### Fields every rule needs
+
+Regardless of `type`, each ElastAlert 2 rule must include:
+
+- **`name`** — unique identifier for the rule.
+- **`index`** — OpenSearch index pattern (for example `*-*` for stack logs).
+- **`type`** — the rule type; it must match this page.
+- **`filter`** — at least one filter clause so ElastAlert knows which documents to evaluate.
+- **`alert`** — one or more notification types (for example `email`, `slack`) and their configuration.
+
+Common optional keys such as `buffer_time`, `run_every`, `realert`, `is_enabled`, and Discover link fields apply to every type; see the [Full Reference](/log-management/alerting/alert-reference). For the Logit.io editor workflow, see [Create a rule](/log-management/alerting/creating-alerts).
+
+The **Required for this type** and **Optional** subsections below list only the keys specific to **`type: spike`**. Global options—`buffer_time`, `run_every`, `realert`, `is_enabled`, Discover links, and the rest of the YAML surface—are in the [Full Reference](/log-management/alerting/alert-reference). For notification wording and destinations, see [Subject & body](/log-management/alerting/alert-subject-and-body), [Context & links](/log-management/alerting/alert-context-and-links), and [Destinations](/log-management/alerting/destinations).
+
+### Required for this type
+
+- `spike_height` — multiplier between windows.
+- `spike_type` — `up`, `down`, or `both`.
+- `timeframe` — size of each window.
+- Often `threshold_cur` and/or `threshold_ref` — minimum counts so small noise does not alert.
+
+### Optional
+- `query_key`, `alert_on_new_data`, `use_count_query`, `use_terms_query`, `terms_size`, `field_value`, `threshold_cur`, `threshold_ref`.
+
+## Full working example
+
+```yaml copy
+name: Traffic spike example
+type: spike
+index: "*-*"
+timeframe:
+  hours: 1
+spike_height: 3
+spike_type: up
+threshold_cur: 100
+filter:
+  - query:
+      query_string:
+        query: "event.dataset:nginx.access"
+use_count_query: true
+doc_type: _doc
+alert:
+  - "email"
+email:
+  - "alerts@example.com"
+```
+
+## Real-world example: sudden nginx traffic spike to Slack
+
+Marketing campaigns or attacks can **multiply** request volume. Alert when the current hour is several times higher than the previous hour, with a floor so noise stays low.
+
+```yaml copy
+name: Nginx access traffic spike
+type: spike
+index: "*-*"
+timeframe:
+  hours: 1
+spike_height: 4
+spike_type: up
+threshold_cur: 5000
+threshold_ref: 1000
+filter:
+  - query:
+      query_string:
+        query: "event.dataset:nginx.access"
+use_count_query: true
+doc_type: _doc
+alert_text_type: alert_text_only
+alert_text: "Spike: current window {0} vs reference {1}"
+alert_text_args:
+  - spike_count
+  - reference_count
+alert:
+  - "slack"
+slack_webhook_url: "https://hooks.slack.com/services/XXX/YYY/ZZZ"
+```
+
+See [Slack](/log-management/alerting/destinations/slack).

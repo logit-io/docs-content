@@ -1,0 +1,95 @@
+---
+title: Whitelist rule type
+metaTitle: "Whitelist rule — allow-list field values — Logit.io"
+description: "Alert when a value is not in an allow list using ElastAlert 2 type: whitelist on Logit.io, with compare_key and full YAML."
+stackTypes: logs
+---
+
+# Whitelist rule type
+
+The **whitelist** rule is the inverse of blacklist: it fires when `compare_key` is **outside** your approved set of values.
+
+Start with **[Options](#options)** when tuning thresholds and windows—**[Full working example](#full-working-example)** shows a realistic index and query.
+
+
+
+## Options
+
+### Fields every rule needs
+
+Regardless of `type`, each ElastAlert 2 rule must include:
+
+- **`name`** — unique identifier for the rule.
+- **`index`** — OpenSearch index pattern (for example `*-*` for stack logs).
+- **`type`** — the rule type; it must match this page.
+- **`filter`** — at least one filter clause so ElastAlert knows which documents to evaluate.
+- **`alert`** — one or more notification types (for example `email`, `slack`) and their configuration.
+
+Common optional keys such as `buffer_time`, `run_every`, `realert`, `is_enabled`, and Discover link fields apply to every type; see the [Full Reference](/log-management/alerting/alert-reference). For the Logit.io editor workflow, see [Create a rule](/log-management/alerting/creating-alerts).
+
+The **Required for this type** and **Optional** subsections below list only the keys specific to **`type: whitelist`**. Global options—`buffer_time`, `run_every`, `realert`, `is_enabled`, Discover links, and the rest of the YAML surface—are in the [Full Reference](/log-management/alerting/alert-reference). For notification wording and destinations, see [Subject & body](/log-management/alerting/alert-subject-and-body), [Context & links](/log-management/alerting/alert-context-and-links), and [Destinations](/log-management/alerting/destinations).
+
+### Required for this type
+
+- `compare_key` — field to test.
+- `ignore_null` — if `true`, documents missing `compare_key` do not match.
+- `whitelist` — list of allowed values (or `!file` entries where supported).
+
+## Full working example
+
+```yaml copy
+name: Unexpected HTTP method
+type: whitelist
+index: "*-*"
+compare_key: http.request.method
+ignore_null: true
+whitelist:
+  - "GET"
+  - "POST"
+  - "HEAD"
+  - "OPTIONS"
+filter:
+  - query:
+      query_string:
+        query: "event.dataset:nginx.access"
+alert:
+  - "email"
+email:
+  - "alerts@example.com"
+```
+
+## Real-world example: admin API methods with email audit trail
+
+Only **GET** and **POST** should hit your internal admin API. Anything else (PUT, DELETE, unexpected verbs) should generate an audit email with a clear subject.
+
+```yaml copy
+name: Admin API — unexpected HTTP method
+type: whitelist
+index: "*-*"
+compare_key: http.request.method
+ignore_null: true
+whitelist:
+  - "GET"
+  - "POST"
+filter:
+  - query:
+      query_string:
+        query: "url.path:*admin* AND event.dataset:nginx.access"
+generate_opensearch_discover_url: true
+opensearch_discover_app_url: "https://your-dashboards.example/app/data-explorer/discover#/"
+opensearch_discover_index_pattern_id: "REPLACE_WITH_DATA_VIEW_UUID"
+opensearch_discover_version: "2.11"
+alert_subject: "Unexpected {0} on admin API"
+alert_subject_args:
+  - "http.request.method"
+alert_text: "Open in Discover: {0}"
+alert_text_type: alert_text_only
+alert_text_args:
+  - opensearch_discover_url
+alert:
+  - "email"
+email:
+  - "security-ops@example.com"
+```
+
+See [Email](/log-management/alerting/destinations/email) and [Context & links](/log-management/alerting/alert-context-and-links) for Discover URL settings.

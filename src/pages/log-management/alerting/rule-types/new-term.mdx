@@ -1,0 +1,89 @@
+---
+title: New term rule type
+metaTitle: "New term rule — never-seen field values — Logit.io"
+description: "Alert on first-time values in a field using ElastAlert 2 type: new_term on Logit.io: fields, terms window, and YAML."
+stackTypes: logs
+---
+
+# New term rule type
+
+The **new_term** rule learns baseline values over a scan window, then alerts when a new value appears in `fields`—watch user agents, IDs, or hosts.
+
+Use **[Options](#options)** for field-by-key reference, then **[Full working example](#full-working-example)** for copy-paste YAML including `filter` and `alert`.
+
+
+
+<Callout type="info">
+ Prefer **keyword** style fields for accurate term tracking; analysed text fields can produce token-level “new terms”.
+</Callout>
+
+## Options
+
+### Fields every rule needs
+
+Regardless of `type`, each ElastAlert 2 rule must include:
+
+- **`name`** — unique identifier for the rule.
+- **`index`** — OpenSearch index pattern (for example `*-*` for stack logs).
+- **`type`** — the rule type; it must match this page.
+- **`filter`** — at least one filter clause so ElastAlert knows which documents to evaluate.
+- **`alert`** — one or more notification types (for example `email`, `slack`) and their configuration.
+
+Common optional keys such as `buffer_time`, `run_every`, `realert`, `is_enabled`, and Discover link fields apply to every type; see the [Full Reference](/log-management/alerting/alert-reference). For the Logit.io editor workflow, see [Create a rule](/log-management/alerting/creating-alerts).
+
+The **Required for this type** and **Optional** subsections below list only the keys specific to **`type: new_term`**. Global options—`buffer_time`, `run_every`, `realert`, `is_enabled`, Discover links, and the rest of the YAML surface—are in the [Full Reference](/log-management/alerting/alert-reference). For notification wording and destinations, see [Subject & body](/log-management/alerting/alert-subject-and-body), [Context & links](/log-management/alerting/alert-context-and-links), and [Destinations](/log-management/alerting/destinations).
+
+### Required for this type
+
+- `fields` — one or more field names to watch (or rely on `query_key` per upstream behaviour when configured).
+
+### Optional
+- `terms_window_size`, `window_step_size`, `alert_on_missing_field`, `use_terms_query`, `use_keyword_postfix`.
+
+## Full working example
+
+```yaml copy
+name: New user agent example
+type: new_term
+index: "*-*"
+fields:
+  - "user_agent.original"
+filter:
+  - query:
+      query_string:
+        query: "event.dataset:nginx.access"
+terms_window_size:
+  days: 7
+alert:
+  - "email"
+email:
+  - "alerts@example.com"
+```
+
+## Real-world example: new user agent in web logs (Microsoft Teams)
+
+You want a heads-up when a **user agent string never seen before** appears in nginx access logs (possible bot, scanner, or new client build).
+
+```yaml copy
+name: New user agent on public web
+type: new_term
+index: "*-*"
+fields:
+  - "user_agent.original"
+filter:
+  - query:
+      query_string:
+        query: "event.dataset:nginx.access"
+terms_window_size:
+  days: 14
+alert_text_type: alert_text_jinja
+alert_subject: "New user agent observed"
+alert_text: |
+  UA: {{ user_agent.original }}
+  Client IP: {{ source.ip }}
+alert:
+  - "ms_teams"
+ms_teams_webhook_url: "https://outlook.office.com/webhook/..."
+```
+
+See [Microsoft Teams](/log-management/alerting/destinations/ms-teams). Prefer **keyword**-friendly fields where your mapping splits analysed text.

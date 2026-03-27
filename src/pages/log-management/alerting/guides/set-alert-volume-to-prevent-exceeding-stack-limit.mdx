@@ -1,0 +1,63 @@
+---
+title: Alert For Log Volume To Stop Exceeding Stack Limit
+description: Set up a Logit.io ElastAlert rule to warn when log volume nears your stack limit—frequency rule example with Slack.
+stackTypes: logs
+---
+
+# How to set an alert for log volume to stop you from exceeding your stack limit
+
+Monitoring log volume helps you avoid breaching stack limits. Logit.io can notify you when volume crosses a threshold, alongside platform emails about usage.
+
+This guide uses an ElastAlert **frequency** rule with a **count query** so you are alerted when event counts in a time window exceed a value you choose. Adjust thresholds and index patterns for your stacks.
+
+## Examples
+
+### Log volume threshold (frequency + Slack)
+
+The rule below counts documents in `index` over `timeframe` and sends Slack when the count reaches `num_events`. Tune `num_events` and `timeframe` to match expected traffic and headroom before your limit.
+
+```yaml copy
+name: ingress-log-volume-watch
+index: "*-*"
+type: frequency
+num_events: 5000000
+timeframe:
+  hours: 1
+use_count_query: true
+doc_type: _doc
+filter:
+  - query:
+      query_string:
+        query: "*"
+alert:
+  - slack
+slack_webhook_url: "https://hooks.slack.com/services/YOUR/WEBHOOK/PATH"
+realert:
+  minutes: 5
+```
+
+**Fields in this example**
+
+- **`name`** — Unique rule name in your project.
+- **`index`** — Index pattern to count (for example `*-*` or `logstash-*`).
+- **`type`** — `frequency` counts matching documents in the window.
+- **`num_events`** — Count at or above which the rule fires (change for your baseline).
+- **`timeframe`** — Rolling window for the count (here, one hour).
+- **`use_count_query`** — Use the count API instead of fetching hits (recommended at high volume).
+- **`doc_type`** — Use `_doc` with `use_count_query` when your cluster expects it; remove if your ElastAlert version and mappings no longer require it.
+- **`filter`** — Narrows what is counted; `*` matches all documents in the index pattern (tighten for specific sources if needed).
+- **`alert`** — Destination list; `slack` is the ElastAlert 2 Slack alerter.
+- **`slack_webhook_url`** — Incoming webhook URL from Slack.
+- **`realert`** — Minimum time between alerts while the condition stays true.
+
+## Apply the rule
+
+Save the YAML in the Logit.io alerting rule editor and enable the rule so the scheduler evaluates it on your `run_every` / `buffer_time` settings.
+
+## Test and adjust
+
+Use **Test only** (or your stack’s equivalent) to validate the query and counts, then change `num_events` or `timeframe` if you get false positives or need earlier warning.
+
+## Monitor
+
+When the threshold is hit, check Slack and the alerting UI so you can scale ingestion, retention, or the stack before you hit a hard limit.

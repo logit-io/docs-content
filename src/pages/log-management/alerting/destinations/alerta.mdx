@@ -1,0 +1,96 @@
+---
+title: Alerta
+metaTitle: "Alerta API alerts from log rules — Logit.io"
+description: "Send OpenSearch log matches to Alerta’s HTTP API with ElastAlert 2 on Logit.io: alerta, attributes, severity, and a full YAML example."
+stackTypes: logs
+---
+
+# Alerta
+
+Route firing rules into **Alerta** so operators see a single console for correlated incidents. Add `alerta` under `alert:` and point `alerta_api_url` at your Alerta deployment.
+
+**[Options](#options)** covers each YAML field—required first—with snippets under some keys. **[Full working example](#full-working-example)** at the bottom is a complete rule for the Logit.io alert editor.
+
+## Options
+
+Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_subject` apply as described in [Subject & body](/log-management/alerting/alert-subject-and-body). **Example fragments** from the ElastAlert 2 reference appear indented under the option they illustrate (add your own `name`, `type`, `index`, and `filter` to make a full rule).
+
+### Required
+
+- `alerta_api_url` — API server URL.
+
+ **Example usage using old-style format**
+
+ ```yaml copy
+  alert:
+    - alerta
+  alerta_api_url: "http://youralertahost/api/alert"
+  alerta_attributes_keys:   ["hostname",   "TimestampEvent",  "senderIP" ]
+  alerta_attributes_values: ["%(key)s",    "%(logdate)s",     "%(sender_ip)s"  ]
+  alerta_correlate: ["ProbeUP","ProbeDOWN"]
+  alerta_event: "ProbeUP"
+  alerta_text:  "Probe %(hostname)s is UP at %(logdate)s GMT"
+  alerta_value: "UP"
+  ```
+
+### Optional
+
+- `alerta_api_key` — This is the api key for alerta server, sent in an `Authorization` HTTP header. If not defined, no Authorization header is sent.
+
+- `alerta_use_qk_as_resource` — If true and query_key is present, this will override `alerta_resource` field with the `query_key value` (Can be useful if `query_key` is a hostname).
+
+- `alerta_use_match_timestamp` — If true, it will use the timestamp of the first match as the `createTime` of the alert. otherwise, the current server time is used.
+
+- `alerta_api_skip_ssl` — Defaults to False.
+
+- `alert_missing_value` — Text to replace any match field not found when formating strings. Defaults to `<MISSING_TEXT>`. The following options dictate the values of the API JSON payload:
+
+- `alerta_severity` — Defaults to "warning".
+
+- `alerta_timeout` — Defaults 86400 (1 Day).
+
+- `alerta_type` — Defaults to "elastalert". The following options use Python-like string syntax `{<field>}` or `%(<field>)s` to access parts of the match, similar to the CommandAlerter. For example: `Alert for {clientip}`. If the referenced key is not found in the match, it is replaced by the text indicated by the option `alert_missing_value`.
+
+- `alerta_resource` — Defaults to "elastalert".
+
+- `alerta_service` — Defaults to "elastalert".
+
+- `alerta_origin` — Defaults to "elastalert".
+
+- `alerta_environment` — Defaults to "Production".
+
+- `alerta_group` — Defaults to "".
+
+- `alerta_correlate` — Defaults to an empty list.
+
+- `alerta_tags` — Defaults to an empty list.
+
+- `alerta_event` — Defaults to the rule's name.
+
+- `alerta_text` — Defaults to the rule's text according to its type.
+
+ **Example usage using new-style format**
+
+ ```yaml copy
+  alert:
+    - alerta
+  alerta_attributes_values: ["{key}",    "{logdate}",     "{sender_ip}"  ]
+  alerta_text:  "Probe {hostname} is UP at {logdate} GMT"
+  ```
+
+- `alerta_value` — Defaults to "". The `attributes` dictionary is built by joining the lists from `alerta_attributes_keys` and `alerta_attributes_values`, considered in order.
+
+## Full working example
+
+```yaml copy
+name: Example alert for Alerta
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "alerta"
+alerta_api_url: "https://your-alerta.example/api/alert"
+```

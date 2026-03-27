@@ -1,0 +1,91 @@
+---
+title: Cardinality rule type
+metaTitle: "Cardinality rule — distinct value counts — Logit.io"
+description: "Alert on too many or too few unique values with ElastAlert 2 type: cardinality on Logit.io: cardinality_field, max/min, query_key."
+stackTypes: logs
+---
+
+# Cardinality rule type
+
+The **cardinality** rule tracks how many distinct values `cardinality_field` has in `timeframe`—strong signal for credential stuffing or enumeration.
+
+Skim **[Options](#options)** for required vs optional fields, then open **[Full working example](#full-working-example)** for a complete `type: cardinality` example.
+
+
+
+<Callout type="info">
+ Use **Test only** to confirm your field is populated on recent documents.
+</Callout>
+
+## Options
+
+### Fields every rule needs
+
+Regardless of `type`, each ElastAlert 2 rule must include:
+
+- **`name`** — unique identifier for the rule.
+- **`index`** — OpenSearch index pattern (for example `*-*` for stack logs).
+- **`type`** — the rule type; it must match this page.
+- **`filter`** — at least one filter clause so ElastAlert knows which documents to evaluate.
+- **`alert`** — one or more notification types (for example `email`, `slack`) and their configuration.
+
+Common optional keys such as `buffer_time`, `run_every`, `realert`, `is_enabled`, and Discover link fields apply to every type; see the [Full Reference](/log-management/alerting/alert-reference). For the Logit.io editor workflow, see [Create a rule](/log-management/alerting/creating-alerts).
+
+The **Required for this type** and **Optional** subsections below list only the keys specific to **`type: cardinality`**. Global options—`buffer_time`, `run_every`, `realert`, `is_enabled`, Discover links, and the rest of the YAML surface—are in the [Full Reference](/log-management/alerting/alert-reference). For notification wording and destinations, see [Subject & body](/log-management/alerting/alert-subject-and-body), [Context & links](/log-management/alerting/alert-context-and-links), and [Destinations](/log-management/alerting/destinations).
+
+### Required for this type
+
+- `timeframe`
+- `cardinality_field`
+- At least one of `max_cardinality` or `min_cardinality`
+
+### Optional
+- `query_key` — compute cardinality separately per bucket.
+
+## Full working example
+
+```yaml copy
+name: Too many unique IPs
+type: cardinality
+index: "*-*"
+timeframe:
+  hours: 1
+cardinality_field: source.ip
+max_cardinality: 5000
+filter:
+  - query:
+      query_string:
+        query: "event.category:network"
+alert:
+  - "email"
+email:
+  - "alerts@example.com"
+```
+
+## Real-world example: possible credential stuffing (many IPs, one user)
+
+A spike in **distinct source IPs** authenticating against the same account can indicate automated attacks. Use `query_key` to scope cardinality **per user**.
+
+```yaml copy
+name: Many IPs per user in auth logs
+type: cardinality
+index: "*-*"
+timeframe:
+  minutes: 30
+cardinality_field: "source.ip"
+max_cardinality: 25
+query_key: user.name
+filter:
+  - query:
+      query_string:
+        query: "event.category:authentication AND event.outcome:failure"
+alert_text_type: alert_text_jinja
+alert_text: |
+  User: {{ user.name }}
+  Distinct `source.ip` count exceeded **25** in 30 minutes (credential-stuffing style pattern).
+alert:
+  - "slack"
+slack_webhook_url: "https://hooks.slack.com/services/XXX/YYY/ZZZ"
+```
+
+The alert body uses Jinja and fields from the triggering event. See [Slack](/log-management/alerting/destinations/slack) and [Subject & body](/log-management/alerting/alert-subject-and-body).

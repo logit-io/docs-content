@@ -1,0 +1,110 @@
+---
+title: TheHive
+metaTitle: "TheHive case alerts — Logit.io"
+description: "Create TheHive alerts or cases from log matches via ElastAlert 2 on Logit.io: hivealerter, API URL, templates, and YAML."
+stackTypes: logs
+---
+
+# TheHive
+
+Turn suspicious log patterns into **TheHive** observables and cases for your SOC. Configure `hivealerter` with API keys, instance URL, and case templates. Add `hivealerter` under `alert:` on your rule (you can combine destinations).
+
+**[Options](#options)** covers each YAML field—required first—with snippets under some keys. **[Full working example](#full-working-example)** at the bottom is a complete rule for the Logit.io alert editor.
+
+## Options
+
+Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_subject` apply as described in [Subject & body](/log-management/alerting/alert-subject-and-body). **Example fragments** from the ElastAlert 2 reference appear indented under the option they illustrate (add your own `name`, `type`, `index`, and `filter` to make a full rule).
+
+### Required
+
+- `hive_connection` — The connection details to your instance (see example below for the required syntax). Only `hive_apikey` is required, `hive_host` and `hive_port` default to `` and `9000` respectively.
+
+ **Example usage**
+
+ ```yaml copy
+  alert: hivealerter
+  
+  hive_connection:
+    hive_host: http://localhost
+    hive_port: <hive_port>
+    hive_apikey: <hive_apikey>
+    hive_proxies:
+      http: ''
+      https: ''
+  
+  hive_alert_config:
+    customFields:
+      - name: example
+        type: string
+        value: example
+    follow: True
+    severity: 2
+    status: 'New'
+    source: 'src-{}'
+    source_args: [ data.source ]
+    description_args: [ name, description]
+    description: '{0} : {1}'
+    tags: ['tag1', 'tag2']
+    title: 'Title {}'
+    title_args: [ data.title ]
+    tlp: 3
+    type: 'type-{}'
+    type_args: [ data.type ]
+  
+  hive_observable_data_mapping:
+    - domain: agent.hostname
+      tlp: 1
+      tags: ['tag1', 'tag2']
+      message: 'agent hostname'
+    - domain: response.domain
+      tlp: 2
+      tags: ['tag3']
+    - ip: client.ip
+  ```
+
+- `hive_alert_config` — Configuration options for the alert, see example below for structure.
+
+- `source` — Text content to use for TheHive event's "source" field. See the optional `source_args` parameter for dynamically formatting this content with dynamic lookup values. `type` Text content to use for TheHive event's "type" field. See the optional `type_args` parameter for dynamically formatting this content with dynamic lookup values.
+
+### Optional
+
+- `hive_observable_data_mapping` — If needed, matched data fields can be mapped to TheHive observable types using the same syntax as `customFields`, described above. The algorithm used to populate the observable value is similar to the one used to populate the `tags`, including the behaviour for aggregated alerts. The tlp, message, and tags fields are optional for each observable. If not specified, the tlp field is given a default value of 2.
+
+- `hive_proxies` — Proxy configuration.
+
+- `hive_verify` — Whether or not to enable SSL certificate validation. Defaults to False.
+
+- `description_args` — can be used to format the description field with additional rule and match field lookups. Note that the description will be initially populated from the ElastAlert 2 default `alert_text` fields, including any defined `alert_text_args`. See the "Alert Content" section for more information on the default formatting.
+
+- `description_missing_value` — Text to replace any match field not found when formatting the `description`. Defaults to `<MISSING VALUE>`.
+
+- `source_args` — List of parameters to format into the `source` text content, with values originating from the first match event.
+
+- `title` — Text content to use for TheHive event's "title" field. This will override the default alert title generated from the `alert_subject` and associated arg parameters. See the "Alert Subject" section for more information on the default formatting.
+
+- `title_args` — List of additional args to format against the "title" content. If the title argument is not provided then these optional arguments will be formatted against the already formatted title generated from the `alert_subject` and related parameters. This means that a two-phased formatting potentially could be utilized in very specific configuration scenarios. See the "Alert Subject" section for more information on the default formatting. The values will be used from the first match event.
+
+- `type_args` — List of parameters to format into the `type` text content, with values originating from the first match event.
+
+## Full working example
+
+```yaml copy
+name: Example alert for TheHive
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "hivealerter"
+hive_connection:
+  hive_host: https://hive.example
+  hive_port: 9000
+  hive_apikey: "REPLACE"
+hive_alert_config:
+  source: elastalert
+  type: log
+  severity: 2
+  tlp: 2
+```

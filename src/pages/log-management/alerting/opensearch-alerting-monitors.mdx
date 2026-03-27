@@ -1,0 +1,93 @@
+---
+title: OpenSearch Alerting monitors
+metaTitle: OpenSearch Alerting — monitors and notifications in Dashboards — Logit.io
+description: Use the OpenSearch Alerting plugin in Launch Logs to build per-query monitors, triggers, and notification channels such as Slack or email.
+stackTypes: logs
+pagination: false
+timestamp: false
+---
+
+# OpenSearch Alerting monitors
+
+Log Management stacks can use **two** alerting paths:
+
+- **ElastAlert 2 rules (YAML)** — configured under **Alerting & Notifications** in the Logit.io dashboard. This is the primary, YAML-based workflow described in [Create a rule](/log-management/alerting/creating-alerts) and [Rule types](/log-management/alerting/rule-types).
+- **OpenSearch Alerting** — monitors created inside **Launch Logs** (OpenSearch Dashboards). This guide covers that UI workflow.
+
+<Callout type="info">
+ For YAML rules, OpenSearch Dashboards links, aggregation, and ElastAlert-specific behaviour, start with the [Alerting overview](/log-management/alerting/overview).
+</Callout>
+
+## Prerequisites
+
+You need a Logit.io account. You can sign up for a free trial. If your Logs stack is not yet receiving data, complete your ingestion setup first.
+
+## Step 1 — Create a monitor
+
+1. Sign in to Logit.io.
+2. From your dashboard choose **Launch Logs** to open OpenSearch Dashboards.
+3. In the left menu, open **Alerting** under OpenSearch Plugins.
+4. Choose **Create monitor**.
+
+![Create Monitor](@/images/help/getting-started/create-monitor.png)
+
+### Monitor details
+
+1. **Monitor name** — use a clear name.
+2. **Monitor type** — choose **Per query monitor** to track a search query.
+3. **Defining method** — **Visual editor** is the simplest starting point.
+4. **Schedule** — set **Run every** (for example, every 5 minutes).
+
+## Step 2 — Data source
+
+1. **Index** — enter the index or pattern that holds your data (for example `filebeat-*`).
+2. **Time field** — usually `@timestamp`.
+
+![Data Source](@/images/help/getting-started/data-source.png)
+
+<Callout type="info">
+ To confirm which index pattern to use, open a document in Discover and check the `_index` field.
+</Callout>
+
+![Index Field](@/images/help/getting-started/index-field.png)
+
+## Step 3 — Query / filter
+
+1. In the **Query** section, add filters that define which documents should be evaluated (for example, a value in the `message` field).
+2. Expand the preview to confirm matches look correct.
+
+![Query](@/images/help/getting-started/query.png)
+
+![Count of Documents](@/images/help/getting-started/count-documents.png)
+
+## Step 4 — Trigger
+
+1. Add a **trigger** with a name and condition (for example, count **IS ABOVE 0** for a simple “any match” test).
+
+![Trigger Action](@/images/help/getting-started/trigger-action.png)
+
+## Step 5 — Notification action
+
+1. Choose **Add action**.
+2. Open **Manage Channels** to configure Slack, email, custom webhooks, or other channel types, then select the channel for this action.
+3. Use **Send test message** to verify delivery.
+
+![Configure Notification](@/images/help/getting-started/configure-notification.png)
+
+![Webhook](@/images/help/getting-started/webhook.png)
+
+Choose **Create** to save the monitor, trigger, and actions.
+
+## Monitor and troubleshoot
+
+Use the monitor dashboard to review execution history and open alerts.
+
+![Monitor Logs](@/images/help/getting-started/monitor-logs.png)
+
+Alerts appear on the timeline when they fire.
+
+![Alerts History](@/images/help/getting-started/alerts-history.png)
+
+The **Alerts** tab lists active alerts.
+
+![Alert Triggers](@/images/help/getting-started/alert-triggers.png)

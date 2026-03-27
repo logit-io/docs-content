@@ -1,0 +1,138 @@
+---
+title: Jira
+metaTitle: "Jira issues from log alerts — Logit.io"
+description: "Open Jira tickets automatically from ElastAlert 2 on Logit.io: jira, projects, issue types, custom fields, and YAML."
+stackTypes: logs
+---
+
+# Jira
+
+Create or update **Jira** work items when log rules fire so engineering tracks remediation in your existing backlog. Use `jira` with project, issue type, and authentication options. Add `jira` under `alert:` on your rule (you can combine destinations).
+
+Skim **[Options](#options)** for required vs optional keys, then open **[Full working example](#full-working-example)** for runnable YAML including `index` and `filter`.
+
+## Options
+
+Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_subject` apply as described in [Subject & body](/log-management/alerting/alert-subject-and-body). **Example fragments** from the ElastAlert 2 reference appear indented under the option they illustrate (add your own `name`, `type`, `index`, and `filter` to make a full rule).
+
+### Required
+
+- `jira_server` — The hostname of the Jira server.
+
+ **Example usage**
+
+ ```yaml copy
+  jira_server: "https://example.atlassian.net/"
+  jira_project: "XXX"
+  jira_assignee: user@example.com
+  jira_issuetype: "Sub-task"
+  jira_parent: "XXX-3164"
+  ```
+
+- `jira_project` — The project to open the ticket under.
+
+- `jira_issuetype` — The type of issue that the ticket will be filed as. Note that this is case sensitive.
+
+- `jira_account_file` — The path to the file which contains Jira account credentials. The ElastAlert 2 distribution includes a sample account file (`jira_acct.yaml` under `examples/rules/`). Your account file is YAML formatted. For Jira Cloud or username/password auth the file normally contains `user` and `password` (use the Jira Cloud API token as `password`). For self-hosted Jira with a PAT, use `apikey` only.
+
+### Optional
+
+- `jira_parent` — Specify an existing ticket that will be used as a parent to create a new subtask in it
+
+- `jira_assignee` — Assigns an issue to a user.
+
+- `jira_component` — The name of the component or components to set the ticket to. This can be a single string or a list of strings. This is provided for backwards compatibility and will eventually be deprecated. It is preferable to use the plural `jira_components` instead.
+
+- `jira_components` — The name of the component or components to set the ticket to. This can be a single string or a list of strings.
+
+- `jira_description` — Similar to `alert_text`, this text is prepended to the Jira description.
+
+- `jira_label` — The label or labels to add to the Jira ticket. This can be a single string or a list of strings. This is provided for backwards compatibility and will eventually be deprecated. It is preferable to use the plural `jira_labels` instead.
+
+- `jira_labels` — The label or labels to add to the Jira ticket. This can be a single string or a list of strings.
+
+- `jira_priority` — The index of the priority to set the issue to. In the Jira dropdown for priorities, 0 would represent the first priority, 1 the 2nd, etc.
+
+- `jira_watchers` — A list of user names to add as watchers on a Jira ticket. This can be a single string or a list of strings.
+
+- `jira_bump_tickets` — If true, ElastAlert 2 search for existing tickets newer than `jira_max_age` and comment on the ticket with information about the alert instead of opening another ticket. ElastAlert 2 finds the existing ticket by searching by summary. If the summary has changed or contains special characters, it may fail to find the ticket. If you are using a custom `alert_subject`, the two summaries must be exact matches, except by setting `jira_ignore_in_title`, you can ignore the value of a field when searching. For example, if the custom subject is "foo occured at bar", and "foo" is the value field X in the match, you can set `jira_ignore_in_title` to "X" and it will only bump tickets with "bar" in the subject. Defaults to false.
+
+- `jira_ignore_in_title` — ElastAlert 2 will attempt to remove the value for this field from the Jira subject when searching for tickets to bump. See `jira_bump_tickets` description above for an example.
+
+- `jira_max_age` — If `jira_bump_tickets` is true, the maximum age of a ticket, in days, such that ElastAlert 2 will comment on the ticket instead of opening a new one. Default is 30 days.
+
+- `jira_bump_not_in_statuses` — If `jira_bump_tickets` is true, a list of statuses the ticket must **not** be in for ElastAlert 2 to comment on the ticket instead of opening a new one. For example, to prevent comments being added to resolved or closed tickets, set this to 'Resolved' and 'Closed'. This option should not be set if the `jira_bump_in_statuses` option is set.
+
+ **Example usage (2)**
+
+ ```yaml copy
+  jira_bump_not_in_statuses:
+    - Resolved
+    - Closed
+  ```
+
+- `jira_bump_in_statuses` — If `jira_bump_tickets` is true, a list of statuses the ticket *must be in* for ElastAlert 2 to comment on the ticket instead of opening a new one. For example, to only comment on 'Open' tickets -- and thus not 'In Progress', 'Analyzing', 'Resolved', etc. tickets -- set this to 'Open'. This option should not be set if the `jira_bump_not_in_statuses` option is set.
+
+ **Example usage (3)**
+
+ ```yaml copy
+  jira_bump_in_statuses:
+    - Open
+  ```
+
+- `jira_bump_only` — Only update if a ticket is found to bump. This skips ticket creation for rules where you only want to affect existing tickets.
+
+ **Example usage (4)**
+
+ ```yaml copy
+  jira_bump_only: true
+  ```
+
+- `jira_transition_to` — If `jira_bump_tickets` is true, Transition this ticket to the given Status when bumping. Must match the text of your Jira implementation's Status field.
+
+ **Example usage (5)**
+
+ ```yaml copy
+  jira_transition_to: 'Fixed'
+  ```
+
+- `jira_bump_after_inactivity` — If this is set, ElastAlert 2 will only comment on tickets that have been inactive for at least this many days. It only applies if `jira_bump_tickets` is true. Default is 0 days.
+
+ **Example**
+
+ ```yaml copy
+  jira_user: "#username"
+  ```
+
+ **Example usage (6)**
+
+ ```yaml copy
+  jira_arbitrary_singular_field: My Name
+  jira_arbitrary_multivalue_field:
+    - Name 1
+    - Name 2
+  jira_customfield_12345: My Custom Value
+  jira_customfield_9999:
+    - My Custom Value 1
+    - My Custom Value 2
+  ```
+
+You can also set arbitrary Jira fields using rule keys `jira_<field_name>` (snake_case), or map a match field into a custom field with `#fieldname` syntax (see the [Full Reference](/log-management/alerting/alert-reference)).
+
+## Full working example
+
+```yaml copy
+name: Example alert for Jira
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "jira"
+jira_server: "https://your-domain.atlassian.net/"
+jira_project: "PROJ"
+jira_issuetype: "Task"
+jira_account_file: "/path/to/jira_acct.yaml"
+```

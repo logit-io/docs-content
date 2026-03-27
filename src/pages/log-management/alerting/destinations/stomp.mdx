@@ -1,0 +1,61 @@
+---
+title: STOMP
+metaTitle: "STOMP message broker alerts — Logit.io"
+description: "Publish matches to a STOMP broker from ElastAlert 2 on Logit.io: stomp, host, login, destination, SSL, and YAML."
+stackTypes: logs
+---
+
+# STOMP
+
+Integrate with brokers that speak **STOMP** (for example ActiveMQ-style setups). Add `stomp` with connection parameters and the queue or topic destination. Add `stomp` under `alert:` on your rule (you can combine destinations).
+
+Field reference lives under **[Options](#options)**; **[Full working example](#full-working-example)** at the end shows full YAML (`name`, `type`, `index`, `filter`, and this destination).
+
+## Options
+
+Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_subject` apply as described in [Subject & body](/log-management/alerting/alert-subject-and-body). **Example fragments** from the ElastAlert 2 reference appear indented under the option they illustrate (add your own `name`, `type`, `index`, and `filter` to make a full rule).
+
+### Required
+
+- `stomp_hostname` — The STOMP host to use, defaults to `localhost`.
+
+ **Example usage**
+
+ ```yaml copy
+  alert:
+    - "stomp"
+  stomp_hostname: "localhost"
+  stomp_hostport: "61613"
+  stomp_login: "admin"
+  stomp_password: "admin"
+  stomp_destination: "/queue/ALERT"
+  ```
+
+- `stomp_hostport` — The STOMP port to use, defaults to `61613`.
+
+- `stomp_login` — The STOMP login to use, defaults to `admin`.
+
+- `stomp_password` — The STOMP password to use, defaults to `admin`.
+
+### Optional
+
+- `stomp_destination` — The STOMP destination to use, defaults to `/queue/ALERT` The stomp_destination field depends on the broker, the /queue/ALERT example is the nomenclature used by ActiveMQ. Each broker has its own logic.
+
+## Full working example
+
+```yaml copy
+name: Example alert for STOMP
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "stomp"
+stomp_hostname: "localhost"
+stomp_hostport: 61613
+stomp_login: "admin"
+stomp_password: "admin"
+stomp_destination: "/queue/ALERT"
+```

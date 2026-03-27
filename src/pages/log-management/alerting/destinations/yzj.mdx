@@ -1,0 +1,53 @@
+---
+title: YZJ
+metaTitle: "YZJ enterprise notifications — Logit.io"
+description: "Integrate YZJ messaging from ElastAlert 2 on Logit.io: yzj, app credentials, user lists, and YAML options."
+stackTypes: logs
+---
+
+# YZJ
+
+Deliver alerts through your **YZJ** deployment using the documented YAML keys. Add `yzj` under `alert:` and supply the app and user parameters your tenant requires.
+
+Use **[Options](#options)** for key-by-key reference, then **[Full working example](#full-working-example)** for copy-paste YAML you can tailor to your stack.
+
+## Options
+
+Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_subject` apply as described in [Subject & body](/log-management/alerting/alert-subject-and-body). **Example fragments** from the ElastAlert 2 reference appear indented under the option they illustrate (add your own `name`, `type`, `index`, and `filter` to make a full rule).
+
+### Required
+
+- `yzj_token` — The request token.
+
+ **Example usage**
+
+ ```yaml copy
+  alert:
+  - "yzj"
+  yzj_token: "token"
+  ```
+
+### Optional
+
+- `yzj_webhook_url` — The webhook URL.
+
+- `yzj_type` — Default 0, send text message.
+
+- `yzj_proxy` — By default ElastAlert 2 will not use a network proxy to send notifications to YZJ. Set this option using `hostname:port` if you need to use a proxy. only supports https.
+
+- `yzj_custom_loc` — The YZJ custom net location, include domain name and port, like: www.xxxx.com:80.
+
+## Full working example
+
+```yaml copy
+name: Example alert for YZJ
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "yzj"
+yzj_token: "REPLACE"
+```

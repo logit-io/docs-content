@@ -1,0 +1,98 @@
+---
+title: Frequency rule type
+metaTitle: "Frequency rule — N events in a window — Logit.io"
+description: "Alert when at least num_events occur in timeframe using ElastAlert 2 type: frequency on Logit.io, with count queries and examples."
+stackTypes: logs
+---
+
+# Frequency rule type
+
+The **frequency** rule counts documents in a sliding window and fires when the total reaches `num_events`—optionally per `query_key` bucket.
+
+Start with **[Options](#options)** when tuning thresholds and windows—**[Full working example](#full-working-example)** shows a realistic index and query.
+
+
+
+## Options
+
+### Fields every rule needs
+
+Regardless of `type`, each ElastAlert 2 rule must include:
+
+- **`name`** — unique identifier for the rule.
+- **`index`** — OpenSearch index pattern (for example `*-*` for stack logs).
+- **`type`** — the rule type; it must match this page.
+- **`filter`** — at least one filter clause so ElastAlert knows which documents to evaluate.
+- **`alert`** — one or more notification types (for example `email`, `slack`) and their configuration.
+
+Common optional keys such as `buffer_time`, `run_every`, `realert`, `is_enabled`, and Discover link fields apply to every type; see the [Full Reference](/log-management/alerting/alert-reference). For the Logit.io editor workflow, see [Create a rule](/log-management/alerting/creating-alerts).
+
+The **Required for this type** and **Optional** subsections below list only the keys specific to **`type: frequency`**. Global options—`buffer_time`, `run_every`, `realert`, `is_enabled`, Discover links, and the rest of the YAML surface—are in the [Full Reference](/log-management/alerting/alert-reference). For notification wording and destinations, see [Subject & body](/log-management/alerting/alert-subject-and-body), [Context & links](/log-management/alerting/alert-context-and-links), and [Destinations](/log-management/alerting/destinations).
+
+### Required for this type
+
+- `num_events` — inclusive threshold.
+- `timeframe` — window in which the count must be reached.
+
+### Optional
+- `query_key` — count per distinct value.
+- `use_count_query` / `use_terms_query` / `terms_size` — performance and cardinality behaviour. At very high volumes, set `use_count_query: true` so ElastAlert uses the count API instead of fetching hits.
+- `attach_related` — include related events on the match.
+
+## Full working example
+
+```yaml copy
+name: Burst of errors
+type: frequency
+index: "*-*"
+num_events: 50
+timeframe:
+  minutes: 10
+filter:
+  - query:
+      query_string:
+        query: "log.level:error OR level:error"
+use_count_query: true
+doc_type: _doc
+alert:
+  - "email"
+email:
+  - "alerts@example.com"
+```
+
+## Real-world example: brute-force pattern to a SOAR webhook
+
+Many **failed logins for the same user** in a few minutes should hit your automation platform via **`post`**, not only email.
+
+```yaml copy
+name: Brute-force style login failures
+type: frequency
+index: "*-*"
+num_events: 30
+timeframe:
+  minutes: 5
+query_key: user.name
+use_count_query: true
+doc_type: _doc
+filter:
+  - query:
+      query_string:
+        query: "event.category:authentication AND event.outcome:failure"
+alert_subject: "Login failures for {0}"
+alert_subject_args:
+  - user.name
+alert:
+  - "post"
+http_post_url: "https://your-soar.example/api/v1/elastalert"
+http_post_static_payload:
+  source: logit
+  playbook: brute_force_response
+http_post_payload:
+  user: user.name
+  client_ip: "source.ip"
+  failure_count: num_hits
+http_post_headers:
+  Content-Type: application/json
+```
+
+See [Webhook (HTTP POST)](/log-management/alerting/destinations/post).

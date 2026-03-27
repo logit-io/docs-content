@@ -1,0 +1,142 @@
+---
+title: Microsoft Power Automate
+metaTitle: "Power Automate HTTP triggers — Logit.io"
+description: "Trigger Microsoft Power Automate flows from log alerts via ElastAlert 2 on Logit.io: ms_power_automate, HTTP POST, and YAML."
+stackTypes: logs
+---
+
+# Microsoft Power Automate
+
+Kick off low-code automation when OpenSearch rules fire by POSTing to a **Power Automate** HTTP trigger. Configure `ms_power_automate` with the generated request URL and payload options. Add `ms_power_automate` under `alert:` on your rule (you can combine destinations).
+
+Use **[Options](#options)** for key-by-key reference, then **[Full working example](#full-working-example)** for copy-paste YAML you can tailor to your stack.
+
+## Options
+
+Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_subject` apply as described in [Subject & body](/log-management/alerting/alert-subject-and-body). **Example fragments** from the ElastAlert 2 reference appear indented under the option they illustrate (add your own `name`, `type`, `index`, and `filter` to make a full rule).
+
+### Required
+
+- `ms_power_automate_webhook_url` — The webhook URL provided in Power Automate, doc Microsoft. After creating the flow select your Teams channel under "Send each adaptive card". You can use a list of URLs to send to multiple channels.
+
+- `ms_power_automate_webhook_url_from_field` — Use a field from the document that triggered the alert as the webhook. If the field cannot be found, the `ms_power_automate_webhook_url` value will be used as a default.
+
+### Optional
+
+- `ms_power_automate_summary_text_size` — By default, is set to the value `large`. This field supports the values, default, small, medium and extraLarge.
+
+- `ms_power_automate_body_text_size` — By default, this field is not set, and has the default behavior in MS Power Automate. This field supports the values, default, small, medium, large and extraLarge.
+
+- `ms_power_automate_alert_summary` — Microsoft Power Automate use this value for notification title, defaults to alert_subject. You can set this value with arbitrary text if you don't want to use the default.
+
+- `ms_power_automate_proxy` — By default ElastAlert 2 will not use a network proxy to send notifications to MS Teams. Set this option using `hostname:port` if you need to use a proxy. only supports https.
+
+- `ms_power_automate_teams_card_width_full` — By default, this is `False` and the notification will be sent to MS Teams without rendering full width in Microsoft Teams. Setting this attribute to `True` will render the alert in full width. doc feature.
+
+- `ms_power_automate_alert_facts` — You can add additional facts to your MS Teams alerts using this field. Specify the title using `name` and a value for the field or arbitrary text using `value`.
+
+ **Example ms_power_automate_alert_facts**
+
+ ```yaml copy
+  ms_power_automate_alert_facts:
+    - name: Team
+      value: Teste
+    - name: Level
+      value: Critical
+  ```
+
+- `ms_power_automate_kibana_discover_attach_url` — Enables the attachment of the `kibana_discover_url` to the MS Power Automate notification. The config `generate_kibana_discover_url` must also be `True` in order to generate the url. Defaults to `False`.
+
+ **Example ms_power_automate_kibana_discover_attach_url, ms_power_automate_kibana_discover_title**
+
+ ```yaml copy
+  # (Required)
+  generate_kibana_discover_url: True
+  kibana_discover_app_url: "http://localhost:5601/app/discover#/"
+  kibana_discover_index_pattern_id: "4babf380-c3b1-11eb-b616-1b59c2feec54"
+  kibana_discover_version: "8.13"
+  
+  # (Optional)
+  kibana_discover_from_timedelta:
+    minutes: 10
+  kibana_discover_to_timedelta:
+    minutes: 10
+  
+  # (Required)
+  ms_power_automate_kibana_discover_attach_url: True
+  
+  # (Optional)
+  ms_power_automate_kibana_discover_title: "Discover in Kibana"
+  ```
+
+ **Example usage**
+
+ ```yaml copy
+  ms_power_automate_kibana_discover_attach_url: true
+  ms_power_automate_kibana_discover_title: "See More"
+  ms_power_automate_kibana_discover_color: 'destructive'
+  ms_power_automate_teams_card_width_full: true
+  
+  ms_power_automate_alert_facts: 
+    - name: Team
+      value: Teste
+    - name: Level
+      value: Critical  
+  
+  alert:
+    - ms_power_automate
+  
+  ms_power_automate_webhook_url: >-
+    webhook
+  ```
+
+- `ms_power_automate_kibana_discover_title` — The title of the Kibana Discover url attachment. Defaults to `Discover in Kibana`.
+
+- `ms_power_automate_kibana_discover_color` — By default, the alert will be published with the `default` type blue if not specified. If set to `positive`, action is displayed with a positive style (typically the button becomes accent color), If set to `destructive`, Action is displayed with a destructive style (typically the button becomes red)
+
+- `ms_power_automate_opensearch_discover_attach_url` — Enables the attachment of the `opensearch_discover_url` to the MS Teams notification. The config `generate_opensearch_discover_url` must also be `True` in order to generate the url. Defaults to `False`.
+
+ **Example ms_power_automate_opensearch_discover_attach_url, ms_power_automate_opensearch_discover_title**
+
+ ```yaml copy
+  # (Required)
+  generate_opensearch_discover_url: True
+  opensearch_discover_app_url: "http://localhost:5601/app/discover#/"
+  opensearch_discover_index_pattern_id: "4babf380-c3b1-11eb-b616-1b59c2feec54"
+  opensearch_discover_version: "7.15"
+  
+  # (Optional)
+  opensearch_discover_from_timedelta:
+    minutes: 10
+  opensearch_discover_to_timedelta:
+    minutes: 10
+  
+  # (Required)
+  ms_power_automate_opensearch_discover_attach_url: True
+  
+  # (Optional)
+  ms_power_automate_opensearch_discover_title: "Discover in opensearch"
+  ```
+
+- `ms_power_automate_opensearch_discover_title` — The title of the Opensearch Discover url attachment. Defaults to `Discover in opensearch`.
+
+- `ms_power_automate_opensearch_discover_color` — By default, the alert will be published with the `default` type blue if not specified. If set to `positive`, action is displayed with a positive style (typically the button becomes accent color), If set to `destructive`, Action is displayed with a destructive style (typically the button becomes red)
+
+- `ms_power_automate_ca_certs` — Set this option to `True` or a path to a CA cert bundle or directory (eg: `/etc/ssl/certs/ca-certificates.crt`) to validate the SSL certificate.
+
+- `ms_power_automate_ignore_ssl_errors` — By default ElastAlert 2 will verify SSL certificate. Set this option to `True` if you want to ignore SSL errors.
+
+## Full working example
+
+```yaml copy
+name: Example alert for Microsoft Power Automate
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "ms_power_automate"
+ms_power_automate_webhook_url: "https://default..."
+```

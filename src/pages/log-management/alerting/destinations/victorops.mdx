@@ -1,0 +1,59 @@
+---
+title: Splunk On-Call (VictorOps)
+metaTitle: "Splunk On-Call (VictorOps) routing — Logit.io"
+description: "Route log alerts to Splunk On-Call with ElastAlert 2 on Logit.io: victorops, REST URLs, routing keys, entity fields, and YAML."
+stackTypes: logs
+---
+
+# Splunk On-Call (VictorOps)
+
+Send OpenSearch-derived incidents to **VictorOps / Splunk On-Call** using the REST integration endpoint. Use `victorops` with your API URL and routing metadata. Add `victorops` under `alert:` on your rule (you can combine destinations).
+
+Start with **[Options](#options)** when wiring credentials and endpoints—**[Full working example](#full-working-example)** shows how they fit in a complete rule.
+
+## Options
+
+Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_subject` apply as described in [Subject & body](/log-management/alerting/alert-subject-and-body). **Example fragments** from the ElastAlert 2 reference appear indented under the option they illustrate (add your own `name`, `type`, `index`, and `filter` to make a full rule).
+
+### Required
+
+- `victorops_api_key` — API key generated under the 'REST Endpoint' in the Integrations settings.
+
+ **Example usage**
+
+ ```yaml copy
+  alert:
+    - "victorops"
+  victorops_api_key: "VictorOps API Key"
+  victorops_routing_key: "VictorOps routing Key"
+  victorops_message_type: "INFO"
+  ```
+
+- `victorops_routing_key` — Splunk On-Call (Formerly VictorOps) routing key to route the alert to.
+
+- `victorops_message_type` — Splunk On-Call (Formerly VictorOps) field to specify severity level. Must be one of the following: INFO, WARNING, ACKNOWLEDGEMENT, CRITICAL, RECOVERY
+
+### Optional
+
+- `victorops_entity_id` — The identity of the incident used by Splunk On-Call (Formerly VictorOps) to correlate incidents throughout the alert lifecycle. If not defined, Splunk On-Call (Formerly VictorOps) will assign a random string to each alert.
+
+- `victorops_entity_display_name` — Human-readable name of alerting entity to summarize incidents without affecting the life-cycle workflow. Will use `alert_subject` if not set.
+
+- `victorops_proxy` — By default ElastAlert 2 will not use a network proxy to send notifications to Splunk On-Call (Formerly VictorOps). Set this option using `hostname:port` if you need to use a proxy. only supports https.
+
+## Full working example
+
+```yaml copy
+name: Example alert for Splunk On-Call (VictorOps)
+type: any
+index: "*-*"
+filter:
+  - query:
+      query_string:
+        query: "level:error OR log.level:error"
+alert:
+  - "victorops"
+victorops_api_key: "REPLACE"
+victorops_routing_key: "REPLACE"
+victorops_message_type: CRITICAL
+```

@@ -1,0 +1,63 @@
+---
+title: Grafana IRM (OnCall)
+metaTitle: "Grafana OnCall & IRM — ElastAlert webhook — Logit.io"
+description: "Connect Logit.io ElastAlert 2 rules to Grafana IRM / OnCall using the HTTP integration: post, payload mapping, and example rule YAML."
+stackTypes: logs
+---
+
+# Grafana IRM (OnCall)
+
+Grafana IRM (including **Grafana OnCall**) can receive alerts through an **HTTP / ElastAlert**-style inbound integration: your rule POSTs JSON to a webhook URL that OnCall shows in the integration settings. See [Grafana’s ElastAlert integration guide](https://grafana.com/docs/grafana-cloud/alerting-and-irm/irm/configure/integrations/integration-reference/oncall/elastalert/) for Grafana-side setup details.
+
+On Logit.io you normally use the **`post`** destination and set `http_post_url` to that **integration URL** (copy it from Grafana OnCall and replace the placeholder in the example below). **[Options](#options)** summarises the `post` keys that matter for OnCall; **[Full working example](#full-working-example)** at the bottom is paste-ready YAML—use the code block’s copy control, then swap in your real integration URL and tune `filter` / `type` for your stack.
+
+## Options
+
+Grafana OnCall’s ElastAlert integration uses the **`post`** alerter. Keys and behaviour match [Webhook (HTTP POST)](/log-management/alerting/destinations/post) and the [Full Reference](/log-management/alerting/alert-reference).
+
+### Required
+
+- `http_post_url` — The URL to POST (your OnCall inbound integration URL).
+
+### Optional
+
+- `http_post_payload` — Map match fields to JSON keys (for example `ip: clientip`). If omitted, all match keys are sent by default.
+- `http_post_static_payload` — Static key/value pairs merged into the JSON (tokens, source labels).
+- `http_post_headers` — Extra HTTP headers on the POST.
+- `http_post_proxy` — HTTPS proxy URL if required.
+- `http_post_all_values` — Include every match field in addition to mapped/static payload (default depends on whether `http_post_payload` is set).
+- `http_post_timeout` — Request timeout in seconds (default 10).
+- `http_post_ca_certs` — CA bundle path or `True` for system CAs.
+- `http_post_ignore_ssl_errors` — Skip TLS verification (avoid on untrusted networks).
+
+## Steps (high level)
+
+1. In Grafana OnCall, add an **ElastAlert** (or compatible **Inbound webhook**) integration and copy the URL.
+2. In your rule, set `alert: post` and `http_post_url` to that URL.
+3. Optionally map fields with `http_post_payload` and add secrets with `http_post_static_payload`.
+
+## Full working example
+
+Copy the rule below into the Logit.io rule editor, then replace `http_post_url` and adjust `index`, `filter`, and `type` / thresholds as needed.
+
+```yaml copy
+name: Production errors to Grafana OnCall
+type: frequency
+index: "*-*"
+num_events: 20
+timeframe:
+  minutes: 10
+filter:
+  - query:
+      query_string:
+        query: "log.level:error OR level:error"
+alert:
+  - "post"
+http_post_url: "https://oncall-prod-us-central-0.grafana.net/oncall/integrations/v1/XXXXX/YYYYY/"
+http_post_static_payload:
+  source: logit
+http_post_headers:
+  Content-Type: application/json
+```
+
+See [Webhook (HTTP POST)](/log-management/alerting/destinations/post) for all `post` options. For Jinja in the body, consider [Webhook (HTTP POST 2)](/log-management/alerting/destinations/post2). Official integration behaviour is described in Grafana OnCall — ElastAlert.
