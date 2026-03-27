@@ -21,7 +21,13 @@ Keys below match the ElastAlert 2 alerter. Shared rule fields such as `alert_sub
 
 - `twilio_auth_token` — Auth token associated with your Twilio account.
 
-- `twilio_to_number` — The phone number where you would like to send the alert. Either one of * `twilio_from_number`: The Twilio phone number from which the alert will be sent. * `twilio_message_service_sid`: The SID of your Twilio message service.
+- `twilio_to_number` — The destination phone number (recipient) for the alert.
+
+- `twilio_from_number` — Twilio phone number to send **from** when not using Copilot (`twilio_use_copilot: false`, the default).
+
+- `twilio_message_service_sid` — SID of your Twilio Messaging Service; use when sending via Copilot (`twilio_use_copilot: true`).
+
+Provide **exactly one** of `twilio_from_number` or `twilio_message_service_sid` as the sender—`twilio_from_number` for standard SMS, or `twilio_message_service_sid` when using Copilot.
 
  **Example with SMS usage**
 
