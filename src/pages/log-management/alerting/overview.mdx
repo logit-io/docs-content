@@ -93,9 +93,20 @@ To view those messages in the dashboard, open **Diagnostic logs** for your stack
 
 If you prefer **OpenSearch Alerting** (monitors in OpenSearch Dashboards) instead of YAML rules, see [OpenSearch Alerting](/log-management/alerting/opensearch-alerting-monitors).
 
-## Guides
+## Best getting started guides
 
-Task-focused walkthroughs live under [Guides](/log-management/alerting/guides): log volume (ElastAlert YAML), high CPU (OpenSearch Alerting UI), notification scenarios, rule validation, and HTML in email alerts.
+Start with these guides in order:
+
+1. **[Validate your rule first](/log-management/alerting/guides/validating-alert-rules)**  
+   Confirm YAML structure, required fields, and destination settings before troubleshooting behaviour.
+2. **[Send alerts for common scenarios](/log-management/alerting/guides/sending-alert-notifications)**  
+   Use ready-to-adapt examples for spike, flatline, and per-host/application alerting patterns.
+3. **[Set a log-volume threshold warning](/log-management/alerting/guides/set-alert-volume-to-prevent-exceeding-stack-limit)**  
+   Warn early when ingestion approaches your stack limit using a frequency rule.
+4. **[Configure high CPU notifications (OpenSearch Alerting)](/log-management/alerting/guides/high-cpu-alerts)**  
+   Build a monitor in OpenSearch Dashboards when you prefer monitor-based alerts.
+
+More task-focused walkthroughs are available under [Guides](/log-management/alerting/guides), including [HTML in email alerts](/log-management/alerting/guides/using-html-in-email-alerts).
 
 ## Frequently asked questions
 
