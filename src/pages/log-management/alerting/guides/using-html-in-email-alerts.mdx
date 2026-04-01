@@ -1,25 +1,50 @@
 ---
-title: Can I Use HTML in Email Alerts?
-metaTitle: Learn if you can use HTML in Email Alerts
-description: Find out if it is possible to use HTML in Elastalert alerts by following the steps outlined in this help article from Logit.io.
+title: Use HTML in Email Alerts
+metaTitle: Configure HTML Email Alerts in ElastAlert 2
+description: Learn how to send HTML-formatted email notifications from Logit.io ElastAlert 2 rules.
 stackTypes: logs
 ---
 
-# Can I use HTML in email alerts?
+# Use HTML in email alerts
 
-### Requirements
+Yes. Logit.io alerting supports HTML email content through ElastAlert 2 email settings.
 
-In short, yes. However, you will need to have at least Elastalert version 0.1.33
-installed against your stack. Fear not, as most Logit stacks should have at least
-the minimum version of Elastalert required in order to use HTML in alerts.
+## Example: HTML email body
 
-### Provisioning Elastalert and setting up an alert
+```yaml copy
+name: html-email-example
+type: frequency
+index: "*-*"
+num_events: 1
+timeframe:
+  minutes: 5
+filter:
+  - query:
+      query_string:
+        query: "log.level:error OR level:error"
+alert:
+  - email
+email:
+  - "alerts@example.com"
+email_format: html
+alert_subject: "Error events detected in the last 5 minutes"
+alert_text_type: alert_text_only
+alert_text: |
+  <h2 style="margin:0 0 8px 0;">Log alert</h2>
+  <p style="margin:0 0 8px 0;">A matching error event was found.</p>
+  <p style="margin:0;">Rule: <strong>{0}</strong></p>
+alert_text_args:
+  - name
+```
 
-You will also need to have Elastalert provisioned and an alert set-up. You can follow this
-guide [here](/log-management/alerting/destinations/email) to set up an example rule.
+## Notes
 
-### What version of Elastalert do I have?
+- Keep HTML simple and email-client friendly (inline styles, basic tags).
+- Test with **Test only** first, then choose **Update** to apply.
+- Use destination-specific settings from the [Email destination reference](/log-management/alerting/destinations/email).
 
-Currently, there is no way a user can check what version of Elastalert is installed.
-If you wish to know what version of Elastalert is installed on your stack, just reach
-out to our support engineers from live chat in your dashboard.
+<Callout type="info">
+If you are unsure whether missing notifications are formatting-related or query-related,
+use the [validation guide](/log-management/alerting/guides/validating-alert-rules) and check
+execution logs in the `elastalert` index.
+</Callout>
