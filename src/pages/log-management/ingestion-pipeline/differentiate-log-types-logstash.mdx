@@ -9,7 +9,7 @@ stackTypes: logs
 
 ## Why would I want to differentiate between different log types?
 
-If you are collecting two sets of logs using the same Elastic beat
+If you are collecting two sets of logs using the same Beat
 source you may want to separate them so that you can perform certain
 actions on them if they meet certain conditions.
 
@@ -18,7 +18,7 @@ For example, you may want to change the index name of one log type to help make 
 ## How do I separate my logs into different log types?
 
 Differentiating between different log types in Logstash can be achieved
-in various ways. If you are using an Elastic Beat source such as
+in various ways. If you are using a Beat source such as
 Auditbeat, Filebeat or Metricbeat you can have multiple inputs sections
 in your configuration file to distinguish between different types of logs
 by editing the Beat configuration file and setting the type to be named differently.

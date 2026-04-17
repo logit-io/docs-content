@@ -1,0 +1,116 @@
+---
+title: "Logstash Filter: Elapsed"
+metaTitle: "Logstash Elapsed Filter Plugin Reference"
+description: "Measures elapsed time between related start/end events. Includes usage guidance, configuration options, validation steps, and troubleshooting for the elapsed filter plugin on Logit.io."
+stackTypes: logs
+---
+
+# Elapsed filter plugin
+
+Pairs start and end events that share a common key and writes the elapsed time between them. Useful for measuring per-request latency when the application emits two log lines rather than one.
+
+- Package: `logstash-filter-elapsed`
+- Coverage source: default/bundled, explicitly installed in the Logit image
+- Official catalog entry: Yes
+
+## Plugin overview
+
+`elapsed` is used in the Logstash filter stage. Measures elapsed time between related start/end events.
+
+### Typical use cases
+
+- Transform fields before indexing to keep schema and naming consistent.
+- Prepare high-quality fields for alerts, dashboards, and downstream pipelines.
+
+### Input and output behavior
+
+- Flow: Tracks paired start/end events and outputs elapsed timing details.
+- Input: works on events that match your surrounding `if` conditions.
+- Output: updates the current event in place unless configured otherwise.
+- Important options: `end_tag`, `start_tag`, `unique_id_field`, `new_event_on_match`.
+
+## Options
+
+### Required
+
+- `end_tag` (type: string; default: none) — Tag that identifies the end event.
+- `start_tag` (type: string; default: none) — Tag that identifies the start event.
+- `unique_id_field` (type: string; default: none) — Field shared by the start and end events that correlates the two.
+
+### Optional
+
+- `new_event_on_match` (type: boolean; default: `false`) — Emit a new dedicated event for the match instead of annotating the end event.
+- `timeout` (type: number; default: `1800`) — Seconds to wait for the end event before giving up on the pair.
+- `keep_start_event` (type: string; default: `first`) — Keep the start event in the pipeline rather than discarding it once the pair is matched.
+
+## Example configuration
+
+```ruby copy
+filter {
+  if [log][type] == "request_start" {
+    mutate { add_tag => [ "start_event" ] }
+  }
+  if [log][type] == "request_end" {
+    mutate { add_tag => [ "end_event" ] }
+  }
+
+  elapsed {
+    start_tag       => "start_event"
+    end_tag         => "end_event"
+    unique_id_field => "[transaction][id]"
+    timeout         => 60
+    new_event_on_match => false
+  }
+}
+```
+
+## Common options configuration
+
+All Logstash filter plugins support these shared options:
+
+- `add_field` (type: hash; default: `{}`) — Adds fields when the filter succeeds. Supports dynamic field names and values.
+- `add_tag` (type: array; default: `[]`) — Adds one or more tags when the filter succeeds.
+- `enable_metric` (type: boolean; default: `true`) — Enables or disables metric collection for this plugin instance.
+- `id` (type: string; default: `none`) — Sets an explicit plugin instance ID for monitoring and troubleshooting.
+- `periodic_flush` (type: boolean; default: `false`) — Calls the filter flush method at regular intervals.
+- `remove_field` (type: array; default: `[]`) — Removes fields when the filter succeeds. Supports dynamic field names.
+- `remove_tag` (type: array; default: `[]`) — Removes tags when the filter succeeds.
+
+```ruby copy
+filter {
+  elapsed {
+    add_field => { "pipeline_stage" => "parsed" }
+    add_tag => ["parsed", "logstash_filter"]
+    enable_metric => true
+    id => "my_filter_instance"
+    periodic_flush => false
+    remove_field => ["tmp_field"]
+    remove_tag => ["temporary"]
+  }
+}
+```
+
+## Apply in Logit.io
+
+1. Open your stack in Logit.io and navigate to **Logstash Pipelines**.
+2. In the `filter { ... }` section, add a `elapsed` block.
+3. Save your pipeline changes, then restart the Logstash pipeline if prompted.
+4. Send sample events and verify parsed/enriched fields in OpenSearch Dashboards.
+
+## Validation checklist
+
+- Confirm the `elapsed` block compiles without syntax errors.
+- Verify expected new/updated fields exist in sample documents.
+- Verify unexpected fields are not removed unless explicitly configured.
+- Confirm tags added on success/failure align with your alerting and routing rules.
+
+## Troubleshooting
+
+- If events are unchanged, verify your filter condition (`if ...`) matches incoming events.
+- If the pipeline fails to start, validate braces/quotes and retry with a minimal filter block.
+- If throughput drops, reduce expensive operations and test with representative sample volume.
+
+## References
+
+- GitHub package: [`logstash-filter-elapsed`](https://github.com/logstash-plugins/logstash-filter-elapsed)
+- Canonical catalog: [/log-management/ingestion-pipeline/logstash-filters-reference](/log-management/ingestion-pipeline/logstash-filters-reference)

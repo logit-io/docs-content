@@ -1,3 +1,12 @@
 {
-  "overview": "Overview"
+  "overview": "Overview",
+  "configuration": "Configuration",
+  "adding-inputs": "Adding Inputs",
+  "api-key-logstash": "API Key for Logstash",
+  "differentiate-log-types-logstash": "Differentiating Log Types",
+  "logstash-filters-reference": "Logstash Filters Reference",
+  "logstash-filters": "Logstash Filters",
+  "remove-fields-logstash-filters": "Removing Fields with Filters",
+  "change-index-names-from-logstash": "Changing Index Names",
+  "logstash-dead-letter-queue": "Dead Letter Queue (DLQ)"
 }

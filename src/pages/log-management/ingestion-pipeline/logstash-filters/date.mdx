@@ -1,0 +1,111 @@
+---
+title: "Logstash Filter: Date"
+metaTitle: "Logstash Date Filter Plugin Reference"
+description: "Parses date/time values and sets the event timestamp. Includes usage guidance, configuration options, validation steps, and troubleshooting for the date filter plugin on Logit.io."
+stackTypes: logs
+---
+
+# Date filter plugin
+
+Parses date/time strings from a field and, by default, uses the parsed value as the event's `@timestamp`. This is the standard way to make log timestamps accurate in OpenSearch once an event reaches Logstash.
+
+- Package: `logstash-filter-date`
+- Coverage source: default/bundled
+- Official catalog entry: Yes
+
+## Plugin overview
+
+`date` is used in the Logstash filter stage. Parses date/time values and sets the event timestamp.
+
+### Typical use cases
+
+- Parse incoming log payloads into structured fields for querying and dashboards.
+- Tag failed operations and route them to dedicated troubleshooting views.
+
+### Input and output behavior
+
+- Flow: Parses date/time strings and updates timestamp fields.
+- Input: works on events that match your surrounding `if` conditions.
+- Output target: `target` (default: `"@timestamp"`).
+- Important options: `target`, `match`, `tag_on_failure`, `locale`.
+- Failure signaling: uses `tag_on_failure` (default: `["_dateparsefailure"]`) so failed events can be routed or inspected.
+
+## Options
+
+### Required
+
+- No required plugin-specific options.
+
+### Optional
+
+- `locale` (type: string; default: none) — Locale used when parsing month or day names (for example `en`).
+- `match` (type: array; default: `[]`) — Array containing the source field name followed by one or more date format patterns to try.
+- `precision` (type: string; default: `ms`) — Number of digits to use for sub-second precision.
+- `tag_on_failure` (type: array; default: `["_dateparsefailure"]`) — Tags applied to events whose date could not be parsed (defaults to `_dateparsefailure`).
+- `target` (type: string; default: `"@timestamp"`) — Target field for the parsed timestamp (defaults to `@timestamp`).
+- `timezone` (type: string; default: none) — Timezone to use when the source string has no offset (for example `Europe/London`).
+
+## Example configuration
+
+```ruby copy
+filter {
+  date {
+    match    => [ "[event][start]", "ISO8601", "yyyy-MM-dd HH:mm:ss" ]
+    target   => "@timestamp"
+    timezone => "UTC"
+    tag_on_failure => [ "_dateparsefailure" ]
+  }
+}
+```
+
+## Common options configuration
+
+All Logstash filter plugins support these shared options:
+
+- `add_field` (type: hash; default: `{}`) — Adds fields when the filter succeeds. Supports dynamic field names and values.
+- `add_tag` (type: array; default: `[]`) — Adds one or more tags when the filter succeeds.
+- `enable_metric` (type: boolean; default: `true`) — Enables or disables metric collection for this plugin instance.
+- `id` (type: string; default: `none`) — Sets an explicit plugin instance ID for monitoring and troubleshooting.
+- `periodic_flush` (type: boolean; default: `false`) — Calls the filter flush method at regular intervals.
+- `remove_field` (type: array; default: `[]`) — Removes fields when the filter succeeds. Supports dynamic field names.
+- `remove_tag` (type: array; default: `[]`) — Removes tags when the filter succeeds.
+
+```ruby copy
+filter {
+  date {
+    add_field => { "pipeline_stage" => "parsed" }
+    add_tag => ["parsed", "logstash_filter"]
+    enable_metric => true
+    id => "my_filter_instance"
+    periodic_flush => false
+    remove_field => ["tmp_field"]
+    remove_tag => ["temporary"]
+  }
+}
+```
+
+## Apply in Logit.io
+
+1. Open your stack in Logit.io and navigate to **Logstash Pipelines**.
+2. In the `filter { ... }` section, add a `date` block.
+3. Save your pipeline changes, then restart the Logstash pipeline if prompted.
+4. Send sample events and verify parsed/enriched fields in OpenSearch Dashboards.
+
+## Validation checklist
+
+- Confirm the `date` block compiles without syntax errors.
+- Verify expected new/updated fields exist in sample documents.
+- Verify unexpected fields are not removed unless explicitly configured.
+- Confirm tags added on success/failure align with your alerting and routing rules.
+
+## Troubleshooting
+
+- If events are unchanged, verify your filter condition (`if ...`) matches incoming events.
+- If the pipeline fails to start, validate braces/quotes and retry with a minimal filter block.
+- Check for `tag_on_failure` tags (default: `["_dateparsefailure"]`) to quickly isolate parse/mutation failures.
+- If throughput drops, reduce expensive operations and test with representative sample volume.
+
+## References
+
+- GitHub package: [`logstash-filter-date`](https://github.com/logstash-plugins/logstash-filter-date)
+- Canonical catalog: [/log-management/ingestion-pipeline/logstash-filters-reference](/log-management/ingestion-pipeline/logstash-filters-reference)

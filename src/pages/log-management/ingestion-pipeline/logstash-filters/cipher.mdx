@@ -1,0 +1,117 @@
+---
+title: "Logstash Filter: Cipher"
+metaTitle: "Logstash Cipher Filter Plugin Reference"
+description: "Encrypts or decrypts field values in events. Includes usage guidance, configuration options, validation steps, and troubleshooting for the cipher filter plugin on Logit.io."
+stackTypes: logs
+---
+
+# Cipher filter plugin
+
+Encrypts or decrypts field values using OpenSSL ciphers. Useful for masking sensitive fields before indexing or for decrypting payloads produced by upstream systems.
+
+- Package: `logstash-filter-cipher`
+- Coverage source: default/bundled, explicitly installed in the Logit image
+- Official catalog entry: Yes
+
+## Plugin overview
+
+`cipher` is used in the Logstash filter stage. Encrypts or decrypts field values in events.
+
+### Typical use cases
+
+- Transform fields before indexing to keep schema and naming consistent.
+- Prepare high-quality fields for alerts, dashboards, and downstream pipelines.
+
+### Input and output behavior
+
+- Flow: reads a configured source field and writes parsed/transformed output into a target or root fields.
+- Input field: `source` (default: `"message"`).
+- Output target: `target` (default: `"message"`).
+- Important options: `source`, `target`, `algorithm`, `mode`.
+
+## Options
+
+### Required
+
+- `algorithm` (type: string; default: none) — OpenSSL cipher name, such as `aes-256-cbc`.
+- `mode` (type: string; default: none) — Operation mode; set to `encrypt` to encrypt values or `decrypt` to decrypt them.
+
+### Optional
+
+- `base64` (type: boolean; default: `true`) — When true, inputs are treated as (and outputs produced as) base64 strings.
+- `cipher_padding` (type: string; default: none) — Disable PKCS padding by setting to `0` when the upstream cipher was run without padding.
+- `iv_random_length` (type: number; default: none) — Length in bytes of a per-event random initialisation vector.
+- `key` (type: string; default: none) — Cipher key used for the operation; supply through a Logit secret rather than hard-coding.
+- `key_pad` (type: string; default: `"\u0000"`) — Character used to pad a short key up to `key_size`.
+- `key_size` (type: number; default: `16`) — Key size in bytes (must match the chosen algorithm).
+- `max_cipher_reuse` (type: number; default: `1`) — Maximum number of events that can reuse the same cipher instance before it is recycled.
+- `source` (type: string; default: `"message"`) — Field containing the value to encrypt or decrypt.
+- `target` (type: string; default: `"message"`) — Field to write the transformed value into (defaults to the source field).
+
+## Example configuration
+
+```ruby copy
+filter {
+  cipher {
+    algorithm        => "aes-256-cbc"
+    mode             => "encrypt"
+    source           => "[user][email]"
+    target           => "[user][email_encrypted]"
+    key              => "${LOGSTASH_CIPHER_KEY}"
+    key_size         => 32
+    iv_random_length => 16
+    base64           => true
+  }
+}
+```
+
+## Common options configuration
+
+All Logstash filter plugins support these shared options:
+
+- `add_field` (type: hash; default: `{}`) — Adds fields when the filter succeeds. Supports dynamic field names and values.
+- `add_tag` (type: array; default: `[]`) — Adds one or more tags when the filter succeeds.
+- `enable_metric` (type: boolean; default: `true`) — Enables or disables metric collection for this plugin instance.
+- `id` (type: string; default: `none`) — Sets an explicit plugin instance ID for monitoring and troubleshooting.
+- `periodic_flush` (type: boolean; default: `false`) — Calls the filter flush method at regular intervals.
+- `remove_field` (type: array; default: `[]`) — Removes fields when the filter succeeds. Supports dynamic field names.
+- `remove_tag` (type: array; default: `[]`) — Removes tags when the filter succeeds.
+
+```ruby copy
+filter {
+  cipher {
+    add_field => { "pipeline_stage" => "parsed" }
+    add_tag => ["parsed", "logstash_filter"]
+    enable_metric => true
+    id => "my_filter_instance"
+    periodic_flush => false
+    remove_field => ["tmp_field"]
+    remove_tag => ["temporary"]
+  }
+}
+```
+
+## Apply in Logit.io
+
+1. Open your stack in Logit.io and navigate to **Logstash Pipelines**.
+2. In the `filter { ... }` section, add a `cipher` block.
+3. Save your pipeline changes, then restart the Logstash pipeline if prompted.
+4. Send sample events and verify parsed/enriched fields in OpenSearch Dashboards.
+
+## Validation checklist
+
+- Confirm the `cipher` block compiles without syntax errors.
+- Verify expected new/updated fields exist in sample documents.
+- Verify unexpected fields are not removed unless explicitly configured.
+- Confirm tags added on success/failure align with your alerting and routing rules.
+
+## Troubleshooting
+
+- If events are unchanged, verify your filter condition (`if ...`) matches incoming events.
+- If the pipeline fails to start, validate braces/quotes and retry with a minimal filter block.
+- If throughput drops, reduce expensive operations and test with representative sample volume.
+
+## References
+
+- GitHub package: [`logstash-filter-cipher`](https://github.com/logstash-plugins/logstash-filter-cipher)
+- Canonical catalog: [/log-management/ingestion-pipeline/logstash-filters-reference](/log-management/ingestion-pipeline/logstash-filters-reference)

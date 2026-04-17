@@ -1,0 +1,116 @@
+---
+title: "Logstash Filter: Ruby"
+metaTitle: "Logstash Ruby Filter Plugin Reference"
+description: "Executes inline Ruby code for custom transformations. Includes usage guidance, configuration options, validation steps, and troubleshooting for the ruby filter plugin on Logit.io."
+stackTypes: logs
+---
+
+# Ruby filter plugin
+
+Executes inline Ruby code against each event. Use it only when built-in filters cannot express the transformation. On Logit.io, the `ruby` filter is gated and requires prior approval from Logit Support before it can run on production pipelines.
+
+- Package: `logstash-filter-ruby`
+- Coverage source: default/bundled
+- Official catalog entry: Yes
+
+<Callout type="warning">
+Use of the `ruby` filter requires prior approval from Logit.io Support before enabling it in production pipelines.
+</Callout>
+
+## Plugin overview
+
+`ruby` is used in the Logstash filter stage. Executes inline Ruby code for custom transformations.
+
+### Typical use cases
+
+- Apply custom transformations not covered by built-in filters.
+- Implement edge-case parsing logic directly in pipeline code.
+
+### Input and output behavior
+
+- Flow: Executes custom Ruby logic against each event for advanced transformations.
+- Input: works on events that match your surrounding `if` conditions.
+- Output: updates the current event in place unless configured otherwise.
+- Important options: `code`, `init`, `path`, `script_params`.
+
+## Options
+
+### Required
+
+- No required plugin-specific options.
+
+### Optional
+
+- `code` (type: string; default: none) — Inline Ruby code to execute; the current event is available as `event`.
+- `init` (type: string; default: none) — Ruby code executed once when the pipeline starts.
+- `path` (type: string; default: none) — Path to an external Ruby script; use instead of `code` for long snippets.
+- `script_params` (type: hash; default: `{}`) — Parameters passed into the external script's `register` method.
+- `tag_on_exception` (type: string; default: `_rubyexception`) — Tag added to the event when the Ruby code raises.
+- `tag_with_exception_message` (type: boolean; default: `false`) — Append the exception message as a tag for quick triage.
+
+## Example configuration
+
+```ruby copy
+filter {
+  ruby {
+    code => '
+      status = event.get("[http][response][status_code]").to_i
+      event.set("[http][response][status_family]", "#{status / 100}xx")
+    '
+    tag_on_exception           => "_rubyexception"
+    tag_with_exception_message => true
+  }
+}
+```
+
+## Common options configuration
+
+All Logstash filter plugins support these shared options:
+
+- `add_field` (type: hash; default: `{}`) — Adds fields when the filter succeeds. Supports dynamic field names and values.
+- `add_tag` (type: array; default: `[]`) — Adds one or more tags when the filter succeeds.
+- `enable_metric` (type: boolean; default: `true`) — Enables or disables metric collection for this plugin instance.
+- `id` (type: string; default: `none`) — Sets an explicit plugin instance ID for monitoring and troubleshooting.
+- `periodic_flush` (type: boolean; default: `false`) — Calls the filter flush method at regular intervals.
+- `remove_field` (type: array; default: `[]`) — Removes fields when the filter succeeds. Supports dynamic field names.
+- `remove_tag` (type: array; default: `[]`) — Removes tags when the filter succeeds.
+
+```ruby copy
+filter {
+  ruby {
+    add_field => { "pipeline_stage" => "parsed" }
+    add_tag => ["parsed", "logstash_filter"]
+    enable_metric => true
+    id => "my_filter_instance"
+    periodic_flush => false
+    remove_field => ["tmp_field"]
+    remove_tag => ["temporary"]
+  }
+}
+```
+
+## Apply in Logit.io
+
+1. Open your stack in Logit.io and navigate to **Logstash Pipelines**.
+2. In the `filter { ... }` section, add a `ruby` block.
+3. Save your pipeline changes, then restart the Logstash pipeline if prompted.
+4. Send sample events and verify parsed/enriched fields in OpenSearch Dashboards.
+
+## Validation checklist
+
+- Confirm the `ruby` block compiles without syntax errors.
+- Verify expected new/updated fields exist in sample documents.
+- Verify unexpected fields are not removed unless explicitly configured.
+- Confirm tags added on success/failure align with your alerting and routing rules.
+
+## Troubleshooting
+
+- If events are unchanged, verify your filter condition (`if ...`) matches incoming events.
+- If the pipeline fails to start, validate braces/quotes and retry with a minimal filter block.
+- Check for `tag_on_exception` tags (default: `_rubyexception`) when plugin code throws runtime exceptions.
+- If throughput drops, reduce expensive operations and test with representative sample volume.
+
+## References
+
+- GitHub package: [`logstash-filter-ruby`](https://github.com/logstash-plugins/logstash-filter-ruby)
+- Canonical catalog: [/log-management/ingestion-pipeline/logstash-filters-reference](/log-management/ingestion-pipeline/logstash-filters-reference)

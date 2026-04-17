@@ -1,0 +1,112 @@
+---
+title: "Logstash Filter: GeoIP"
+metaTitle: "Logstash GeoIP Filter Plugin Reference"
+description: "Enriches events with geo information derived from IPs. Includes usage guidance, configuration options, validation steps, and troubleshooting for the geoip filter plugin on Logit.io."
+stackTypes: logs
+---
+
+# GeoIP filter plugin
+
+Enriches events with location and network metadata for a given IP address. The plugin uses a bundled MaxMind GeoLite2 database so it works without any outbound network calls.
+
+- Package: `logstash-filter-geoip`
+- Coverage source: default/bundled
+- Official catalog entry: Yes
+
+## Plugin overview
+
+`geoip` is used in the Logstash filter stage. Enriches events with geo information derived from IPs.
+
+### Typical use cases
+
+- Enrich IP fields with geo and ASN metadata for geolocation dashboards.
+- Support country/region-based filtering and alert routing workflows.
+
+### Input and output behavior
+
+- Flow: Uses an IP/hostname input to enrich events with location and network metadata.
+- Input field: `source`.
+- Output target: controlled by `target`.
+- Important options: `source`, `target`, `tag_on_failure`, `cache_size`.
+- Failure signaling: uses `tag_on_failure` (default: `["_geoip_lookup_failure"]`) so failed events can be routed or inspected.
+
+## Options
+
+### Required
+
+- `source` (type: string; default: none) — Field containing the IP address or hostname to look up.
+
+### Optional
+
+- `cache_size` (type: number; default: `1000`) — Number of recent lookups to keep in memory.
+- `database` (type: a valid filesystem path) — Path to a custom MaxMind database file (mutually exclusive with `default_database_type`).
+- `default_database_type` (type: `City` or `ASN`) — Built-in database to use (`City` or `ASN`).
+- `ecs_compatibility` (type: string) — Controls ECS field compatibility behaviour (`disabled`, `v1`, or `v8`).
+- `fields` (type: array; default: none) — Subset of lookup fields to keep (for example `country_name`, `city_name`, `location`).
+- `tag_on_failure` (type: array; default: `["_geoip_lookup_failure"]`) — Tags applied when the lookup produces no result.
+- `target` (type: string) — Parent field to nest the enrichment output under (defaults to `geoip`).
+
+## Example configuration
+
+```ruby copy
+filter {
+  geoip {
+    source => "[client][ip]"
+    target => "[client][geo]"
+    fields => [ "country_name", "city_name", "location", "continent_code" ]
+    tag_on_failure => [ "_geoip_lookup_failure" ]
+  }
+}
+```
+
+## Common options configuration
+
+All Logstash filter plugins support these shared options:
+
+- `add_field` (type: hash; default: `{}`) — Adds fields when the filter succeeds. Supports dynamic field names and values.
+- `add_tag` (type: array; default: `[]`) — Adds one or more tags when the filter succeeds.
+- `enable_metric` (type: boolean; default: `true`) — Enables or disables metric collection for this plugin instance.
+- `id` (type: string; default: `none`) — Sets an explicit plugin instance ID for monitoring and troubleshooting.
+- `periodic_flush` (type: boolean; default: `false`) — Calls the filter flush method at regular intervals.
+- `remove_field` (type: array; default: `[]`) — Removes fields when the filter succeeds. Supports dynamic field names.
+- `remove_tag` (type: array; default: `[]`) — Removes tags when the filter succeeds.
+
+```ruby copy
+filter {
+  geoip {
+    add_field => { "pipeline_stage" => "parsed" }
+    add_tag => ["parsed", "logstash_filter"]
+    enable_metric => true
+    id => "my_filter_instance"
+    periodic_flush => false
+    remove_field => ["tmp_field"]
+    remove_tag => ["temporary"]
+  }
+}
+```
+
+## Apply in Logit.io
+
+1. Open your stack in Logit.io and navigate to **Logstash Pipelines**.
+2. In the `filter { ... }` section, add a `geoip` block.
+3. Save your pipeline changes, then restart the Logstash pipeline if prompted.
+4. Send sample events and verify parsed/enriched fields in OpenSearch Dashboards.
+
+## Validation checklist
+
+- Confirm the `geoip` block compiles without syntax errors.
+- Verify expected new/updated fields exist in sample documents.
+- Verify unexpected fields are not removed unless explicitly configured.
+- Confirm tags added on success/failure align with your alerting and routing rules.
+
+## Troubleshooting
+
+- If events are unchanged, verify your filter condition (`if ...`) matches incoming events.
+- If the pipeline fails to start, validate braces/quotes and retry with a minimal filter block.
+- Check for `tag_on_failure` tags (default: `["_geoip_lookup_failure"]`) to quickly isolate parse/mutation failures.
+- If throughput drops, reduce expensive operations and test with representative sample volume.
+
+## References
+
+- GitHub package: [`logstash-filter-geoip`](https://github.com/logstash-plugins/logstash-filter-geoip)
+- Canonical catalog: [/log-management/ingestion-pipeline/logstash-filters-reference](/log-management/ingestion-pipeline/logstash-filters-reference)

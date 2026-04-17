@@ -1,0 +1,114 @@
+---
+title: "Logstash Filter: de_dot"
+metaTitle: "Logstash de_dot Filter Plugin Reference"
+description: "Removes dots from field names. Includes usage guidance, configuration options, validation steps, and troubleshooting for the de_dot filter plugin on Logit.io."
+stackTypes: logs
+---
+
+# de_dot filter plugin
+
+Rewrites field names that contain `.` characters so they play nicely with OpenSearch. By default each dot is replaced with an underscore, producing a flat field name. With `nested => true` the dots are turned into sub-field boundaries instead, producing nested objects.
+
+- Package: `logstash-filter-de_dot`
+- Coverage source: default/bundled
+- Official catalog entry: Yes
+
+## Plugin overview
+
+`de_dot` is used in the Logstash filter stage. Removes dots from field names.
+
+### Typical use cases
+
+- Transform fields before indexing to keep schema and naming consistent.
+- Prepare high-quality fields for alerts, dashboards, and downstream pipelines.
+
+### Input and output behavior
+
+- Flow: processes matching events and mutates fields/tags within the same event.
+- Input: works on events that match your surrounding `if` conditions.
+- Output: updates the current event in place unless configured otherwise.
+- Important options: `fields`, `nested`, `recursive`, `separator`.
+
+## Options
+
+### Required
+
+- No required plugin-specific options.
+
+### Optional
+
+- `fields` (type: array; default: none) — Explicit list of field references to de-dot (for example `["process.name", "[foo][bar.suffix]"]`). If omitted, every top-level field on the event is checked.
+- `nested` (type: boolean; default: `false`) — When true, convert each dotted name into a nested sub-field instead of flattening with `separator` (the separator is forced to `][` internally, so setting both `nested => true` and `separator` at the same time is not useful).
+- `recursive` (type: boolean; default: `false`) — When true, descend into hash-valued fields and de-dot nested keys as well. Expensive; only enable when you know the event can contain dotted keys inside nested objects.
+- `separator` (type: string; default: `"_"`) — Character used to replace each `.` in a field name when `nested` is false. Cannot itself contain a `.`.
+
+## Example configuration
+
+```ruby copy
+filter {
+  de_dot {
+    fields    => [ "process.name", "container.image.name" ]
+    separator => "_"
+    recursive => false
+  }
+}
+
+# Alternative: turn dotted names into nested sub-fields.
+# filter {
+#   de_dot {
+#     fields => [ "process.name" ]
+#     nested => true
+#   }
+# }
+```
+
+## Common options configuration
+
+All Logstash filter plugins support these shared options:
+
+- `add_field` (type: hash; default: `{}`) — Adds fields when the filter succeeds. Supports dynamic field names and values.
+- `add_tag` (type: array; default: `[]`) — Adds one or more tags when the filter succeeds.
+- `enable_metric` (type: boolean; default: `true`) — Enables or disables metric collection for this plugin instance.
+- `id` (type: string; default: `none`) — Sets an explicit plugin instance ID for monitoring and troubleshooting.
+- `periodic_flush` (type: boolean; default: `false`) — Calls the filter flush method at regular intervals.
+- `remove_field` (type: array; default: `[]`) — Removes fields when the filter succeeds. Supports dynamic field names.
+- `remove_tag` (type: array; default: `[]`) — Removes tags when the filter succeeds.
+
+```ruby copy
+filter {
+  de_dot {
+    add_field => { "pipeline_stage" => "parsed" }
+    add_tag => ["parsed", "logstash_filter"]
+    enable_metric => true
+    id => "my_filter_instance"
+    periodic_flush => false
+    remove_field => ["tmp_field"]
+    remove_tag => ["temporary"]
+  }
+}
+```
+
+## Apply in Logit.io
+
+1. Open your stack in Logit.io and navigate to **Logstash Pipelines**.
+2. In the `filter { ... }` section, add a `de_dot` block.
+3. Save your pipeline changes, then restart the Logstash pipeline if prompted.
+4. Send sample events and verify parsed/enriched fields in OpenSearch Dashboards.
+
+## Validation checklist
+
+- Confirm the `de_dot` block compiles without syntax errors.
+- Verify expected new/updated fields exist in sample documents.
+- Verify unexpected fields are not removed unless explicitly configured.
+- Confirm tags added on success/failure align with your alerting and routing rules.
+
+## Troubleshooting
+
+- If events are unchanged, verify your filter condition (`if ...`) matches incoming events.
+- If the pipeline fails to start, validate braces/quotes and retry with a minimal filter block.
+- If throughput drops, reduce expensive operations and test with representative sample volume.
+
+## References
+
+- GitHub package: [`logstash-filter-de_dot`](https://github.com/logstash-plugins/logstash-filter-de_dot)
+- Canonical catalog: [/log-management/ingestion-pipeline/logstash-filters-reference](/log-management/ingestion-pipeline/logstash-filters-reference)

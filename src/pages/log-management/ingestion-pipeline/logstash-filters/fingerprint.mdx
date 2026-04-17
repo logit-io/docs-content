@@ -1,0 +1,111 @@
+---
+title: "Logstash Filter: Fingerprint"
+metaTitle: "Logstash Fingerprint Filter Plugin Reference"
+description: "Builds stable hashes or fingerprints from selected fields. Includes usage guidance, configuration options, validation steps, and troubleshooting for the fingerprint filter plugin on Logit.io."
+stackTypes: logs
+---
+
+# Fingerprint filter plugin
+
+Generates a stable hash from one or more fields so you can deduplicate events, build reproducible document IDs, or pseudonymise values before indexing.
+
+- Package: `logstash-filter-fingerprint`
+- Coverage source: default/bundled
+- Official catalog entry: Yes
+
+## Plugin overview
+
+`fingerprint` is used in the Logstash filter stage. Builds stable hashes or fingerprints from selected fields.
+
+### Typical use cases
+
+- Transform fields before indexing to keep schema and naming consistent.
+- Prepare high-quality fields for alerts, dashboards, and downstream pipelines.
+
+### Input and output behavior
+
+- Flow: reads a configured source field and writes parsed/transformed output into a target or root fields.
+- Input field: `source` (default: `"message"`).
+- Output target: `target` (default: ``"[event][hash]"` when ECS is enabled`).
+- Important options: `source`, `target`, `method`, `base64encode`.
+
+## Options
+
+### Required
+
+- `method` (type: string; default: `"SHA1"`) — Hashing method, for example `SHA1`, `SHA256`, `MURMUR3`, or `UUID`.
+
+### Optional
+
+- `base64encode` (type: boolean; default: `false`) — Output the fingerprint as a base64 string rather than hex.
+- `concatenate_sources` (type: boolean; default: `false`) — Combine the values of all source fields before hashing.
+- `concatenate_all_fields` (type: boolean; default: `false`) — Concatenate every field on the event (use with care; order sensitive).
+- `ecs_compatibility` (type: string) — Controls ECS field compatibility behaviour (`disabled`, `v1`, or `v8`).
+- `key` (type: password; default: none) — Optional secret used for keyed hashes such as HMAC-SHA256.
+- `source` (type: array; default: `"message"`) — Field or list of fields to fingerprint.
+- `target` (type: string; default: `"[event][hash]"` when ECS is enabled) — Field to receive the generated fingerprint.
+
+## Example configuration
+
+```ruby copy
+filter {
+  fingerprint {
+    source               => [ "[user][id]", "[event][action]", "@timestamp" ]
+    method               => "SHA256"
+    concatenate_sources  => true
+    target               => "[event][id]"
+    base64encode         => true
+  }
+}
+```
+
+## Common options configuration
+
+All Logstash filter plugins support these shared options:
+
+- `add_field` (type: hash; default: `{}`) — Adds fields when the filter succeeds. Supports dynamic field names and values.
+- `add_tag` (type: array; default: `[]`) — Adds one or more tags when the filter succeeds.
+- `enable_metric` (type: boolean; default: `true`) — Enables or disables metric collection for this plugin instance.
+- `id` (type: string; default: `none`) — Sets an explicit plugin instance ID for monitoring and troubleshooting.
+- `periodic_flush` (type: boolean; default: `false`) — Calls the filter flush method at regular intervals.
+- `remove_field` (type: array; default: `[]`) — Removes fields when the filter succeeds. Supports dynamic field names.
+- `remove_tag` (type: array; default: `[]`) — Removes tags when the filter succeeds.
+
+```ruby copy
+filter {
+  fingerprint {
+    add_field => { "pipeline_stage" => "parsed" }
+    add_tag => ["parsed", "logstash_filter"]
+    enable_metric => true
+    id => "my_filter_instance"
+    periodic_flush => false
+    remove_field => ["tmp_field"]
+    remove_tag => ["temporary"]
+  }
+}
+```
+
+## Apply in Logit.io
+
+1. Open your stack in Logit.io and navigate to **Logstash Pipelines**.
+2. In the `filter { ... }` section, add a `fingerprint` block.
+3. Save your pipeline changes, then restart the Logstash pipeline if prompted.
+4. Send sample events and verify parsed/enriched fields in OpenSearch Dashboards.
+
+## Validation checklist
+
+- Confirm the `fingerprint` block compiles without syntax errors.
+- Verify expected new/updated fields exist in sample documents.
+- Verify unexpected fields are not removed unless explicitly configured.
+- Confirm tags added on success/failure align with your alerting and routing rules.
+
+## Troubleshooting
+
+- If events are unchanged, verify your filter condition (`if ...`) matches incoming events.
+- If the pipeline fails to start, validate braces/quotes and retry with a minimal filter block.
+- If throughput drops, reduce expensive operations and test with representative sample volume.
+
+## References
+
+- GitHub package: [`logstash-filter-fingerprint`](https://github.com/logstash-plugins/logstash-filter-fingerprint)
+- Canonical catalog: [/log-management/ingestion-pipeline/logstash-filters-reference](/log-management/ingestion-pipeline/logstash-filters-reference)
