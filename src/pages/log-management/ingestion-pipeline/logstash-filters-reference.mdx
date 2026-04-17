@@ -1,0 +1,331 @@
+---
+title: Logstash Filters Reference
+metaTitle: "Canonical Logstash Filters Inventory | Logit.io"
+description: "Canonical inventory and coverage matrix for Logstash filter plugins documented by Logit.io."
+stackTypes: logs
+---
+
+# Logstash Filters Reference
+
+This page is generated from the canonical inventory at `scripts/logstash-filter-inventory.json`.
+
+## Coverage matrix
+
+| Plugin | Package | Official | Default/Bundled | Image-installed | Status |
+| --- | --- | --- | --- | --- | --- |
+| `age` | `logstash-filter-age` | Yes | Yes | Yes | `covered` |
+| `aggregate` | `logstash-filter-aggregate` | Yes | Yes | No | `covered` |
+| `alter` | `logstash-filter-alter` | Yes | Yes | Yes | `covered` |
+| `bytes` | `logstash-filter-bytes` | Yes | Yes | No | `covered` |
+| `cidr` | `logstash-filter-cidr` | Yes | Yes | No | `covered` |
+| `cipher` | `logstash-filter-cipher` | Yes | Yes | Yes | `covered` |
+| `clone` | `logstash-filter-clone` | Yes | Yes | No | `covered` |
+| `csv` | `logstash-filter-csv` | Yes | Yes | No | `covered` |
+| `date` | `logstash-filter-date` | Yes | Yes | No | `covered` |
+| `de_dot` | `logstash-filter-de_dot` | Yes | Yes | No | `covered` |
+| `dissect` | `logstash-filter-dissect` | Yes | Yes | No | `covered` |
+| `drop` | `logstash-filter-drop` | Yes | Yes | No | `covered` |
+| `elapsed` | `logstash-filter-elapsed` | Yes | Yes | Yes | `covered` |
+| `environment` | `logstash-filter-environment` | Yes | Yes | No | `covered` |
+| `extractnumbers` | `logstash-filter-extractnumbers` | Yes | Yes | Yes | `covered` |
+| `fingerprint` | `logstash-filter-fingerprint` | Yes | Yes | No | `covered` |
+| `geoip` | `logstash-filter-geoip` | Yes | Yes | No | `covered` |
+| `grok` | `logstash-filter-grok` | Yes | Yes | No | `covered` |
+| `i18n` | `logstash-filter-i18n` | Yes | Yes | Yes | `covered` |
+| `java_uuid` | `core plugin` | Yes | Yes | No | `covered` |
+| `json` | `logstash-filter-json` | Yes | Yes | No | `covered` |
+| `json_encode` | `logstash-filter-json_encode` | Yes | Yes | Yes | `covered` |
+| `kv` | `logstash-filter-kv` | Yes | Yes | No | `covered` |
+| `math` | `logstash-filter-math` | No | No | Yes | `covered` |
+| `metricize` | `logstash-filter-metricize` | Yes | Yes | Yes | `covered` |
+| `metrics` | `logstash-filter-metrics` | Yes | Yes | No | `covered` |
+| `mutate` | `logstash-filter-mutate` | Yes | Yes | No | `covered` |
+| `prune` | `logstash-filter-prune` | Yes | Yes | Yes | `covered` |
+| `range` | `logstash-filter-range` | Yes | Yes | Yes | `covered` |
+| `ruby` | `logstash-filter-ruby` | Yes | Yes | No | `covered` |
+| `sleep` | `logstash-filter-sleep` | Yes | Yes | No | `covered` |
+| `split` | `logstash-filter-split` | Yes | Yes | No | `covered` |
+| `syslog_pri` | `logstash-filter-syslog_pri` | Yes | Yes | No | `covered` |
+| `threats_classifier` | `logstash-filter-threats_classifier` | Yes | Yes | No | `covered` |
+| `throttle` | `logstash-filter-throttle` | Yes | Yes | No | `covered` |
+| `tld` | `logstash-filter-tld` | Yes | Yes | No | `covered` |
+| `translate` | `logstash-filter-translate` | Yes | Yes | No | `covered` |
+| `truncate` | `logstash-filter-truncate` | Yes | Yes | No | `covered` |
+| `urldecode` | `logstash-filter-urldecode` | Yes | Yes | No | `covered` |
+| `useragent` | `logstash-filter-useragent` | Yes | Yes | No | `covered` |
+| `uuid` | `logstash-filter-uuid` | Yes | Yes | Yes | `covered` |
+| `wurfl_device_detection` | `logstash-filter-wurfl_device_detection` | Yes | Yes | No | `covered` |
+| `xml` | `logstash-filter-xml` | Yes | Yes | No | `covered` |
+
+## Plugin details
+
+#### Age (`age`)
+- Package: `logstash-filter-age`
+- Summary: Calculates event age in seconds from the event timestamp.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/age](/log-management/ingestion-pipeline/logstash-filters/age)
+
+#### Aggregate (`aggregate`)
+- Package: `logstash-filter-aggregate`
+- Summary: Aggregates information across events that belong to the same task.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/aggregate](/log-management/ingestion-pipeline/logstash-filters/aggregate)
+
+#### Alter (`alter`)
+- Package: `logstash-filter-alter`
+- Summary: Performs field alterations that are not handled by mutate.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/alter](/log-management/ingestion-pipeline/logstash-filters/alter)
+
+#### Bytes (`bytes`)
+- Package: `logstash-filter-bytes`
+- Summary: Parses storage-size strings such as 123 MB into bytes.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/bytes](/log-management/ingestion-pipeline/logstash-filters/bytes)
+
+#### CIDR (`cidr`)
+- Package: `logstash-filter-cidr`
+- Summary: Checks IP addresses against one or more network ranges.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/cidr](/log-management/ingestion-pipeline/logstash-filters/cidr)
+
+#### Cipher (`cipher`)
+- Package: `logstash-filter-cipher`
+- Summary: Encrypts or decrypts field values in events.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/cipher](/log-management/ingestion-pipeline/logstash-filters/cipher)
+
+#### Clone (`clone`)
+- Package: `logstash-filter-clone`
+- Summary: Duplicates events so each copy can follow a separate branch.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/clone](/log-management/ingestion-pipeline/logstash-filters/clone)
+
+#### CSV (`csv`)
+- Package: `logstash-filter-csv`
+- Summary: Parses comma-separated data into fields.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/csv](/log-management/ingestion-pipeline/logstash-filters/csv)
+
+#### Date (`date`)
+- Package: `logstash-filter-date`
+- Summary: Parses date/time values and sets the event timestamp.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/date](/log-management/ingestion-pipeline/logstash-filters/date)
+
+#### de_dot (`de_dot`)
+- Package: `logstash-filter-de_dot`
+- Summary: Removes dots from field names.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/de-dot](/log-management/ingestion-pipeline/logstash-filters/de-dot)
+
+#### Dissect (`dissect`)
+- Package: `logstash-filter-dissect`
+- Summary: Extracts structured fields from delimited text.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/dissect](/log-management/ingestion-pipeline/logstash-filters/dissect)
+
+#### Drop (`drop`)
+- Package: `logstash-filter-drop`
+- Summary: Drops events that match conditions.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/drop](/log-management/ingestion-pipeline/logstash-filters/drop)
+
+#### Elapsed (`elapsed`)
+- Package: `logstash-filter-elapsed`
+- Summary: Measures elapsed time between related start/end events.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/elapsed](/log-management/ingestion-pipeline/logstash-filters/elapsed)
+
+#### Environment (`environment`)
+- Package: `logstash-filter-environment`
+- Summary: Copies environment variable values into event metadata fields.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/environment](/log-management/ingestion-pipeline/logstash-filters/environment)
+
+#### Extract Numbers (`extractnumbers`)
+- Package: `logstash-filter-extractnumbers`
+- Summary: Extracts numeric values from text fields.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/extractnumbers](/log-management/ingestion-pipeline/logstash-filters/extractnumbers)
+
+#### Fingerprint (`fingerprint`)
+- Package: `logstash-filter-fingerprint`
+- Summary: Builds stable hashes or fingerprints from selected fields.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/fingerprint](/log-management/ingestion-pipeline/logstash-filters/fingerprint)
+
+#### GeoIP (`geoip`)
+- Package: `logstash-filter-geoip`
+- Summary: Enriches events with geo information derived from IPs.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/geoip](/log-management/ingestion-pipeline/logstash-filters/geoip)
+
+#### Grok (`grok`)
+- Package: `logstash-filter-grok`
+- Summary: Parses unstructured strings into named fields using patterns.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/grok](/log-management/ingestion-pipeline/logstash-filters/grok)
+
+#### i18n (`i18n`)
+- Package: `logstash-filter-i18n`
+- Summary: Normalizes text by removing special characters.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/i18n](/log-management/ingestion-pipeline/logstash-filters/i18n)
+
+#### Java UUID (`java_uuid`)
+- Package: `core plugin`
+- Summary: Generates a UUID for each processed event using the Java implementation.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/java-uuid](/log-management/ingestion-pipeline/logstash-filters/java-uuid)
+
+#### JSON (`json`)
+- Package: `logstash-filter-json`
+- Summary: Parses JSON content from source fields into event fields.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/json](/log-management/ingestion-pipeline/logstash-filters/json)
+
+#### JSON Encode (`json_encode`)
+- Package: `logstash-filter-json_encode`
+- Summary: Serializes field content into JSON strings.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/json-encode](/log-management/ingestion-pipeline/logstash-filters/json-encode)
+
+#### KV (`kv`)
+- Package: `logstash-filter-kv`
+- Summary: Parses key/value text into structured fields.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/kv](/log-management/ingestion-pipeline/logstash-filters/kv)
+
+#### Math (`math`)
+- Package: `logstash-filter-math`
+- Summary: Applies arithmetic operations to numeric fields.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/math](/log-management/ingestion-pipeline/logstash-filters/math)
+
+#### Metricize (`metricize`)
+- Package: `logstash-filter-metricize`
+- Summary: Splits complex events into per-metric events.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/metricize](/log-management/ingestion-pipeline/logstash-filters/metricize)
+
+#### Metrics (`metrics`)
+- Package: `logstash-filter-metrics`
+- Summary: Aggregates metrics from event streams.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/metrics](/log-management/ingestion-pipeline/logstash-filters/metrics)
+
+#### Mutate (`mutate`)
+- Package: `logstash-filter-mutate`
+- Summary: Renames, converts, removes, and updates fields.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/mutate](/log-management/ingestion-pipeline/logstash-filters/mutate)
+
+#### Prune (`prune`)
+- Package: `logstash-filter-prune`
+- Summary: Whitelists or blacklists fields to keep event payloads focused.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/prune](/log-management/ingestion-pipeline/logstash-filters/prune)
+
+#### Range (`range`)
+- Package: `logstash-filter-range`
+- Summary: Checks field values against numeric or length bounds.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/range](/log-management/ingestion-pipeline/logstash-filters/range)
+
+#### Ruby (`ruby`)
+- Package: `logstash-filter-ruby`
+- Summary: Executes inline Ruby code for custom transformations.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/ruby](/log-management/ingestion-pipeline/logstash-filters/ruby)
+
+#### Sleep (`sleep`)
+- Package: `logstash-filter-sleep`
+- Summary: Introduces delays while processing events.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/sleep](/log-management/ingestion-pipeline/logstash-filters/sleep)
+
+#### Split (`split`)
+- Package: `logstash-filter-split`
+- Summary: Splits arrays or multiline data into separate events.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/split](/log-management/ingestion-pipeline/logstash-filters/split)
+
+#### Syslog PRI (`syslog_pri`)
+- Package: `logstash-filter-syslog_pri`
+- Summary: Parses syslog PRI values into severity and facility fields.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/syslog-pri](/log-management/ingestion-pipeline/logstash-filters/syslog-pri)
+
+#### Threats Classifier (`threats_classifier`)
+- Package: `logstash-filter-threats_classifier`
+- Summary: Classifies attacker intent in security log events.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/threats-classifier](/log-management/ingestion-pipeline/logstash-filters/threats-classifier)
+
+#### Throttle (`throttle`)
+- Package: `logstash-filter-throttle`
+- Summary: Rate-limits events by key and period.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/throttle](/log-management/ingestion-pipeline/logstash-filters/throttle)
+
+#### TLD (`tld`)
+- Package: `logstash-filter-tld`
+- Summary: Extracts top-level domain components from URLs or hostnames.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/tld](/log-management/ingestion-pipeline/logstash-filters/tld)
+
+#### Translate (`translate`)
+- Package: `logstash-filter-translate`
+- Summary: Maps field values using dictionary data.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/translate](/log-management/ingestion-pipeline/logstash-filters/translate)
+
+#### Truncate (`truncate`)
+- Package: `logstash-filter-truncate`
+- Summary: Truncates long field values to a maximum length.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/truncate](/log-management/ingestion-pipeline/logstash-filters/truncate)
+
+#### URL Decode (`urldecode`)
+- Package: `logstash-filter-urldecode`
+- Summary: Decodes URL-encoded field values.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/urldecode](/log-management/ingestion-pipeline/logstash-filters/urldecode)
+
+#### UserAgent (`useragent`)
+- Package: `logstash-filter-useragent`
+- Summary: Parses user-agent strings into browser, OS, and device fields.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/useragent](/log-management/ingestion-pipeline/logstash-filters/useragent)
+
+#### UUID (`uuid`)
+- Package: `logstash-filter-uuid`
+- Summary: Adds UUID values to events.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/uuid](/log-management/ingestion-pipeline/logstash-filters/uuid)
+
+#### WURFL Device Detection (`wurfl_device_detection`)
+- Package: `logstash-filter-wurfl_device_detection`
+- Summary: Enriches events with device intelligence from WURFL.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/wurfl-device-detection](/log-management/ingestion-pipeline/logstash-filters/wurfl-device-detection)
+
+#### XML (`xml`)
+- Package: `logstash-filter-xml`
+- Summary: Parses XML into structured event fields.
+- Coverage status: `covered`
+- Docs page: [/log-management/ingestion-pipeline/logstash-filters/xml](/log-management/ingestion-pipeline/logstash-filters/xml)
+
+## Excluded from hosted docs
+
+The following plugins are intentionally excluded from this hosted docs set because they require direct external connectivity from pipeline runtime.
+
+| Plugin | Package | Reason |
+| --- | --- | --- |
+| `dns` | `logstash-filter-dns` | Requires external host/service connectivity |
+| `elastic_integration` | `logstash-filter-elastic_integration` | Requires external host/service connectivity |
+| `elasticsearch` | `logstash-filter-elasticsearch` | Requires external host/service connectivity |
+| `http` | `logstash-filter-http` | Requires external host/service connectivity |
+| `jdbc_streaming` | `logstash-integration-jdbc` | Requires external host/service connectivity |
+| `memcached` | `logstash-filter-memcached` | Requires external host/service connectivity |

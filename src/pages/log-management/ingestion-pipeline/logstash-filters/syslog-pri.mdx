@@ -1,0 +1,109 @@
+---
+title: "Logstash Filter: Syslog PRI"
+metaTitle: "Logstash Syslog PRI Filter Plugin Reference"
+description: "Parses syslog PRI values into severity and facility fields. Includes usage guidance, configuration options, validation steps, and troubleshooting for the syslog_pri filter plugin on Logit.io."
+stackTypes: logs
+---
+
+# Syslog PRI filter plugin
+
+Parses the `PRI` numeric header of a syslog message into its facility and severity components, producing labelled fields you can alert on.
+
+- Package: `logstash-filter-syslog_pri`
+- Coverage source: default/bundled
+- Official catalog entry: Yes
+
+## Plugin overview
+
+`syslog_pri` is used in the Logstash filter stage. Parses syslog PRI values into severity and facility fields.
+
+### Typical use cases
+
+- Parse incoming log payloads into structured fields for querying and dashboards.
+- Transform fields before indexing to keep schema and naming consistent.
+
+### Input and output behavior
+
+- Flow: processes matching events and mutates fields/tags within the same event.
+- Input: works on events that match your surrounding `if` conditions.
+- Output: updates the current event in place unless configured otherwise.
+- Important options: `ecs_compatibility`, `facility_labels`, `severity_labels`, `syslog_pri_field_name`.
+
+## Options
+
+### Required
+
+- No required plugin-specific options.
+
+### Optional
+
+- `ecs_compatibility` (type: string) — Controls ECS field compatibility behaviour (`disabled`, `v1`, or `v8`).
+- `facility_labels` (type: array; default: `["kernel", "user-level", "mail", "daemon", "security/authorization", "syslogd", "line printer", "network news", "uucp", "clock", "security/authorization", "ftp", "ntp", "log audit", "log alert", "clock", "local0", "local1", "local2", "local3", "local4", "local5", "local6", "local7"]`) — Custom facility label list to override the defaults.
+- `severity_labels` (type: array; default: `["emergency", "alert", "critical", "error", "warning", "notice", "informational", "debug"]`) — Custom severity label list to override the defaults.
+- `syslog_pri_field_name` (type: string) — Field that contains the numeric PRI value.
+- `use_labels` (type: boolean; default: `true`) — When true, emit human-readable facility and severity labels in addition to numeric fields.
+
+## Example configuration
+
+```ruby copy
+filter {
+  grok {
+    match => { "message" => "<%{NONNEGINT:syslog_pri}>%{GREEDYDATA:syslog_message}" }
+  }
+  syslog_pri {
+    syslog_pri_field_name => "syslog_pri"
+    use_labels => true
+  }
+}
+```
+
+## Common options configuration
+
+All Logstash filter plugins support these shared options:
+
+- `add_field` (type: hash; default: `{}`) — Adds fields when the filter succeeds. Supports dynamic field names and values.
+- `add_tag` (type: array; default: `[]`) — Adds one or more tags when the filter succeeds.
+- `enable_metric` (type: boolean; default: `true`) — Enables or disables metric collection for this plugin instance.
+- `id` (type: string; default: `none`) — Sets an explicit plugin instance ID for monitoring and troubleshooting.
+- `periodic_flush` (type: boolean; default: `false`) — Calls the filter flush method at regular intervals.
+- `remove_field` (type: array; default: `[]`) — Removes fields when the filter succeeds. Supports dynamic field names.
+- `remove_tag` (type: array; default: `[]`) — Removes tags when the filter succeeds.
+
+```ruby copy
+filter {
+  syslog_pri {
+    add_field => { "pipeline_stage" => "parsed" }
+    add_tag => ["parsed", "logstash_filter"]
+    enable_metric => true
+    id => "my_filter_instance"
+    periodic_flush => false
+    remove_field => ["tmp_field"]
+    remove_tag => ["temporary"]
+  }
+}
+```
+
+## Apply in Logit.io
+
+1. Open your stack in Logit.io and navigate to **Logstash Pipelines**.
+2. In the `filter { ... }` section, add a `syslog_pri` block.
+3. Save your pipeline changes, then restart the Logstash pipeline if prompted.
+4. Send sample events and verify parsed/enriched fields in OpenSearch Dashboards.
+
+## Validation checklist
+
+- Confirm the `syslog_pri` block compiles without syntax errors.
+- Verify expected new/updated fields exist in sample documents.
+- Verify unexpected fields are not removed unless explicitly configured.
+- Confirm tags added on success/failure align with your alerting and routing rules.
+
+## Troubleshooting
+
+- If events are unchanged, verify your filter condition (`if ...`) matches incoming events.
+- If the pipeline fails to start, validate braces/quotes and retry with a minimal filter block.
+- If throughput drops, reduce expensive operations and test with representative sample volume.
+
+## References
+
+- GitHub package: [`logstash-filter-syslog_pri`](https://github.com/logstash-plugins/logstash-filter-syslog_pri)
+- Canonical catalog: [/log-management/ingestion-pipeline/logstash-filters-reference](/log-management/ingestion-pipeline/logstash-filters-reference)

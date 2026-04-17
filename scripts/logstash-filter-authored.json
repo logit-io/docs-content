@@ -1,0 +1,1913 @@
+{
+  "version": 2,
+  "note": "Logit-authored Logstash filter documentation. Single source of truth for per-plugin description, options, and example blocks. Factual fields (name/required/type/default) mirror the public plugin interface; all prose and example blocks are written in-house.",
+  "plugins": {
+    "age": {
+      "description": "Calculates how old each event is by subtracting the event `@timestamp` from the current time. The resulting age (in seconds) is written to a field you can use for conditional routing, stale-event dropping, or TTL-style processing.",
+      "options": [
+        {
+          "name": "target",
+          "required": false,
+          "type": "string",
+          "default": "`\"[@metadata][age]\"`",
+          "description": "Field where the calculated age value (in seconds) is written."
+        }
+      ],
+      "example": "filter {\n  age {\n    target => \"[event][age_seconds]\"\n  }\n  if [event][age_seconds] > 86400 {\n    mutate { add_tag => [\"stale_event\"] }\n  }\n}"
+    },
+    "aggregate": {
+      "description": "Groups information across events that share a common task identifier so you can produce correlated outputs (such as transaction durations, per-session summaries, or paired request/response records). State is held in memory per pipeline worker, which means you should run aggregating pipelines on a single worker.",
+      "options": [
+        {
+          "name": "code",
+          "required": true,
+          "type": "string",
+          "default": "none",
+          "description": "Ruby code executed on each matching event; the shared state is available as `map` and the current event as `event`."
+        },
+        {
+          "name": "task_id",
+          "required": true,
+          "type": "string",
+          "default": "none",
+          "description": "Sprintf expression that produces the shared task key used to correlate related events (for example `%{transaction_id}`)."
+        },
+        {
+          "name": "aggregate_maps_path",
+          "required": false,
+          "type": "string",
+          "default": "none",
+          "description": "File path used to persist aggregate state across pipeline restarts."
+        },
+        {
+          "name": "end_of_task",
+          "required": false,
+          "type": "boolean",
+          "default": "`false`",
+          "description": "When true, deletes the map entry for the task after the code block runs (use this on the event that ends the task)."
+        },
+        {
+          "name": "inactivity_timeout",
+          "required": false,
+          "type": "number",
+          "default": "none",
+          "description": "Seconds without a new event before a task is flushed (must be lower than `timeout`)."
+        },
+        {
+          "name": "map_action",
+          "required": false,
+          "type": "string",
+          "default": "`\"create_or_update\"`",
+          "description": "Controls whether the filter creates a new map entry, updates an existing one, or both (`create`, `update`, or `create_or_update`)."
+        },
+        {
+          "name": "push_map_as_event_on_timeout",
+          "required": false,
+          "type": "boolean",
+          "default": "`false`",
+          "description": "Emit the aggregated state as a new event when the task times out."
+        },
+        {
+          "name": "push_previous_map_as_event",
+          "required": false,
+          "type": "boolean",
+          "default": "`false`",
+          "description": "Emit the previous task's aggregated state when a new task id is seen (requires events to arrive in order)."
+        },
+        {
+          "name": "timeout",
+          "required": false,
+          "type": "number",
+          "default": "`1800`",
+          "description": "Seconds to retain an idle task before it is considered complete and optionally emitted."
+        },
+        {
+          "name": "timeout_code",
+          "required": false,
+          "type": "string",
+          "default": "none",
+          "description": "Ruby code run against the new event produced by a timeout flush."
+        },
+        {
+          "name": "timeout_tags",
+          "required": false,
+          "type": "array",
+          "default": "`[]`",
+          "description": "Tags added to events produced by timeout flushes to help downstream routing."
+        },
+        {
+          "name": "timeout_task_id_field",
+          "required": false,
+          "type": "string",
+          "default": "none",
+          "description": "Field on the flushed event that stores the originating task id."
+        },
+        {
+          "name": "timeout_timestamp_field",
+          "required": false,
+          "type": "string",
+          "default": "none",
+          "description": "Timestamp field on the flushed event; uses the last seen event time when set."
+        },
+        {
+          "name": "map_count_warning_threshold",
+          "required": false,
+          "type": "number",
+          "default": "`5000`",
+          "description": "Logs a warning when the number of in-memory aggregate maps exceeds this threshold."
+        }
+      ],
+      "example": "filter {\n  aggregate {\n    task_id => \"%{transaction_id}\"\n    code => \"map['event_count'] ||= 0; map['event_count'] += 1\"\n    push_map_as_event_on_timeout => true\n    timeout => 120\n    inactivity_timeout => 30\n    timeout_tags => [\"aggregated_transaction\"]\n  }\n}"
+    },
+    "alter": {
+      "description": "Applies field-level alterations that do not fit the `mutate` filter: conditional replacement, fallback values, and coalesce operations across several fields.",
+      "options": [
+        {
+          "name": "coalesce",
+          "required": false,
+          "type": "array",
+          "default": "none",
+          "description": "Takes the first non-null value from a list of fields and writes it to a destination field."
+        },
+        {
+          "name": "condrewrite",
+          "required": false,
+          "type": "array",
+          "default": "none",
+          "description": "Rewrites a field value only when it matches a supplied condition."
+        },
+        {
+          "name": "condrewriteother",
+          "required": false,
+          "type": "array",
+          "default": "none",
+          "description": "Conditionally rewrites a different field based on the source field's value."
+        }
+      ],
+      "example": "filter {\n  alter {\n    coalesce => [\"[user][email]\", \"%{[user][username]}\", \"%{[user][id]}\", \"unknown\"]\n    condrewrite => [\n      \"[response][status]\", \"ok\", \"success\",\n      \"[response][status]\", \"fail\", \"failure\"\n    ]\n  }\n}"
+    },
+    "bytes": {
+      "description": "Parses storage-size strings such as `123 MB` or `5.6gb` and converts them into numeric byte values. Useful when upstream systems emit human-readable sizes that you need to query, chart, or alert on numerically.",
+      "options": [
+        {
+          "name": "target",
+          "required": true,
+          "type": "string",
+          "default": null,
+          "description": "Field where the numeric byte value will be written."
+        },
+        {
+          "name": "source",
+          "required": false,
+          "type": "string",
+          "default": "`.`",
+          "description": "Field that contains the human-readable size string."
+        },
+        {
+          "name": "conversion_method",
+          "required": false,
+          "type": "string",
+          "default": "`binary`",
+          "description": "Conversion base used when interpreting the size (`binary` for 1024-based units or `decimal` for 1000-based units)."
+        }
+      ],
+      "example": "filter {\n  bytes {\n    source => \"[http][response][size_human]\"\n    target => \"[http][response][size_bytes]\"\n    conversion_method => \"binary\"\n  }\n}"
+    },
+    "cidr": {
+      "description": "Matches IP addresses against one or more CIDR ranges and lets you take action on matches (for example tag internal traffic, drop known-bad ranges, or route events by network).",
+      "options": [
+        {
+          "name": "address",
+          "required": false,
+          "type": "array",
+          "default": "`[]`",
+          "description": "List of IP addresses to check against the configured networks."
+        },
+        {
+          "name": "address_field",
+          "required": false,
+          "type": "string",
+          "default": "none",
+          "description": "Field whose value is used as the IP to check (alternative to `address`)."
+        },
+        {
+          "name": "network",
+          "required": false,
+          "type": "array",
+          "default": "`[]`",
+          "description": "List of CIDR blocks to match against (for example `10.0.0.0/8`)."
+        },
+        {
+          "name": "network_path",
+          "required": false,
+          "type": "a valid filesystem path",
+          "default": "none",
+          "description": "Path to a file containing one CIDR block per line, reloaded at the configured interval."
+        },
+        {
+          "name": "refresh_interval",
+          "required": false,
+          "type": "number",
+          "default": "`600`",
+          "description": "Seconds between reloads when `network_path` is used."
+        },
+        {
+          "name": "separator",
+          "required": false,
+          "type": "string",
+          "default": "`\\n`",
+          "description": "Character used to split multiple CIDR values when loading from a file."
+        }
+      ],
+      "example": "filter {\n  cidr {\n    address      => [ \"%{[client][ip]}\" ]\n    network      => [ \"10.0.0.0/8\", \"192.168.0.0/16\", \"172.16.0.0/12\" ]\n    add_tag      => [ \"internal_network\" ]\n  }\n}"
+    },
+    "cipher": {
+      "description": "Encrypts or decrypts field values using OpenSSL ciphers. Useful for masking sensitive fields before indexing or for decrypting payloads produced by upstream systems.",
+      "options": [
+        {
+          "name": "algorithm",
+          "required": true,
+          "type": "string",
+          "default": "none",
+          "description": "OpenSSL cipher name, such as `aes-256-cbc`."
+        },
+        {
+          "name": "mode",
+          "required": true,
+          "type": "string",
+          "default": "none",
+          "description": "Operation mode; set to `encrypt` to encrypt values or `decrypt` to decrypt them."
+        },
+        {
+          "name": "base64",
+          "required": false,
+          "type": "boolean",
+          "default": "`true`",
+          "description": "When true, inputs are treated as (and outputs produced as) base64 strings."
+        },
+        {
+          "name": "cipher_padding",
+          "required": false,
+          "type": "string",
+          "default": "none",
+          "description": "Disable PKCS padding by setting to `0` when the upstream cipher was run without padding."
+        },
+        {
+          "name": "iv_random_length",
+          "required": false,
+          "type": "number",
+          "default": "none",
+          "description": "Length in bytes of a per-event random initialisation vector."
+        },
+        {
+          "name": "key",
+          "required": false,
+          "type": "string",
+          "default": "none",
+          "description": "Cipher key used for the operation; supply through a Logit secret rather than hard-coding."
+        },
+        {
+          "name": "key_pad",
+          "required": false,
+          "type": "string",
+          "default": "`\"\\u0000\"`",
+          "description": "Character used to pad a short key up to `key_size`."
+        },
+        {
+          "name": "key_size",
+          "required": false,
+          "type": "number",
+          "default": "`16`",
+          "description": "Key size in bytes (must match the chosen algorithm)."
+        },
+        {
+          "name": "max_cipher_reuse",
+          "required": false,
+          "type": "number",
+          "default": "`1`",
+          "description": "Maximum number of events that can reuse the same cipher instance before it is recycled."
+        },
+        {
+          "name": "source",
+          "required": false,
+          "type": "string",
+          "default": "`\"message\"`",
+          "description": "Field containing the value to encrypt or decrypt."
+        },
+        {
+          "name": "target",
+          "required": false,
+          "type": "string",
+          "default": "`\"message\"`",
+          "description": "Field to write the transformed value into (defaults to the source field)."
+        }
+      ],
+      "example": "filter {\n  cipher {\n    algorithm        => \"aes-256-cbc\"\n    mode             => \"encrypt\"\n    source           => \"[user][email]\"\n    target           => \"[user][email_encrypted]\"\n    key              => \"${LOGSTASH_CIPHER_KEY}\"\n    key_size         => 32\n    iv_random_length => 16\n    base64           => true\n  }\n}"
+    },
+    "clone": {
+      "description": "Duplicates the current event and tags each clone so downstream conditionals can route copies through different processing branches.",
+      "options": [
+        {
+          "name": "clones",
+          "required": true,
+          "type": "array",
+          "default": "none",
+          "description": "List of tag values; one clone is created per entry and tagged with the matching value."
+        },
+        {
+          "name": "ecs_compatibility",
+          "required": false,
+          "type": "string",
+          "default": null,
+          "description": "Controls ECS field compatibility behaviour (`disabled`, `v1`, or `v8`)."
+        }
+      ],
+      "example": "filter {\n  clone {\n    clones => [ \"for_archive\", \"for_analytics\" ]\n  }\n\n  if \"for_archive\" in [tags] {\n    mutate { add_field => { \"[stream]\" => \"cold_storage\" } }\n  }\n  if \"for_analytics\" in [tags] {\n    mutate { add_field => { \"[stream]\" => \"live_dashboards\" } }\n  }\n}"
+    },
+    "csv": {
+      "description": "Parses comma-separated values from a field into named fields, with optional type conversion and header detection.",
+      "options": [
+        {
+          "name": "autodetect_column_names",
+          "required": false,
+          "type": "boolean",
+          "default": "`false`",
+          "description": "When true, use the first matching event as the header row."
+        },
+        {
+          "name": "autogenerate_column_names",
+          "required": false,
+          "type": "boolean",
+          "default": "`true`",
+          "description": "When true, generate column names automatically (`column1`, `column2`, ...)."
+        },
+        {
+          "name": "columns",
+          "required": false,
+          "type": "array",
+          "default": "`[]`",
+          "description": "Ordered list of column names matching the CSV layout."
+        },
+        {
+          "name": "convert",
+          "required": false,
+          "type": "hash",
+          "default": "`{}`",
+          "description": "Per-column type conversion map (for example `{ \"count\" => \"integer\" }`)."
+        },
+        {
+          "name": "ecs_compatibility",
+          "required": false,
+          "type": "string",
+          "default": null,
+          "description": "Controls ECS field compatibility behaviour (`disabled`, `v1`, or `v8`)."
+        },
+        {
+          "name": "quote_char",
+          "required": false,
+          "type": "string",
+          "default": "`\"\\\"\"`",
+          "description": "Character used to quote values that contain the separator."
+        },
+        {
+          "name": "separator",
+          "required": false,
+          "type": "string",
+          "default": "`\",\"`",
+          "description": "Character used as the field separator."
+        },
+        {
+          "name": "skip_empty_columns",
+          "required": false,
+          "type": "boolean",
+          "default": "`false`",
+          "description": "Do not create fields for empty columns."
+        },
+        {
+          "name": "skip_empty_rows",
+          "required": false,
+          "type": "boolean",
+          "default": "`false`",
+          "description": "Drop events where every column is empty."
+        },
+        {
+          "name": "skip_header",
+          "required": false,
+          "type": "boolean",
+          "default": "`false`",
+          "description": "Skip the first matching event when it is a header row."
+        },
+        {
+          "name": "source",
+          "required": false,
+          "type": "string",
+          "default": "`\"message\"`",
+          "description": "Field containing the CSV line to parse."
+        },
+        {
+          "name": "target",
+          "required": false,
+          "type": "string",
+          "default": "none",
+          "description": "Parent field to nest parsed columns under (omit to write to the event root)."
+        }
+      ],
+      "example": "filter {\n  csv {\n    source    => \"message\"\n    columns   => [ \"timestamp\", \"method\", \"path\", \"status\", \"duration_ms\" ]\n    separator => \",\"\n    convert   => {\n      \"status\"      => \"integer\"\n      \"duration_ms\" => \"float\"\n    }\n    skip_empty_columns => true\n  }\n}"
+    },
+    "date": {
+      "description": "Parses date/time strings from a field and, by default, uses the parsed value as the event's `@timestamp`. This is the standard way to make log timestamps accurate in OpenSearch once an event reaches Logstash.",
+      "options": [
+        {
+          "name": "locale",
+          "required": false,
+          "type": "string",
+          "default": "none",
+          "description": "Locale used when parsing month or day names (for example `en`)."
+        },
+        {
+          "name": "match",
+          "required": false,
+          "type": "array",
+          "default": "`[]`",
+          "description": "Array containing the source field name followed by one or more date format patterns to try."
+        },
+        {
+          "name": "precision",
+          "required": false,
+          "type": "string",
+          "default": "`ms`",
+          "description": "Number of digits to use for sub-second precision."
+        },
+        {
+          "name": "tag_on_failure",
+          "required": false,
+          "type": "array",
+          "default": "`[\"_dateparsefailure\"]`",
+          "description": "Tags applied to events whose date could not be parsed (defaults to `_dateparsefailure`)."
+        },
+        {
+          "name": "target",
+          "required": false,
+          "type": "string",
+          "default": "`\"@timestamp\"`",
+          "description": "Target field for the parsed timestamp (defaults to `@timestamp`)."
+        },
+        {
+          "name": "timezone",
+          "required": false,
+          "type": "string",
+          "default": "none",
+          "description": "Timezone to use when the source string has no offset (for example `Europe/London`)."
+        }
+      ],
+      "example": "filter {\n  date {\n    match    => [ \"[event][start]\", \"ISO8601\", \"yyyy-MM-dd HH:mm:ss\" ]\n    target   => \"@timestamp\"\n    timezone => \"UTC\"\n    tag_on_failure => [ \"_dateparsefailure\" ]\n  }\n}"
+    },
+    "de_dot": {
+      "description": "Rewrites field names that contain `.` characters so they play nicely with OpenSearch. By default each dot is replaced with an underscore, producing a flat field name. With `nested => true` the dots are turned into sub-field boundaries instead, producing nested objects.",
+      "options": [
+        {
+          "name": "fields",
+          "required": false,
+          "type": "array",
+          "default": "none",
+          "description": "Explicit list of field references to de-dot (for example `[\"process.name\", \"[foo][bar.suffix]\"]`). If omitted, every top-level field on the event is checked."
+        },
+        {
+          "name": "nested",
+          "required": false,
+          "type": "boolean",
+          "default": "`false`",
+          "description": "When true, convert each dotted name into a nested sub-field instead of flattening with `separator` (the separator is forced to `][` internally, so setting both `nested => true` and `separator` at the same time is not useful)."
+        },
+        {
+          "name": "recursive",
+          "required": false,
+          "type": "boolean",
+          "default": "`false`",
+          "description": "When true, descend into hash-valued fields and de-dot nested keys as well. Expensive; only enable when you know the event can contain dotted keys inside nested objects."
+        },
+        {
+          "name": "separator",
+          "required": false,
+          "type": "string",
+          "default": "`\"_\"`",
+          "description": "Character used to replace each `.` in a field name when `nested` is false. Cannot itself contain a `.`."
+        }
+      ],
+      "example": "filter {\n  de_dot {\n    fields    => [ \"process.name\", \"container.image.name\" ]\n    separator => \"_\"\n    recursive => false\n  }\n}\n\n# Alternative: turn dotted names into nested sub-fields.\n# filter {\n#   de_dot {\n#     fields => [ \"process.name\" ]\n#     nested => true\n#   }\n# }"
+    },
+    "dissect": {
+      "description": "Fast, allocation-friendly alternative to `grok` for parsing logs that use fixed delimiters. Use `dissect` for predictable formats and fall back to `grok` only when you need regex flexibility.",
+      "options": [
+        {
+          "name": "convert_datatype",
+          "required": false,
+          "type": "hash",
+          "default": "`{}`",
+          "description": "Per-field type conversion applied after extraction (for example `{ \"status\" => \"int\" }`)."
+        },
+        {
+          "name": "mapping",
+          "required": false,
+          "type": "hash",
+          "default": "`{}`",
+          "description": "Map of source field to dissect pattern (for example `{ \"message\" => \"%{ts} %{+ts} %{level} %{msg}\" }`)."
+        },
+        {
+          "name": "tag_on_failure",
+          "required": false,
+          "type": "array",
+          "default": "`[\"_dissectfailure\"]`",
+          "description": "Tags applied when the dissect pattern does not match."
+        }
+      ],
+      "example": "filter {\n  dissect {\n    mapping => {\n      \"message\" => \"%{ts} %{+ts} [%{level}] %{logger} - %{msg}\"\n    }\n    convert_datatype => {\n      \"pid\"    => \"int\"\n      \"status\" => \"int\"\n    }\n    tag_on_failure => [ \"_dissectfailure\" ]\n  }\n}"
+    },
+    "drop": {
+      "description": "Drops events from the pipeline. Combine it with an enclosing `if` block to discard noisy logs (health checks, known test traffic, deprecated levels) before they are indexed.",
+      "options": [
+        {
+          "name": "percentage",
+          "required": false,
+          "type": "number",
+          "default": "`100`",
+          "description": "Drop only this percentage of matching events (0 to 100); useful for sampling."
+        }
+      ],
+      "example": "filter {\n  if [http][request][path] == \"/healthz\" {\n    drop { }\n  }\n\n  if [log][level] == \"DEBUG\" {\n    drop { percentage => 90 }\n  }\n}"
+    },
+    "elapsed": {
+      "description": "Pairs start and end events that share a common key and writes the elapsed time between them. Useful for measuring per-request latency when the application emits two log lines rather than one.",
+      "options": [
+        {
+          "name": "end_tag",
+          "required": true,
+          "type": "string",
+          "default": "none",
+          "description": "Tag that identifies the end event."
+        },
+        {
+          "name": "start_tag",
+          "required": true,
+          "type": "string",
+          "default": "none",
+          "description": "Tag that identifies the start event."
+        },
+        {
+          "name": "unique_id_field",
+          "required": true,
+          "type": "string",
+          "default": "none",
+          "description": "Field shared by the start and end events that correlates the two."
+        },
+        {
+          "name": "new_event_on_match",
+          "required": false,
+          "type": "boolean",
+          "default": "`false`",
+          "description": "Emit a new dedicated event for the match instead of annotating the end event."
+        },
+        {
+          "name": "timeout",
+          "required": false,
+          "type": "number",
+          "default": "`1800`",
+          "description": "Seconds to wait for the end event before giving up on the pair."
+        },
+        {
+          "name": "keep_start_event",
+          "required": false,
+          "type": "string",
+          "default": "`first`",
+          "description": "Keep the start event in the pipeline rather than discarding it once the pair is matched."
+        }
+      ],
+      "example": "filter {\n  if [log][type] == \"request_start\" {\n    mutate { add_tag => [ \"start_event\" ] }\n  }\n  if [log][type] == \"request_end\" {\n    mutate { add_tag => [ \"end_event\" ] }\n  }\n\n  elapsed {\n    start_tag       => \"start_event\"\n    end_tag         => \"end_event\"\n    unique_id_field => \"[transaction][id]\"\n    timeout         => 60\n    new_event_on_match => false\n  }\n}"
+    },
+    "environment": {
+      "description": "Reads environment variables at pipeline start and writes their values into the event, typically into `@metadata` for use by downstream filters or outputs.",
+      "options": [
+        {
+          "name": "add_metadata_from_env",
+          "required": false,
+          "type": "hash",
+          "default": "`{}`",
+          "description": "Map of environment variable name to destination `@metadata` field path."
+        }
+      ],
+      "example": "filter {\n  environment {\n    add_metadata_from_env => {\n      \"[@metadata][stack_region]\" => \"STACK_REGION\"\n      \"[@metadata][pipeline_owner]\" => \"PIPELINE_OWNER\"\n    }\n  }\n}"
+    },
+    "extractnumbers": {
+      "description": "Scans a text field and extracts every numeric value it can find, writing the results into structured numeric fields for downstream aggregation or alerting.",
+      "options": [
+        {
+          "name": "source",
+          "required": false,
+          "type": "string",
+          "default": "`\"message\"`",
+          "description": "Field whose text content will be scanned for numeric values."
+        }
+      ],
+      "example": "filter {\n  extractnumbers {\n    source => \"message\"\n  }\n}"
+    },
+    "fingerprint": {
+      "description": "Generates a stable hash from one or more fields so you can deduplicate events, build reproducible document IDs, or pseudonymise values before indexing.",
+      "options": [
+        {
+          "name": "method",
+          "required": true,
+          "type": "string",
+          "default": "`\"SHA1\"`",
+          "description": "Hashing method, for example `SHA1`, `SHA256`, `MURMUR3`, or `UUID`."
+        },
+        {
+          "name": "base64encode",
+          "required": false,
+          "type": "boolean",
+          "default": "`false`",
+          "description": "Output the fingerprint as a base64 string rather than hex."
+        },
+        {
+          "name": "concatenate_sources",
+          "required": false,
+          "type": "boolean",
+          "default": "`false`",
+          "description": "Combine the values of all source fields before hashing."
+        },
+        {
+          "name": "concatenate_all_fields",
+          "required": false,
+          "type": "boolean",
+          "default": "`false`",
+          "description": "Concatenate every field on the event (use with care; order sensitive)."
+        },
+        {
+          "name": "ecs_compatibility",
+          "required": false,
+          "type": "string",
+          "default": null,
+          "description": "Controls ECS field compatibility behaviour (`disabled`, `v1`, or `v8`)."
+        },
+        {
+          "name": "key",
+          "required": false,
+          "type": "password",
+          "default": "none",
+          "description": "Optional secret used for keyed hashes such as HMAC-SHA256."
+        },
+        {
+          "name": "source",
+          "required": false,
+          "type": "array",
+          "default": "`\"message\"`",
+          "description": "Field or list of fields to fingerprint."
+        },
+        {
+          "name": "target",
+          "required": false,
+          "type": "string",
+          "default": "`\"[event][hash]\"` when ECS is enabled",
+          "description": "Field to receive the generated fingerprint."
+        }
+      ],
+      "example": "filter {\n  fingerprint {\n    source               => [ \"[user][id]\", \"[event][action]\", \"@timestamp\" ]\n    method               => \"SHA256\"\n    concatenate_sources  => true\n    target               => \"[event][id]\"\n    base64encode         => true\n  }\n}"
+    },
+    "geoip": {
+      "description": "Enriches events with location and network metadata for a given IP address. The plugin uses a bundled MaxMind GeoLite2 database so it works without any outbound network calls.",
+      "options": [
+        {
+          "name": "source",
+          "required": true,
+          "type": "string",
+          "default": "none",
+          "description": "Field containing the IP address or hostname to look up."
+        },
+        {
+          "name": "cache_size",
+          "required": false,
+          "type": "number",
+          "default": "`1000`",
+          "description": "Number of recent lookups to keep in memory."
+        },
+        {
+          "name": "database",
+          "required": false,
+          "type": "a valid filesystem path",
+          "default": null,
+          "description": "Path to a custom MaxMind database file (mutually exclusive with `default_database_type`)."
+        },
+        {
+          "name": "default_database_type",
+          "required": false,
+          "type": "`City` or `ASN`",
+          "default": null,
+          "description": "Built-in database to use (`City` or `ASN`)."
+        },
+        {
+          "name": "ecs_compatibility",
+          "required": false,
+          "type": "string",
+          "default": null,
+          "description": "Controls ECS field compatibility behaviour (`disabled`, `v1`, or `v8`)."
+        },
+        {
+          "name": "fields",
+          "required": false,
+          "type": "array",
+          "default": "none",
+          "description": "Subset of lookup fields to keep (for example `country_name`, `city_name`, `location`)."
+        },
+        {
+          "name": "tag_on_failure",
+          "required": false,
+          "type": "array",
+          "default": "`[\"_geoip_lookup_failure\"]`",
+          "description": "Tags applied when the lookup produces no result."
+        },
+        {
+          "name": "target",
+          "required": false,
+          "type": "string",
+          "default": null,
+          "description": "Parent field to nest the enrichment output under (defaults to `geoip`)."
+        }
+      ],
+      "example": "filter {\n  geoip {\n    source => \"[client][ip]\"\n    target => \"[client][geo]\"\n    fields => [ \"country_name\", \"city_name\", \"location\", \"continent_code\" ]\n    tag_on_failure => [ \"_geoip_lookup_failure\" ]\n  }\n}"
+    },
+    "grok": {
+      "description": "Parses unstructured text using named regex patterns. It is the default tool for converting single-line log messages into structured fields when the format does not fit a simpler alternative such as `dissect`, `csv`, or `kv`.",
+      "options": [
+        {
+          "name": "break_on_match",
+          "required": false,
+          "type": "boolean",
+          "default": "`true`",
+          "description": "When true, stop trying additional patterns after the first success."
+        },
+        {
+          "name": "ecs_compatibility",
+          "required": false,
+          "type": "string",
+          "default": null,
+          "description": "Controls ECS field compatibility behaviour (`disabled`, `v1`, or `v8`)."
+        },
+        {
+          "name": "keep_empty_captures",
+          "required": false,
+          "type": "boolean",
+          "default": "`false`",
+          "description": "Keep captures that matched but produced an empty value."
+        },
+        {
+          "name": "match",
+          "required": false,
+          "type": "hash",
+          "default": "`{}`",
+          "description": "Map of source field name to one or more grok patterns; the first match wins."
+        },
+        {
+          "name": "named_captures_only",
+          "required": false,
+          "type": "boolean",
+          "default": "`true`",
+          "description": "Only store named captures on the event; discard unnamed groups."
+        },
+        {
+          "name": "overwrite",
+          "required": false,
+          "type": "array",
+          "default": "`[]`",
+          "description": "List of field names that grok is allowed to overwrite on match."
+        },
+        {
+          "name": "pattern_definitions",
+          "required": false,
+          "type": "hash",
+          "default": "`{}`",
+          "description": "Inline custom pattern definitions available to this filter instance."
+        },
+        {
+          "name": "patterns_dir",
+          "required": false,
+          "type": "array",
+          "default": "`[]`",
+          "description": "Directories containing additional grok pattern files."
+        },
+        {
+          "name": "patterns_files_glob",
+          "required": false,
+          "type": "string",
+          "default": "`\"*\"`",
+          "description": "Glob used to select pattern files from `patterns_dir`."
+        },
+        {
+          "name": "tag_on_failure",
+          "required": false,
+          "type": "array",
+          "default": "`[\"_grokparsefailure\"]`",
+          "description": "Tags added when no pattern matches."
+        },
+        {
+          "name": "tag_on_timeout",
+          "required": false,
+          "type": "string",
+          "default": "`\"_groktimeout\"`",
+          "description": "Tags added when pattern evaluation exceeds `timeout_millis`."
+        },
+        {
+          "name": "timeout_millis",
+          "required": false,
+          "type": "number",
+          "default": "`30000`",
+          "description": "Maximum milliseconds spent evaluating a single event's patterns."
+        },
+        {
+          "name": "timeout_scope",
+          "required": false,
+          "type": "string",
+          "default": "`\"pattern\"`",
+          "description": "Whether the timeout applies per pattern (`pattern`) or across the whole event (`event`)."
+        }
+      ],
+      "example": "filter {\n  grok {\n    match => {\n      \"message\" => \"%{TIMESTAMP_ISO8601:ts} \\[%{LOGLEVEL:level}\\] %{DATA:logger} - %{GREEDYDATA:msg}\"\n    }\n    overwrite       => [ \"message\" ]\n    tag_on_failure  => [ \"_grokparsefailure\" ]\n    timeout_millis  => 2000\n  }\n}"
+    },
+    "i18n": {
+      "description": "Normalises non-ASCII text by transliterating accented characters into their closest ASCII equivalents. Useful when downstream systems expect a restricted character set.",
+      "options": [
+        {
+          "name": "transliterate",
+          "required": false,
+          "type": "array",
+          "default": "none",
+          "description": "List of field names whose values should be transliterated."
+        }
+      ],
+      "example": "filter {\n  i18n {\n    transliterate => [ \"[user][display_name]\", \"[city]\" ]\n  }\n}"
+    },
+    "java_uuid": {
+      "description": "Generates a random UUID for each event using the Java implementation. Use this rather than the Ruby `uuid` filter when you want the built-in, core Logstash version.",
+      "options": [
+        {
+          "name": "target",
+          "required": true,
+          "type": "string",
+          "default": "none",
+          "description": "Field to receive the generated UUID."
+        },
+        {
+          "name": "overwrite",
+          "required": false,
+          "type": "boolean",
+          "default": "`false`",
+          "description": "When true, replace any existing value in the target field."
+        }
+      ],
+      "example": "filter {\n  java_uuid {\n    target    => \"[event][id]\"\n    overwrite => false\n  }\n}"
+    },
+    "json": {
+      "description": "Parses a JSON-encoded string stored in a field and promotes its keys into structured event fields. This is the standard way to unpack events that arrive as a single JSON blob inside `message`.",
+      "options": [
+        {
+          "name": "source",
+          "required": true,
+          "type": "string",
+          "default": "none",
+          "description": "Field containing the JSON string to parse."
+        },
+        {
+          "name": "ecs_compatibility",
+          "required": false,
+          "type": "string",
+          "default": null,
+          "description": "Controls ECS field compatibility behaviour (`disabled`, `v1`, or `v8`)."
+        },
+        {
+          "name": "skip_on_invalid_json",
+          "required": false,
+          "type": "boolean",
+          "default": "`false`",
+          "description": "When true, invalid JSON does not add a parse-failure tag."
+        },
+        {
+          "name": "tag_on_failure",
+          "required": false,
+          "type": "array",
+          "default": "`[\"_jsonparsefailure\"]`",
+          "description": "Tags applied when the source is not valid JSON."
+        },
+        {
+          "name": "target",
+          "required": false,
+          "type": "string",
+          "default": "none",
+          "description": "Parent field to nest the parsed keys under (omit to write to the event root)."
+        }
+      ],
+      "example": "filter {\n  json {\n    source => \"message\"\n    target => \"payload\"\n    skip_on_invalid_json => false\n    tag_on_failure => [ \"_jsonparsefailure\" ]\n  }\n}"
+    },
+    "json_encode": {
+      "description": "Serialises the value of a field into a JSON string. Useful when a downstream consumer expects a flattened JSON payload inside a single field.",
+      "options": [
+        {
+          "name": "source",
+          "required": true,
+          "type": "string",
+          "default": "none",
+          "description": "Field whose value will be serialised."
+        },
+        {
+          "name": "target",
+          "required": false,
+          "type": "string",
+          "default": "none",
+          "description": "Field to receive the resulting JSON string (defaults to the source field)."
+        }
+      ],
+      "example": "filter {\n  json_encode {\n    source => \"[request][headers]\"\n    target => \"[request][headers_json]\"\n  }\n}"
+    },
+    "kv": {
+      "description": "Parses key/value pairs inside a text field into structured fields. Works well for URL query strings, structured syslog suffixes, and simple application logs.",
+      "options": [
+        {
+          "name": "allow_duplicate_values",
+          "required": false,
+          "type": "boolean",
+          "default": "`true`",
+          "description": "Keep duplicate values instead of deduplicating them into an array."
+        },
+        {
+          "name": "allow_empty_values",
+          "required": false,
+          "type": "boolean",
+          "default": "`false`",
+          "description": "Keep keys whose value is an empty string."
+        },
+        {
+          "name": "default_keys",
+          "required": false,
+          "type": "hash",
+          "default": "`{}`",
+          "description": "Keys to add with default values when missing from the input."
+        },
+        {
+          "name": "ecs_compatibility",
+          "required": false,
+          "type": "string",
+          "default": null,
+          "description": "Controls ECS field compatibility behaviour (`disabled`, `v1`, or `v8`)."
+        },
+        {
+          "name": "exclude_keys",
+          "required": false,
+          "type": "array",
+          "default": "`[]`",
+          "description": "Drop keys listed here."
+        },
+        {
+          "name": "field_split",
+          "required": false,
+          "type": "string",
+          "default": "`\" \"`",
+          "description": "String that separates pairs from each other (for example `\" \"` or `\"&\"`)."
+        },
+        {
+          "name": "field_split_pattern",
+          "required": false,
+          "type": "string",
+          "default": "none",
+          "description": "Regex alternative to `field_split` for more complex separators."
+        },
+        {
+          "name": "include_brackets",
+          "required": false,
+          "type": "boolean",
+          "default": "`true`",
+          "description": "Treat bracket characters as part of values (useful for `[` and `]`)."
+        },
+        {
+          "name": "include_keys",
+          "required": false,
+          "type": "array",
+          "default": "`[]`",
+          "description": "Only keep keys listed here."
+        },
+        {
+          "name": "prefix",
+          "required": false,
+          "type": "string",
+          "default": "`\"\"`",
+          "description": "Prefix added to every extracted key name."
+        },
+        {
+          "name": "recursive",
+          "required": false,
+          "type": "boolean",
+          "default": "`false`",
+          "description": "Recursively parse values that themselves look like key/value strings."
+        },
+        {
+          "name": "remove_char_key",
+          "required": false,
+          "type": "string",
+          "default": "none",
+          "description": "Characters to remove entirely from every key."
+        },
+        {
+          "name": "remove_char_value",
+          "required": false,
+          "type": "string",
+          "default": "none",
+          "description": "Characters to remove entirely from every value."
+        },
+        {
+          "name": "source",
+          "required": false,
+          "type": "string",
+          "default": "`\"message\"`",
+          "description": "Field containing the key/value text."
+        },
+        {
+          "name": "target",
+          "required": false,
+          "type": "string",
+          "default": "none",
+          "description": "Parent field to nest parsed pairs under."
+        },
+        {
+          "name": "tag_on_failure",
+          "required": false,
+          "type": "array",
+          "default": "[`_kv_filter_error`].",
+          "description": "Tags applied when parsing produces no fields."
+        },
+        {
+          "name": "tag_on_timeout",
+          "required": false,
+          "type": "string",
+          "default": "`_kv_filter_timeout`.",
+          "description": "Tags applied when parsing exceeds `timeout_millis`."
+        },
+        {
+          "name": "timeout_millis",
+          "required": false,
+          "type": "number",
+          "default": "30000 (30 seconds).",
+          "description": "Maximum time in milliseconds to spend parsing a single event."
+        },
+        {
+          "name": "transform_key",
+          "required": false,
+          "type": "string",
+          "default": "none",
+          "description": "Transform every key (`lowercase`, `uppercase`, or `capitalize`)."
+        },
+        {
+          "name": "transform_value",
+          "required": false,
+          "type": "string",
+          "default": "none",
+          "description": "Transform every value (`lowercase`, `uppercase`, or `capitalize`)."
+        },
+        {
+          "name": "trim_key",
+          "required": false,
+          "type": "string",
+          "default": "none",
+          "description": "Characters to strip from the beginning and end of each key."
+        },
+        {
+          "name": "trim_value",
+          "required": false,
+          "type": "string",
+          "default": "none",
+          "description": "Characters to strip from the beginning and end of each value."
+        },
+        {
+          "name": "value_split",
+          "required": false,
+          "type": "string",
+          "default": "`\"=\"`",
+          "description": "String that separates a key from its value (for example `\"=\"`)."
+        },
+        {
+          "name": "value_split_pattern",
+          "required": false,
+          "type": "string",
+          "default": "none",
+          "description": "Regex alternative to `value_split`."
+        },
+        {
+          "name": "whitespace",
+          "required": false,
+          "type": "string",
+          "default": "`lenient`",
+          "description": "Whitespace handling mode (`lenient` or `strict`)."
+        }
+      ],
+      "example": "filter {\n  kv {\n    source         => \"message\"\n    target         => \"params\"\n    field_split    => \"&?\"\n    value_split    => \"=\"\n    include_keys   => [ \"user_id\", \"session\", \"action\" ]\n    transform_key  => \"lowercase\"\n    trim_value     => \"\\\"'\"\n    tag_on_failure => [ \"_kvparsefailure\" ]\n  }\n}"
+    },
+    "math": {
+      "description": "Applies basic arithmetic operations to numeric fields. Use it to compute derived metrics (for example converting milliseconds to seconds) directly inside the pipeline. This plugin is not part of the default Logstash distribution; it is pre-installed on Logit stacks.",
+      "options": [],
+      "example": "filter {\n  math {\n    calculate => [\n      [ \"[http][response][time_ms]\", \"/\", \"1000.0\", \"[http][response][time_seconds]\" ]\n    ]\n  }\n}"
+    },
+    "metricize": {
+      "description": "Splits a complex event that contains several metrics into one smaller event per metric. Useful when downstream tooling indexes one metric per document.",
+      "options": [
+        {
+          "name": "metrics",
+          "required": true,
+          "type": "array",
+          "default": "none",
+          "description": "List of field names in the source event that each represent a metric."
+        },
+        {
+          "name": "drop_original_event",
+          "required": false,
+          "type": "boolean",
+          "default": "`false`",
+          "description": "Drop the original combined event after emitting per-metric events."
+        },
+        {
+          "name": "metric_field_name",
+          "required": false,
+          "type": "string",
+          "default": "`\"metric\"`",
+          "description": "Field on each output event that stores the metric name."
+        },
+        {
+          "name": "value_field_name",
+          "required": false,
+          "type": "string",
+          "default": "`\"value\"`",
+          "description": "Field on each output event that stores the metric value."
+        }
+      ],
+      "example": "filter {\n  metricize {\n    metrics             => [ \"cpu_pct\", \"mem_pct\", \"disk_pct\" ]\n    metric_field_name   => \"metric\"\n    value_field_name    => \"value\"\n    drop_original_event => true\n  }\n}"
+    },
+    "metrics": {
+      "description": "Aggregates metrics (meters, timers, and percentiles) over a rolling window of events and emits the summary as its own event. Useful for producing rate/latency metrics from raw log streams.",
+      "options": [
+        {
+          "name": "clear_interval",
+          "required": false,
+          "type": "number",
+          "default": "`-1`",
+          "description": "Seconds after which the internal state is cleared (use to reset rolling windows)."
+        },
+        {
+          "name": "flush_interval",
+          "required": false,
+          "type": "number",
+          "default": "`5`",
+          "description": "Seconds between summary emissions."
+        },
+        {
+          "name": "ignore_older_than",
+          "required": false,
+          "type": "number",
+          "default": "`0`",
+          "description": "Ignore events older than this many seconds relative to `@timestamp`."
+        },
+        {
+          "name": "meter",
+          "required": false,
+          "type": "array",
+          "default": "`[]`",
+          "description": "List of meter names; one counter per meter is maintained."
+        },
+        {
+          "name": "percentiles",
+          "required": false,
+          "type": "array",
+          "default": "`[1, 5, 10, 90, 95, 99, 100]`",
+          "description": "Percentiles to report on timers (for example `[50, 95, 99]`)."
+        },
+        {
+          "name": "rates",
+          "required": false,
+          "type": "array",
+          "default": "`[1, 5, 15]`",
+          "description": "Rates to report, in minutes (for example `[1, 5, 15]`)."
+        },
+        {
+          "name": "timer",
+          "required": false,
+          "type": "hash",
+          "default": "`{}`",
+          "description": "Map of timer name to source field path; used for percentile and rate calculations."
+        }
+      ],
+      "example": "filter {\n  metrics {\n    meter          => [ \"events.ingested\", \"events.parse_failures\" ]\n    timer          => { \"http.response.time_ms\" => \"[http][response][time_ms]\" }\n    rates          => [ 1, 5 ]\n    percentiles    => [ 50, 95, 99 ]\n    flush_interval => 60\n    add_tag        => [ \"pipeline_metrics\" ]\n  }\n}"
+    },
+    "mutate": {
+      "description": "General-purpose field editor for Logstash. Use it to rename, convert, replace, remove, copy, split, merge, or case-normalise fields. It is typically the last step before output, where you shape events to match the target schema.",
+      "options": [
+        {
+          "name": "convert",
+          "required": false,
+          "type": "hash",
+          "default": "none",
+          "description": "Convert field types, for example `{ \"count\" => \"integer\", \"ratio\" => \"float\" }`."
+        },
+        {
+          "name": "copy",
+          "required": false,
+          "type": "hash",
+          "default": "none",
+          "description": "Copy fields; `{ \"src\" => \"dst\" }` copies `src` to `dst` without removing `src`."
+        },
+        {
+          "name": "gsub",
+          "required": false,
+          "type": "array",
+          "default": "none",
+          "description": "Regex-based substitution on field values (triples of `field`, `pattern`, `replacement`)."
+        },
+        {
+          "name": "join",
+          "required": false,
+          "type": "hash",
+          "default": "none",
+          "description": "Join an array field into a single string using a separator."
+        },
+        {
+          "name": "lowercase",
+          "required": false,
+          "type": "array",
+          "default": "none",
+          "description": "Lowercase the listed field values."
+        },
+        {
+          "name": "merge",
+          "required": false,
+          "type": "hash",
+          "default": "none",
+          "description": "Merge two fields together (array into array, hash into hash)."
+        },
+        {
+          "name": "coerce",
+          "required": false,
+          "type": "hash",
+          "default": "none",
+          "description": "Supply a default value when a configured field is missing."
+        },
+        {
+          "name": "rename",
+          "required": false,
+          "type": "hash",
+          "default": "none",
+          "description": "Rename fields; accepts either a hash `{ \"source\" => \"destination\" }` or an array."
+        },
+        {
+          "name": "replace",
+          "required": false,
+          "type": "hash",
+          "default": "none",
+          "description": "Replace a field's value; supports `%{...}` interpolation."
+        },
+        {
+          "name": "split",
+          "required": false,
+          "type": "hash",
+          "default": "none",
+          "description": "Split a string field into an array using a delimiter."
+        },
+        {
+          "name": "strip",
+          "required": false,
+          "type": "array",
+          "default": "none",
+          "description": "Strip leading and trailing whitespace from listed fields."
+        },
+        {
+          "name": "update",
+          "required": false,
+          "type": "hash",
+          "default": "none",
+          "description": "Update a field only when it already exists."
+        },
+        {
+          "name": "uppercase",
+          "required": false,
+          "type": "array",
+          "default": "none",
+          "description": "Uppercase the listed field values."
+        },
+        {
+          "name": "capitalize",
+          "required": false,
+          "type": "array",
+          "default": "none",
+          "description": "Capitalize the listed field values."
+        },
+        {
+          "name": "tag_on_failure",
+          "required": false,
+          "type": "string",
+          "default": "`_mutate_error`",
+          "description": "Tags applied when a mutate action fails."
+        }
+      ],
+      "example": "filter {\n  mutate {\n    rename => {\n      \"[host]\" => \"[host][name]\"\n      \"[src]\"  => \"[source][ip]\"\n    }\n    convert => {\n      \"[http][response][status_code]\" => \"integer\"\n      \"[http][response][time_ms]\"     => \"float\"\n    }\n    gsub => [\n      \"[url][path]\", \"/\\\\d+\", \"/:id\"\n    ]\n    lowercase => [ \"[log][level]\" ]\n    remove_field => [ \"raw_message\", \"tmp\" ]\n    tag_on_failure => [ \"_mutateparsefailure\" ]\n  }\n}"
+    },
+    "prune": {
+      "description": "Removes fields from an event to keep only what downstream systems need. You can whitelist fields and values (keep matches) or blacklist them (drop matches), including pattern-based rules.",
+      "options": [
+        {
+          "name": "blacklist_names",
+          "required": false,
+          "type": "array",
+          "default": "`[\"%{[^}]+}\"]`",
+          "description": "Regex patterns; field names that match are removed."
+        },
+        {
+          "name": "blacklist_values",
+          "required": false,
+          "type": "hash",
+          "default": "`{}`",
+          "description": "Per-field regex values; fields whose value matches are removed."
+        },
+        {
+          "name": "interpolate",
+          "required": false,
+          "type": "boolean",
+          "default": "`false`",
+          "description": "Interpolate `%{...}` expressions in values before matching."
+        },
+        {
+          "name": "whitelist_names",
+          "required": false,
+          "type": "array",
+          "default": "`[]`",
+          "description": "Regex patterns; only field names that match are kept."
+        },
+        {
+          "name": "whitelist_values",
+          "required": false,
+          "type": "hash",
+          "default": "`{}`",
+          "description": "Per-field regex values; fields whose value matches are kept."
+        }
+      ],
+      "example": "filter {\n  prune {\n    whitelist_names => [ \"^@?timestamp$\", \"^host(\\\\..+)?$\", \"^log(\\\\..+)?$\", \"^message$\", \"^service(\\\\..+)?$\" ]\n    blacklist_names => [ \"^_+$\" ]\n    interpolate     => false\n  }\n}"
+    },
+    "range": {
+      "description": "Checks numeric values or string lengths against bounds and applies actions when an event is inside or outside the expected range.",
+      "options": [
+        {
+          "name": "negate",
+          "required": false,
+          "type": "boolean",
+          "default": "`false`",
+          "description": "Invert the match so actions fire when the value is outside the range."
+        },
+        {
+          "name": "ranges",
+          "required": false,
+          "type": "array",
+          "default": "`[]`",
+          "description": "Array of range rules; each rule is `[ field, min, max, action ]`."
+        }
+      ],
+      "example": "filter {\n  range {\n    ranges => [\n      \"[http][response][status_code]\", 200, 299, \"tag:status_2xx\",\n      \"[http][response][status_code]\", 500, 599, \"tag:status_5xx\",\n      \"message\", 0, 2048, \"tag:message_length_ok\"\n    ]\n    negate => false\n  }\n}"
+    },
+    "ruby": {
+      "description": "Executes inline Ruby code against each event. Use it only when built-in filters cannot express the transformation. On Logit.io, the `ruby` filter is gated and requires prior approval from Logit Support before it can run on production pipelines.",
+      "options": [
+        {
+          "name": "code",
+          "required": false,
+          "type": "string",
+          "default": "none",
+          "description": "Inline Ruby code to execute; the current event is available as `event`."
+        },
+        {
+          "name": "init",
+          "required": false,
+          "type": "string",
+          "default": "none",
+          "description": "Ruby code executed once when the pipeline starts."
+        },
+        {
+          "name": "path",
+          "required": false,
+          "type": "string",
+          "default": "none",
+          "description": "Path to an external Ruby script; use instead of `code` for long snippets."
+        },
+        {
+          "name": "script_params",
+          "required": false,
+          "type": "hash",
+          "default": "`{}`",
+          "description": "Parameters passed into the external script's `register` method."
+        },
+        {
+          "name": "tag_on_exception",
+          "required": false,
+          "type": "string",
+          "default": "`_rubyexception`",
+          "description": "Tag added to the event when the Ruby code raises."
+        },
+        {
+          "name": "tag_with_exception_message",
+          "required": false,
+          "type": "boolean",
+          "default": "`false`",
+          "description": "Append the exception message as a tag for quick triage."
+        }
+      ],
+      "example": "filter {\n  ruby {\n    code => '\n      status = event.get(\"[http][response][status_code]\").to_i\n      event.set(\"[http][response][status_family]\", \"#{status / 100}xx\")\n    '\n    tag_on_exception           => \"_rubyexception\"\n    tag_with_exception_message => true\n  }\n}"
+    },
+    "sleep": {
+      "description": "Pauses the pipeline for a configured interval. Primarily used for throttling or testing; production pipelines should rarely need this.",
+      "options": [
+        {
+          "name": "every",
+          "required": false,
+          "type": "string",
+          "default": "`1`",
+          "description": "Only sleep once every N events."
+        },
+        {
+          "name": "replay",
+          "required": false,
+          "type": "boolean",
+          "default": "`false`",
+          "description": "When true, scale the sleep according to each event's timestamp (useful for replay scenarios)."
+        },
+        {
+          "name": "time",
+          "required": false,
+          "type": "string",
+          "default": "none",
+          "description": "Seconds to sleep per matching event."
+        }
+      ],
+      "example": "filter {\n  if \"load_test\" in [tags] {\n    sleep {\n      time  => 0.1\n      every => 10\n    }\n  }\n}"
+    },
+    "split": {
+      "description": "Takes a single event with an array-valued field and produces one output event per array element, copying all other fields onto each child event.",
+      "options": [
+        {
+          "name": "field",
+          "required": false,
+          "type": "string",
+          "default": "`\"message\"`",
+          "description": "Field that holds the array to split over."
+        },
+        {
+          "name": "target",
+          "required": false,
+          "type": "string",
+          "default": "none",
+          "description": "Field on each child event where the individual element is written (defaults to the source field)."
+        },
+        {
+          "name": "terminator",
+          "required": false,
+          "type": "string",
+          "default": "`\"\\n\"`",
+          "description": "String terminator used to split a string field into an array before splitting."
+        }
+      ],
+      "example": "filter {\n  split {\n    field  => \"[events]\"\n    target => \"[event]\"\n  }\n}"
+    },
+    "syslog_pri": {
+      "description": "Parses the `PRI` numeric header of a syslog message into its facility and severity components, producing labelled fields you can alert on.",
+      "options": [
+        {
+          "name": "ecs_compatibility",
+          "required": false,
+          "type": "string",
+          "default": null,
+          "description": "Controls ECS field compatibility behaviour (`disabled`, `v1`, or `v8`)."
+        },
+        {
+          "name": "facility_labels",
+          "required": false,
+          "type": "array",
+          "default": "`[\"kernel\", \"user-level\", \"mail\", \"daemon\", \"security/authorization\", \"syslogd\", \"line printer\", \"network news\", \"uucp\", \"clock\", \"security/authorization\", \"ftp\", \"ntp\", \"log audit\", \"log alert\", \"clock\", \"local0\", \"local1\", \"local2\", \"local3\", \"local4\", \"local5\", \"local6\", \"local7\"]`",
+          "description": "Custom facility label list to override the defaults."
+        },
+        {
+          "name": "severity_labels",
+          "required": false,
+          "type": "array",
+          "default": "`[\"emergency\", \"alert\", \"critical\", \"error\", \"warning\", \"notice\", \"informational\", \"debug\"]`",
+          "description": "Custom severity label list to override the defaults."
+        },
+        {
+          "name": "syslog_pri_field_name",
+          "required": false,
+          "type": "string",
+          "default": null,
+          "description": "Field that contains the numeric PRI value."
+        },
+        {
+          "name": "use_labels",
+          "required": false,
+          "type": "boolean",
+          "default": "`true`",
+          "description": "When true, emit human-readable facility and severity labels in addition to numeric fields."
+        }
+      ],
+      "example": "filter {\n  grok {\n    match => { \"message\" => \"<%{NONNEGINT:syslog_pri}>%{GREEDYDATA:syslog_message}\" }\n  }\n  syslog_pri {\n    syslog_pri_field_name => \"syslog_pri\"\n    use_labels => true\n  }\n}"
+    },
+    "threats_classifier": {
+      "description": "Enriches security log events with metadata about attacker intent. This is a third-party community plugin; review the upstream project before relying on its classifications in production.",
+      "options": [],
+      "example": "filter {\n  threats_classifier {\n  }\n}"
+    },
+    "throttle": {
+      "description": "Rate-limits events that share a key inside a rolling time window. Combine it with `drop` or a tag to mute floods of repetitive events without losing visibility entirely.",
+      "options": [
+        {
+          "name": "key",
+          "required": true,
+          "type": "string",
+          "default": "none",
+          "description": "Sprintf expression that produces the throttle key (events sharing a key count together)."
+        },
+        {
+          "name": "after_count",
+          "required": false,
+          "type": "number",
+          "default": "`-1`",
+          "description": "Tag events only after the count exceeds this threshold."
+        },
+        {
+          "name": "before_count",
+          "required": false,
+          "type": "number",
+          "default": "`-1`",
+          "description": "Tag events only before the count reaches this threshold."
+        },
+        {
+          "name": "max_age",
+          "required": false,
+          "type": "number",
+          "default": "`3600`",
+          "description": "Maximum age of a counter before it is discarded."
+        },
+        {
+          "name": "max_counters",
+          "required": false,
+          "type": "number",
+          "default": "`100000`",
+          "description": "Cap on the number of distinct counters kept in memory."
+        },
+        {
+          "name": "period",
+          "required": false,
+          "type": "string",
+          "default": "`\"60\"`",
+          "description": "Length of the rolling window, in seconds."
+        }
+      ],
+      "example": "filter {\n  throttle {\n    key         => \"%{[log][level]}|%{[service][name]}\"\n    period      => 60\n    after_count => 50\n    add_tag     => [ \"throttled\" ]\n  }\n\n  if \"throttled\" in [tags] {\n    drop { }\n  }\n}"
+    },
+    "tld": {
+      "description": "Parses a URL or hostname and writes the top-level domain, registered domain, and subdomain components into structured fields.",
+      "options": [
+        {
+          "name": "source",
+          "required": false,
+          "type": "string",
+          "default": "`\"message\"`",
+          "description": "Field containing the URL or hostname to parse."
+        },
+        {
+          "name": "target",
+          "required": false,
+          "type": "string",
+          "default": "`\"tld\"`",
+          "description": "Parent field to nest the parsed components under (defaults to `tld`)."
+        }
+      ],
+      "example": "filter {\n  tld {\n    source => \"[url][full]\"\n    target => \"[url][tld]\"\n  }\n}"
+    },
+    "translate": {
+      "description": "Looks up values in a dictionary and writes the mapped result to a destination field. Supports inline dictionaries, external YAML/JSON/CSV files, and optional regex-style matching.",
+      "options": [
+        {
+          "name": "source",
+          "required": true,
+          "type": "string",
+          "default": "none",
+          "description": "Field whose value is used as the lookup key."
+        },
+        {
+          "name": "destination",
+          "required": false,
+          "type": "string",
+          "default": null,
+          "description": "Deprecated alias for `target`; prefer `target`."
+        },
+        {
+          "name": "dictionary",
+          "required": false,
+          "type": "hash",
+          "default": "`{}`",
+          "description": "Inline key/value dictionary used for the lookup."
+        },
+        {
+          "name": "dictionary_path",
+          "required": false,
+          "type": "a valid filesystem path",
+          "default": "none",
+          "description": "Path to an external YAML, JSON, or CSV file containing the dictionary."
+        },
+        {
+          "name": "ecs_compatibility",
+          "required": false,
+          "type": "string",
+          "default": null,
+          "description": "Controls ECS field compatibility behaviour (`disabled`, `v1`, or `v8`)."
+        },
+        {
+          "name": "exact",
+          "required": false,
+          "type": "boolean",
+          "default": "`true`",
+          "description": "When true, use exact matching (default); set false for substring replacement."
+        },
+        {
+          "name": "fallback",
+          "required": false,
+          "type": "string",
+          "default": "none",
+          "description": "Value to use when the lookup misses."
+        },
+        {
+          "name": "field",
+          "required": false,
+          "type": "string",
+          "default": null,
+          "description": "Deprecated alias for `source`; prefer `source`."
+        },
+        {
+          "name": "iterate_on",
+          "required": false,
+          "type": "string",
+          "default": "none",
+          "description": "Iterate the lookup over an array-valued source field."
+        },
+        {
+          "name": "override",
+          "required": false,
+          "type": "boolean",
+          "default": null,
+          "description": "Overwrite the target field if it already has a value."
+        },
+        {
+          "name": "refresh_interval",
+          "required": false,
+          "type": "number",
+          "default": "`300`",
+          "description": "Seconds between reloads of `dictionary_path`."
+        },
+        {
+          "name": "regex",
+          "required": false,
+          "type": "boolean",
+          "default": "`false`",
+          "description": "When true, treat dictionary keys as regex patterns."
+        },
+        {
+          "name": "refresh_behaviour",
+          "required": false,
+          "type": "string",
+          "default": "`merge`",
+          "description": "Reload strategy when a dictionary file is updated (`merge` or `replace`)."
+        },
+        {
+          "name": "target",
+          "required": false,
+          "type": "string",
+          "default": null,
+          "description": "Field that receives the mapped value."
+        },
+        {
+          "name": "yaml_dictionary_code_point_limit",
+          "required": false,
+          "type": "number",
+          "default": "134217728 (128MB for 1 byte code points)",
+          "description": "YAML parse safety limit for dictionary files."
+        },
+        {
+          "name": "yaml_load_strategy",
+          "required": false,
+          "type": "string",
+          "default": "`one_shot`",
+          "description": "YAML loader strategy; `safe` is recommended."
+        }
+      ],
+      "example": "filter {\n  translate {\n    source      => \"[http][response][status_code]\"\n    target      => \"[http][response][status_family]\"\n    dictionary  => {\n      \"200\" => \"success\"\n      \"201\" => \"success\"\n      \"301\" => \"redirect\"\n      \"400\" => \"client_error\"\n      \"401\" => \"unauthorized\"\n      \"404\" => \"not_found\"\n      \"500\" => \"server_error\"\n    }\n    fallback    => \"other\"\n    exact       => true\n    override    => true\n  }\n}"
+    },
+    "truncate": {
+      "description": "Limits the size of one or more fields so large payloads do not bloat stored documents or exceed index field-size limits.",
+      "options": [
+        {
+          "name": "length_bytes",
+          "required": true,
+          "type": "number",
+          "default": "none",
+          "description": "Maximum length, in bytes, to keep per field."
+        },
+        {
+          "name": "fields",
+          "required": false,
+          "type": "string",
+          "default": "none",
+          "description": "List of field names to truncate."
+        }
+      ],
+      "example": "filter {\n  truncate {\n    fields       => [ \"message\", \"[http][request][body]\" ]\n    length_bytes => 4096\n  }\n}"
+    },
+    "urldecode": {
+      "description": "Decodes URL-encoded (percent-encoded) values so escaped characters become readable text. Useful when upstream systems log encoded URLs or form data.",
+      "options": [
+        {
+          "name": "all_fields",
+          "required": false,
+          "type": "boolean",
+          "default": "`false`",
+          "description": "When true, decode every string field in the event."
+        },
+        {
+          "name": "charset",
+          "required": false,
+          "type": "string",
+          "default": "`\"UTF-8\"`",
+          "description": "Character set used when interpreting decoded bytes (for example `UTF-8`)."
+        },
+        {
+          "name": "field",
+          "required": false,
+          "type": "string",
+          "default": "`\"message\"`",
+          "description": "Field to decode."
+        },
+        {
+          "name": "tag_on_failure",
+          "required": false,
+          "type": "array",
+          "default": "`[\"_urldecodefailure\"]`",
+          "description": "Tags applied when decoding fails."
+        }
+      ],
+      "example": "filter {\n  urldecode {\n    field   => \"[url][query]\"\n    charset => \"UTF-8\"\n    tag_on_failure => [ \"_urldecodefailure\" ]\n  }\n}"
+    },
+    "useragent": {
+      "description": "Parses user-agent strings into structured fields such as browser, operating system, and device. The plugin uses a bundled regex database so it works without any outbound network calls.",
+      "options": [
+        {
+          "name": "source",
+          "required": true,
+          "type": "string",
+          "default": "none",
+          "description": "Field that contains the user-agent string."
+        },
+        {
+          "name": "ecs_compatibility",
+          "required": false,
+          "type": "string",
+          "default": null,
+          "description": "Controls ECS field compatibility behaviour (`disabled`, `v1`, or `v8`)."
+        },
+        {
+          "name": "lru_cache_size",
+          "required": false,
+          "type": "number",
+          "default": "`100000`",
+          "description": "In-memory cache size used to speed up repeated lookups."
+        },
+        {
+          "name": "prefix",
+          "required": false,
+          "type": "string",
+          "default": "`\"\"`",
+          "description": "Prefix added to each generated field name."
+        },
+        {
+          "name": "regexes",
+          "required": false,
+          "type": "string",
+          "default": "none",
+          "description": "Path to a custom regex YAML file (use the default when possible)."
+        },
+        {
+          "name": "target",
+          "required": false,
+          "type": "string",
+          "default": null,
+          "description": "Parent field to nest parsed components under (defaults to the event root)."
+        }
+      ],
+      "example": "filter {\n  useragent {\n    source => \"[user_agent][original]\"\n    target => \"[user_agent]\"\n  }\n}"
+    },
+    "uuid": {
+      "description": "Generates a random UUID string for each event. Use it to give every document a stable, unique identifier you can reference from alerts, dashboards, or dedupe jobs.",
+      "options": [
+        {
+          "name": "target",
+          "required": true,
+          "type": "string",
+          "default": "none",
+          "description": "Field to receive the generated UUID."
+        },
+        {
+          "name": "overwrite",
+          "required": false,
+          "type": "boolean",
+          "default": "`false`",
+          "description": "When true, replace any existing value in the target field."
+        }
+      ],
+      "example": "filter {\n  uuid {\n    target    => \"[event][id]\"\n    overwrite => false\n  }\n}"
+    },
+    "wurfl_device_detection": {
+      "description": "Enriches events with device-intelligence fields (brand, model, OS, form factor) from the WURFL database. This is a third-party plugin and requires a WURFL data file and license; review the upstream project before relying on it in production.",
+      "options": [],
+      "example": "filter {\n  wurfl_device_detection {\n  }\n}"
+    },
+    "xml": {
+      "description": "Parses XML content from a field into structured event fields. Supports full tree-to-hash conversion, optional XPath extraction, and namespace handling.",
+      "options": [
+        {
+          "name": "source",
+          "required": true,
+          "type": "string",
+          "default": "none",
+          "description": "Field that contains the XML document to parse."
+        },
+        {
+          "name": "force_array",
+          "required": false,
+          "type": "boolean",
+          "default": "`true`",
+          "description": "When true, single-element XPath results are stored as single-item arrays for consistency."
+        },
+        {
+          "name": "force_content",
+          "required": false,
+          "type": "boolean",
+          "default": "`false`",
+          "description": "When true, text content and attributes are always parsed into hash values."
+        },
+        {
+          "name": "namespaces",
+          "required": false,
+          "type": "hash",
+          "default": "`{}`",
+          "description": "Map of namespace prefix to URI for namespace-aware XPath expressions."
+        },
+        {
+          "name": "parse_options",
+          "required": false,
+          "type": "string",
+          "default": "none",
+          "description": "Parser flags for relaxed or strict handling (for example `strict`)."
+        },
+        {
+          "name": "remove_namespaces",
+          "required": false,
+          "type": "boolean",
+          "default": "`false`",
+          "description": "Strip XML namespaces from parsed element names."
+        },
+        {
+          "name": "store_xml",
+          "required": false,
+          "type": "boolean",
+          "default": "`true`",
+          "description": "When true, store the parsed XML tree under `target`."
+        },
+        {
+          "name": "suppress_empty",
+          "required": false,
+          "type": "boolean",
+          "default": "`true`",
+          "description": "When true, empty elements are omitted from the output."
+        },
+        {
+          "name": "target",
+          "required": false,
+          "type": "string",
+          "default": "none",
+          "description": "Parent field to nest the parsed XML hash under."
+        },
+        {
+          "name": "xpath",
+          "required": false,
+          "type": "hash",
+          "default": "`{}`",
+          "description": "Map of XPath expression to target field for selective extraction."
+        }
+      ],
+      "example": "filter {\n  xml {\n    source        => \"message\"\n    target        => \"[payload][xml]\"\n    store_xml     => true\n    force_array   => false\n    suppress_empty => true\n    xpath         => {\n      \"//order/id/text()\"       => \"[order][id]\"\n      \"//order/customer/text()\" => \"[order][customer]\"\n    }\n  }\n}"
+    }
+  }
+}

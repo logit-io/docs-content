@@ -1,0 +1,107 @@
+---
+title: "Logstash Filter: Prune"
+metaTitle: "Logstash Prune Filter Plugin Reference"
+description: "Whitelists or blacklists fields to keep event payloads focused. Includes usage guidance, configuration options, validation steps, and troubleshooting for the prune filter plugin on Logit.io."
+stackTypes: logs
+---
+
+# Prune filter plugin
+
+Removes fields from an event to keep only what downstream systems need. You can whitelist fields and values (keep matches) or blacklist them (drop matches), including pattern-based rules.
+
+- Package: `logstash-filter-prune`
+- Coverage source: default/bundled, explicitly installed in the Logit image
+- Official catalog entry: Yes
+
+## Plugin overview
+
+`prune` is used in the Logstash filter stage. Whitelists or blacklists fields to keep event payloads focused.
+
+### Typical use cases
+
+- Transform fields before indexing to keep schema and naming consistent.
+- Prepare high-quality fields for alerts, dashboards, and downstream pipelines.
+
+### Input and output behavior
+
+- Flow: processes matching events and mutates fields/tags within the same event.
+- Input: works on events that match your surrounding `if` conditions.
+- Output: updates the current event in place unless configured otherwise.
+- Important options: `blacklist_names`, `blacklist_values`, `interpolate`, `whitelist_names`.
+
+## Options
+
+### Required
+
+- No required plugin-specific options.
+
+### Optional
+
+- `blacklist_names` (type: array; default: `["%{[^}]+}"]`) — Regex patterns; field names that match are removed.
+- `blacklist_values` (type: hash; default: `{}`) — Per-field regex values; fields whose value matches are removed.
+- `interpolate` (type: boolean; default: `false`) — Interpolate `%{...}` expressions in values before matching.
+- `whitelist_names` (type: array; default: `[]`) — Regex patterns; only field names that match are kept.
+- `whitelist_values` (type: hash; default: `{}`) — Per-field regex values; fields whose value matches are kept.
+
+## Example configuration
+
+```ruby copy
+filter {
+  prune {
+    whitelist_names => [ "^@?timestamp$", "^host(\\..+)?$", "^log(\\..+)?$", "^message$", "^service(\\..+)?$" ]
+    blacklist_names => [ "^_+$" ]
+    interpolate     => false
+  }
+}
+```
+
+## Common options configuration
+
+All Logstash filter plugins support these shared options:
+
+- `add_field` (type: hash; default: `{}`) — Adds fields when the filter succeeds. Supports dynamic field names and values.
+- `add_tag` (type: array; default: `[]`) — Adds one or more tags when the filter succeeds.
+- `enable_metric` (type: boolean; default: `true`) — Enables or disables metric collection for this plugin instance.
+- `id` (type: string; default: `none`) — Sets an explicit plugin instance ID for monitoring and troubleshooting.
+- `periodic_flush` (type: boolean; default: `false`) — Calls the filter flush method at regular intervals.
+- `remove_field` (type: array; default: `[]`) — Removes fields when the filter succeeds. Supports dynamic field names.
+- `remove_tag` (type: array; default: `[]`) — Removes tags when the filter succeeds.
+
+```ruby copy
+filter {
+  prune {
+    add_field => { "pipeline_stage" => "parsed" }
+    add_tag => ["parsed", "logstash_filter"]
+    enable_metric => true
+    id => "my_filter_instance"
+    periodic_flush => false
+    remove_field => ["tmp_field"]
+    remove_tag => ["temporary"]
+  }
+}
+```
+
+## Apply in Logit.io
+
+1. Open your stack in Logit.io and navigate to **Logstash Pipelines**.
+2. In the `filter { ... }` section, add a `prune` block.
+3. Save your pipeline changes, then restart the Logstash pipeline if prompted.
+4. Send sample events and verify parsed/enriched fields in OpenSearch Dashboards.
+
+## Validation checklist
+
+- Confirm the `prune` block compiles without syntax errors.
+- Verify expected new/updated fields exist in sample documents.
+- Verify unexpected fields are not removed unless explicitly configured.
+- Confirm tags added on success/failure align with your alerting and routing rules.
+
+## Troubleshooting
+
+- If events are unchanged, verify your filter condition (`if ...`) matches incoming events.
+- If the pipeline fails to start, validate braces/quotes and retry with a minimal filter block.
+- If throughput drops, reduce expensive operations and test with representative sample volume.
+
+## References
+
+- GitHub package: [`logstash-filter-prune`](https://github.com/logstash-plugins/logstash-filter-prune)
+- Canonical catalog: [/log-management/ingestion-pipeline/logstash-filters-reference](/log-management/ingestion-pipeline/logstash-filters-reference)

@@ -1,0 +1,120 @@
+---
+title: "Logstash Filter: Grok"
+metaTitle: "Logstash Grok Filter Plugin Reference"
+description: "Parses unstructured strings into named fields using patterns. Includes usage guidance, configuration options, validation steps, and troubleshooting for the grok filter plugin on Logit.io."
+stackTypes: logs
+---
+
+# Grok filter plugin
+
+Parses unstructured text using named regex patterns. It is the default tool for converting single-line log messages into structured fields when the format does not fit a simpler alternative such as `dissect`, `csv`, or `kv`.
+
+- Package: `logstash-filter-grok`
+- Coverage source: default/bundled
+- Official catalog entry: Yes
+
+## Plugin overview
+
+`grok` is used in the Logstash filter stage. Parses unstructured strings into named fields using patterns.
+
+### Typical use cases
+
+- Parse unstructured log lines into structured fields for dashboards and alerts.
+- Extract reusable fields (for example request method, path, and status code) from message text.
+
+### Input and output behavior
+
+- Flow: Parses text patterns and writes named captures into event fields.
+- Input: works on events that match your surrounding `if` conditions.
+- Output: updates the current event in place unless configured otherwise.
+- Important options: `match`, `tag_on_failure`, `break_on_match`, `ecs_compatibility`.
+- Failure signaling: uses `tag_on_failure` (default: `["_grokparsefailure"]`) so failed events can be routed or inspected.
+
+## Options
+
+### Required
+
+- No required plugin-specific options.
+
+### Optional
+
+- `break_on_match` (type: boolean; default: `true`) — When true, stop trying additional patterns after the first success.
+- `ecs_compatibility` (type: string) — Controls ECS field compatibility behaviour (`disabled`, `v1`, or `v8`).
+- `keep_empty_captures` (type: boolean; default: `false`) — Keep captures that matched but produced an empty value.
+- `match` (type: hash; default: `{}`) — Map of source field name to one or more grok patterns; the first match wins.
+- `named_captures_only` (type: boolean; default: `true`) — Only store named captures on the event; discard unnamed groups.
+- `overwrite` (type: array; default: `[]`) — List of field names that grok is allowed to overwrite on match.
+- `pattern_definitions` (type: hash; default: `{}`) — Inline custom pattern definitions available to this filter instance.
+- `patterns_dir` (type: array; default: `[]`) — Directories containing additional grok pattern files.
+- `patterns_files_glob` (type: string; default: `"*"`) — Glob used to select pattern files from `patterns_dir`.
+- `tag_on_failure` (type: array; default: `["_grokparsefailure"]`) — Tags added when no pattern matches.
+- `tag_on_timeout` (type: string; default: `"_groktimeout"`) — Tags added when pattern evaluation exceeds `timeout_millis`.
+- `timeout_millis` (type: number; default: `30000`) — Maximum milliseconds spent evaluating a single event's patterns.
+- `timeout_scope` (type: string; default: `"pattern"`) — Whether the timeout applies per pattern (`pattern`) or across the whole event (`event`).
+
+## Example configuration
+
+```ruby copy
+filter {
+  grok {
+    match => {
+      "message" => "%{TIMESTAMP_ISO8601:ts} \[%{LOGLEVEL:level}\] %{DATA:logger} - %{GREEDYDATA:msg}"
+    }
+    overwrite       => [ "message" ]
+    tag_on_failure  => [ "_grokparsefailure" ]
+    timeout_millis  => 2000
+  }
+}
+```
+
+## Common options configuration
+
+All Logstash filter plugins support these shared options:
+
+- `add_field` (type: hash; default: `{}`) — Adds fields when the filter succeeds. Supports dynamic field names and values.
+- `add_tag` (type: array; default: `[]`) — Adds one or more tags when the filter succeeds.
+- `enable_metric` (type: boolean; default: `true`) — Enables or disables metric collection for this plugin instance.
+- `id` (type: string; default: `none`) — Sets an explicit plugin instance ID for monitoring and troubleshooting.
+- `periodic_flush` (type: boolean; default: `false`) — Calls the filter flush method at regular intervals.
+- `remove_field` (type: array; default: `[]`) — Removes fields when the filter succeeds. Supports dynamic field names.
+- `remove_tag` (type: array; default: `[]`) — Removes tags when the filter succeeds.
+
+```ruby copy
+filter {
+  grok {
+    add_field => { "pipeline_stage" => "parsed" }
+    add_tag => ["parsed", "logstash_filter"]
+    enable_metric => true
+    id => "my_filter_instance"
+    periodic_flush => false
+    remove_field => ["tmp_field"]
+    remove_tag => ["temporary"]
+  }
+}
+```
+
+## Apply in Logit.io
+
+1. Open your stack in Logit.io and navigate to **Logstash Pipelines**.
+2. In the `filter { ... }` section, add a `grok` block.
+3. Save your pipeline changes, then restart the Logstash pipeline if prompted.
+4. Send sample events and verify parsed/enriched fields in OpenSearch Dashboards.
+
+## Validation checklist
+
+- Confirm the `grok` block compiles without syntax errors.
+- Verify expected new/updated fields exist in sample documents.
+- Verify unexpected fields are not removed unless explicitly configured.
+- Confirm tags added on success/failure align with your alerting and routing rules.
+
+## Troubleshooting
+
+- If events are unchanged, verify your filter condition (`if ...`) matches incoming events.
+- If the pipeline fails to start, validate braces/quotes and retry with a minimal filter block.
+- Check for `tag_on_failure` tags (default: `["_grokparsefailure"]`) to quickly isolate parse/mutation failures.
+- If throughput drops, reduce expensive operations and test with representative sample volume.
+
+## References
+
+- GitHub package: [`logstash-filter-grok`](https://github.com/logstash-plugins/logstash-filter-grok)
+- Canonical catalog: [/log-management/ingestion-pipeline/logstash-filters-reference](/log-management/ingestion-pipeline/logstash-filters-reference)

@@ -1,0 +1,119 @@
+---
+title: "Logstash Filter: CSV"
+metaTitle: "Logstash CSV Filter Plugin Reference"
+description: "Parses comma-separated data into fields. Includes usage guidance, configuration options, validation steps, and troubleshooting for the csv filter plugin on Logit.io."
+stackTypes: logs
+---
+
+# CSV filter plugin
+
+Parses comma-separated values from a field into named fields, with optional type conversion and header detection.
+
+- Package: `logstash-filter-csv`
+- Coverage source: default/bundled
+- Official catalog entry: Yes
+
+## Plugin overview
+
+`csv` is used in the Logstash filter stage. Parses comma-separated data into fields.
+
+### Typical use cases
+
+- Parse incoming log payloads into structured fields for querying and dashboards.
+- Transform fields before indexing to keep schema and naming consistent.
+
+### Input and output behavior
+
+- Flow: Splits delimited text into columns and writes them as fields.
+- Input field: `source` (default: `"message"`).
+- Output target: controlled by `target`.
+- Important options: `source`, `target`, `autodetect_column_names`, `autogenerate_column_names`.
+
+## Options
+
+### Required
+
+- No required plugin-specific options.
+
+### Optional
+
+- `autodetect_column_names` (type: boolean; default: `false`) — When true, use the first matching event as the header row.
+- `autogenerate_column_names` (type: boolean; default: `true`) — When true, generate column names automatically (`column1`, `column2`, ...).
+- `columns` (type: array; default: `[]`) — Ordered list of column names matching the CSV layout.
+- `convert` (type: hash; default: `{}`) — Per-column type conversion map (for example `{ "count" => "integer" }`).
+- `ecs_compatibility` (type: string) — Controls ECS field compatibility behaviour (`disabled`, `v1`, or `v8`).
+- `quote_char` (type: string; default: `"\""`) — Character used to quote values that contain the separator.
+- `separator` (type: string; default: `","`) — Character used as the field separator.
+- `skip_empty_columns` (type: boolean; default: `false`) — Do not create fields for empty columns.
+- `skip_empty_rows` (type: boolean; default: `false`) — Drop events where every column is empty.
+- `skip_header` (type: boolean; default: `false`) — Skip the first matching event when it is a header row.
+- `source` (type: string; default: `"message"`) — Field containing the CSV line to parse.
+- `target` (type: string; default: none) — Parent field to nest parsed columns under (omit to write to the event root).
+
+## Example configuration
+
+```ruby copy
+filter {
+  csv {
+    source    => "message"
+    columns   => [ "timestamp", "method", "path", "status", "duration_ms" ]
+    separator => ","
+    convert   => {
+      "status"      => "integer"
+      "duration_ms" => "float"
+    }
+    skip_empty_columns => true
+  }
+}
+```
+
+## Common options configuration
+
+All Logstash filter plugins support these shared options:
+
+- `add_field` (type: hash; default: `{}`) — Adds fields when the filter succeeds. Supports dynamic field names and values.
+- `add_tag` (type: array; default: `[]`) — Adds one or more tags when the filter succeeds.
+- `enable_metric` (type: boolean; default: `true`) — Enables or disables metric collection for this plugin instance.
+- `id` (type: string; default: `none`) — Sets an explicit plugin instance ID for monitoring and troubleshooting.
+- `periodic_flush` (type: boolean; default: `false`) — Calls the filter flush method at regular intervals.
+- `remove_field` (type: array; default: `[]`) — Removes fields when the filter succeeds. Supports dynamic field names.
+- `remove_tag` (type: array; default: `[]`) — Removes tags when the filter succeeds.
+
+```ruby copy
+filter {
+  csv {
+    add_field => { "pipeline_stage" => "parsed" }
+    add_tag => ["parsed", "logstash_filter"]
+    enable_metric => true
+    id => "my_filter_instance"
+    periodic_flush => false
+    remove_field => ["tmp_field"]
+    remove_tag => ["temporary"]
+  }
+}
+```
+
+## Apply in Logit.io
+
+1. Open your stack in Logit.io and navigate to **Logstash Pipelines**.
+2. In the `filter { ... }` section, add a `csv` block.
+3. Save your pipeline changes, then restart the Logstash pipeline if prompted.
+4. Send sample events and verify parsed/enriched fields in OpenSearch Dashboards.
+
+## Validation checklist
+
+- Confirm the `csv` block compiles without syntax errors.
+- Verify expected new/updated fields exist in sample documents.
+- Verify unexpected fields are not removed unless explicitly configured.
+- Confirm tags added on success/failure align with your alerting and routing rules.
+
+## Troubleshooting
+
+- If events are unchanged, verify your filter condition (`if ...`) matches incoming events.
+- If the pipeline fails to start, validate braces/quotes and retry with a minimal filter block.
+- If throughput drops, reduce expensive operations and test with representative sample volume.
+
+## References
+
+- GitHub package: [`logstash-filter-csv`](https://github.com/logstash-plugins/logstash-filter-csv)
+- Canonical catalog: [/log-management/ingestion-pipeline/logstash-filters-reference](/log-management/ingestion-pipeline/logstash-filters-reference)

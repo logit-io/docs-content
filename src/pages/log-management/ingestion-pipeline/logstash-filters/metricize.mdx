@@ -1,0 +1,106 @@
+---
+title: "Logstash Filter: Metricize"
+metaTitle: "Logstash Metricize Filter Plugin Reference"
+description: "Splits complex events into per-metric events. Includes usage guidance, configuration options, validation steps, and troubleshooting for the metricize filter plugin on Logit.io."
+stackTypes: logs
+---
+
+# Metricize filter plugin
+
+Splits a complex event that contains several metrics into one smaller event per metric. Useful when downstream tooling indexes one metric per document.
+
+- Package: `logstash-filter-metricize`
+- Coverage source: default/bundled, explicitly installed in the Logit image
+- Official catalog entry: Yes
+
+## Plugin overview
+
+`metricize` is used in the Logstash filter stage. Splits complex events into per-metric events.
+
+### Typical use cases
+
+- Transform fields before indexing to keep schema and naming consistent.
+- Prepare high-quality fields for alerts, dashboards, and downstream pipelines.
+
+### Input and output behavior
+
+- Flow: processes matching events and mutates fields/tags within the same event.
+- Input: works on events that match your surrounding `if` conditions.
+- Output: updates the current event in place unless configured otherwise.
+- Important options: `metrics`, `drop_original_event`, `metric_field_name`, `value_field_name`.
+
+## Options
+
+### Required
+
+- `metrics` (type: array; default: none) — List of field names in the source event that each represent a metric.
+
+### Optional
+
+- `drop_original_event` (type: boolean; default: `false`) — Drop the original combined event after emitting per-metric events.
+- `metric_field_name` (type: string; default: `"metric"`) — Field on each output event that stores the metric name.
+- `value_field_name` (type: string; default: `"value"`) — Field on each output event that stores the metric value.
+
+## Example configuration
+
+```ruby copy
+filter {
+  metricize {
+    metrics             => [ "cpu_pct", "mem_pct", "disk_pct" ]
+    metric_field_name   => "metric"
+    value_field_name    => "value"
+    drop_original_event => true
+  }
+}
+```
+
+## Common options configuration
+
+All Logstash filter plugins support these shared options:
+
+- `add_field` (type: hash; default: `{}`) — Adds fields when the filter succeeds. Supports dynamic field names and values.
+- `add_tag` (type: array; default: `[]`) — Adds one or more tags when the filter succeeds.
+- `enable_metric` (type: boolean; default: `true`) — Enables or disables metric collection for this plugin instance.
+- `id` (type: string; default: `none`) — Sets an explicit plugin instance ID for monitoring and troubleshooting.
+- `periodic_flush` (type: boolean; default: `false`) — Calls the filter flush method at regular intervals.
+- `remove_field` (type: array; default: `[]`) — Removes fields when the filter succeeds. Supports dynamic field names.
+- `remove_tag` (type: array; default: `[]`) — Removes tags when the filter succeeds.
+
+```ruby copy
+filter {
+  metricize {
+    add_field => { "pipeline_stage" => "parsed" }
+    add_tag => ["parsed", "logstash_filter"]
+    enable_metric => true
+    id => "my_filter_instance"
+    periodic_flush => false
+    remove_field => ["tmp_field"]
+    remove_tag => ["temporary"]
+  }
+}
+```
+
+## Apply in Logit.io
+
+1. Open your stack in Logit.io and navigate to **Logstash Pipelines**.
+2. In the `filter { ... }` section, add a `metricize` block.
+3. Save your pipeline changes, then restart the Logstash pipeline if prompted.
+4. Send sample events and verify parsed/enriched fields in OpenSearch Dashboards.
+
+## Validation checklist
+
+- Confirm the `metricize` block compiles without syntax errors.
+- Verify expected new/updated fields exist in sample documents.
+- Verify unexpected fields are not removed unless explicitly configured.
+- Confirm tags added on success/failure align with your alerting and routing rules.
+
+## Troubleshooting
+
+- If events are unchanged, verify your filter condition (`if ...`) matches incoming events.
+- If the pipeline fails to start, validate braces/quotes and retry with a minimal filter block.
+- If throughput drops, reduce expensive operations and test with representative sample volume.
+
+## References
+
+- GitHub package: [`logstash-filter-metricize`](https://github.com/logstash-plugins/logstash-filter-metricize)
+- Canonical catalog: [/log-management/ingestion-pipeline/logstash-filters-reference](/log-management/ingestion-pipeline/logstash-filters-reference)
