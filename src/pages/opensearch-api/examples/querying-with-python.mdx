@@ -1,0 +1,117 @@
+---
+title: Querying with Python
+metaTitle: Learn How to Query with Python in OpenSearch
+description: Query your Logit.io OpenSearch stack from Python using the OpenSearch REST API and Query DSL.
+stackTypes: logs, opensearch
+---
+
+# Querying OpenSearch with Python
+
+Use Python to run search queries against the **OpenSearch REST API** on your Logit.io stack. This guide covers connection details, Query DSL basics, and a working `requests` example.
+
+For endpoint, credentials, and ports, see [Connect to Your Cluster](/opensearch-api/connect).
+
+### Prerequisites
+
+- An active Logit.io account with a Logs stack.
+- Python 3.8 or newer.
+- Your OpenSearch API details from **Settings → Endpoints** on the stack.
+
+### Install dependencies
+
+```sh copy
+pip install requests
+```
+
+### OpenSearch Query DSL
+
+OpenSearch uses a JSON-based Query DSL. Common query types:
+
+- **match** — full-text search on analyzed fields
+- **term** — exact match on keyword fields
+- **range** — filter by numeric or date ranges (for example `@timestamp`)
+
+### Query with Basic authentication
+
+In **Basic (username and password)** mode, pass your stack ID and API key to `requests` as HTTP Basic auth. This is the simplest approach for most Python scripts.
+
+```python copy showLineNumbers filename="search_logs.py" /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+import requests
+
+endpoint = "@opensearch.endpointAddress:443"
+index = "filebeat-*"
+url = f"{endpoint}/{index}/_search"
+
+query = {
+    "size": 100,
+    "query": {
+        "bool": {
+            "must": [
+                {"match": {"message": "error"}}
+            ],
+            "filter": [
+                {"range": {"@timestamp": {"gte": "now-1d/d"}}}
+            ]
+        }
+    }
+}
+
+response = requests.post(
+    url,
+    auth=("@opensearch.username", "@opensearch.password"),
+    json=query,
+    headers={"Content-Type": "application/json"},
+)
+
+response.raise_for_status()
+results = response.json()
+
+for hit in results["hits"]["hits"]:
+    print(hit["_source"])
+```
+
+Replace `filebeat-*` with the index or index pattern you want to search.
+
+### Query with API key authentication
+
+If your stack uses **API key** mode, pass your stack API key as the `apikey` query parameter instead of Basic auth.
+
+```python copy showLineNumbers filename="search_logs_apikey.py" /@opensearch.endpointAddress/ /@opensearch.apiKey/
+import requests
+
+endpoint = "@opensearch.endpointAddress:443"
+index = "filebeat-*"
+url = f"{endpoint}/{index}/_search"
+
+query = {
+    "size": 100,
+    "query": {
+        "match_all": {}
+    }
+}
+
+response = requests.post(
+    url,
+    params={"apikey": "@opensearch.apiKey"},
+    json=query,
+    headers={"Content-Type": "application/json"},
+)
+
+response.raise_for_status()
+print(response.json())
+```
+
+### Tips
+
+- Use a specific index or narrow time range where possible. Broad `match_all` queries across large indexes can be slow.
+- **Aggregations** help summarise trends (counts, averages, histograms). See the [OpenSearch aggregations documentation](https://docs.opensearch.org/latest/aggregations/).
+- To save results as a file, see [Export Data to CSV](/opensearch-api/examples/export-data-to-csv).
+- For indexing or advanced client features, consider the [opensearch-py](https://github.com/opensearch-project/opensearch-py) client with the same endpoint and credentials.
+
+### Further reading
+
+- [Connect to Your Cluster](/opensearch-api/connect)
+- [Export Data to CSV](/opensearch-api/examples/export-data-to-csv)
+- [Search APIs](/opensearch-api/search-apis)
+- [OpenSearch Query DSL](https://docs.opensearch.org/latest/query-dsl/)
+- [API Overview](/opensearch-api/api-overview)

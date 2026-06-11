@@ -1,0 +1,56 @@
+---
+title: Managed Stack Limitations
+metaTitle: OpenSearch REST API Limitations on Logit.io
+description: Understand which OpenSearch REST API operations are available, restricted, or platform-managed on Logit.io hosted stacks.
+stackTypes: logs, opensearch
+---
+
+# Managed stack limitations
+
+Logit.io exposes the OpenSearch REST API on your stack endpoint (`https://{stack-id}-es.logit.io`) so you can search, index, and manage your log data programmatically. Some operations that exist in the [OpenSearch API reference](https://docs.opensearch.org/latest/api-reference/) are restricted or platform-managed on hosted stacks.
+
+### What you can do
+
+With your stack API credentials from **Settings → Endpoints**, you typically have **full access to your stack's data and indexes**, including:
+
+- Search, count, and scroll queries (`/_search`, `/_count`, scroll APIs)
+- Index, update, and delete documents (`/_doc`, `/_bulk`, `/_delete_by_query`, `/_update_by_query`)
+- Create and delete indexes, manage aliases, read mappings and templates
+- Reindex between indexes on your stack (`/_reindex`)
+- Read cluster health and use CAT APIs for diagnostics (`/_cluster/health`, `/_cat/indices`, etc.)
+
+Your credentials authenticate as the stack's programmatic API user, not as an individual Logit.io dashboard user. Role-based index restrictions configured for dashboard users do **not** apply to stack API key access.
+
+### What is restricted or not recommended
+
+| Area | Typical behaviour | Alternative |
+| --- | --- | --- |
+| **Security plugin admin** | Creating users, roles, or role mappings via `/_plugins/_security` or legacy `/_security` APIs is not supported for customers | Manage access via [Logit.io account roles](/account-administration/account-access-users-teams/roles-access/managing-opensearch-grafana-security-roles) and OpenSearch Dashboards |
+| **Cluster topology** | Adding/removing nodes, voting configuration, cluster routing | Managed by Logit.io — contact support |
+| **Persistent cluster settings** | Some `/_cluster/settings` changes may be rejected or overridden | Use supported stack settings in the dashboard; contact support for tuning requests |
+| **Snapshots and restores** | Repository registration and snapshot lifecycle are platform-managed | Data retention is governed by your [stack plan](/log-management/overview); contact support for recovery scenarios |
+| **Plugin installation** | Installing arbitrary OpenSearch plugins via API is not available | Plugins are provisioned as part of your stack version |
+| **Ingest pipelines** | Direct pipeline management is uncommon on Logs stacks | Use [Logstash filters](/log-management/ingestion-pipeline/overview) for ingestion-time processing |
+
+If an API returns **403 Forbidden** or **401 Unauthorized**, check your authentication mode on the Endpoints page first. If credentials are correct and the call still fails, the operation may not be exposed on hosted stacks — contact the [Logit.io support team](https://logit.io/about-us/contact-us/).
+
+### Practical limits
+
+These limits come from OpenSearch defaults and hosted cluster sizing, not Logit-specific blocks:
+
+| Limit | Default | Notes |
+| --- | --- | --- |
+| **`index.max_result_window`** | 10,000 | Single search requests cannot return more than 10,000 hits — use [scroll](/opensearch-api/search-apis) or [export with scroll](/opensearch-api/examples/export-data-to-csv) for larger exports |
+| **Bulk request size** | Varies | Very large `/_bulk` payloads may time out — batch in smaller chunks (for example 1,000–5,000 documents) |
+| **Scroll keepalive** | Configurable per request | Long scroll contexts consume cluster resources — use shorter `scroll` values and clear contexts when done |
+| **Query complexity** | — | Heavy aggregations or broad `match_all` across all indexes can affect cluster performance — narrow by index and time range |
+
+### Future: user-scoped API access
+
+Logit.io may offer a separate endpoint (`{stack-id}-es-user.logit.io`) for programmatic access under a named user's team roles (same permissions as OpenSearch Dashboards). Stack API key access on `{stack-id}-es.logit.io` will remain unchanged. Documentation will be added when this feature is generally available.
+
+### Further reading
+
+- [Connect to Your Cluster](/opensearch-api/connect)
+- [API Overview](/opensearch-api/api-overview)
+- [OpenSearch API reference](https://docs.opensearch.org/latest/api-reference/)

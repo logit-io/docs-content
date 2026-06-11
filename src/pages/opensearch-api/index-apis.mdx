@@ -1,0 +1,123 @@
+---
+title: Index & Template APIs
+metaTitle: OpenSearch Index and Template APIs on Logit.io
+description: Manage indexes, templates, mappings, and aliases on your Logit.io OpenSearch stack using Index APIs.
+stackTypes: logs, opensearch
+---
+
+# Index & Template APIs
+
+Index APIs manage indexes, templates, mappings, and aliases. Use them to inspect how Logit.io and your integrations (for example Filebeat) structure log data, or to create custom indexes for direct API ingestion.
+
+Connection details: [Connect to Your Cluster](/opensearch-api/connect).
+
+Full specification: [OpenSearch Index APIs](https://docs.opensearch.org/latest/api-reference/index-apis/).
+
+### Common endpoints
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `PUT` | `/{index}` | Create an index (with optional settings/mappings) |
+| `DELETE` | `/{index}` | Delete an index |
+| `GET` | `/_cat/indices?v` | List indexes (see also [Cluster & CAT APIs](/opensearch-api/cluster-and-cat-apis)) |
+| `GET` | `/{index}/_mapping` | Get field mappings for an index |
+| `GET` | `/_index_template` | List composable index templates |
+| `GET` | `/_index_template/{name}` | Get a specific composable template |
+| `GET` | `/_template` | List legacy index templates |
+| `GET` | `/_template/{name}` | Get a legacy template |
+| `GET` | `/_alias` | List aliases |
+| `POST` | `/_aliases` | Add or remove aliases atomically |
+
+Logit.io stacks may have both **composable** (`/_index_template`) and **legacy** (`/_template`) templates depending on version and integrations.
+
+### List index templates
+
+<Tabs items={["Composable templates", "Legacy templates"]}>
+  <Tab>
+    ```bash copy /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+    curl -X GET "@opensearch.endpointAddress:443/_index_template?pretty" \
+      -u "@opensearch.username:@opensearch.password"
+    ```
+  </Tab>
+  <Tab>
+    ```bash copy /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+    curl -X GET "@opensearch.endpointAddress:443/_template?pretty" \
+      -u "@opensearch.username:@opensearch.password"
+    ```
+  </Tab>
+</Tabs>
+
+Filter by pattern (legacy):
+
+```bash copy /@opensearch.endpointAddress/ /@opensearch.apiKey/
+curl -X GET "@opensearch.endpointAddress:443/_template/filebeat-*?apikey=@opensearch.apiKey&pretty"
+```
+
+See also [Index templates](/log-management/opensearch/index-management/index-templates) for the OpenSearch Dashboards Dev Tools workflow.
+
+### Get mappings for an index
+
+```bash copy /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+curl -X GET "@opensearch.endpointAddress:443/filebeat-*/_mapping?pretty" \
+  -u "@opensearch.username:@opensearch.password"
+```
+
+Mapping concepts: [Mapping overview](/log-management/opensearch/index-management/mapping/overview).
+
+### Create a custom index
+
+```bash copy /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+curl -X PUT "@opensearch.endpointAddress:443/my-custom-logs" \
+  -u "@opensearch.username:@opensearch.password" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "settings": {
+      "number_of_shards": 1,
+      "number_of_replicas": 0
+    },
+    "mappings": {
+      "properties": {
+        "@timestamp": {"type": "date"},
+        "message": {"type": "text"},
+        "level": {"type": "keyword"}
+      }
+    }
+  }'
+```
+
+Shard and replica counts may be adjusted by platform defaults on hosted stacks. If creation fails, contact support.
+
+### Manage aliases
+
+Add an alias pointing at an index:
+
+```bash copy /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+curl -X POST "@opensearch.endpointAddress:443/_aliases" \
+  -u "@opensearch.username:@opensearch.password" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "actions": [
+      {"add": {"index": "filebeat-2026.06.11", "alias": "logs-today"}}
+    ]
+  }'
+```
+
+Aliases are useful for [reindexing](/log-management/opensearch/index-management/reindexing) with zero-downtime index swaps.
+
+### Delete an index
+
+<Callout type="warning">
+Deleting an index permanently removes all documents in it.
+</Callout>
+
+```bash copy /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+curl -X DELETE "@opensearch.endpointAddress:443/my-custom-logs" \
+  -u "@opensearch.username:@opensearch.password"
+```
+
+### Further reading
+
+- [Index templates](/log-management/opensearch/index-management/index-templates)
+- [Viewing mappings](/log-management/opensearch/index-management/mapping/viewing-mappings)
+- [Reindexing](/log-management/opensearch/index-management/reindexing)
+- [Index APIs reference](https://docs.opensearch.org/latest/api-reference/index-apis/)

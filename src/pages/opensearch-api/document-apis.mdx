@@ -1,0 +1,139 @@
+---
+title: Document APIs
+metaTitle: OpenSearch Document APIs on Logit.io
+description: Index, update, delete, and bulk-ingest documents on your Logit.io OpenSearch stack using Document APIs.
+stackTypes: logs, opensearch
+---
+
+# Document APIs
+
+Document APIs create, read, update, and delete individual documents in your indexes. Use them for custom ingestion scripts, one-off fixes, or bulk loads alongside Logstash.
+
+Connection details: [Connect to Your Cluster](/opensearch-api/connect).
+
+Full specification: [OpenSearch Document APIs](https://docs.opensearch.org/latest/api-reference/document-apis/).
+
+### Common endpoints
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `POST` | `/{index}/_doc` | Index a document (auto-generate `_id`) |
+| `PUT` | `/{index}/_doc/{id}` | Index a document with a specific `_id` |
+| `GET` | `/{index}/_doc/{id}` | Get a document by `_id` |
+| `POST` | `/{index}/_update/{id}` | Partial update |
+| `DELETE` | `/{index}/_doc/{id}` | Delete a document |
+| `POST` | `/_bulk` | Bulk index/update/delete |
+| `POST` | `/{index}/_delete_by_query` | Delete documents matching a query |
+| `POST` | `/{index}/_update_by_query` | Update documents matching a query |
+
+<Callout type="warning">
+`/_delete_by_query` and `/_update_by_query` are irreversible on live data. Test with a narrow query and `_count` first.
+</Callout>
+
+### Index a single document
+
+<Tabs items={["Basic auth", "API key"]}>
+  <Tab>
+    ```bash copy /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+    curl -X POST "@opensearch.endpointAddress:443/my-logs/_doc" \
+      -u "@opensearch.username:@opensearch.password" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "@timestamp": "2026-06-11T12:00:00Z",
+        "level": "INFO",
+        "message": "Example log line from curl"
+      }'
+    ```
+  </Tab>
+  <Tab>
+    ```bash copy /@opensearch.endpointAddress/ /@opensearch.apiKey/
+    curl -X POST "@opensearch.endpointAddress:443/my-logs/_doc?apikey=@opensearch.apiKey" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "@timestamp": "2026-06-11T12:00:00Z",
+        "level": "INFO",
+        "message": "Example log line from curl"
+      }'
+    ```
+  </Tab>
+</Tabs>
+
+### Get a document by ID
+
+```bash copy /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+curl -X GET "@opensearch.endpointAddress:443/my-logs/_doc/YOUR_DOCUMENT_ID" \
+  -u "@opensearch.username:@opensearch.password"
+```
+
+### Bulk index
+
+Bulk requests use newline-delimited JSON (NDJSON): action line, then optional source line, repeated.
+
+```bash copy /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+curl -X POST "@opensearch.endpointAddress:443/_bulk" \
+  -u "@opensearch.username:@opensearch.password" \
+  -H "Content-Type: application/x-ndjson" \
+  --data-binary @- <<'EOF'
+{"index":{"_index":"my-logs"}}
+{"@timestamp":"2026-06-11T12:00:01Z","message":"First line"}
+{"index":{"_index":"my-logs"}}
+{"@timestamp":"2026-06-11T12:00:02Z","message":"Second line"}
+EOF
+```
+
+Send bulk payloads in batches (for example 1,000–5,000 lines) to avoid timeouts. For production ingestion, [Logstash](/log-management/ingestion-pipeline/overview) is usually more resilient.
+
+### Delete by query
+
+Count first:
+
+```bash copy /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+curl -X POST "@opensearch.endpointAddress:443/my-logs/_count" \
+  -u "@opensearch.username:@opensearch.password" \
+  -H "Content-Type: application/json" \
+  -d '{"query": {"term": {"level": "DEBUG"}}}'
+```
+
+Then delete:
+
+```bash copy /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+curl -X POST "@opensearch.endpointAddress:443/my-logs/_delete_by_query" \
+  -u "@opensearch.username:@opensearch.password" \
+  -H "Content-Type: application/json" \
+  -d '{"query": {"term": {"level": "DEBUG"}}}'
+```
+
+### Python bulk example
+
+```python copy showLineNumbers filename="bulk_index.py" /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+import json
+import requests
+
+endpoint = "@opensearch.endpointAddress:443"
+auth = ("@opensearch.username", "@opensearch.password")
+
+lines = []
+for i in range(3):
+    lines.append(json.dumps({"index": {"_index": "my-logs"}}))
+    lines.append(json.dumps({
+        "@timestamp": "2026-06-11T12:00:00Z",
+        "message": f"Log line {i}",
+    }))
+
+body = "\n".join(lines) + "\n"
+response = requests.post(
+    f"{endpoint}/_bulk",
+    auth=auth,
+    headers={"Content-Type": "application/x-ndjson"},
+    data=body,
+)
+response.raise_for_status()
+print(response.json())
+```
+
+### Further reading
+
+- [Search APIs](/opensearch-api/search-apis) — query before delete/update by query
+- [Index & Template APIs](/opensearch-api/index-apis) — create indexes and mappings first
+- [Bulk API](https://docs.opensearch.org/latest/api-reference/document-apis/bulk/)
+- [Delete by query](https://docs.opensearch.org/latest/api-reference/document-apis/delete-by-query/)

@@ -1,0 +1,185 @@
+---
+title: Export Data to CSV
+metaTitle: Export OpenSearch Search Results to CSV
+description: Download log data from your Logit.io OpenSearch cluster to a CSV file using the REST API and Python.
+stackTypes: logs, opensearch
+---
+
+# Export search results to CSV
+
+Use the OpenSearch REST API to query your stack and write the results to a CSV file. This is useful for ad-hoc analysis, sharing data with colleagues, or feeding results into other tools.
+
+For connection details and authentication, see [Connect to Your Cluster](/opensearch-api/connect).
+
+<Callout type="info">
+To export visualisations from OpenSearch Dashboards as CSV, see [Export Search Results](/log-management/opensearch/searching/exporting-search-results) in the Dashboards UI.
+</Callout>
+
+### Prerequisites
+
+- Python 3.8 or newer
+- Your OpenSearch API credentials from **Settings → Endpoints**
+- Basic mode is recommended for scripts (username + password via HTTP Basic auth)
+
+```sh copy
+pip install requests
+```
+
+### Export a single page of results
+
+This example searches an index, extracts `_source` fields from each hit, and writes them to `export.csv`.
+
+```python copy showLineNumbers filename="export_to_csv.py" /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+import csv
+import json
+import requests
+
+ENDPOINT = "@opensearch.endpointAddress:443"
+INDEX = "filebeat-*"
+OUTPUT_FILE = "export.csv"
+AUTH = ("@opensearch.username", "@opensearch.password")
+
+# Adjust fields and query for your data
+COLUMNS = ["@timestamp", "message", "host.name", "log.level"]
+QUERY = {
+    "size": 1000,
+    "sort": [{"@timestamp": "desc"}],
+    "query": {
+        "bool": {
+            "filter": [
+                {"range": {"@timestamp": {"gte": "now-24h"}}}
+            ]
+        }
+    },
+    "_source": COLUMNS,
+}
+
+url = f"{ENDPOINT}/{INDEX}/_search"
+response = requests.post(
+    url,
+    auth=AUTH,
+    json=QUERY,
+    headers={"Content-Type": "application/json"},
+)
+response.raise_for_status()
+
+hits = response.json()["hits"]["hits"]
+rows = [hit.get("_source", {}) for hit in hits]
+
+def flatten(value):
+    if isinstance(value, (dict, list)):
+        return json.dumps(value, ensure_ascii=False)
+    return value
+
+with open(OUTPUT_FILE, "w", newline="", encoding="utf-8") as csvfile:
+    writer = csv.DictWriter(csvfile, fieldnames=COLUMNS, extrasaction="ignore")
+    writer.writeheader()
+    for row in rows:
+        writer.writerow({col: flatten(row.get(col, "")) for col in COLUMNS})
+
+print(f"Exported {len(rows)} rows to {OUTPUT_FILE}")
+```
+
+Replace `filebeat-*` and the `COLUMNS` list with the index and fields you need. Run the script:
+
+```sh copy
+python export_to_csv.py
+```
+
+### Export larger result sets with scroll
+
+A single search request is limited to **10,000** hits by default (`index.max_result_window`). For larger exports, use the [scroll API](https://docs.opensearch.org/latest/api-reference/search-apis/scroll/) to page through results. See [Search APIs](/opensearch-api/search-apis) for more detail.
+
+```python copy showLineNumbers filename="export_to_csv_scroll.py" /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+import csv
+import json
+import requests
+
+ENDPOINT = "@opensearch.endpointAddress:443"
+INDEX = "filebeat-*"
+OUTPUT_FILE = "export.csv"
+AUTH = ("@opensearch.username", "@opensearch.password")
+SCROLL = "2m"
+BATCH_SIZE = 1000
+COLUMNS = ["@timestamp", "message", "host.name", "log.level"]
+
+QUERY = {
+    "size": BATCH_SIZE,
+    "sort": [{"@timestamp": "desc"}],
+    "query": {"match_all": {}},
+    "_source": COLUMNS,
+}
+
+def flatten(value):
+    if isinstance(value, (dict, list)):
+        return json.dumps(value, ensure_ascii=False)
+    return value
+
+def search(auth):
+    url = f"{ENDPOINT}/{INDEX}/_search"
+    return requests.post(
+        url,
+        params={"scroll": SCROLL},
+        auth=auth,
+        json=QUERY,
+        headers={"Content-Type": "application/json"},
+    )
+
+def scroll(scroll_id):
+    return requests.post(
+        f"{ENDPOINT}/_search/scroll",
+        auth=AUTH,
+        json={"scroll": SCROLL, "scroll_id": scroll_id},
+        headers={"Content-Type": "application/json"},
+    )
+
+response = search(AUTH)
+response.raise_for_status()
+body = response.json()
+scroll_id = body["_scroll_id"]
+total_written = 0
+
+with open(OUTPUT_FILE, "w", newline="", encoding="utf-8") as csvfile:
+    writer = csv.DictWriter(csvfile, fieldnames=COLUMNS, extrasaction="ignore")
+    writer.writeheader()
+
+    while True:
+        hits = body["hits"]["hits"]
+        if not hits:
+            break
+
+        for hit in hits:
+            source = hit.get("_source", {})
+            writer.writerow({col: flatten(source.get(col, "")) for col in COLUMNS})
+
+        total_written += len(hits)
+        print(f"Exported {total_written} rows...")
+
+        response = scroll(scroll_id)
+        response.raise_for_status()
+        body = response.json()
+        scroll_id = body["_scroll_id"]
+
+print(f"Finished. Wrote {total_written} rows to {OUTPUT_FILE}")
+```
+
+<Callout type="warning">
+Large scroll exports can load your cluster. Narrow your query with a time range or filters, run exports during quieter periods, and avoid exporting more data than you need.
+</Callout>
+
+### API key authentication
+
+If your stack uses API key mode, pass `params={"apikey": "@opensearch.apiKey"}` on each `requests.post` call instead of `auth=AUTH`.
+
+### Tips
+
+- Use `_source` in your query to fetch only the fields you need — this keeps exports faster and CSV files smaller.
+- Nested objects and arrays are written as JSON strings in the CSV. Flatten specific fields in your query or script if you need separate columns.
+- For recurring or very large exports, consider OpenSearch Dashboards reporting, a scheduled script, or pushing data to object storage instead of downloading everything at once.
+
+### Further reading
+
+- [Connect to Your Cluster](/opensearch-api/connect)
+- [Querying with Python](/opensearch-api/examples/querying-with-python)
+- [Search APIs](/opensearch-api/search-apis)
+- [OpenSearch scroll API](https://docs.opensearch.org/latest/api-reference/search-apis/scroll/)

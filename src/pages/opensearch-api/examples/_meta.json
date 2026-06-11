@@ -1,0 +1,8 @@
+{
+  "connect-to-opensearch-with-curl": "Connect with cURL",
+  "connect-to-opensearch-with-python": "Connect with Python",
+  "connect-to-opensearch-with-csharp": "Connect with C#",
+  "connect-to-opensearch-with-java": "Connect with Java",
+  "querying-with-python": "Query with Python",
+  "export-data-to-csv": "Export Data to CSV"
+}

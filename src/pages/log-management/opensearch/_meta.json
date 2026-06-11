@@ -1,0 +1,10 @@
+{
+  "rest-api": "OpenSearch REST API",
+  "searching": "Searching",
+  "index-management": "Index Management",
+  "opensearch-dashboards": "OpenSearch Dashboards",
+  "reporting": "Reporting",
+  "cold-storage-restoration": "Cold Storage Restoration",
+  "supported-versions": "Supported Versions",
+  "timezones": "Timezones"
+}
