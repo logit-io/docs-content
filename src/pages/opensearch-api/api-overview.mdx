@@ -1,0 +1,86 @@
+---
+title: API Overview
+metaTitle: OpenSearch REST API Overview on Logit.io
+description: Map OpenSearch REST API families to common Logit.io use cases. Link to upstream specs and Logit-specific examples.
+stackTypes: logs, opensearch
+---
+
+# OpenSearch REST API overview
+
+Logit.io runs OpenSearch on **Logs stacks** and on dedicated **OpenSearch stacks**. Both expose the **same REST paths** as self-hosted OpenSearch — search, index documents, manage templates, check health — at `https://{stack-id}-es.logit.io`. Authentication and connection details are Logit-specific; request and response formats follow [OpenSearch's API reference](https://docs.opensearch.org/latest/api-reference/).
+
+| Stack type | Connection guide | Placeholders in signed-in docs |
+| --- | --- | --- |
+| **Logs** | [Connect to Your Cluster](/opensearch-api/connect) | `@opensearch.*` |
+| **OpenSearch** | [Connect to Your Cluster](/opensearch-api/connect) | `@opensearch.*` |
+
+Before calling any API, copy your endpoint, credentials, and ports (**443** or **9200**) from **Settings → Endpoints**.
+
+### How requests are formed
+
+Every API call follows this pattern:
+
+```text
+{method} https://{stack-id}-es.logit.io:{port}/{opensearch-api-path}
+```
+
+Append authentication on every request:
+
+- **API key mode** — `?apikey={your-stack-api-key}` query parameter
+- **Basic mode** — HTTP Basic auth with username = stack ID, password = stack API key
+
+See [Managed Stack Limitations](/opensearch-api/managed-stack-limitations) for operations that may not be available on a hosted stack.
+
+### Match your OpenSearch version
+
+OpenSearch API behaviour can differ between major versions. Check the OpenSearch version on your stack (**Settings → OpenSearch** or the stack summary), then use the matching docs where possible:
+
+```text
+https://docs.opensearch.org/docs/{version}/api-reference/
+```
+
+If unsure, the [latest API reference](https://docs.opensearch.org/latest/api-reference/) is a reasonable default.
+
+### Core API families
+
+OpenSearch groups REST APIs into families. The table below lists those most relevant on Logit.io Logs stacks, with a Logit guide (where we have one) and the upstream specification.
+
+| API family | Common use on Logit.io | Logit guide | Upstream reference |
+| --- | --- | --- | --- |
+| **Search** | Query logs, scroll exports, counts | [Search APIs](/opensearch-api/search-apis) | [Search APIs](https://docs.opensearch.org/latest/api-reference/search-apis/) |
+| **Document** | Index, update, delete documents; bulk ingest | [Document APIs](/opensearch-api/document-apis) | [Document APIs](https://docs.opensearch.org/latest/api-reference/document-apis/) |
+| **Index** | Templates, mappings, aliases, create/delete indexes | [Index & Template APIs](/opensearch-api/index-apis) | [Index APIs](https://docs.opensearch.org/latest/api-reference/index-apis/) |
+| **CAT** | Quick tabular cluster/index summaries | [Cluster & CAT APIs](/opensearch-api/cluster-and-cat-apis) | [CAT APIs](https://docs.opensearch.org/latest/api-reference/cat/) |
+| **Cluster** | Health checks, read cluster state | [Cluster & CAT APIs](/opensearch-api/cluster-and-cat-apis) | [Cluster APIs](https://docs.opensearch.org/latest/api-reference/cluster-apis/) |
+| **Snapshot** | Backup/restore | Contact support — snapshots are platform-managed | [Snapshot APIs](https://docs.opensearch.org/latest/api-reference/snapshot-apis/) |
+| **Security** | Users, roles, permissions | Not exposed for stack API access — use Dashboards and account roles | [Security APIs](https://docs.opensearch.org/latest/api-reference/security/) |
+| **Ingest** | Ingest pipelines | Usually managed via Logstash on Logit.io | [Ingest APIs](https://docs.opensearch.org/latest/api-reference/ingest-apis/) |
+
+### Plugin and advanced APIs
+
+These APIs exist on OpenSearch but are less commonly called directly against `{stack-id}-es.logit.io` on Logs stacks. Use OpenSearch Dashboards or contact support if you need them.
+
+| API | Upstream reference | Notes |
+| --- | --- | --- |
+| Alerting | [Alerting API](https://docs.opensearch.org/latest/alerting/api/) | Prefer [OpenSearch Alerting in Dashboards](/log-management/alerting/opensearch-alerting-monitors) |
+| Index State Management (ISM) | [ISM API](https://docs.opensearch.org/latest/im-plugin/ism/api/) | Retention is typically configured via your Logit.io plan |
+| Anomaly detection | [Anomaly detection API](https://docs.opensearch.org/latest/monitoring-plugins/ad/api/) | Dashboards UI |
+| Scroll | [Scroll API](https://docs.opensearch.org/latest/api-reference/search-apis/scroll/) | Covered in [Search APIs](/opensearch-api/search-apis) and [Export Data to CSV](/opensearch-api/examples/export-data-to-csv) |
+| Point in Time (PIT) | [PIT API](https://docs.opensearch.org/latest/api-reference/search-apis/point-in-time/) | Deep pagination alternative to scroll |
+| Multi-search | [Multi-search](https://docs.opensearch.org/latest/api-reference/search-apis/multi-search/) | Batch multiple searches in one request |
+
+### Logit guides and cookbooks
+
+| Task | Guide |
+| --- | --- |
+| Connect and authenticate | [Connect to Your Cluster](/opensearch-api/connect) |
+| Search and export logs | [Search APIs](/opensearch-api/search-apis), [Export Data to CSV](/opensearch-api/examples/export-data-to-csv) |
+| Query from Python | [Querying with Python](/opensearch-api/examples/querying-with-python) |
+| View templates and mappings | [Index & Template APIs](/opensearch-api/index-apis), [Index templates](/log-management/opensearch/index-management/index-templates) |
+| Reindex data | [Reindexing](/log-management/opensearch/index-management/reindexing) |
+| Monitor cluster health | [Cluster & CAT APIs](/opensearch-api/cluster-and-cat-apis) |
+| What you cannot do via API | [Managed Stack Limitations](/opensearch-api/managed-stack-limitations) |
+
+### OpenSearch Dashboards API (separate)
+
+The stack OpenSearch API (`-es.logit.io`) is **not** the same as the OpenSearch Dashboards API. Dashboards uses **Profile proxy credentials** via `kibana.logit.io`. See [Access OpenSearch Dashboards features via REST API](/log-management/opensearch/opensearch-dashboards/api).

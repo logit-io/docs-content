@@ -1,0 +1,121 @@
+---
+title: Connect to Your Cluster
+metaTitle: Connect Directly to Your Logit.io OpenSearch Cluster
+description: Connect to your Logit.io OpenSearch cluster using the REST API. Find endpoint, credentials, and ports on Settings → Endpoints (Logs and OpenSearch stacks).
+stackTypes: logs, opensearch
+---
+
+# Connect directly to your OpenSearch cluster
+
+Call the **full OpenSearch REST API** on your stack to search and index documents, manage indexes and templates, check cluster health, run reindex jobs, and anything else in the [OpenSearch API reference](https://docs.opensearch.org/latest/api-reference/).
+
+Logit.io supports two authentication modes: **API key** (default) and **Basic (username and password)**.
+
+<Callout type="info">
+When signed in, examples auto-fill `@opensearch.endpointAddress`, `@opensearch.apiKey`, `@opensearch.username`, and `@opensearch.password` from **Settings → Endpoints** (Logs and OpenSearch stacks).
+</Callout>
+
+### Which stack type do you have?
+
+| | **Logs stack** | **OpenSearch stack** |
+| --- | --- | --- |
+| **Product** | Log management (Logstash + OpenSearch + Dashboards) | Dedicated OpenSearch cluster |
+| **Dashboard path** | Stack → **Settings** → **Endpoints** | Stack → **Settings** → **Endpoints** |
+| **Also on stack summary** | OpenSearch section → **View Full Details** | Stack summary (show password) |
+| **Product-specific docs** | [Log Management overview](/log-management/overview) | [OpenSearch product overview](/opensearch/overview) |
+
+### How to find your connection details
+
+1. Sign in to your Logit.io account.
+2. Open **Settings** for the stack you want to access.
+3. Select **Endpoints** from the menu.
+4. In **OpenSearch API Details**, copy your endpoint, credentials, and preferred port.
+
+The Endpoints page shows:
+
+| Field | Description |
+| --- | --- |
+| **Authentication Mode** | **API Key** or **Basic (Username and Password)**. Stack administrators can switch modes from this page. |
+| **Endpoint** | `https://{stack-id}-es.logit.io` |
+| **API Key** | Shown in API key mode. Append as the `apikey` query parameter on requests. |
+| **Username / Password** | Shown in Basic mode. Username is your **stack ID**; password is your stack API key. |
+| **Available Ports** | **9200** (SSL default port) or **443** (SSL TCP port). Both use HTTPS. |
+
+The page also provides **Example Authenticated API Access** URLs with your credentials embedded.
+
+![OpenSearch API details on the Endpoints page](@/images/help/log-management/storage/elasticsearch-access.png)
+
+### Base URL and ports
+
+```text copy /@opensearch.endpointAddress/
+@opensearch.endpointAddress
+```
+
+Append the OpenSearch API path (for example `/_cluster/health`, `/_search`, or `/my-index/_doc`) to that URL.
+
+Ports: **443** (common for HTTPS clients) or **9200** (OpenSearch default SSL port).
+
+### Using any OpenSearch API endpoint
+
+| Operation | HTTP method | Path |
+| --- | --- | --- |
+| Cluster health | `GET` | `/_cluster/health` |
+| List indexes | `GET` | `/_cat/indices?v` |
+| Search | `GET` or `POST` | `/_search` or `/{index}/_search` |
+| Index a document | `POST` | `/{index}/_doc` |
+| Bulk ingest | `POST` | `/_bulk` |
+| Get index templates | `GET` | `/_index_template` or `/_template` |
+| Reindex | `POST` | `/_reindex` |
+
+See [API Overview](/opensearch-api/api-overview) for Logit guides by API family.
+
+### Using API key authentication mode
+
+Pass your stack API key as the `apikey` query parameter on every request.
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+  <Tab>
+    ```bash copy /@opensearch.endpointAddress/ /@opensearch.apiKey/
+    curl -X GET "@opensearch.endpointAddress:443/_cluster/health?apikey=@opensearch.apiKey&pretty"
+    ```
+  </Tab>
+  <Tab>
+    ```cmd copy /@opensearch.endpointAddress/ /@opensearch.apiKey/
+    curl -X GET "@opensearch.endpointAddress:443/_cluster/health?apikey=@opensearch.apiKey&pretty"
+    ```
+  </Tab>
+</Tabs>
+
+### Using Basic (username and password) authentication mode
+
+Username = stack ID, password = stack API key. Example authenticated URL from the Endpoints page:
+
+```text copy /@opensearch.username/ /@opensearch.password/ /@opensearch_id/
+https://@opensearch.username:@opensearch.password@@opensearch_id-es.logit.io:443
+```
+
+<Tabs items={["Linux / macOS", "Windows"]}>
+  <Tab>
+    ```bash copy /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+    curl -X GET "@opensearch.endpointAddress:443/_cluster/health?pretty" \
+      -u "@opensearch.username:@opensearch.password"
+    ```
+  </Tab>
+  <Tab>
+    ```cmd copy /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+    curl -X GET "@opensearch.endpointAddress:443/_cluster/health?pretty" ^
+      -u "@opensearch.username:@opensearch.password"
+    ```
+  </Tab>
+</Tabs>
+
+### Switching authentication mode
+
+Switch between **API Key** and **Basic** on the **Endpoints** page (~30 seconds to apply). Use Basic for clients that expect `user` and `password` (for example Logstash `elasticsearch` output or Serilog).
+
+### Next steps
+
+- [API Overview](/opensearch-api/api-overview)
+- [Examples](/opensearch-api/examples) — connect, query, export to CSV, and more
+- [Search APIs](/opensearch-api/search-apis)
+- [Managed Stack Limitations](/opensearch-api/managed-stack-limitations)

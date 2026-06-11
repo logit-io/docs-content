@@ -1,0 +1,38 @@
+---
+title: OpenSearch REST API
+metaTitle: Connect to OpenSearch via the REST API on Logit.io
+description: The single reference for calling the OpenSearch REST API on Logit.io — Logs stacks and dedicated OpenSearch stacks. Connection, API guides, and examples.
+pagination: false
+timestamp: false
+stackTypes: logs, opensearch
+---
+
+# OpenSearch REST API
+
+Call the **full OpenSearch REST API** on any Logit.io stack at `https://{stack-id}-es.logit.io`. This section applies to **both**:
+
+- **Logs stacks** — OpenSearch behind Logstash and OpenSearch Dashboards
+- **OpenSearch stacks** — dedicated hosted OpenSearch clusters
+
+Authentication, ports, and API paths are the same. Copy credentials from **Settings → Endpoints** in the dashboard.
+
+<Callout type="info">
+**Not sure which API you need?**
+
+- **Stack OpenSearch REST API** (this section) — query, index, and manage data on `{stack-id}-es.logit.io`
+- [OpenSearch Dashboards REST API](/log-management/opensearch/opensearch-dashboards/api) — Dashboards features via `kibana.logit.io` and Profile proxy credentials
+- [Logit Developer API](/developer-api/overview) — account and stack management via `dashboard.logit.io/api`
+</Callout>
+
+**Start here:**
+
+1. [Connect to Your Cluster](/opensearch-api/connect) — endpoint, authentication, ports (Logs and OpenSearch stacks)
+2. [API Overview](/opensearch-api/api-overview) — map API families to guides and upstream docs
+3. [Examples](/opensearch-api/examples) — connect, query, export to CSV, and more
+4. Pick an API guide below for copy-ready curl and Python snippets
+
+<Callout type="info">
+When signed in, examples auto-fill `@opensearch.*` placeholders from your stack's Endpoints page (Logs and OpenSearch stacks).
+</Callout>
+
+<FolderBrowser />

@@ -1,52 +1,39 @@
 ---
 title: Reindexing
 metaTitle: Learn How to Conduct Reindexing in OpenSearch
-description: Read Logit.io’s in-depth help article to understand how you would use the reindex feature in OpenSearch
+description: Reindex data on your Logit.io OpenSearch stack using OpenSearch Dashboards Dev Tools or the OpenSearch REST API.
 stackTypes: logs
 ---
 
 # How to reindex in OpenSearch?
 
-Reindexing in OpenSearch is a useful feature that allows you to create 
-a new version of your index with different configurations or consolidate 
-data from multiple indices. This guide provides step-by-step instructions 
-on how to reindex your data within the Logit.io-managed OpenSearch service.
+Reindexing creates a new version of an index with different settings or mappings, or copies documents from one index to another. On Logit.io you can run a reindex from **OpenSearch Dashboards Dev Tools** or programmatically via the **OpenSearch REST API**.
 
 ## Prerequisites
 
-- Active [Logit.io account](https://dashboard.logit.io/sign-up) with OpenSearch service enabled.
-- Familiarity with Logit.io's OpenSearch Dashboards.
-- Basic understanding of JSON and OpenSearch DSL (Domain Specific Language).
+- Active [Logit.io account](https://dashboard.logit.io/sign-up) with a Logs stack.
+- Familiarity with OpenSearch Dashboards or your stack's OpenSearch API credentials from **Settings → Endpoints** ([Connect to Your Cluster](/opensearch-api/connect)).
+- Basic understanding of JSON and OpenSearch Query DSL.
 
-## Step 1: Access the OpenSearch Dashboard
-Log in to your Logit.io account.
+## Option 1: Reindex using OpenSearch Dashboards Dev Tools
 
-Navigate to the OpenSearch Dashboards by clicking _Launch Logs_.
+### Step 1: Open Dev Tools
 
-Select the environment that contains your indices, if applicable.
+1. Sign in to your Logit.io account.
+2. Open **Launch Logs** to open OpenSearch Dashboards.
+3. In the left menu, select **Dev Tools**.
 
-## Step 2: Open Dev Tools
-The Dev Tools option in Logit.io's OpenSearch Dashboards 
-allows you to directly execute OpenSearch API commands.
+### Step 2: Plan your reindex
 
-Find and click on "Dev Tools" in the left-hand navigation menu.
+Decide on:
 
-Prepare to enter your reindex command in the console.
+- **Source index** — the index (or indexes) to copy from
+- **Destination index** — the target index (created automatically if it does not exist)
+- **Script (optional)** — transformations to apply during reindexing
 
-## Step 3: Plan Your Reindex Operation
-Before executing the reindex command, decide on the following:
+### Step 3: Run the reindex command
 
-**Source index:** The index (or indices) you're reindexing from.
-
-**Destination index:** The new index you're creating. If it doesn't 
-exist, OpenSearch will automatically create it during the reindexing process.
-
-**Reindex script (optional):** Any transformations you wish to apply to your documents during reindexing.
-
-## Step 4: Execute the Reindex Command
-
-In the Dev Tools console, use the reindex API to start the process. 
-Below is a basic template for reindexing:
+In the Dev Tools console:
 
 ```json copy
 POST /_reindex
@@ -59,40 +46,63 @@ POST /_reindex
   }
 }
 ```
-Replace source_index_name with the name of your current index 
-and destination_index_name with the name of your new index.
+
+Replace `source_index_name` and `destination_index_name` with your index names.
 
 <Callout type="info">
-  If you need to apply transformations or conditions, 
-  refer to the OpenSearch documentation for the script field in the reindex API.
+For transformations or filtering during reindex, see the [OpenSearch reindex API](https://docs.opensearch.org/latest/api-reference/document-apis/reindex/) documentation for the `script` and `query` fields. See also [Document APIs](/opensearch-api/document-apis).
 </Callout>
 
-## Step 5: Monitor the Reindex Operation
-Reindexing can take time depending on the size of your indices and 
-the complexity of any scripts you're using. You can monitor progress 
-through the OpenSearch Dashboards.
+### Step 4: Monitor and verify
 
-## Step 6: Verify the Reindex
-After the reindex operation completes, verify that the documents 
-are correctly copied to your destination index:
+Reindex duration depends on index size and any scripts used. Monitor progress in OpenSearch Dashboards.
 
-```cmd copy
+After completion, verify document count in the destination index:
+
+```plaintext
 GET /destination_index_name/_count
 ```
 
-This command returns the count of documents in the destination index. 
-Ensure this matches your expectations based on the source index.
+Compare the result with the source index count.
+
+## Option 2: Reindex using the OpenSearch REST API
+
+Use the same `POST /_reindex` request against your stack endpoint. Copy credentials from **Settings → Endpoints**.
+
+**Basic authentication:**
+
+```bash copy /@elasticsearch.endpointAddress/ /@elasticsearch.username/ /@elasticsearch.password/
+curl -X POST "@elasticsearch.endpointAddress:443/_reindex" \
+  -u "@elasticsearch.username:@elasticsearch.password" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "source": { "index": "source_index_name" },
+    "dest": { "index": "destination_index_name" }
+  }'
+```
+
+**API key authentication:**
+
+```bash copy /@elasticsearch.endpointAddress/ /@elasticsearch.apiKey/
+curl -X POST "@elasticsearch.endpointAddress:443/_reindex?apikey=@elasticsearch.apiKey" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "source": { "index": "source_index_name" },
+    "dest": { "index": "destination_index_name" }
+  }'
+```
+
+Check the destination index count:
+
+```bash copy /@elasticsearch.endpointAddress/ /@elasticsearch.username/ /@elasticsearch.password/
+curl -X GET "@elasticsearch.endpointAddress:443/destination_index_name/_count?pretty" \
+  -u "@elasticsearch.username:@elasticsearch.password"
+```
 
 ## Troubleshooting
 
-**Failed reindexing:** Check the OpenSearch logs for errors. 
-Common issues include scripting errors or resource limitations.
+**Failed reindexing** — Check the response body for errors. Common causes include script errors, mapping conflicts, or insufficient cluster resources.
 
-**Performance issues:** Large reindex operations can impact cluster 
-performance. Consider performing reindexing during off-peak hours.
+**Performance** — Large reindexes can affect cluster performance. Run them during quieter periods where possible.
 
-By following these steps, you can efficiently reindex your data 
-within the Logit.io platform, ensuring your indices are configured for optimal performance and relevance.
-
-For more complex reindexing needs or troubleshooting feel free 
-to reach out to the Logit.io support team for personalized assistance.
+For complex reindex jobs or persistent errors, contact the [Logit.io support team](https://logit.io/about-us/contact-us/).

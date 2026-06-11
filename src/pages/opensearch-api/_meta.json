@@ -1,0 +1,10 @@
+{
+  "connect": "Connect to Your Cluster",
+  "api-overview": "API Overview",
+  "search-apis": "Search APIs",
+  "document-apis": "Document APIs",
+  "index-apis": "Index & Template APIs",
+  "cluster-and-cat-apis": "Cluster & CAT APIs",
+  "managed-stack-limitations": "Managed Stack Limitations",
+  "examples": "Examples"
+}

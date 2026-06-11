@@ -1,0 +1,130 @@
+---
+title: Search APIs
+metaTitle: OpenSearch Search APIs on Logit.io
+description: Query and export log data on your Logit.io stack using OpenSearch Search APIs including _search, _count, and scroll.
+stackTypes: logs, opensearch
+---
+
+# Search APIs
+
+Search APIs query documents in your indexes. On Logit.io you call them on `https://{stack-id}-es.logit.io` with credentials from [Connect to Your Cluster](/opensearch-api/connect).
+
+Full request and response schemas: [OpenSearch Search APIs](https://docs.opensearch.org/latest/api-reference/search-apis/).
+
+### Common endpoints
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` / `POST` | `/{index}/_search` | Run a Query DSL search |
+| `GET` / `POST` | `/_search` | Search across all indexes (use with care) |
+| `GET` / `POST` | `/{index}/_count` | Count matching documents |
+| `POST` | `/{index}/_search?scroll=1m` | Start a scroll context for large result sets |
+| `POST` | `/_search/scroll` | Fetch the next scroll page |
+| `DELETE` | `/_search/scroll/{scroll_id}` | Clear a scroll context |
+| `POST` | `/{index}/_search?search_type=query_then_fetch` | Standard search (default) |
+
+For exports larger than 10,000 documents, use **scroll** or see [Export Data to CSV](/opensearch-api/examples/export-data-to-csv).
+
+### Search an index
+
+<Tabs items={["Basic auth", "API key"]}>
+  <Tab>
+    ```bash copy /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+    curl -X POST "@opensearch.endpointAddress:443/filebeat-*/_search?pretty" \
+      -u "@opensearch.username:@opensearch.password" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "size": 20,
+        "sort": [{"@timestamp": "desc"}],
+        "query": {
+          "bool": {
+            "filter": [
+              {"range": {"@timestamp": {"gte": "now-1h"}}}
+            ]
+          }
+        }
+      }'
+    ```
+  </Tab>
+  <Tab>
+    ```bash copy /@opensearch.endpointAddress/ /@opensearch.apiKey/
+    curl -X POST "@opensearch.endpointAddress:443/filebeat-*/_search?apikey=@opensearch.apiKey&pretty" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "size": 20,
+        "sort": [{"@timestamp": "desc"}],
+        "query": {"match_all": {}}
+      }'
+    ```
+  </Tab>
+</Tabs>
+
+Replace `filebeat-*` with your index or pattern.
+
+### Count documents
+
+```bash copy /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+curl -X POST "@opensearch.endpointAddress:443/filebeat-*/_count" \
+  -u "@opensearch.username:@opensearch.password" \
+  -H "Content-Type: application/json" \
+  -d '{"query": {"range": {"@timestamp": {"gte": "now-24h"}}}}'
+```
+
+### Scroll through large results
+
+Start a scroll (keepalive `2m`):
+
+```bash copy /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+curl -X POST "@opensearch.endpointAddress:443/filebeat-*/_search?scroll=2m" \
+  -u "@opensearch.username:@opensearch.password" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "size": 1000,
+    "query": {"match_all": {}},
+    "_source": ["@timestamp", "message"]
+  }'
+```
+
+Use the `_scroll_id` from the response to fetch the next page:
+
+```bash copy /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+curl -X POST "@opensearch.endpointAddress:443/_search/scroll" \
+  -u "@opensearch.username:@opensearch.password" \
+  -H "Content-Type: application/json" \
+  -d '{"scroll": "2m", "scroll_id": "YOUR_SCROLL_ID"}'
+```
+
+Repeat until `hits.hits` is empty. A complete Python scroll export is in [Export Data to CSV](/opensearch-api/examples/export-data-to-csv).
+
+### Python example
+
+```python copy showLineNumbers filename="search.py" /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+import requests
+
+response = requests.post(
+    "@opensearch.endpointAddress:443/filebeat-*/_search",
+    auth=("@opensearch.username", "@opensearch.password"),
+    json={
+        "size": 50,
+        "query": {"match": {"message": "error"}},
+    },
+)
+response.raise_for_status()
+for hit in response.json()["hits"]["hits"]:
+    print(hit["_source"])
+```
+
+More examples: [Querying with Python](/opensearch-api/examples/querying-with-python).
+
+### Tips
+
+- Prefer `POST` with a JSON body for non-trivial queries.
+- Use `_source` to return only the fields you need.
+- Add a time filter on `@timestamp` to limit data scanned.
+- See [Managed Stack Limitations](/opensearch-api/managed-stack-limitations) for `max_result_window` and performance guidance.
+
+### Further reading
+
+- [Export Data to CSV](/opensearch-api/examples/export-data-to-csv)
+- [OpenSearch Query DSL](https://docs.opensearch.org/latest/query-dsl/)
+- [Scroll API](https://docs.opensearch.org/latest/api-reference/search-apis/scroll/)

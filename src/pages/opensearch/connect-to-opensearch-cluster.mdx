@@ -9,20 +9,25 @@ stackTypes: opensearch
 
 # Connect to an OpenSearch Cluster
 
-This guide will show you how to connect to your OpenSearch cluster after it has been created. You'll learn how to find your connection details and explore different methods to interact with your cluster using various programming languages.
+Product-specific getting started for dedicated OpenSearch stacks. For the canonical connection reference (endpoint, auth, ports, all API guides), see **[OpenSearch REST API](/opensearch-api/connect)** — shared with [Logs stacks](/log-management/overview).
 
 If you have not yet created an OpenSearch Cluster, please see our guide on [Creating an OpenSearch Cluster](creating-opensearch-cluster.mdx) first.
 
 <Steps>
   ### Access Your Cluster Details
 
-  Once your OpenSearch Cluster has been created, you can find your connection details on the Logit.io Dashboard. The Stack summary shows your endpoint, username, and password (hidden by default, but viewable by clicking "show"). 
+  Once your OpenSearch Cluster has been created, find connection details in either place:
+
+  - **Stack summary** — endpoint, username, and password (click **show** to reveal the password)
+  - **Settings → Endpoints** — full API details including authentication mode, ports **443** / **9200**, and example authenticated URLs (same layout as Logs stacks)
 
   ![Logit.io Dashboard Summary](@/images/getting-started/opensearch/dashboard.png)
 
+  See [Cluster Settings → Endpoints](opensearch-cluster-settings.mdx) for the Endpoints page screenshot and copy buttons.
+
   ### Connection Settings
 
-  Here are the settings you'll need to connect to your OpenSearch Cluster:
+  Here are the settings you'll need to call the OpenSearch REST API on your cluster:
 
   Endpoint:
   ```text copy /@opensearch.endpointAddress/ 
@@ -39,7 +44,7 @@ If you have not yet created an OpenSearch Cluster, please see our guide on [Crea
   @opensearch.password
   ```
 
-  These credentials are essential for authenticating with your OpenSearch Cluster.
+  These credentials use **Basic (username and password)** authentication. Your stack may also use **API key** mode — switch on the Endpoints page if needed. See **[OpenSearch REST API](/opensearch-api)** for auth modes, API guides, and examples.
 
   ### Cluster Settings
 
@@ -49,15 +54,16 @@ If you have not yet created an OpenSearch Cluster, please see our guide on [Crea
 
   We provide several examples showing how to connect to your OpenSearch Cluster using popular programming languages:
 
-  - [Connect with C#](examples/connect-to-opensearch-with-csharp.mdx)
-  - [Connect with Python](examples/connect-to-opensearch-with-python.mdx)
-  - [Connect with cURL](examples/connect-to-opensearch-with-curl.mdx)
-  - [Connect with Java](examples/connect-to-opensearch-with-java.mdx)
+  - [Connect with C#](/opensearch-api/examples/connect-to-opensearch-with-csharp)
+  - [Connect with Python](/opensearch-api/examples/connect-to-opensearch-with-python)
+  - [Connect with cURL](/opensearch-api/examples/connect-to-opensearch-with-curl)
+  - [Connect with Java](/opensearch-api/examples/connect-to-opensearch-with-java)
 
   ### Next Steps
 
   After connecting to your OpenSearch Cluster, you might want to:
   
+  - Browse [OpenSearch REST API](/opensearch-api) — search, bulk index, health checks, export to CSV
   - Learn more about [OpenSearch features and capabilities](overview.mdx)
   - Explore [advanced configuration options](opensearch-cluster-settings.mdx)
   - Browse all [code examples](examples.mdx) for different integration scenarios

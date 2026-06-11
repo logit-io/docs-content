@@ -1,0 +1,36 @@
+---
+title: OpenSearch REST API
+metaTitle: Connect to OpenSearch via the REST API on Your Logs Stack
+description: Link to the shared OpenSearch REST API reference for Logit.io Logs stacks — connect, search, export data, and manage indexes programmatically.
+pagination: false
+timestamp: false
+stackTypes: logs
+---
+
+# OpenSearch REST API
+
+Call the **full OpenSearch REST API** on your Logs stack at `https://{stack-id}-es.logit.io`. Copy your endpoint, credentials, and ports from **Settings → Endpoints**.
+
+The complete reference lives in **[OpenSearch REST API](/opensearch-api)** — shared by Logs stacks and dedicated OpenSearch stacks. Examples auto-fill `@opensearch.*` placeholders when you are signed in.
+
+<Callout type="info">
+**Not sure which API you need?**
+
+- **Stack OpenSearch REST API** — query, index, and manage data on `{stack-id}-es.logit.io` ([guides below](/opensearch-api))
+- [OpenSearch Dashboards REST API](/log-management/opensearch/opensearch-dashboards/api) — Dashboards features via `kibana.logit.io` and Profile proxy credentials
+- [Logit Developer API](/developer-api/overview) — account and stack management via `dashboard.logit.io/api`
+</Callout>
+
+### Start here
+
+- [Connect to Your Cluster](/opensearch-api/connect) — endpoint, authentication, ports
+- [API Overview](/opensearch-api/api-overview) — map API families to guides and upstream docs
+- [Examples](/opensearch-api/examples) — connect, query, export to CSV, and more
+
+### API guides
+
+- [Search APIs](/opensearch-api/search-apis)
+- [Document APIs](/opensearch-api/document-apis)
+- [Index & Template APIs](/opensearch-api/index-apis)
+- [Cluster & CAT APIs](/opensearch-api/cluster-and-cat-apis)
+- [Managed Stack Limitations](/opensearch-api/managed-stack-limitations)

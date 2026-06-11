@@ -1,0 +1,148 @@
+---
+title: Cluster & CAT APIs
+metaTitle: OpenSearch Cluster and CAT APIs on Logit.io
+description: Check cluster health, list indexes, and monitor your Logit.io OpenSearch stack using Cluster and CAT APIs.
+stackTypes: logs, opensearch
+---
+
+# Cluster & CAT APIs
+
+Cluster and CAT APIs help you monitor stack health and get quick operational summaries — useful for debugging ingestion issues, uptime checks, and verifying index counts.
+
+Connection details: [Connect to Your Cluster](/opensearch-api/connect).
+
+- Cluster API reference: [Cluster APIs](https://docs.opensearch.org/latest/api-reference/cluster-apis/)
+- CAT API reference: [CAT APIs](https://docs.opensearch.org/latest/api-reference/cat/)
+
+### Common endpoints
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/_cluster/health` | Cluster health (`green`, `yellow`, `red`) |
+| `GET` | `/_cluster/health/{index}` | Health for specific indexes |
+| `GET` | `/_cluster/stats` | Cluster statistics (nodes, indexes, docs) |
+| `GET` | `/_cat/indices?v` | Index list with doc counts and store size |
+| `GET` | `/_cat/health?v` | One-line cluster health |
+| `GET` | `/_cat/aliases?v` | List aliases |
+| `GET` | `/_cat/nodes?v` | Node summary (fields may be limited on hosted stacks) |
+| `GET` | `/_cat/shards/{index}?v` | Shard allocation per index |
+
+Some cluster admin endpoints (`/_cluster/settings` with persistent changes, reroute, etc.) may be restricted on hosted stacks — see [Managed Stack Limitations](/opensearch-api/managed-stack-limitations).
+
+### Cluster health
+
+<Tabs items={["Basic auth", "API key"]}>
+  <Tab>
+    ```bash copy /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+    curl -X GET "@opensearch.endpointAddress:443/_cluster/health?pretty" \
+      -u "@opensearch.username:@opensearch.password"
+    ```
+  </Tab>
+  <Tab>
+    ```bash copy /@opensearch.endpointAddress/ /@opensearch.apiKey/
+    curl -X GET "@opensearch.endpointAddress:443/_cluster/health?apikey=@opensearch.apiKey&pretty"
+    ```
+  </Tab>
+</Tabs>
+
+Example response fields:
+
+| Field | Meaning |
+| --- | --- |
+| `status` | `green` (all primary/replica shards active), `yellow` (replicas unassigned), `red` (primary shards missing) |
+| `number_of_nodes` | Nodes in the cluster |
+| `active_primary_shards` | Primary shards online |
+| `relocating_shards` | Shards currently moving (non-zero during maintenance) |
+
+Health for a specific index pattern:
+
+```bash copy /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+curl -X GET "@opensearch.endpointAddress:443/_cluster/health/filebeat-*?pretty" \
+  -u "@opensearch.username:@opensearch.password"
+```
+
+### List indexes (CAT)
+
+```bash copy /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+curl -X GET "@opensearch.endpointAddress:443/_cat/indices?v&s=index" \
+  -u "@opensearch.username:@opensearch.password"
+```
+
+Useful columns: `index`, `health`, `docs.count`, `store.size`, `creation.date.string`.
+
+Filter with a pattern:
+
+```bash copy /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+curl -X GET "@opensearch.endpointAddress:443/_cat/indices/filebeat-*?v&h=index,health,docs.count,store.size" \
+  -u "@opensearch.username:@opensearch.password"
+```
+
+### Monitoring and uptime checks
+
+Use `/_cluster/health` from an external monitor (cron, Prometheus blackbox probe, etc.) to detect cluster problems.
+
+**Simple uptime check** — exit code 0 only when status is `green` or `yellow`:
+
+```bash copy /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+STATUS=$(curl -s -u "@opensearch.username:@opensearch.password" \
+  "@opensearch.endpointAddress:443/_cluster/health" | grep -o '"status":"[^"]*"' | cut -d'"' -f4)
+
+if [ "$STATUS" = "red" ]; then
+  echo "OpenSearch cluster status: $STATUS"
+  exit 1
+fi
+echo "OpenSearch cluster status: $STATUS"
+```
+
+**Python health check** for use in scripts or alerting hooks:
+
+```python copy showLineNumbers filename="health_check.py" /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+import sys
+import requests
+
+response = requests.get(
+    "@opensearch.endpointAddress:443/_cluster/health",
+    auth=("@opensearch.username", "@opensearch.password"),
+    timeout=10,
+)
+response.raise_for_status()
+status = response.json()["status"]
+
+if status == "red":
+    print(f"Cluster health is {status}")
+    sys.exit(1)
+
+print(f"Cluster health is {status}")
+```
+
+**Document count spot-check** — compare today's index size against expectations:
+
+```bash copy /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+curl -X POST "@opensearch.endpointAddress:443/filebeat-*/_count" \
+  -u "@opensearch.username:@opensearch.password" \
+  -H "Content-Type: application/json" \
+  -d '{"query": {"range": {"@timestamp": {"gte": "now-1h"}}}}'
+```
+
+Pair with [ingestion statistics](/log-management/getting-started) in the dashboard to confirm data is arriving.
+
+### Read cluster stats
+
+Higher-level summary than CAT — node count, total documents, store size:
+
+```bash copy /@opensearch.endpointAddress/ /@opensearch.username/ /@opensearch.password/
+curl -X GET "@opensearch.endpointAddress:443/_cluster/stats?pretty" \
+  -u "@opensearch.username:@opensearch.password"
+```
+
+### When to use Dashboards instead
+
+For interactive investigation (Discover, index management UI, stack version), use **Launch Logs** (OpenSearch Dashboards). Use Cluster and CAT APIs when you need **scriptable, automatable** checks or quick terminal output.
+
+### Further reading
+
+- [API Overview](/opensearch-api/api-overview)
+- [Managed Stack Limitations](/opensearch-api/managed-stack-limitations)
+- [How can I diagnose no data appearing?](/log-management/troubleshooting/how-can-i-diagnose-no-data-appearing)
+- [Cluster health API](https://docs.opensearch.org/latest/api-reference/cluster-apis/health/)
+- [CAT indices API](https://docs.opensearch.org/latest/api-reference/cat/cat-indices/)
