@@ -63,7 +63,7 @@ Follow the steps below to send your observability data to Logit.io.
   ```json copy showLineNumbers /@logstash.host/ /@logstash.sslPort/
   "Serilog": {
   "Using": [ "Serilog.Sinks.Network" ],
-  "MinimumLevel": "Debug",
+  "MinimumLevel": "Warning",
   "WriteTo": [
     {
     "Name": "TCPSink",
@@ -174,11 +174,11 @@ Follow the steps below to send your observability data to Logit.io.
                 
   ```xml copy
   <ItemGroup>
-    <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.11.2" />
-    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.11.2" />
-    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.11.2" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.11.1" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.11.1" />
+    <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.12.0" />
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.12.0" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.12.0" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.12.0" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.12.0" />
   </ItemGroup>
   ```
 
@@ -270,6 +270,12 @@ Follow the steps below to send your observability data to Logit.io.
               {
                   tracingOtlpEndpoint += ":" + tracingOtlpPort;
               }
+
+              if (tracingOtlpProtocol != "grpc")
+              {
+                tracingOtlpEndpoint += "/v1/traces";
+              }
+              
               otlpOptions.Endpoint = new Uri(tracingOtlpEndpoint);
 
               otlpOptions.Protocol = tracingOtlpProtocol!.ToLower() == "grpc" ? OtlpExportProtocol.Grpc : OtlpExportProtocol.HttpProtobuf;

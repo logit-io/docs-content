@@ -35,7 +35,7 @@ Use OpenTelemetry to easily send C++ traces to your Logit.io Stack.
     namespace otlp = opentelemetry::exporter::otlp;
 
     otlp::OtlpHttpExporterOptions opts;
-    opts.url = "https://@opentelemetry.endpointAddress:@opentelemetry.httpsPort";
+    opts.url = "https://@opentelemetry.endpointAddress:@opentelemetry.httpsPort/v1/traces";
     opts.http_headers = "Authorization=Basic @opentelemetry.base64encodedAuthString";
 
     auto exporter = otlp::OtlpHttpExporterFactory::Create(opts);
