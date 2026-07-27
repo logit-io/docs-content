@@ -1,20 +1,20 @@
 ---
 title: Winlogbeat
-metaTitle: Learn How to Integrate and Configure Winlogbeat to Send Logs
+metaTitle: Winlogbeat — Ship Windows Event Logs to Logit.io
 pageTitle: Winlogbeat Configuration
 subTitle: Ship logs to Logit.io via Winlogbeat
 logo: winlogbeat
 color: "#00bfb3"
-description: Winlogbeat is a Windows-specific event log-shipping agent.
+description: Configure Winlogbeat to send Windows Security, System, and Application event logs to Logit.io. Setup guide for SIEM workflows and OpenSearch Dashboards.
 stackTypes: logs
 sslPortType: beats-ssl
 tags: Beats, Logs, Windows, Microsoft, System, Event Log, Logging, Winlogbeat
 dashboardIds: winlogbeat
 ---
 
-Winlogbeat is a Windows specific event-log shipping agent installed 
-as a Windows service. It can be used to collect and send event 
-logs to one or more destinations, including Logstash.
+Ship Windows event logs to Logit.io with Winlogbeat: install the agent as a Windows service, point it at your Logstash endpoint, and view Security / System / Application events in OpenSearch Dashboards.
+
+Winlogbeat is a Windows-specific event-log shipping agent. Use it for security logging, failed-logon investigations, and SIEM-style workflows on managed OpenSearch.
 
 <Steps>
   ## Logs
@@ -56,7 +56,10 @@ logs to one or more destinations, including Logstash.
 
 </Steps>
 
+## Next steps
 
-
-
+- [Event log analyser](https://logit.io/solutions/analysis/event-log-analyser/) — Windows event / SIEM workflows on Logit.io
+- [SIEM as a Service](https://logit.io/platform/observability/siem-as-a-service/) — security logging and threat hunting
+- [Log management pricing](https://logit.io/pricing/logs/) — plans from $25/mo and 14-day free trial
+- [Elastic Agent](/docs/integrations/elastic-agent/) — unified logs and metrics shipping
 

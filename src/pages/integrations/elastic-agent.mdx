@@ -1,18 +1,18 @@
 ---
 title: Elastic Agent
-metaTitle: Learn How to Integrate and Configure the Elastic Agent to Send Logs
+metaTitle: Elastic Agent — Send Logs & Metrics to Logit.io
 pageTitle: Elastic Agent Configuration
 subTitle: A unified approach for seamlessly incorporating monitoring of logs, metrics, and other data types
 logo: elasticsearch
 color: "#00bfb3"
 popular: true
-description: Elastic Agent allows you to send logs, metrics, and diverse data types to stacks. Configure Elastic Agent to send logs to Logstash or Elasticsearch.
+description: Configure Elastic Agent to ship logs and metrics to Logit.io via Logstash. Unified agent setup for OpenSearch stacks and observability pipelines.
 stackTypes: logs
 sslPortType: beats-ssl
 tags: Beats, Logs, Elastic Agent, Files, Text, Log Files, Elastic Agent
 ---
 
-Follow the steps below to send your observability data to Logit.io
+Ship logs and metrics to Logit.io with Elastic Agent: install the agent, use the pre-built Logstash output config, and view data in OpenSearch Dashboards. Follow the steps below.
 
 <Steps>
   ## Logs
@@ -141,3 +141,10 @@ It's important to note that Elastic Agent complements Logstash, making them an e
 Proper configuration of Elastic Agent is essential to avoid complex logging issues, such as excessively large registry files or errors related to deleted or renamed log files. A well-configured agent ensures smooth data collection and indexing.
 
 If you need any further assistance with migrating your log data to ELK we're here to help you get started. Feel free to get in contact with our support team by sending us a message via <IntercomButton text="live chat" /> & we'll be happy to assist.
+
+## Next steps
+
+- [Winlogbeat](/docs/integrations/winlogbeat/) — Windows event log shipping
+- [Log management](https://logit.io/platform/logging/log-management/) — managed Logstash + OpenSearch
+- [Log management pricing](https://logit.io/pricing/logs/) — plans from $25/mo and 14-day free trial
+- [Hosted OpenSearch](https://logit.io/platform/features/hosted-opensearch/) — OpenSearch clusters on Logit.io
