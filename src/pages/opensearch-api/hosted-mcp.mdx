@@ -1,0 +1,109 @@
+---
+title: Hosted OpenSearch MCP
+metaTitle: Hosted OpenSearch MCP for Cursor and Claude on Logit.io
+description: Connect Cursor or Claude Desktop to your Logit.io stack with hosted, read-only OpenSearch MCP at {stackId}-mcp.logit.io. Business and Custom plans.
+stackTypes: logs, opensearch
+---
+
+# Hosted OpenSearch MCP (Cursor / Claude)
+
+Logit.io hosts a **read-only** [OpenSearch MCP server](https://github.com/opensearch-project/opensearch-mcp-server-py) for your Logs and OpenSearch stacks. Connect AI clients such as **Cursor** or **Claude Desktop** without running MCP locally.
+
+Public URL:
+
+```text
+https://{stack-id}-mcp.logit.io/mcp
+```
+
+<Callout type="info">
+Available on **Business** and **Custom** plans. MCP uses a **dedicated API key**, separate from your OpenSearch HTTP API key on `{stack-id}-es.logit.io`.
+</Callout>
+
+### What you get
+
+- Hosted MCP endpoint per stack (no container or local process to maintain)
+- **Read-only** queries against that stack's OpenSearch data
+- Dashboard copy-paste config for Cursor / Claude
+- Independent key rotation on **Settings → Endpoints**
+
+MCP is not a substitute for the full OpenSearch REST API. For programmatic write access or stack-key automation, use [Connect to Your Cluster](/opensearch-api/connect). For role-scoped human/CI API access, use [OpenSearch API (user credentials)](/opensearch-api/user-credentials).
+
+### Prerequisites
+
+1. Account on a **Business** or **Custom** plan.
+2. A Logs or OpenSearch stack.
+3. Permission to enable MCP on the stack (stack administrator or account owner/admin).
+
+### Enable on a stack
+
+1. Open the stack **Settings** page (Overview).
+2. In **Access**, find **OpenSearch MCP**.
+3. Select **Enable**.
+
+Logit.io provisions `{stack-id}-mcp.logit.io` and generates a dedicated MCP API key.
+
+Disable from the same **Access** card to remove the public MCP route for that stack.
+
+### Connection details
+
+After enablement, open **Settings → Endpoints**. The **OpenSearch MCP (read-only)** section shows:
+
+| Field | Value |
+| --- | --- |
+| **MCP URL** | `https://{stack-id}-mcp.logit.io/mcp` |
+| **Username** | `{stack-id}-mcp` |
+| **API Key** | Dedicated MCP key (not the OpenSearch `-es` key) |
+| **Example config** | JSON ready to paste into Cursor or Claude Desktop |
+
+You can **rotate the MCP API key** on the Endpoints page. The previous key stops working after rotation.
+
+### Cursor setup
+
+1. Copy the example MCP config from **Settings → Endpoints**.
+2. Open Cursor MCP settings and add a server entry (or merge into your existing MCP config).
+
+Example shape (replace placeholders with values from Endpoints):
+
+```json copy
+{
+  "mcpServers": {
+    "logit-opensearch": {
+      "url": "https://{stack-id}-mcp.logit.io/mcp",
+      "headers": {
+        "Authorization": "Basic {base64-of-username:api-key}"
+      }
+    }
+  }
+}
+```
+
+The dashboard config already includes the correctly encoded `Authorization` header. Prefer copying that block rather than building Basic auth by hand.
+
+### Claude Desktop setup
+
+Claude Desktop uses the same JSON shape as the dashboard example. Paste the config from **Settings → Endpoints** into Claude's MCP server settings, then restart Claude Desktop if required by your client version.
+
+### Limitations
+
+| Topic | Behaviour |
+| --- | --- |
+| **Write operations** | Not available — MCP is always read-only |
+| **Credentials** | Dedicated `{stack-id}-mcp` username + MCP API key; do not reuse the `-es` stack API key |
+| **Plan** | Business and Custom only |
+| **Scope** | One MCP endpoint per stack; enable separately on each stack you need |
+
+### Troubleshooting
+
+| Symptom | What to check |
+| --- | --- |
+| **401 Unauthorized** | Using the MCP username (`{stack-id}-mcp`) and **MCP** API key from Endpoints? Key recently rotated? |
+| **404 / connection failed** | MCP enabled on the stack? URL exact (`https://{stack-id}-mcp.logit.io/mcp`)? DNS may take a short time after enable. |
+| **Client cannot list tools** | Confirm the client supports remote MCP over HTTPS with custom headers; re-paste the dashboard config. |
+| **Expected write tool missing** | By design — hosted MCP does not expose write tools. |
+
+### Next steps
+
+- [OpenSearch API (user credentials)](/opensearch-api/user-credentials) — role-scoped REST API
+- [Connect to Your Cluster](/opensearch-api/connect) — stack API key on `-es`
+- [Search APIs](/opensearch-api/search-apis)
+- [Managed Stack Limitations](/opensearch-api/managed-stack-limitations)

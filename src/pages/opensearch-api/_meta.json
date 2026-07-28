@@ -1,5 +1,7 @@
 {
   "connect": "Connect to Your Cluster",
+  "user-credentials": "OpenSearch API (user credentials)",
+  "hosted-mcp": "Hosted OpenSearch MCP",
   "api-overview": "API Overview",
   "search-apis": "Search APIs",
   "document-apis": "Document APIs",

@@ -16,9 +16,17 @@ Logit.io runs OpenSearch on **Logs stacks** and on dedicated **OpenSearch stacks
 
 Before calling any API, copy your endpoint, credentials, and ports (**443** or **9200**) from **Settings → Endpoints**.
 
+### Endpoints at a glance
+
+| Hostname | Access | Guide |
+| --- | --- | --- |
+| `{stack-id}-es.logit.io` | Stack API key (full programmatic access) | [Connect to Your Cluster](/opensearch-api/connect) |
+| `{stack-id}-es-user.logit.io` | User / service-account Basic auth (Teams roles) | [OpenSearch API (user credentials)](/opensearch-api/user-credentials) |
+| `{stack-id}-mcp.logit.io` | Hosted read-only MCP for Cursor / Claude | [Hosted OpenSearch MCP](/opensearch-api/hosted-mcp) |
+
 ### How requests are formed
 
-Every API call follows this pattern:
+Every stack API key call follows this pattern:
 
 ```text
 {method} https://{stack-id}-es.logit.io:{port}/{opensearch-api-path}
@@ -28,6 +36,8 @@ Append authentication on every request:
 
 - **API key mode** — `?apikey={your-stack-api-key}` query parameter
 - **Basic mode** — HTTP Basic auth with username = stack ID, password = stack API key
+
+For role-scoped user credentials or MCP, see the guides linked above.
 
 See [Managed Stack Limitations](/opensearch-api/managed-stack-limitations) for operations that may not be available on a hosted stack.
 
@@ -74,6 +84,8 @@ These APIs exist on OpenSearch but are less commonly called directly against `{s
 | Task | Guide |
 | --- | --- |
 | Connect and authenticate | [Connect to Your Cluster](/opensearch-api/connect) |
+| Per-user / service-account API | [OpenSearch API (user credentials)](/opensearch-api/user-credentials) |
+| Cursor / Claude MCP | [Hosted OpenSearch MCP](/opensearch-api/hosted-mcp) |
 | Search and export logs | [Search APIs](/opensearch-api/search-apis), [Export Data to CSV](/opensearch-api/examples/export-data-to-csv) |
 | Query from Python | [Querying with Python](/opensearch-api/examples/querying-with-python) |
 | View templates and mappings | [Index & Template APIs](/opensearch-api/index-apis), [Index templates](/log-management/opensearch/index-management/index-templates) |

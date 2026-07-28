@@ -45,12 +45,21 @@ These limits come from OpenSearch defaults and hosted cluster sizing, not Logit-
 | **Scroll keepalive** | Configurable per request | Long scroll contexts consume cluster resources — use shorter `scroll` values and clear contexts when done |
 | **Query complexity** | — | Heavy aggregations or broad `match_all` across all indexes can affect cluster performance — narrow by index and time range |
 
-### Future: user-scoped API access
+### User credentials and hosted MCP
 
-Logit.io may offer a separate endpoint (`{stack-id}-es-user.logit.io`) for programmatic access under a named user's team roles (same permissions as OpenSearch Dashboards). Stack API key access on `{stack-id}-es.logit.io` will remain unchanged. Documentation will be added when this feature is generally available.
+On **Business** and **Custom** plans you can enable additional public endpoints per stack:
+
+| Endpoint | Behaviour |
+| --- | --- |
+| **`{stack-id}-es-user.logit.io`** | Basic auth for humans and service accounts. Permissions match [Teams OpenSearch roles](/account-administration/account-access-users-teams/roles-access/managing-opensearch-grafana-security-roles). Does **not** expose security-plugin admin APIs for creating roles via `/_plugins/_security`. See [OpenSearch API (user credentials)](/opensearch-api/user-credentials). |
+| **`{stack-id}-mcp.logit.io`** | Hosted read-only OpenSearch MCP for Cursor / Claude. Dedicated MCP credentials; write tools are not available. See [Hosted OpenSearch MCP](/opensearch-api/hosted-mcp). |
+
+Stack API key access on `{stack-id}-es.logit.io` remains unchanged and still **bypasses** dashboard user role restrictions (full programmatic access to the stack's data).
 
 ### Further reading
 
 - [Connect to Your Cluster](/opensearch-api/connect)
+- [OpenSearch API (user credentials)](/opensearch-api/user-credentials)
+- [Hosted OpenSearch MCP](/opensearch-api/hosted-mcp)
 - [API Overview](/opensearch-api/api-overview)
 - [OpenSearch API reference](https://docs.opensearch.org/latest/api-reference/)

@@ -22,6 +22,10 @@ By default all Logit.io Teams come with the roles shown below for common scenari
 
 When you add or update a team the roles are automatically synchronised to OpenSearch Security for you, removing the need for the manual mapping of users to roles in OpenSearch. You can read more details below about what permissions each predefined role grants to members of that team.
 
+<Callout type="info">
+When **[OpenSearch API (user credentials)](/opensearch-api/user-credentials)** is enabled on a stack (Business / Custom), these Teams OpenSearch roles also apply to requests on `{stack-id}-es-user.logit.io`. Stack API key access on `{stack-id}-es.logit.io` is unchanged and is not limited by Teams roles.
+</Callout>
+
 ### Stack Administrator
 
 OpenSearch Role name: stack_admin
