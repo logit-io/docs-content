@@ -11,12 +11,16 @@ Logit.io hosts a **read-only** [OpenSearch MCP server](https://github.com/opense
 
 Public URL:
 
-```text
-https://{stack-id}-mcp.logit.io/mcp
+```text copy /@mcp.endpointAddress/
+@mcp.endpointAddress
 ```
 
 <Callout type="info">
 Available on **Business** and **Custom** plans. MCP uses a **dedicated API key**, separate from your OpenSearch HTTP API key on `{stack-id}-es.logit.io`.
+</Callout>
+
+<Callout type="info">
+When signed in with MCP enabled on your selected stack, examples auto-fill `@mcp.endpointAddress`, `@mcp.username`, `@mcp.apiKey`, and `@mcp.base64encodedAuthString`. If placeholders remain, enable MCP under stack **Settings → Access**, then refresh docs.
 </Callout>
 
 ### What you get
@@ -50,38 +54,36 @@ After enablement, open **Settings → Endpoints**. The **OpenSearch MCP (read-on
 
 | Field | Value |
 | --- | --- |
-| **MCP URL** | `https://{stack-id}-mcp.logit.io/mcp` |
-| **Username** | `{stack-id}-mcp` |
-| **API Key** | Dedicated MCP key (not the OpenSearch `-es` key) |
+| **MCP URL** | `@mcp.endpointAddress` |
+| **Username** | `@mcp.username` |
+| **API Key** | Dedicated MCP key (not the OpenSearch `-es` key) — `@mcp.apiKey` when signed in |
 | **Example config** | JSON ready to paste into Cursor or Claude Desktop |
 
 You can **rotate the MCP API key** on the Endpoints page. The previous key stops working after rotation.
 
 ### Cursor setup
 
-1. Copy the example MCP config from **Settings → Endpoints**.
+1. Copy the example MCP config from **Settings → Endpoints**, or use the auto-filled example below when signed in.
 2. Open Cursor MCP settings and add a server entry (or merge into your existing MCP config).
 
-Example shape (replace placeholders with values from Endpoints):
-
-```json copy
+```json copy /@mcp.endpointAddress/ /@mcp.base64encodedAuthString/
 {
   "mcpServers": {
     "logit-opensearch": {
-      "url": "https://{stack-id}-mcp.logit.io/mcp",
+      "url": "@mcp.endpointAddress",
       "headers": {
-        "Authorization": "Basic {base64-of-username:api-key}"
+        "Authorization": "Basic @mcp.base64encodedAuthString"
       }
     }
   }
 }
 ```
 
-The dashboard config already includes the correctly encoded `Authorization` header. Prefer copying that block rather than building Basic auth by hand.
+The dashboard Endpoints page also provides a ready-to-copy block with the correctly encoded `Authorization` header.
 
 ### Claude Desktop setup
 
-Claude Desktop uses the same JSON shape as the dashboard example. Paste the config from **Settings → Endpoints** into Claude's MCP server settings, then restart Claude Desktop if required by your client version.
+Claude Desktop uses the same JSON shape. Paste the config from **Settings → Endpoints** (or the example above when signed in) into Claude's MCP server settings, then restart Claude Desktop if required by your client version.
 
 ### Limitations
 
@@ -96,10 +98,11 @@ Claude Desktop uses the same JSON shape as the dashboard example. Paste the conf
 
 | Symptom | What to check |
 | --- | --- |
-| **401 Unauthorized** | Using the MCP username (`{stack-id}-mcp`) and **MCP** API key from Endpoints? Key recently rotated? |
-| **404 / connection failed** | MCP enabled on the stack? URL exact (`https://{stack-id}-mcp.logit.io/mcp`)? DNS may take a short time after enable. |
+| **401 Unauthorized** | Using the MCP username (`@mcp.username`) and **MCP** API key from Endpoints? Key recently rotated? |
+| **404 / connection failed** | MCP enabled on the stack? URL exact (`@mcp.endpointAddress`)? DNS may take a short time after enable. |
 | **Client cannot list tools** | Confirm the client supports remote MCP over HTTPS with custom headers; re-paste the dashboard config. |
 | **Expected write tool missing** | By design — hosted MCP does not expose write tools. |
+| **Docs still show placeholders** | Select a stack with MCP enabled and refresh; JWT cookie only includes MCP fields when the feature is on. |
 
 ### Next steps
 
