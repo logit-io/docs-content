@@ -17,13 +17,13 @@ When signed in, examples auto-fill `@opensearch.endpointAddress`, `@opensearch.a
 
 ### Choose your access method
 
-| Method | Hostname | Best for | Guide |
+| Method | Hostname | Credentials | Guide |
 | --- | --- | --- | --- |
-| **Stack API key** | `{stack-id}-es.logit.io` | Full programmatic access with the stack key | This page |
-| **User credentials** | `{stack-id}-es-user.logit.io` | Per-user or service-account access (Teams roles) | [OpenSearch API (user credentials)](/opensearch-api/user-credentials) |
-| **Hosted MCP** | `{stack-id}-mcp.logit.io` | Read-only Cursor / Claude MCP | [Hosted OpenSearch MCP](/opensearch-api/hosted-mcp) |
+| **Stack API key** | `{stack-id}-es.logit.io` | Stack API key / Basic (stack ID + stack key) | This page |
+| **User credentials** | `{stack-id}-es-user.logit.io` | **Different** Profile or service-account username/password (not the stack key) | [OpenSearch API (user credentials)](/opensearch-api/user-credentials) |
+| **Hosted MCP** | `{stack-id}-mcp.logit.io` | **Different** dedicated MCP username + MCP API key | [Hosted OpenSearch MCP](/opensearch-api/hosted-mcp) |
 
-User credentials and hosted MCP require a **Business** or **Custom** plan and must be enabled per stack under **Settings → Access**.
+User credentials and hosted MCP require a **Business** or **Custom** plan and must be enabled per stack under **Settings → Access**. Docs JWT placeholders for those endpoints are filled only when the feature is enabled (and, for `-es-user`, when you have opted in from Profile).
 
 ### Which stack type do you have?
 
