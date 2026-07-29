@@ -9,11 +9,21 @@ stackTypes: logs, opensearch
 
 Call the **full OpenSearch REST API** on your stack to search and index documents, manage indexes and templates, check cluster health, run reindex jobs, and anything else in the [OpenSearch API reference](https://docs.opensearch.org/latest/api-reference/).
 
-Logit.io supports two authentication modes: **API key** (default) and **Basic (username and password)**.
+Logit.io supports two authentication modes on the stack endpoint: **API key** (default) and **Basic (username and password)**.
 
 <Callout type="info">
 When signed in, examples auto-fill `@opensearch.endpointAddress`, `@opensearch.apiKey`, `@opensearch.username`, and `@opensearch.password` from **Settings → Endpoints** (Logs and OpenSearch stacks).
 </Callout>
+
+### Choose your access method
+
+| Method | Hostname | Credentials | Guide |
+| --- | --- | --- | --- |
+| **Stack API key** | `{stack-id}-es.logit.io` | Stack API key / Basic (stack ID + stack key) | This page |
+| **User credentials** | `{stack-id}-es-user.logit.io` | **Different** Profile or service-account username/password (not the stack key) | [OpenSearch API (user credentials)](/opensearch-api/user-credentials) |
+| **Hosted MCP** | `{stack-id}-mcp.logit.io` | **Different** dedicated MCP username + MCP API key | [Hosted OpenSearch MCP](/opensearch-api/hosted-mcp) |
+
+User credentials and hosted MCP require a **Business** or **Custom** plan and must be enabled per stack under **Settings → Access**. Docs JWT placeholders for those endpoints are filled only when the feature is enabled (and, for `-es-user`, when you have opted in from Profile).
 
 ### Which stack type do you have?
 
@@ -115,6 +125,8 @@ Switch between **API Key** and **Basic** on the **Endpoints** page (~30 seconds 
 
 ### Next steps
 
+- [OpenSearch API (user credentials)](/opensearch-api/user-credentials) — role-scoped Basic auth on `-es-user`
+- [Hosted OpenSearch MCP](/opensearch-api/hosted-mcp) — Cursor / Claude
 - [API Overview](/opensearch-api/api-overview)
 - [Examples](/opensearch-api/examples) — connect, query, export to CSV, and more
 - [Search APIs](/opensearch-api/search-apis)
