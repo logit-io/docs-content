@@ -1,7 +1,7 @@
 ---
 title: Hosted OpenSearch MCP
 metaTitle: Hosted OpenSearch MCP for Cursor and Claude on Logit.io
-description: Connect Cursor or Claude Desktop to your Logit.io stack with hosted, read-only OpenSearch MCP at {stackId}-mcp.logit.io. Business and Custom plans.
+description: Connect Cursor or Claude Desktop to your Logit.io stack with hosted, read-only OpenSearch MCP at {stackId}-mcp.logit.io. Log Management and Custom plans.
 stackTypes: logs, opensearch
 ---
 
@@ -16,7 +16,7 @@ Public URL:
 ```
 
 <Callout type="info">
-Available on **Business** and **Custom** plans. MCP uses a **dedicated API key**, separate from your OpenSearch HTTP API key on `{stack-id}-es.logit.io`.
+Available on **Log Management** and **Custom** plans. MCP uses a **dedicated API key**, separate from your OpenSearch HTTP API key on `{stack-id}-es.logit.io`.
 </Callout>
 
 <Callout type="info">
@@ -34,7 +34,7 @@ MCP is not a substitute for the full OpenSearch REST API. For programmatic write
 
 ### Prerequisites
 
-1. Account on a **Business** or **Custom** plan.
+1. Account on a **Log Management** or **Custom** plan.
 2. A Logs or OpenSearch stack.
 3. Permission to enable MCP on the stack (stack administrator or account owner/admin).
 
@@ -91,7 +91,7 @@ Claude Desktop uses the same JSON shape. Paste the config from **Settings → En
 | --- | --- |
 | **Write operations** | Not available — MCP is always read-only |
 | **Credentials** | Dedicated `{stack-id}-mcp` username + MCP API key; do not reuse the `-es` stack API key |
-| **Plan** | Business and Custom only |
+| **Plan** | Log Management and Custom |
 | **Scope** | One MCP endpoint per stack; enable separately on each stack you need |
 
 ### Troubleshooting
