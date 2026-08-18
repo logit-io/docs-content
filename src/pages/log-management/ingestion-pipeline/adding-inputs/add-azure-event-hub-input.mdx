@@ -7,7 +7,11 @@ stackTypes: logs
 
 # How to add an Azure Event Hub Input to your Log Stack
 
-To configure the Azure Event Hub input in your Logstash stack, follow these steps:
+If you are signed in, open the Azure Event Hub configure form for your Log stack:
+
+<ConfigureInputButton stackType="logs" utmMedium="docs" utmCampaign="add-azure-event-hub-input" input="azure" buttonText="Azure Event Hub Input" />
+
+Or configure it manually:
 
 1. Navigate to `Logstash Inputs` settings.
 2. Click on the "Add New Input" button in the Logstash configuration wizard.
@@ -24,8 +28,8 @@ To configure the Azure Event Hub input in your Logstash stack, follow these step
    - **Tags:** Assign tags to your events (comma-separated).
    - **Type:** Add a type field to all events handled by this input.
    - **Add Field:** Include additional fields to the events. You can add multiple key-value pairs.
-5. Click the "Configure Input" button to save the Azure Event Hub input configuration.
-6. Click "Cancel" to discard changes.
+6. Click the "Configure Input" button to save the Azure Event Hub input configuration.
+7. Click "Cancel" to discard changes.
 
 This guide provides a step-by-step process for configuring an Azure Event Hub input in Logstash. 
 Adjust the values based on your specific use case and preferences.

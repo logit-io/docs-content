@@ -7,18 +7,23 @@ stackTypes: logs
 
 # How to add a Syslog TCP or UDP Input to your Log Stack
 
-To set up the Syslog input in your Logstash stack, follow these steps:
+If you are signed in, open the Syslog configure form for your Log stack (choose TCP or UDP):
+
+<ConfigureInputButton stackType="logs" utmMedium="docs" utmCampaign="add-syslog-tcp-input" input="syslog" protocol="tcp" buttonText="Syslog TCP Input" />
+<ConfigureInputButton stackType="logs" utmMedium="docs" utmCampaign="add-syslog-udp-input" input="syslog" protocol="udp" buttonText="Syslog UDP Input" />
+
+Or configure it manually:
 
 1. Navigate to `Logstash Inputs` settings.
 2. Click on the "Add New Input" button.
 3. Choose the "Syslog" option you require from the list of available input types.
 4. The following configuration details are optional, only add if required:
-   - **Display Name:** Assign a name for the HTTP-SSL input.
+   - **Display Name:** Assign a name for the Syslog input.
    - **Display Description:** Provide a description for easy identification.
    - **Tags:** Tag your events with arbitrary values (comma-separated).
    - **Type:** Include a type field in all events processed by this input.
    - **Add Field:** Append extra fields to your events by entering key-value pairs.
-5. Click the "Configure Input" button to save the HTTP-SSL input configuration.
+5. Click the "Configure Input" button to save the Syslog input configuration.
 6. Click "Cancel" to discard changes.
 
 This guide provides a step-by-step process for configuring a Syslog input in Logstash. 
