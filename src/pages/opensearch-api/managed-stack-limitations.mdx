@@ -52,7 +52,7 @@ On **Business** and **Custom** plans you can enable additional public endpoints 
 | Endpoint | Behaviour |
 | --- | --- |
 | **`{stack-id}-es-user.logit.io`** | Basic auth for humans and service accounts. Permissions match [Teams OpenSearch roles](/account-administration/account-access-users-teams/roles-access/managing-opensearch-grafana-security-roles). Does **not** expose security-plugin admin APIs for creating roles via `/_plugins/_security`. See [OpenSearch API (user credentials)](/opensearch-api/user-credentials). |
-| **`{stack-id}-mcp.logit.io`** | Hosted read-only OpenSearch MCP for Cursor / Claude. Dedicated MCP credentials; write tools are not available. See [Hosted OpenSearch MCP](/opensearch-api/hosted-mcp). |
+| **`{stack-id}-mcp.logit.io`** | Hosted read-only OpenSearch MCP for Cursor / Claude. Dedicated MCP credentials; write tools are not available. See [Hosted MCP quickstart](/opensearch-api/hosted-mcp). |
 
 Stack API key access on `{stack-id}-es.logit.io` remains unchanged and still **bypasses** dashboard user role restrictions (full programmatic access to the stack's data).
 
@@ -60,6 +60,6 @@ Stack API key access on `{stack-id}-es.logit.io` remains unchanged and still **b
 
 - [Connect to Your Cluster](/opensearch-api/connect)
 - [OpenSearch API (user credentials)](/opensearch-api/user-credentials)
-- [Hosted OpenSearch MCP](/opensearch-api/hosted-mcp)
+- [Hosted MCP quickstart](/opensearch-api/hosted-mcp)
 - [API Overview](/opensearch-api/api-overview)
 - [OpenSearch API reference](https://docs.opensearch.org/latest/api-reference/)
