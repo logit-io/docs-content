@@ -82,9 +82,9 @@ receivers:
   otlp:
     protocols:
       grpc:
-        endpoint: 0.0.0.0:4317
+        endpoint: localhost:4317
       http:
-        endpoint: 0.0.0.0:4318
+        endpoint: localhost:4318
 
 processors:
   batch: {}
@@ -114,7 +114,7 @@ service:
 
 Replace `{stack-id}` and `<your-hosted-otel-api-key>` with the values from **Settings → Endpoints**. Do not add `:4318` or `:4317` to the Logit.io endpoint — use HTTPS on the default port 443.
 
-Apps and agents can keep sending to your Collector on localhost `4317` / `4318`. Only the path from the Collector to Logit.io uses Hosted OpenTelemetry over HTTPS.
+Apps and agents can keep sending to your Collector on `localhost:4317` / `localhost:4318`. Bind the local receiver to `0.0.0.0` only when the Collector runs inside a container and other containers must reach it. Only the path from the Collector to Logit.io uses Hosted OpenTelemetry over HTTPS.
 
 Prefer a self-hosted Collector that writes to OpenSearch, APM and Metrics separately? See the [OpenTelemetry Collector integration](/integrations/otel-collector).
 
