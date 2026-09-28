@@ -125,13 +125,20 @@ Many OpenTelemetry SDKs read these environment variables:
 ```bash copy
 export OTEL_EXPORTER_OTLP_ENDPOINT=https://{stack-id}-otel.logit.io
 export OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
-export OTEL_EXPORTER_OTLP_HEADERS=Authorization=Basic%20<base64-username-colon-api-key>
+export OTEL_EXPORTER_OTLP_HEADERS="Authorization=Basic%20<base64-username-colon-api-key>"
+```
+
+Build the Base64 value (replace with your stack ID and Hosted OpenTelemetry API key):
+
+```bash copy
+printf '%s' '{stack-id}-otel:<your-hosted-otel-api-key>' | base64
 ```
 
 Notes:
 
 - Set `OTEL_EXPORTER_OTLP_PROTOCOL` to `http/protobuf` (OTLP/HTTP). Do not use gRPC against Hosted OpenTelemetry.
-- Build the Basic credential as `username:api-key` (for example `{stack-id}-otel:<your-hosted-otel-api-key>`), Base64-encode that string, then put it after `Authorization=Basic%20` in `OTEL_EXPORTER_OTLP_HEADERS`. The space after `Basic` must be percent-encoded as `%20`.
+- Quote `OTEL_EXPORTER_OTLP_HEADERS` so shell redirection does not treat `<` and `>` as special characters.
+- Put the Base64 output after `Authorization=Basic%20` in `OTEL_EXPORTER_OTLP_HEADERS`. The space after `Basic` must be percent-encoded as `%20`.
 - Leave the signal paths off the endpoint. The SDK appends `/v1/logs`, `/v1/traces` and `/v1/metrics` for you.
 - Copy the ready-made header from your stack's Hosted OpenTelemetry settings when the dashboard provides one, so you do not have to encode the value by hand.
 
