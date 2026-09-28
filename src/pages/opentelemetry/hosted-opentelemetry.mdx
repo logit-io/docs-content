@@ -140,7 +140,6 @@ Notes:
 - Quote `OTEL_EXPORTER_OTLP_HEADERS` so shell redirection does not treat `<` and `>` as special characters.
 - Put the Base64 output after `Authorization=Basic%20` in `OTEL_EXPORTER_OTLP_HEADERS`. The space after `Basic` must be percent-encoded as `%20`.
 - Leave the signal paths off the endpoint. The SDK appends `/v1/logs`, `/v1/traces` and `/v1/metrics` for you.
-- Copy the ready-made header from your stack's Hosted OpenTelemetry settings when the dashboard provides one, so you do not have to encode the value by hand.
 
 ### 5. Confirm data is arriving
 
