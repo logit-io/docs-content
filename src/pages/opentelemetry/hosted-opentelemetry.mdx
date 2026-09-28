@@ -65,7 +65,7 @@ On **Settings → Endpoints**, open the **Hosted OpenTelemetry** section:
 
 Authenticate with **HTTP Basic auth**: username `{stack-id}-otel` and the Hosted OpenTelemetry API key as the password.
 
-Rotate the API key from the Endpoints page when you need to invalidate a previous key. Update every Collector and SDK that still uses the old key.
+Use **Rotate credentials** on the Endpoints page when you need a new key. The old API key stops working as soon as you rotate, so update every Collector and SDK before or immediately after rotating.
 
 ### 3. OpenTelemetry Collector example
 
