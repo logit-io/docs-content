@@ -14,7 +14,7 @@ tags: OTEL, OTEL Collector, OpenTelemetry, Logs, Metrics, Traces, Telemetry
 The OpenTelemetry Collector allows you to send logs, metrics and traces to your Logit.io stacks.
 
 <Callout type="info">
-Want a managed OTLP HTTPS endpoint instead of exporting to OpenSearch, APM and Metrics separately? See [Hosted OpenTelemetry](/opentelemetry/hosted-opentelemetry) for a single `otlphttp` exporter, Basic auth, and SDK environment variables.
+Want a managed OTLP HTTPS endpoint instead of exporting to OpenSearch, APM and Metrics separately? See [Hosted OpenTelemetry](/opentelemetry/hosted-opentelemetry) for a single `otlp_http` exporter, Basic auth, and SDK environment variables.
 </Callout>
 
 <Steps>
@@ -55,6 +55,8 @@ Want a managed OTLP HTTPS endpoint instead of exporting to OpenSearch, APM and M
   ### OpenTelemetry Collector Configuration
 
   The config below will be pre-configured if you have launched this source integration from your stack dashboard.
+
+  This example uses the `basicauth` extension, which needs the **Contrib** distribution (`otelcol-contrib`), not the core `otelcol` build. Prefer the `otlp_http` exporter name when you send OTLP over HTTP — `otlphttp` is the older, deprecated alias.
         
   If not, make sure to replace the following placeholders with the correct details: `<your-opentelemetry-username>`, `<your-opentelemetry-password>`,`<your-elasticsearch-username>`, `<your-elasticsearch-password>`, `<your-log-stack-id>`, `<your-metrics-username>`, `<your-metrics-password>`, `<your-metrics-stack-id>`, `<your-opentelemetry-endpoint-address>` and `<your-opentelemetry-endpoint-port>`.
 
