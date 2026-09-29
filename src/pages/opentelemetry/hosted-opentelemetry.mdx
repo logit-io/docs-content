@@ -33,7 +33,7 @@ Hosted OpenTelemetry accepts **OTLP over HTTPS on port 443** only (paths `/v1/lo
 
 All three signals use the **same** Hosted OpenTelemetry endpoint and credentials.
 
-If you send traces without the APM add-on, or metrics without the Metrics add-on, Logit.io still accepts the request and then **drops** that signal. The dashboard shows a dropped count for those signals. Enable the matching add-on so the data is stored and searchable.
+If you send traces without the APM add-on, or metrics without the Metrics add-on, Logit.io still accepts the request but doesn't store that signal. The onboarding screens and **Settings → Endpoints** show what arrived, for example "Traces received. Add APM to view them" with "1,234 spans received so far", plus an **Add APM** or **Add Metrics** button. Enable the matching add-on so the data is stored and searchable.
 
 ### Prerequisites
 
@@ -149,7 +149,7 @@ Notes:
 | **Traces** | Launch **APM** (Jaeger) and search for your service |
 | **Metrics** | Launch **Metrics** (Grafana) and explore recent series |
 
-If traces or metrics show a rising **dropped** count on the dashboard, enable the APM or Metrics add-on for the stack and wait a short time for routing to update.
+If you've sent traces without the APM add-on, or metrics without the Metrics add-on, the dashboard shows "Traces received. Add APM to view them" or "Metrics received. Add Metrics to view them", with a count such as "1,234 spans received so far" or "1 metric point received so far". If no count is available yet, it shows "Add APM to see your traces. Your config already sends them." or "Add Metrics to see your metrics. Your config already sends them." instead. Select **Add APM** or **Add Metrics**, then wait a short time for routing to update.
 
 ### Limitations
 
@@ -157,8 +157,8 @@ If traces or metrics show a rising **dropped** count on the dashboard, enable th
 | --- | --- |
 | **Protocol** | OTLP over HTTPS (port 443) only |
 | **Signals** | Logs, traces and metrics share one endpoint |
-| **Traces without APM** | Accepted, then dropped (dashboard shows dropped count) |
-| **Metrics without Metrics** | Accepted, then dropped (dashboard shows dropped count) |
+| **Traces without APM** | Accepted but not stored. The dashboard shows the spans received so far and an **Add APM** button |
+| **Metrics without the Metrics add-on** | Accepted but not stored. The dashboard shows the metric points received so far and an **Add Metrics** button |
 | **Credentials** | Basic auth with username `{stack-id}-otel` and the Hosted OpenTelemetry API key |
 
 ### Troubleshooting
@@ -167,7 +167,7 @@ If traces or metrics show a rising **dropped** count on the dashboard, enable th
 | --- | --- |
 | **401 Unauthorized** | Username exactly `{stack-id}-otel`? Using the Hosted OpenTelemetry API key from Endpoints (not the OpenSearch `-es` key)? Key recently rotated? |
 | **Connection / TLS errors** | Endpoint is `https://{stack-id}-otel.logit.io` with no custom port? Protocol set to `http/protobuf`? |
-| **Logs arrive, traces or metrics do not** | APM or Metrics add-on enabled? Dashboard dropped count increasing? |
+| **Logs arrive, traces or metrics do not** | APM or Metrics add-on enabled? Does the dashboard show "Traces received. Add APM to view them" or "Metrics received. Add Metrics to view them"? |
 | **Collector config rejected** | `otlp_http` exporter endpoint must be HTTPS; using `otelcol-contrib` for `basicauth`? Username and API key must match Endpoints |
 
 ### Related documentation
