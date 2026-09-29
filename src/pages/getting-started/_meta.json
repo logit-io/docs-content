@@ -9,7 +9,7 @@
   "azure": "Microsoft Azure",
   "jaeger": "Jaeger",
   "monitoring-an-application": "Monitoring an Application",
-  "opentelemetry": "Opentelemetry",
+  "opentelemetry": "OpenTelemetry",
   "telegraf": "Telegraf",
   "opensearch-dashboards": "OpenSearch Dashboards",
   "grafana-dashboards": "Grafana Dashboards"
