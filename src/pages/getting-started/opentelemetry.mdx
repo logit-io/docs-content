@@ -1,71 +1,67 @@
 ---
 title: Getting started with OpenTelemetry
-metaTitle: Learn about OpenTelemetry
-description: Learn how to collect, process, and export telemetry data from software applications and system processes
-stackTypes: logs, apm
+metaTitle: Send logs, traces and metrics to Hosted OpenTelemetry
+description: Hosted OpenTelemetry endpoint, http/protobuf and Basic auth for application logs, traces and metrics.
+stackTypes: logs, metrics, apm
 ---
 
 # Getting started with OpenTelemetry
 
-​OpenTelemetry is an open-source observability framework designed to collect, process, and export telemetry data from software applications 
-and system processes. By standardizing how telemetry data is captured and transmitted, OpenTelemetry enables developers to monitor application 
-performance, diagnose issues, and optimize systems with ease. Its vendor-neutral approach ensures compatibility with various observability 
-tools and platforms, making it a versatile choice for achieving deep insights into distributed systems, microservices, and cloud-native applications.
+Send logs, traces and metrics from your application to Logit.io Hosted OpenTelemetry. One endpoint and one credential cover all three signals.
 
-Integrating with Logit.io enables comprehensive observability by collecting, processing, OpenTelemetry and visualizing telemetry data such as 
-traces, metrics, and logs. This guide provides a step-by-step approach to set up OpenTelemetry within your application and configure it to send 
-data to Logit.io.
+This page is the setup for an application process. It does not install the OpenTelemetry Collector. Servers, host metrics, Kubernetes and an existing Collector use the [OpenTelemetry Collector](../integrations/otel-collector/) guide.
 
-### OpenTelemetry for Traces
+## Endpoint
 
-Using OpenTelemetry for traces enables detailed tracking of requests as they flow through your application, distributed system, or system processes. 
-Traces provide a visual representation of how operations are executed across services, making it easier to diagnose issues and optimize performance.
+- Endpoint: `https://@logs_id-otel.logit.io` (no port)
+- Protocol: `http/protobuf`
+- Username: `@logs_id-otel`
+- API key: the key on the Hosted OpenTelemetry card (Settings, Endpoints). Replace `<your-api-key>` in the samples. Do not commit that key.
+- Header: `Authorization=Basic%20` plus the Base64 of `username:api-key`. The space after `Basic` is percent-encoded. Do not send `Authorization=Basic ` with a raw space as the header value.
 
-Use OpenTelemetry to capture spans, which represent individual operations within a trace.
+`@logs_id` is your logs stack id. Signed-in docs fill it in. Do not add a port, and do not use gRPC to this host.
 
-Enrich spans with metadata, such as timestamps, errors, and custom attributes, for deeper insights.
+Set the variables on the process that runs the app (launch settings, container environment, IIS `environmentVariables`, systemd, or a Windows service). An export in the current terminal only applies to a local run in that same window.
 
-Use Logit.io to send trace data to Jaeger for visualization and analysis.
+<Tabs items={["Linux and macOS", "Windows PowerShell"]}>
+<Tab>
 
-By correlating traces with logs and metrics, OpenTelemetry offers a unified observability approach, helping teams identify bottlenecks, optimize 
-workflows, and maintain reliable systems.
+```bash copy /@logs_id/
+export OTEL_SERVICE_NAME="my-service"
+export OTEL_EXPORTER_OTLP_ENDPOINT="https://@logs_id-otel.logit.io"
+export OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf"
+export OTEL_EXPORTER_OTLP_HEADERS="Authorization=Basic%20$(printf '%s:%s' '@logs_id-otel' '<your-api-key>' | base64 | tr -d '\n')"
+```
 
-To use OpenTelemetry for Traces with Logit.io click [here](../opentelemetry/using-opentelemetry-for-traces/).
+</Tab>
+<Tab>
 
-### OpenTelemetry for Logs
+```powershell copy /@logs_id/
+$env:OTEL_SERVICE_NAME = "my-service"
+$env:OTEL_EXPORTER_OTLP_ENDPOINT = "https://@logs_id-otel.logit.io"
+$env:OTEL_EXPORTER_OTLP_PROTOCOL = "http/protobuf"
+$pair = "@logs_id-otel:<your-api-key>"
+$env:OTEL_EXPORTER_OTLP_HEADERS = "Authorization=Basic%20" + [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($pair))
+```
 
-Using OpenTelemetry for logs involves capturing, processing, and exporting log data from your application and system processes in a standardized way.
+</Tab>
+</Tabs>
 
-OpenTelemetry enables generation of logs that include rich contextual information, such as trace and span IDs for enhanced traceability. The Logs 
-can be sent to Logit.io for analysis and visualization.
+## Language registration
 
-OpenTelemetry enables seamless integration with other telemetry data (traces and metrics), making it easier to diagnose issues, detect anomalies, 
-and optimize system performance.
+Use the same environment variables on every language. Package names below are the ones the dashboard onboarding prompt uses. Do not set the bare host as `Endpoint` in code.
 
-This approach helps developers and operators streamline observability workflows and gain actionable insights into their applications' behavior.
+- [.NET](../integrations/dotnet/) — `UseOtlpExporter()` plus the .NET profiler when you want zero-code
+- [Python](../integrations/python/) — `opentelemetry-instrument`
+- [Node.js](../integrations/nodejs/) — `node --require @opentelemetry/auto-instrumentations-node/register`
+- [Java](../integrations/java/) — `opentelemetry-javaagent.jar`
+- [Go](../integrations/go/) — `autoexport` with the HTTP exporters
+- [Ruby](../integrations/ruby/)
+- [PHP](../integrations/php/)
+- [Elixir](../integrations/elixir/)
+- [Erlang](../integrations/erlang/)
+- [C++](../integrations/cpp/), [Rust](../integrations/rust/) and [Swift](../integrations/swift/) — environment variables on this page, then the language registration. Those pages do not name a package.
 
-To use OpenTelemetry for Logs with Logit.io click [here](../opentelemetry/using-opentelemetry-for-logs/).
+If your language is not in that list, keep the environment variables above and follow that language's OpenTelemetry registration. Do not invent package names, do not install `otelcol-contrib` for this path, and do not use gRPC to the Logit host.
 
-### OpenTelemetry for Metrics
-
-Using OpenTelemetry for metrics involves collecting, processing, and exporting quantitative data that reflects the performance and behavior of your 
-application or system. Metrics, such as request counts, error rates, and response times, provide real-time insights into system health and resource 
-utilization.
-
-
-Use OpenTelemetry to define and record custom metrics, or rely on auto-instrumentation for common libraries, frameworks and system processes.
-
-Capture system metrics such as CPU usage, memory consumption, disk I/O, and network activity to monitor infrastructure performance.
-
-Use Logit.io to send metrics to a preferred backend, such as Prometheus or Grafana for visualization and monitoring.
-
-Combine metrics with traces and logs for a comprehensive view of system behavior, enabling root cause analysis and performance optimization.
-
-By standardizing metric collection, OpenTelemetry simplifies observability and helps maintain robust, performant systems.
-
-To use OpenTelemetry for Metrics with Logit.io click [here](../opentelemetry/using-opentelemetry-for-metrics/).
-
-
-
-
-
+<LaunchVisualizer type="logs" />

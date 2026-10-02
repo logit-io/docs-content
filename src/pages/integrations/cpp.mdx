@@ -1,82 +1,55 @@
 ---
 title: C++
-metaTitle: Learn How to Integrate and Configure C++ to Send Traces
-pageTitle: OpenTelemetry C++ Configuration
-subTitle: Ship traces from C++ to OpenSearch with OpenTelemetry
+metaTitle: Send C++ telemetry to Hosted OpenTelemetry
+pageTitle: C++ Hosted OpenTelemetry
+subTitle: Ship C++ telemetry to Hosted OpenTelemetry
 logo: cpp
 color: "#1a3b63"
-description: Follow the steps in Logit.io's C++ source integrations to ship traces from C++ to OpenSearch with OpenTelemetry.
-stackTypes: apm
-tags: C++, Cpp, Cplusplus++, Apm, Grpc, Http
+stackTypes: logs, metrics, apm
+description: Hosted OpenTelemetry environment variables for C++. Follow the language registration for packages.
+tags: C++, Cpp, OpenTelemetry, Logs, Metrics, Traces
 ---
 
-Use OpenTelemetry to easily send C++ traces to your Logit.io Stack.
+Send logs, traces and metrics from a C++ app to Hosted OpenTelemetry. This page does not name a package. Follow the language registration, then export with the environment variables below. Do not install `otelcol-contrib` for this path.
 
-<Steps>
-  ## APM
-  ### Install Integration
-  <InstallIntegration/>
-  
-  ### Getting Started
+## Endpoint
 
-  <Tabs items={["HTTPS", "gRPC"]}>
-  
-  <Tab>
-    You can get help Getting Started with OpenTelemetry for C++ by referring to the 
-    [official documentation](https://opentelemetry.io/docs/instrumentation/cpp/getting-started/). 
-    You need to configure the OTLP exporter to ensure the trace data reaches your Logit.io Stack.
+- Endpoint: `https://@logs_id-otel.logit.io` (no port)
+- Protocol: `http/protobuf`
+- Username: `@logs_id-otel`
+- API key: the key on the Hosted OpenTelemetry card (Settings, Endpoints). Replace `<your-api-key>`. Do not commit that key.
+- Header: `Authorization=Basic%20` plus the Base64 of `username:api-key`.
 
-    OTLP HTTP Exporter settings:
+`@logs_id` is your logs stack id. Do not set the bare host as `Endpoint` in code. Do not use gRPC to this host.
 
-    ```cpp copy showLineNumbers /@opentelemetry.endpointAddress/ /@opentelemetry.httpsPort/ /@opentelemetry.base64encodedAuthString/
-    #include "opentelemetry/exporters/otlp/otlp_https_exporter_factory.h"
-    #include "opentelemetry/exporters/otlp/otlp_https_exporter_options.h"
+Set the variables on the process that runs the app. An export in the current shell only applies to a local run in that same window.
 
-    namespace otlp = opentelemetry::exporter::otlp;
+<Tabs items={["Linux and macOS", "Windows PowerShell"]}>
+<Tab>
 
-    otlp::OtlpHttpExporterOptions opts;
-    opts.url = "https://@opentelemetry.endpointAddress:@opentelemetry.httpsPort";
-    opts.http_headers = "Authorization=Basic @opentelemetry.base64encodedAuthString";
+```bash copy /@logs_id/
+export OTEL_SERVICE_NAME="my-service"
+export OTEL_EXPORTER_OTLP_ENDPOINT="https://@logs_id-otel.logit.io"
+export OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf"
+export OTEL_EXPORTER_OTLP_HEADERS="Authorization=Basic%20$(printf '%s:%s' '@logs_id-otel' '<your-api-key>' | base64 | tr -d '\n')"
+```
 
-    auto exporter = otlp::OtlpHttpExporterFactory::Create(opts);
-    ```
+</Tab>
+<Tab>
 
-    For more information about exporter configuration with C++ please refer to the 
-    [documentation](https://opentelemetry.io/docs/instrumentation/cpp/exporters/).
-  </Tab>
+```powershell copy /@logs_id/
+$env:OTEL_SERVICE_NAME = "my-service"
+$env:OTEL_EXPORTER_OTLP_ENDPOINT = "https://@logs_id-otel.logit.io"
+$env:OTEL_EXPORTER_OTLP_PROTOCOL = "http/protobuf"
+$pair = "@logs_id-otel:<your-api-key>"
+$env:OTEL_EXPORTER_OTLP_HEADERS = "Authorization=Basic%20" + [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($pair))
+```
 
-  <Tab>
-    You can get help Getting Started with OpenTelemetry for C++ by referring to the 
-    [official documentation](https://opentelemetry.io/docs/instrumentation/cpp/getting-started/). 
-    You need to configure the OTLP exporter to ensure the trace data reaches your Logit.io Stack.
+</Tab>
+</Tabs>
 
-    OTLP gRPC Exporter settings:
+Follow the C++ language registration for packages. If that registration is a zero-code agent, include that agent's install. Do not say there are no code changes unless that installer is in the steps.
 
-    ```cpp copy showLineNumbers /@opentelemetry.endpointAddress/ /@opentelemetry.grpcPort/ /@opentelemetry.base64encodedAuthString/
-    #include "opentelemetry/exporters/otlp/otlp_grpc_exporter_factory.h"
-    #include "opentelemetry/exporters/otlp/otlp_grpc_exporter_options.h"
+<LaunchVisualizer type="logs" />
 
-    namespace otlp = opentelemetry::exporter::otlp;
-
-    otlp::OtlpGrpcExporterOptions opts;
-    opts.endpoint = "https://@opentelemetry.endpointAddress:@opentelemetry.grpcPort";
-    opts.metadata.insert(std::pair<std::string, std::string>(
-        "authorization", "Basic @opentelemetry.base64encodedAuthString"));
-
-    auto exporter = otlp::OtlpGrpcExporterFactory::Create(opts);
-    ```
-
-    For more information about exporter configuration with C++ please refer to the 
-    [documentation](https://opentelemetry.io/docs/instrumentation/cpp/exporters/).
-  </Tab>
-
-  </Tabs>
-
-  ### Launch Jaeger to View Your Data
-
-  <LaunchVisualizer type="apm" />
-
-  ### How to diagnose no data in Stack
-
-  <DiagnoseNoData />
-</Steps>
+<DiagnoseNoData />

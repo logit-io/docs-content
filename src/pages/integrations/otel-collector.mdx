@@ -1,140 +1,273 @@
 ---
 title: OpenTelemetry Collector
-metaTitle: Integrate and Configure the OpenTelemetry Collector to Send Data
-subTitle: OpenTelemetry (OTEL) Collector for Logs, Metrics and Traces
+metaTitle: Install the OpenTelemetry Collector and send to Hosted OpenTelemetry
+subTitle: otelcol-contrib 0.161.0 exporting logs, traces and metrics to Hosted OpenTelemetry
 logo: opentelemetry
 color: "#2e62a4"
 popular: true
-description: The OpenTelemetry Collector allows you to send logs, metrics and traces to your ELK stacks. Configure OTEL Collector to send data to Logstash and Elasticsearch.
+description: Install otelcol-contrib 0.161.0 and export logs, traces and metrics with otlphttp to Hosted OpenTelemetry. Same install for servers, host metrics, Kubernetes and an existing Collector.
 stackTypes: logs, metrics, apm
-sslPortType: beats-ssl
 tags: OTEL, OTEL Collector, OpenTelemetry, Logs, Metrics, Traces, Telemetry
 ---
 
-The OpenTelemetry Collector allows you to send logs, metrics and traces to your Logit.io stacks.
+Install the OpenTelemetry Collector Contrib package and export logs, traces and metrics to Hosted OpenTelemetry with one `otlphttp/logit` exporter.
+
+Applications that send OTLP themselves should use the language guide on [Getting started with OpenTelemetry](../getting-started/opentelemetry/) and should not install the Collector.
+
+## Endpoint
+
+- Endpoint: `https://@logs_id-otel.logit.io` (no port on the Logit host)
+- Exporter: `otlphttp/logit` (OTLP over HTTP)
+- Username: `@logs_id-otel`
+- Password: the API key on the Hosted OpenTelemetry card (Settings, Endpoints). Replace `<your-api-key>`. Do not commit that key.
+
+`@logs_id` is your logs stack id. Do not export with gRPC to this host, and do not add a port to the endpoint. A local `otlp` receiver on `127.0.0.1` is only for apps on that machine. It is not the Logit address.
+
+The samples pin **otelcol-contrib 0.161.0**.
 
 <Steps>
-  ### About the OpenTelemetry Collector
+  ## Install
 
-  The OpenTelemetry Collector enables you to quickly and securely ship your data according to your specific configuration requirements 
-  and facilitates the forwarding of logs, metrics, and trace data directly to Logit.io's observability platform.
+  ### Debian or Ubuntu
 
-  Setting up and operating the OpenTelemetry Collector offers multiple benefits, such as:
+  The package registers the `otelcol-contrib` systemd service, which reads `/etc/otelcol-contrib/config.yaml` and runs as the `otelcol-contrib` user. Adding that user to `adm` lets it read `/var/log/syslog`.
 
-  **Simplified setup:** With Logit.io's pre-configured OTEL stack config, you can streamline your data transmission setup.
-
-  **Comprehensive data collection:** This tool gathers logs, metrics, and tracing information, offering an all-encompassing platform for 
-  data observability to enhance monitoring and optimization efforts.
-
-  ### Learn how to instrument your application
-
-  Understand how to instrument your application with OpenTelemetry with this official guide 
-  [Getting Started for Developers](https://opentelemetry.io/docs/getting-started/dev/) or continue and use the Demo App in the next step.
-
-  ### Install the OpenTelemetry Demo App (Optional)
-
-  The Demo App generates logs, traces and metrics for a sample application in cases where you don't want to instrument your application at this stage.
-
-  Install [Docker](https://www.docker.com/products/docker-desktop/) if you don't already have it.
-
-  Clone the Demo repository
-
-  ```cmd copy
-  git clone https://github.com/open-telemetry/opentelemetry-demo.git
-  ```
-  Change to the Demo folder
-
-  ```cmd copy
-  cd opentelemetry-demo/
+  ```bash copy
+  curl -fsSLO https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.161.0/otelcol-contrib_0.161.0_linux_amd64.deb
+  sudo dpkg -i otelcol-contrib_0.161.0_linux_amd64.deb
+  sudo usermod -aG adm otelcol-contrib
   ```
 
-  ### OpenTelemetry Collector Configuration
+  ### RHEL or Amazon Linux
 
-  The config below will be pre-configured if you have launched this source integration from your stack dashboard.
-        
-  If not, make sure to replace the following placeholders with the correct details: `<your-opentelemetry-username>`, `<your-opentelemetry-password>`,`<your-elasticsearch-username>`, `<your-elasticsearch-password>`, `<your-log-stack-id>`, `<your-metrics-username>`, `<your-metrics-password>`, `<your-metrics-stack-id>`, `<your-opentelemetry-endpoint-address>` and `<your-opentelemetry-endpoint-port>`.
+  ```bash copy
+  curl -fsSLO https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.161.0/otelcol-contrib_0.161.0_linux_amd64.rpm
+  sudo rpm -ivh otelcol-contrib_0.161.0_linux_amd64.rpm
+  ```
 
-  Copy the configuration file below (making the above changes if necessary) and overwrite the contents of otelcol-config.yml (this file can be found in the otelcollector folder where you installed the OpenTelemetry Collector demo application e.g. opentelemetry-demo/src/otelcollector/otelcol-config.yml).
+  ### Windows
 
-  ```yaml copy showLineNumbers /@opentelemetry.username:strip_quotes/ /@opentelemetry.password:strip_quotes/ /@elasticsearch.username:strip_quotes/ /@elasticsearch.password:strip_quotes/ /@logs_id-es.logit.io/ /@metricsUsername/ /@metricsPassword/ /metrics_id-vm.logit.io/ /@vmAgentPort/ /@opentelemetry.endpointAddress:strip_quotes/ /@opentelemetry.grpcPort:strip_quotes/
+  Run this from an elevated PowerShell. The MSI installs to `C:\Program Files\OpenTelemetry Collector` and registers the `otelcol-contrib` service with that folder's `config.yaml`. The service starts on install because the MSI ships a default config. Replace that file before you rely on it.
+
+  ```powershell copy
+  Invoke-WebRequest -Uri https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.161.0/otelcol-contrib_0.161.0_windows_x64.msi -OutFile otelcol-contrib_0.161.0_windows_x64.msi
+  Start-Process msiexec.exe -ArgumentList "/i otelcol-contrib_0.161.0_windows_x64.msi /qn" -Wait
+  ```
+
+  ## Servers and log files
+
+  Save this as `/etc/otelcol-contrib/config.yaml` on Linux. It tails `/var/log/syslog` and `/var/log/messages`, receives local OTLP, scrapes host metrics, and exports logs, traces and metrics. The Collector user needs read access to each file you add under `filelog` `include`.
+
+  ```yaml copy /@logs_id/
   extensions:
-    basicauth/apm:
+    basicauth/logit:
       client_auth:
-        username: '@opentelemetry.username:strip_quotes'
-        password: '@opentelemetry.password:strip_quotes'
-    basicauth/logs:
-      client_auth:
-        username: '@elasticsearch.username:strip_quotes'
-        password: '@elasticsearch.password:strip_quotes'
+        username: "@logs_id-otel"
+        password: "<your-api-key>"
+
   receivers:
+    filelog:
+      include: ["/var/log/syslog", "/var/log/messages"]
+      start_at: end
     otlp:
       protocols:
-        http:
-          cors:
-            allowed_origins:
-              - http://*
-              - https://*
-          endpoint: 0.0.0.0:4318
-        grpc:
-          endpoint: 0.0.0.0:4317
+        http: { endpoint: "127.0.0.1:4318" }
+        grpc: { endpoint: "127.0.0.1:4317" }
+    hostmetrics:
+      collection_interval: 30s
+      scrapers: { cpu: {}, memory: {}, disk: {}, filesystem: {}, network: {}, load: {} }
+
+  processors:
+    resourcedetection:
+      detectors: [system]
+    resource/logit:
+      attributes:
+        - { key: service.name, value: "my-server", action: insert }
+    batch: {}
+
   exporters:
-    opensearch:
-      logs_index: otel-logs
-      http:
-        endpoint: https://@logs_id-es.logit.io
-        auth:
-          authenticator: basicauth/logs
-    prometheusremotewrite:
-      endpoint: 'https://@metricsUsername:@metricsPassword@@metrics_id-vm.logit.io:@vmAgentPort/api/v1/write'
-      resource_to_telemetry_conversion:
-        enabled: true
-    otlp:
-      auth:
-        authenticator: basicauth/apm
-      endpoint: '@opentelemetry.endpointAddress:strip_quotes:@opentelemetry.grpcPort:strip_quotes'
-    logging:
-      verbosity: detailed
+    otlphttp/logit:
+      endpoint: "https://@logs_id-otel.logit.io"
+      auth: { authenticator: basicauth/logit }
+
   service:
-    extensions:
-      - basicauth/apm
-      - basicauth/logs
+    extensions: [basicauth/logit]
     pipelines:
-      traces:
-        receivers:
-          - otlp
-        exporters:
-          - otlp
       logs:
-        receivers:
-          - otlp
-        exporters:
-          - opensearch
+        receivers: [filelog, otlp]
+        processors: [resourcedetection, resource/logit, batch]
+        exporters: [otlphttp/logit]
+      traces:
+        receivers: [otlp]
+        processors: [resourcedetection, batch]
+        exporters: [otlphttp/logit]
       metrics:
-        receivers:
-          - otlp
-        exporters:
-          - prometheusremotewrite
+        receivers: [hostmetrics, otlp]
+        processors: [resourcedetection, resource/logit, batch]
+        exporters: [otlphttp/logit]
   ```
 
-  ### Run the OpenTelemetry Demo App (Optional)
+  On Windows, save the config as `C:\Program Files\OpenTelemetry Collector\config.yaml`. It reads the Application, System and Security event logs instead of files. The service runs as LocalSystem, so the Security log is readable.
 
-  If you are using the Demo app, you can start it by running the following command in a Terminal (make sure you run it in the opentelemetry-demo folder):
+  ```yaml copy /@logs_id/
+  extensions:
+    basicauth/logit:
+      client_auth:
+        username: "@logs_id-otel"
+        password: "<your-api-key>"
 
-  ```cmd copy
-  docker compose up --force-recreate --remove-orphans --detach
+  receivers:
+    windowseventlog/application:
+      channel: application
+      start_at: end
+    windowseventlog/system:
+      channel: system
+      start_at: end
+    windowseventlog/security:
+      channel: security
+      start_at: end
+    otlp:
+      protocols:
+        http: { endpoint: "127.0.0.1:4318" }
+        grpc: { endpoint: "127.0.0.1:4317" }
+    hostmetrics:
+      collection_interval: 30s
+      scrapers: { cpu: {}, memory: {}, disk: {}, filesystem: {}, network: {}, load: {} }
+
+  processors:
+    resourcedetection:
+      detectors: [system]
+    resource/logit:
+      attributes:
+        - { key: service.name, value: "my-server", action: insert }
+    batch: {}
+
+  exporters:
+    otlphttp/logit:
+      endpoint: "https://@logs_id-otel.logit.io"
+      auth: { authenticator: basicauth/logit }
+
+  service:
+    extensions: [basicauth/logit]
+    pipelines:
+      logs:
+        receivers: [windowseventlog/application, windowseventlog/system, windowseventlog/security, otlp]
+        processors: [resourcedetection, resource/logit, batch]
+        exporters: [otlphttp/logit]
+      traces:
+        receivers: [otlp]
+        processors: [resourcedetection, batch]
+        exporters: [otlphttp/logit]
+      metrics:
+        receivers: [hostmetrics, otlp]
+        processors: [resourcedetection, resource/logit, batch]
+        exporters: [otlphttp/logit]
   ```
 
-  You can now view the Demo App: [http://localhost:8080/](http://localhost:8080/) and Logs, Metrics and Traces are being sent to your stacks.
+  ## Host metrics
 
-  ### Launch OpenSearch Dashboards to View Your Data
+  Use the same install as above, then this config. It sends CPU, memory, disk, filesystem, network and load metrics. On Windows the same scrapers apply (`load` is emulated).
+
+  ```yaml copy /@logs_id/
+  extensions:
+    basicauth/logit:
+      client_auth:
+        username: "@logs_id-otel"
+        password: "<your-api-key>"
+
+  receivers:
+    hostmetrics:
+      collection_interval: 30s
+      scrapers: { cpu: {}, memory: {}, disk: {}, filesystem: {}, network: {}, load: {} }
+
+  processors:
+    resourcedetection:
+      detectors: [system]
+    resource/logit:
+      attributes:
+        - { key: service.name, value: "my-server", action: insert }
+    batch: {}
+
+  exporters:
+    otlphttp/logit:
+      endpoint: "https://@logs_id-otel.logit.io"
+      auth: { authenticator: basicauth/logit }
+
+  service:
+    extensions: [basicauth/logit]
+    pipelines:
+      metrics:
+        receivers: [hostmetrics]
+        processors: [resourcedetection, resource/logit, batch]
+        exporters: [otlphttp/logit]
+  ```
+
+  ## Restart
+
+  Linux, after you save `/etc/otelcol-contrib/config.yaml`:
+
+  ```bash copy
+  sudo systemctl restart otelcol-contrib
+  sudo journalctl -u otelcol-contrib -n 20 --no-pager
+  ```
+
+  Windows, after you save `C:\Program Files\OpenTelemetry Collector\config.yaml`. The service logs to the Application event log under the `otelcol-contrib` source.
+
+  ```powershell copy
+  Restart-Service otelcol-contrib
+  Get-WinEvent -FilterHashtable @{ LogName = 'Application'; ProviderName = 'otelcol-contrib' } -MaxEvents 20 | Format-List TimeCreated, Message
+  ```
+
+  ## Kubernetes
+
+  One Helm install. The chart presets mount pod logs and host metrics. The image tag is `0.161.0`. `basicauth/logit` stays next to the chart's `health_check` extension, which its probes need. Logs, traces and metrics all export with `otlphttp/logit`.
+
+  ```bash copy /@logs_id/
+  helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts && \
+  helm upgrade --install otel-logit open-telemetry/opentelemetry-collector \
+    --set mode=daemonset \
+    --set image.repository=otel/opentelemetry-collector-contrib \
+    --set image.tag=0.161.0 \
+    --set presets.logsCollection.enabled=true \
+    --set presets.hostMetrics.enabled=true \
+    --set config.extensions.basicauth/logit.client_auth.username=@logs_id-otel \
+    --set config.extensions.basicauth/logit.client_auth.password=<your-api-key> \
+    --set config.exporters.otlphttp/logit.endpoint=https://@logs_id-otel.logit.io \
+    --set config.exporters.otlphttp/logit.auth.authenticator=basicauth/logit \
+    --set 'config.service.extensions={health_check,basicauth/logit}' \
+    --set 'config.service.pipelines.logs.exporters={otlphttp/logit}' \
+    --set 'config.service.pipelines.traces.exporters={otlphttp/logit}' \
+    --set 'config.service.pipelines.metrics.exporters={otlphttp/logit}'
+  ```
+
+  ## Existing Collector
+
+  If `otelcol-contrib` is already installed, do not install the deb, rpm or MSI again. Merge this extension and exporter into the config you already run, add `basicauth/logit` to `service.extensions`, and set `otlphttp/logit` as the exporter on your logs, traces and metrics pipelines. This fragment has no `service.pipelines` block, so it does not drop receivers you already defined.
+
+  ```yaml copy /@logs_id/
+  extensions:
+    basicauth/logit:
+      client_auth:
+        username: "@logs_id-otel"
+        password: "<your-api-key>"
+
+  exporters:
+    otlphttp/logit:
+      endpoint: "https://@logs_id-otel.logit.io"
+      auth: { authenticator: basicauth/logit }
+  ```
+
+  Restart with the same commands as above.
+
+  ### Launch OpenSearch Dashboards to view logs
 
   <LaunchVisualizer type="logs" />
 
-  ### Launch Grafana to View Your Data
+  ### Launch Grafana to view metrics
 
   <LaunchVisualizer type="metrics" />
 
-  ### Launch Jaeger to View Your Data
+  ### Launch your traces view
 
   <LaunchVisualizer type="apm" />
 
@@ -143,25 +276,3 @@ The OpenTelemetry Collector allows you to send logs, metrics and traces to your 
   <DiagnoseNoData />
 
 </Steps>
-
-### OpenTelemetry Collector Overview
-
-The OpenTelemetry Collector, renowned for its efficiency and streamlined memory footprint, is becoming the preferred choice for funneling logs, metrics, 
-and tracing data into observability platforms. As a pivotal component of the comprehensive suite of open-source telemetry tools, it builds upon the 
-foundational features of predecessors, crafted in the efficient Go programming language. The Collector excels in ingesting, processing, tailing, and 
-exporting telemetry data, positioning itself as a versatile and essential tool in the telemetry data pipeline.
-
-Originating from the integration of best practices and core functionalities from earlier telemetry tools, the OpenTelemetry Collector is engineered to 
-offer flexibility and robustness in handling telemetry data. Unlike its early versions, which were limited in scope and destination options for telemetry 
-data, recent iterations have expanded its capabilities, enabling seamless integration with a variety of data processing and storage systems, including 
-but not limited to Redis and Kafka.
-
-Despite the Collector's adaptability and comprehensive feature set, an improperly configured OpenTelemetry setup can lead to intricate issues in telemetry 
-data management. These complications might manifest as unwieldy registry files or errors in file handling when logs are deleted or renamed, posing 
-significant challenges in maintaining a clean and efficient logging environment. Additionally, the task of monitoring and managing multiple telemetry 
-pipelines can be daunting for those operating their own telemetry infrastructure, prompting some to explore managed observability solutions as an 
-effective way to alleviate these burdens.
-  
-If you need any further assistance with migrating your log, metrics and tracing data to Logit.io we're here to help you get started. Feel free to get in contact 
-with our support team by sending us a message via <IntercomButton text="live chat" /> & we'll be happy to assist.
-  

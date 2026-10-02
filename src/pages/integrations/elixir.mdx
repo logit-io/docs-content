@@ -1,69 +1,73 @@
 ---
 title: Elixir
-metaTitle: Learn How to Integrate and Configure Elixir to Send Traces
-pageTitle: OpenTelemetry Elixir Configuration
-subTitle: Ship traces from Elixir to OpenSearch with OpenTelemetry
+metaTitle: Send Elixir telemetry to Hosted OpenTelemetry
+pageTitle: Elixir Hosted OpenTelemetry
+subTitle: Ship Elixir telemetry to Hosted OpenTelemetry
 logo: elixir
 color: "#800080"
-stackTypes: apm
-description: Follow the simple steps in our source integrations to ship traces from Elixir to OpenSearch with OpenTelemetry. Send Elixir data to your Logit.io stacks.
-tags: Elixir, Erlang, BEAM, Functional Programming, Apm, Grpc, Http
+stackTypes: logs, metrics, apm
+description: Send Elixir telemetry to Logit.io Hosted OpenTelemetry with the Phoenix OpenTelemetry deps over http/protobuf.
+tags: Elixir, Erlang, BEAM, OpenTelemetry, Traces
 ---
 
-Use OpenTelemetry to easily send Elixir traces to your Logit.io Stack.
+Send telemetry from an Elixir app to Hosted OpenTelemetry. The copied registration is the Phoenix setup. It does not show a metrics or logs setup, so do not invent one, and do not install `otelcol-contrib` to cover them.
+
+## Endpoint
+
+- Endpoint: `https://@logs_id-otel.logit.io` (no port)
+- Protocol: `http/protobuf`
+- Username: `@logs_id-otel`
+- API key: the key on the Hosted OpenTelemetry card (Settings, Endpoints). Replace `<your-api-key>`. Do not commit that key.
+- Header: `Authorization=Basic%20` plus the Base64 of `username:api-key`.
+
+`@logs_id` is your logs stack id. Keep the endpoint in the `OTEL_EXPORTER_OTLP_*` environment variables. Do not set `otlp_endpoint` in config to the bare host. Do not use gRPC to this host.
+
+Set the variables on the process that runs the app (the release, systemd unit, or container). An export in the current shell only applies to a local run in that same window.
+
+<Tabs items={["Linux and macOS", "Windows PowerShell"]}>
+<Tab>
+
+```bash copy /@logs_id/
+export OTEL_SERVICE_NAME="my-service"
+export OTEL_EXPORTER_OTLP_ENDPOINT="https://@logs_id-otel.logit.io"
+export OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf"
+export OTEL_EXPORTER_OTLP_HEADERS="Authorization=Basic%20$(printf '%s:%s' '@logs_id-otel' '<your-api-key>' | base64 | tr -d '\n')"
+```
+
+</Tab>
+<Tab>
+
+```powershell copy /@logs_id/
+$env:OTEL_SERVICE_NAME = "my-service"
+$env:OTEL_EXPORTER_OTLP_ENDPOINT = "https://@logs_id-otel.logit.io"
+$env:OTEL_EXPORTER_OTLP_PROTOCOL = "http/protobuf"
+$pair = "@logs_id-otel:<your-api-key>"
+$env:OTEL_EXPORTER_OTLP_HEADERS = "Authorization=Basic%20" + [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($pair))
+```
+
+</Tab>
+</Tabs>
 
 <Steps>
-  ## APM
-  ### Install Integration
-  <InstallIntegration/>
-  
-  ### Getting Started
+  ## Phoenix dependencies
 
-  <Tabs items={["HTTPS", "gRPC"]}>
-  
-  <Tab>
-    You can get help Getting Started with OpenTelemetry for Elixir by referring 
-    to the [official documentation](https://opentelemetry.io/docs/instrumentation/erlang/getting-started/). 
-    You need to configure the OTLP exporter to ensure the trace data reaches your Logit.io Stack.
+  ```elixir copy
+  {:opentelemetry_exporter, "~> 1.8"},
+  {:opentelemetry, "~> 1.5"},
+  {:opentelemetry_api, "~> 1.4"},
+  {:opentelemetry_phoenix, "~> 2"},
+  {:opentelemetry_cowboy, "~> 1"}
+  ```
 
-    OTLP HTTP/S Exporter settings:
+  ```elixir copy
+  :opentelemetry_cowboy.setup()
+  OpentelemetryPhoenix.setup(adapter: :cowboy2)
+  ```
 
-    ```elixir copy showLineNumbers /@opentelemetry.endpointAddress/ /@opentelemetry.httpsPort/ /@opentelemetry.base64encodedAuthString/
-    config :opentelemetry_exporter,
-    otlp_protocol: :http_protobuf,
-    otlp_endpoint: "https://@opentelemetry.endpointAddress:@opentelemetry.httpsPort",
-    otlp_headers: [{"authorization", "Basic @opentelemetry.base64encodedAuthString" }]
-    ```
+  The sample exporter in the getting started steps is stdout for traces. For Logit, use the environment variables above with protocol `http/protobuf` for logs, traces and metrics.
 
-    For more information about exporter configuration with Elixir please see the 
-    [documentation](https://opentelemetry.io/docs/instrumentation/erlang/exporters/).
-  </Tab>
-
-  <Tab>
-    You can get help Getting Started with OpenTelemetry for Elixir by referring 
-    to the [official documentation](https://opentelemetry.io/docs/instrumentation/erlang/getting-started/). 
-    You need to configure the OTLP exporter to ensure the trace data reaches your Logit.io Stack.
-
-    OTLP gRPC Exporter settings:
-
-    ```elixir copy showLineNumbers /@opentelemetry.endpointAddress/ /@opentelemetry.grpcPort/ /@opentelemetry.base64encodedAuthString/
-    config :opentelemetry_exporter,
-    otlp_protocol: :grpc,
-    otlp_endpoint: "https://@opentelemetry.endpointAddress:@opentelemetry.grpcPort",
-    otlp_headers: [{"authorization", "Basic @opentelemetry.base64encodedAuthString" }]
-    ```
-
-    For more information about exporter configuration with Elixir please see the 
-    [documentation](https://opentelemetry.io/docs/instrumentation/erlang/exporters/).
-  </Tab>
-
-  </Tabs>
-
-  ### Launch Jaeger to View Your Data
-
-  <LaunchVisualizer type="apm" />
-
-  ### How to diagnose no data in Stack
+  <LaunchVisualizer type="logs" />
 
   <DiagnoseNoData />
+
 </Steps>

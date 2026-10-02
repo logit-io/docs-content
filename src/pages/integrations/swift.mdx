@@ -1,104 +1,55 @@
 ---
 title: Swift
-metaTitle: Learn How to Integrate and Configure Swift to Send Metrics
-pageTitle: OpenTelemetry Swift Configuration
-subTitle: Ship traces from Swift to OpenSearch with OpenTelemetry
+metaTitle: Send Swift telemetry to Hosted OpenTelemetry
+pageTitle: Swift Hosted OpenTelemetry
+subTitle: Ship Swift telemetry to Hosted OpenTelemetry
 logo: swift
 color: "#ff9900"
-stackTypes: apm
-description: Learn how to send Swift data to your Logit.io stacks with this collection of Swift APM source integrations
-tags: Swift, iOS, macOS, WatchOS, tvOS, Apple, Apm, Grpc, Http
+stackTypes: logs, metrics, apm
+description: Hosted OpenTelemetry environment variables for Swift. Follow the language registration for packages.
+tags: Swift, iOS, macOS, OpenTelemetry, Logs, Metrics, Traces
 ---
 
-Use OpenTelemetry to easily send Swift traces to your Logit.io Stack.
+Send logs, traces and metrics from a Swift app to Hosted OpenTelemetry. This page does not name a package. Follow the language registration, then export with the environment variables below. Do not install `otelcol-contrib` for this path.
 
-<Steps>
-  ## APM
-  ### Install Integration
-  <InstallIntegration/>
-  
-  ### Getting Started
+## Endpoint
 
-  <Tabs items={["HTTPS", "gRPC"]}>
-  
-  <Tab>
-    You can get help Getting Started with OpenTelemetry for Swift by referring to the 
-    [official documentation](https://opentelemetry.io/docs/instrumentation/swift/getting-started/).
-          
-    To initialize the trace exporter use the snippet below as a starting point:
+- Endpoint: `https://@logs_id-otel.logit.io` (no port)
+- Protocol: `http/protobuf`
+- Username: `@logs_id-otel`
+- API key: the key on the Hosted OpenTelemetry card (Settings, Endpoints). Replace `<your-api-key>`. Do not commit that key.
+- Header: `Authorization=Basic%20` plus the Base64 of `username:api-key`.
 
-    ```swift copy showLineNumbers /@opentelemetry.endpointAddress/ /@opentelemetry.httpsPort/
-    import OpenTelemetryApi
-    import OpenTelemetrySdk
-    import OpenTelemetryProtocolExporter
+`@logs_id` is your logs stack id. Do not set the bare host as `Endpoint` in code. Do not use gRPC to this host.
 
-    let otlpConfiguration = OtlpExporterConfiguration(
-      endpoint: "https://@opentelemetry.endpointAddress:@opentelemetry.httpsPort/v1/traces")
-      
-    let traceExporter = OtlpHttpTraceExporter(config: otlpConfiguration)
+Set the variables on the process that runs the app. An export in the current shell only applies to a local run in that same window.
 
-    OpenTelemetry.registerTracerProvider(tracerProvider: TracerProviderBuilder()
-        .add(spanProcessor:SimpleSpanProcessor(spanExporter: traceExporter))
-        .with(resource: Resource())
-        .build())
-    ```
+<Tabs items={["Linux and macOS", "Windows PowerShell"]}>
+<Tab>
 
-    You can also configure various settings by specifying the appropriate Environment variables, for example:
+```bash copy /@logs_id/
+export OTEL_SERVICE_NAME="my-service"
+export OTEL_EXPORTER_OTLP_ENDPOINT="https://@logs_id-otel.logit.io"
+export OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf"
+export OTEL_EXPORTER_OTLP_HEADERS="Authorization=Basic%20$(printf '%s:%s' '@logs_id-otel' '<your-api-key>' | base64 | tr -d '\n')"
+```
 
-    ```env copy /@opentelemetry.endpointAddress/ /@opentelemetry.httpsPort/ /@opentelemetry.base64encodedAuthString/
-    OTEL_TRACES_EXPORTER = otlp
-    OTEL_EXPORTER_OTLP_ENDPOINT = https://@opentelemetry.endpointAddress:@opentelemetry.httpsPort
-    OTEL_EXPORTER_OTLP_TRACES_PROTOCOL = https
-    OTEL_EXPORTER_OTLP_TRACES_HEADERS = Authorization=Basic @opentelemetry.base64encodedAuthString
-    ```
-  </Tab>
+</Tab>
+<Tab>
 
-  <Tab>
-    You can get help Getting Started with OpenTelemetry for Swift by referring to the 
-    [official documentation](https://opentelemetry.io/docs/instrumentation/swift/getting-started/).
-          
-    To initialize the trace exporter use the snippet below as a starting point:
+```powershell copy /@logs_id/
+$env:OTEL_SERVICE_NAME = "my-service"
+$env:OTEL_EXPORTER_OTLP_ENDPOINT = "https://@logs_id-otel.logit.io"
+$env:OTEL_EXPORTER_OTLP_PROTOCOL = "http/protobuf"
+$pair = "@logs_id-otel:<your-api-key>"
+$env:OTEL_EXPORTER_OTLP_HEADERS = "Authorization=Basic%20" + [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($pair))
+```
 
-    ```swift copy showLineNumbers /@opentelemetry.endpointAddress/ /"@opentelemetry.grpcPort:strip_quotes"/
-    import GRPC
-    import OpenTelemetryApi
-    import OpenTelemetrySdk
-    import OpenTelemetryProtocolExporter
+</Tab>
+</Tabs>
 
-    // initialize the OtlpTraceExporter
-    let otlpConfiguration = OtlpConfiguration(timeout: OtlpConfiguration.DefaultTimeoutInterval)
+Follow the Swift language registration for packages. If that registration is a zero-code agent, include that agent's install. Do not say there are no code changes unless that installer is in the steps.
 
-    let grpcChannel = ClientConnection
-        .usingPlatformAppropriateTLS(for: MultiThreadedEventLoopGroup(numberOfThreads:1))
-        .connect(host: "https://@opentelemetry.endpointAddress", port: "@opentelemetry.grpcPort:strip_quotes")
+<LaunchVisualizer type="logs" />
 
-    let traceExporter = OtlpTraceExporter(channel: grpcChannel,
-                                          config: otlpConfiguration)
-
-    // build & register the Tracer Provider using the built otlp trace exporter
-    OpenTelemetry.registerTracerProvider(tracerProvider: TracerProviderBuilder()
-                                                          .add(spanProcessor:SimpleSpanProcessor(spanExporter: traceExporter))
-                                                          .with(resource: Resource())
-                                                          .build())
-    ```
-
-    You can also configure various settings by specifying the appropriate Environment variables, for example:
-
-    ```env copy /@opentelemetry.endpointAddress/ /@opentelemetry.grpcPort/ /@opentelemetry.base64encodedAuthString/
-    OTEL_TRACES_EXPORTER = otlp
-    OTEL_EXPORTER_OTLP_ENDPOINT = https://@opentelemetry.endpointAddress:@opentelemetry.grpcPort
-    OTEL_EXPORTER_OTLP_TRACES_PROTOCOL = grpc
-    OTEL_EXPORTER_OTLP_TRACES_HEADERS = Authorization=Basic @opentelemetry.base64encodedAuthString
-    ```
-  </Tab>
-
-  </Tabs>
-
-  ### Launch Jaeger to View Your Data
-
-  <LaunchVisualizer type="apm" />
-
-  ### How to diagnose no data in Stack
-
-  <DiagnoseNoData />
-</Steps>
+<DiagnoseNoData />

@@ -1,145 +1,55 @@
 ---
 title: Rust
-metaTitle: Learn How to Integrate and Configure Rust to Send Traces
-pageTitle: OpenTelemetry Rust Configuration
-subTitle: Ship traces from Rust to OpenSearch with OpenTelemetry
+metaTitle: Send Rust telemetry to Hosted OpenTelemetry
+pageTitle: Rust Hosted OpenTelemetry
+subTitle: Ship Rust telemetry to Hosted OpenTelemetry
 logo: rust
 color: "#0f172a"
-stackTypes: apm
-description: Read Logit.io's numerous Rust APM source integrations from Logit.io documentation to learn how to send Rust data to Logit.io
-tags: Rust, Systems Programming, Programming Language, Apm, Grpc, Http
+stackTypes: logs, metrics, apm
+description: Hosted OpenTelemetry environment variables for Rust. Follow the language registration for packages.
+tags: Rust, OpenTelemetry, Logs, Metrics, Traces
 ---
 
-Use OpenTelemetry to easily send Rust traces to your Logit.io Stack.
+Send logs, traces and metrics from a Rust app to Hosted OpenTelemetry. This page does not name a package. Follow the language registration, then export with the environment variables below. Do not install `otelcol-contrib` for this path.
 
-<Steps>
-  ## APM
-  ### Install Integration
-  <InstallIntegration/>
-  
-  ### Getting Started
+## Endpoint
 
-  <Tabs items={["HTTPS", "gRPC"]}>
-  
-  <Tab>
-    You can get help Getting Started with OpenTelemetry for Rust by referring to the 
-    [official documentation](https://opentelemetry.io/docs/instrumentation/rust/getting-started/). 
+- Endpoint: `https://@logs_id-otel.logit.io` (no port)
+- Protocol: `http/protobuf`
+- Username: `@logs_id-otel`
+- API key: the key on the Hosted OpenTelemetry card (Settings, Endpoints). Replace `<your-api-key>`. Do not commit that key.
+- Header: `Authorization=Basic%20` plus the Base64 of `username:api-key`.
 
-    This example uses the snippet found [here](https://docs.rs/opentelemetry-otlp/latest/opentelemetry_otlp/) as its basis.
+`@logs_id` is your logs stack id. Do not set the bare host as `Endpoint` in code. Do not use gRPC to this host.
 
-    ```rust copy showLineNumbers /@opentelemetry.base64encodedAuthString/ /@opentelemetry.endpointAddress/ /@opentelemetry.grpcPort/
-    use opentelemetry_api::{KeyValue, trace::Tracer};
-    use opentelemetry_sdk::{trace::{self, RandomIdGenerator, Sampler}, Resource};
-    use opentelemetry_sdk::util::tokio_interval_stream;
-    use opentelemetry_otlp::{Protocol, WithExportConfig, ExportConfig};
-    use std::time::Duration;
-    use tonic::metadata::*;
+Set the variables on the process that runs the app. An export in the current shell only applies to a local run in that same window.
 
-    fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync + 'static>> {
-        let mut map = MetadataMap::with_capacity(1);
+<Tabs items={["Linux and macOS", "Windows PowerShell"]}>
+<Tab>
 
-        map.insert("authorization", "Basic @opentelemetry.base64encodedAuthString".parse().unwrap());
+```bash copy /@logs_id/
+export OTEL_SERVICE_NAME="my-service"
+export OTEL_EXPORTER_OTLP_ENDPOINT="https://@logs_id-otel.logit.io"
+export OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf"
+export OTEL_EXPORTER_OTLP_HEADERS="Authorization=Basic%20$(printf '%s:%s' '@logs_id-otel' '<your-api-key>' | base64 | tr -d '\n')"
+```
 
-        let tracer = opentelemetry_otlp::new_pipeline()
-            .tracing()
-            .with_exporter(
-                opentelemetry_otlp::new_exporter()
-                .tonic()
-                .with_endpoint("https://@opentelemetry.endpointAddress:@opentelemetry.httpsPort")
-                .with_metadata(map)
-            )
-            // The trace config below should be amended to your requirements
-            .with_trace_config(
-                trace::config()
-                    .with_sampler(Sampler::AlwaysOn)
-                    .with_id_generator(RandomIdGenerator::default())
-                    .with_max_events_per_span(64)
-                    .with_max_attributes_per_span(16)
-                    .with_max_events_per_span(16)
-                    .with_resource(Resource::new(vec![KeyValue::new("service.name", "example")])),
-            )
-            .install_batch(opentelemetry::runtime::Tokio)?;
+</Tab>
+<Tab>
 
-        let export_config = ExportConfig {
-            endpoint: "https://@opentelemetry.endpointAddress:@opentelemetry.httpsPort".to_string(),
-            protocol: Protocol::http/protobuf
-        };
+```powershell copy /@logs_id/
+$env:OTEL_SERVICE_NAME = "my-service"
+$env:OTEL_EXPORTER_OTLP_ENDPOINT = "https://@logs_id-otel.logit.io"
+$env:OTEL_EXPORTER_OTLP_PROTOCOL = "http/protobuf"
+$pair = "@logs_id-otel:<your-api-key>"
+$env:OTEL_EXPORTER_OTLP_HEADERS = "Authorization=Basic%20" + [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($pair))
+```
 
-        tracer.in_span("doing_work", |cx| {
-            // Traced app logic here...
-        });
+</Tab>
+</Tabs>
 
-        Ok(())
-    }
-    ```
+Follow the Rust language registration for packages. If that registration is a zero-code agent, include that agent's install. Do not say there are no code changes unless that installer is in the steps.
 
-    For more information about exporter configuration with Rust please refer to the 
-    [official documentation](https://opentelemetry.io/docs/instrumentation/rust/exporters/).
-  </Tab>
+<LaunchVisualizer type="logs" />
 
-  <Tab>
-    You can get help Getting Started with OpenTelemetry for Rust by referring to the 
-    [official documentation](https://opentelemetry.io/docs/instrumentation/rust/getting-started/). 
-
-    This example uses the snippet found [here](https://docs.rs/opentelemetry-otlp/latest/opentelemetry_otlp/) as its basis.
-
-    ```rust copy showLineNumbers /@opentelemetry.base64encodedAuthString/ /@opentelemetry.endpointAddress/ /@opentelemetry.grpcPort/
-    use opentelemetry_api::{KeyValue, trace::Tracer};
-    use opentelemetry_sdk::{trace::{self, RandomIdGenerator, Sampler}, Resource};
-    use opentelemetry_sdk::util::tokio_interval_stream;
-    use opentelemetry_otlp::{Protocol, WithExportConfig, ExportConfig};
-    use std::time::Duration;
-    use tonic::metadata::*;
-
-    fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync + 'static>> {
-        let mut map = MetadataMap::with_capacity(1);
-
-        map.insert("authorization", "Basic @opentelemetry.base64encodedAuthString".parse().unwrap());
-
-        let tracer = opentelemetry_otlp::new_pipeline()
-            .tracing()
-            .with_exporter(
-                opentelemetry_otlp::new_exporter()
-                .tonic()
-                .with_endpoint("https://@opentelemetry.endpointAddress:@opentelemetry.grpcPort")
-                .with_metadata(map)
-            )
-            // The trace config below should be amended to your requirements
-            .with_trace_config(
-                trace::config()
-                    .with_sampler(Sampler::AlwaysOn)
-                    .with_id_generator(RandomIdGenerator::default())
-                    .with_max_events_per_span(64)
-                    .with_max_attributes_per_span(16)
-                    .with_max_events_per_span(16)
-                    .with_resource(Resource::new(vec![KeyValue::new("service.name", "example")])),
-            )
-            .install_batch(opentelemetry::runtime::Tokio)?;
-
-        let export_config = ExportConfig {
-            endpoint: "https://@opentelemetry.endpointAddress:@opentelemetry.grpcPort".to_string(),
-            protocol: Protocol::Grpc
-        };
-
-        tracer.in_span("doing_work", |cx| {
-            // Traced app logic here...
-        });
-
-        Ok(())
-    }
-    ```
-
-    For more information about exporter configuration with Rust please refer to the 
-    [official documentation](https://opentelemetry.io/docs/instrumentation/rust/exporters/).
-  </Tab>
-
-  </Tabs>
-
-  ### Launch Jaeger to View Your Data
-
-  <LaunchVisualizer type="apm" />
-
-  ### How to diagnose no data in Stack
-
-  <DiagnoseNoData />
-</Steps>
+<DiagnoseNoData />
