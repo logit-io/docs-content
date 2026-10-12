@@ -1,0 +1,183 @@
+---
+title: Hosted OpenTelemetry
+metaTitle: Hosted OpenTelemetry Quickstart | Send OTLP Logs, Traces and Metrics | Logit.io
+description: Send OpenTelemetry logs, traces and metrics to Logit.io over HTTPS using your stack's Hosted OpenTelemetry endpoint, Basic auth, the OpenTelemetry Collector, or SDK environment variables.
+stackTypes: logs
+---
+
+# Hosted OpenTelemetry
+
+Logit.io provides a managed OpenTelemetry (OTLP) endpoint for each Logs stack. Send logs, traces and metrics to one HTTPS URL — without running your own public OTLP receiver.
+
+Public endpoint:
+
+```text copy
+https://{stack-id}-otel.logit.io
+```
+
+Replace `{stack-id}` with your Logs stack ID. Copy the exact URL, username and API key from your stack's **Hosted OpenTelemetry** settings on the Logit.io dashboard (**Settings → Endpoints**).
+
+Related guides: [Getting started with OpenTelemetry](/getting-started/opentelemetry), [OpenTelemetry Collector](/integrations/otel-collector) (self-hosted collector shipping to OpenSearch, APM and Metrics separately).
+
+<Callout type="info">
+Hosted OpenTelemetry accepts **OTLP over HTTPS on port 443** only (paths `/v1/logs`, `/v1/traces`, `/v1/metrics`). gRPC and plain HTTP on ports 4317/4318 are not supported on this endpoint.
+</Callout>
+
+### What you can send
+
+| Signal | Where it lands | Requirement |
+| --- | --- | --- |
+| **Logs** | Your Logs stack | Hosted OpenTelemetry enabled on the stack |
+| **Traces** | Your APM stack | [APM add-on](/application-performance-monitoring/getting-started) linked to the Logs stack |
+| **Metrics** | Your Metrics stack | [Metrics add-on](/infrastructure-metrics/overview) linked to the Logs stack |
+
+All three signals use the **same** Hosted OpenTelemetry endpoint and credentials.
+
+If you send traces without the APM add-on, or metrics without the Metrics add-on, Logit.io still accepts the request but doesn't store that signal. The onboarding screens and **Settings → Endpoints** show what arrived, for example "Traces received. Add APM to view them" with "1,234 spans received so far", plus an **Add APM** or **Add Metrics** button. Enable the matching add-on so the data is stored and searchable.
+
+### Prerequisites
+
+1. A [Logit.io account](https://dashboard.logit.io/sign-up) with a Logs stack.
+2. Hosted OpenTelemetry enabled for that stack (see below).
+3. For traces: an APM add-on on the account/stack. For metrics: a Metrics add-on.
+4. An OpenTelemetry Collector, language SDK, or other OTLP HTTP exporter that can send to HTTPS with Basic auth. Collector examples that use the `basicauth` extension need the **Contrib** distribution (`otelcol-contrib`), not the core `otelcol` build.
+
+### 1. Enable Hosted OpenTelemetry
+
+Hosted OpenTelemetry is available on all plans. New Logs stacks have Hosted OpenTelemetry switched on by default.
+
+1. Sign in to the [Logit.io Dashboard](https://dashboard.logit.io).
+2. Open your Logs stack's **Settings → Endpoints** page.
+3. On the **Hosted OpenTelemetry** card, select **Switch on** and confirm. (Skip this if the card already shows the endpoint details.)
+4. Wait until the endpoint is ready. The connection details then appear on the same **Hosted OpenTelemetry** card.
+
+Logit.io provisions `https://{stack-id}-otel.logit.io` and shows the connection details for that stack.
+
+### 2. Copy connection details
+
+On **Settings → Endpoints**, open the **Hosted OpenTelemetry** section:
+
+| Field | Value |
+| --- | --- |
+| **HTTPS endpoint** | `https://{stack-id}-otel.logit.io` |
+| **Username** | `{stack-id}-otel` |
+| **API key** | The Hosted OpenTelemetry API key shown on the Endpoints page (not your OpenSearch `-es` key, APM password, or Metrics password) |
+
+Authenticate with **HTTP Basic auth**: username `{stack-id}-otel` and the Hosted OpenTelemetry API key as the password.
+
+Use **Rotate credentials** on the Endpoints page when you need a new key. The old API key stops working as soon as you rotate, so update every Collector and SDK before or immediately after rotating.
+
+### 3. OpenTelemetry Collector example
+
+Point an `otlp_http` exporter at your Hosted OpenTelemetry endpoint and attach Basic auth (`otlphttp` is the older, deprecated alias). The example below receives OTLP locally and forwards logs, traces and metrics through one exporter.
+
+```yaml copy showLineNumbers
+extensions:
+  basicauth/logit:
+    client_auth:
+      username: "{stack-id}-otel"
+      password: "<your-hosted-otel-api-key>"
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: localhost:4317
+      http:
+        endpoint: localhost:4318
+
+processors:
+  batch: {}
+
+exporters:
+  otlp_http/logit:
+    endpoint: https://{stack-id}-otel.logit.io
+    auth:
+      authenticator: basicauth/logit
+
+service:
+  extensions: [basicauth/logit]
+  pipelines:
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp_http/logit]
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp_http/logit]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp_http/logit]
+```
+
+Replace `{stack-id}` and `<your-hosted-otel-api-key>` with the values from **Settings → Endpoints**. Do not add `:4318` or `:4317` to the Logit.io endpoint — use HTTPS on the default port 443.
+
+Apps and agents can keep sending to your Collector on `localhost:4317` / `localhost:4318`. Bind the local receiver to `0.0.0.0` only when the Collector runs inside a container and other containers must reach it. Only the path from the Collector to Logit.io uses Hosted OpenTelemetry over HTTPS.
+
+Prefer a self-hosted Collector that writes to OpenSearch, APM and Metrics separately? See the [OpenTelemetry Collector integration](/integrations/otel-collector).
+
+### 4. SDK environment variables
+
+Many OpenTelemetry SDKs read these environment variables:
+
+```bash copy
+export OTEL_EXPORTER_OTLP_ENDPOINT=https://{stack-id}-otel.logit.io
+export OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+export OTEL_EXPORTER_OTLP_HEADERS="Authorization=Basic%20<base64-username-colon-api-key>"
+```
+
+Build the Base64 value (replace with your stack ID and Hosted OpenTelemetry API key):
+
+```bash copy
+printf '%s' '{stack-id}-otel:<your-hosted-otel-api-key>' | base64
+```
+
+Notes:
+
+- Set `OTEL_EXPORTER_OTLP_PROTOCOL` to `http/protobuf` (OTLP/HTTP). Do not use gRPC against Hosted OpenTelemetry.
+- Quote `OTEL_EXPORTER_OTLP_HEADERS` so shell redirection does not treat `<` and `>` as special characters.
+- Put the Base64 output after `Authorization=Basic%20` in `OTEL_EXPORTER_OTLP_HEADERS`. The space after `Basic` must be percent-encoded as `%20`.
+- Leave the signal paths off the endpoint. The SDK appends `/v1/logs`, `/v1/traces` and `/v1/metrics` for you.
+
+### 5. Confirm data is arriving
+
+| Signal | Where to look |
+| --- | --- |
+| **Logs** | Launch **Logs** (OpenSearch Dashboards) and search for recent events |
+| **Traces** | Launch **APM** (Jaeger) and search for your service |
+| **Metrics** | Launch **Metrics** (Grafana) and explore recent series |
+
+If you've sent traces without the APM add-on, or metrics without the Metrics add-on, the dashboard shows "Traces received. Add APM to view them" or "Metrics received. Add Metrics to view them", with a count such as "1,234 spans received so far" or "1 metric point received so far". If no count is available yet, it shows "Add APM to see your traces. Your config already sends them." or "Add Metrics to see your metrics. Your config already sends them." instead. Select **Add APM** or **Add Metrics**, then wait a short time for routing to update.
+
+### Limitations
+
+| Topic | Behaviour |
+| --- | --- |
+| **Protocol** | OTLP over HTTPS (port 443) only |
+| **Signals** | Logs, traces and metrics share one endpoint |
+| **Traces without APM** | Accepted but not stored. The dashboard shows the spans received so far and an **Add APM** button |
+| **Metrics without the Metrics add-on** | Accepted but not stored. The dashboard shows the metric points received so far and an **Add Metrics** button |
+| **Credentials** | Basic auth with username `{stack-id}-otel` and the Hosted OpenTelemetry API key |
+
+### Troubleshooting
+
+| Symptom | What to check |
+| --- | --- |
+| **401 Unauthorized** | Username exactly `{stack-id}-otel`? Using the Hosted OpenTelemetry API key from Endpoints (not the OpenSearch `-es` key)? Key recently rotated? |
+| **Connection / TLS errors** | Endpoint is `https://{stack-id}-otel.logit.io` with no custom port? Protocol set to `http/protobuf`? |
+| **Logs arrive, traces or metrics do not** | APM or Metrics add-on enabled? Does the dashboard show "Traces received. Add APM to view them" or "Metrics received. Add Metrics to view them"? |
+| **Collector config rejected** | `otlp_http` exporter endpoint must be HTTPS; using `otelcol-contrib` for `basicauth`? Username and API key must match Endpoints |
+
+### Related documentation
+
+- [Getting started with OpenTelemetry](/getting-started/opentelemetry)
+- [Using OpenTelemetry for Logs](/opentelemetry/using-opentelemetry-for-logs)
+- [Using OpenTelemetry for Traces](/opentelemetry/using-opentelemetry-for-traces)
+- [Using OpenTelemetry for Metrics](/opentelemetry/using-opentelemetry-for-metrics)
+- [OpenTelemetry Collector](/integrations/otel-collector)
+- [APM OpenTelemetry Inputs](/application-performance-monitoring/ingestion-pipeline/opentelemetry-inputs)
+- [Infrastructure Metrics Remote Write](/infrastructure-metrics/ingestion-pipeline/remote-write)
+
+If you need help enabling Hosted OpenTelemetry or confirming your first export, contact support via <IntercomButton text="live chat" />.

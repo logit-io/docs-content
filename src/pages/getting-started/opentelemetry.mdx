@@ -16,6 +16,11 @@ Integrating with Logit.io enables comprehensive observability by collecting, pro
 traces, metrics, and logs. This guide provides a step-by-step approach to set up OpenTelemetry within your application and configure it to send 
 data to Logit.io.
 
+### Hosted OpenTelemetry
+
+For a managed OTLP endpoint on your Logs stack — one HTTPS URL for logs, traces and metrics — see [Hosted OpenTelemetry](/opentelemetry/hosted-opentelemetry).
+That path uses OTLP over HTTPS with Basic auth from your stack's Hosted OpenTelemetry settings. Traces need the APM add-on; metrics need the Metrics add-on.
+
 ### OpenTelemetry for Traces
 
 Using OpenTelemetry for traces enables detailed tracking of requests as they flow through your application, distributed system, or system processes. 
