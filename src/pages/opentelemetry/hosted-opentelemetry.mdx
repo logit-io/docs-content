@@ -9,8 +9,6 @@ stackTypes: logs
 
 Hosted OpenTelemetry means Logit.io runs the OpenTelemetry Collector for you. Each Logs stack gets its own HTTPS endpoint, so your apps can send logs, traces and metrics straight from an OpenTelemetry SDK or zero-code agent, without running a Collector yourself. If you already run a Collector, for host metrics or file logs, just point its OTLP/HTTP exporter at the same endpoint.
 
-Logit.io provides a managed OpenTelemetry (OTLP) endpoint for each Logs stack. Send logs, traces and metrics to one HTTPS URL — without running your own public OTLP receiver.
-
 Public endpoint:
 
 ```text copy
@@ -50,7 +48,7 @@ Hosted OpenTelemetry is available on all plans. New Logs stacks have Hosted Open
 
 1. Sign in to the [Logit.io Dashboard](https://dashboard.logit.io).
 2. Open the stack's **Endpoints** page for your Logs stack.
-3. An account owner or administrator, or a stack administrator, selects **Switch on** in the **Hosted OpenTelemetry** card. Setup takes a few minutes, and then the connection details appear. (Skip this if the card already shows the endpoint details.)
+3. An account owner or administrator, or a stack administrator, selects **Switch on** in the **Hosted OpenTelemetry** card and confirms. Setup takes a few minutes, and then the connection details appear. (Skip this if the card already shows the endpoint details.)
 
 Logit.io provisions `https://{stackId}-otel.logit.io` and shows the connection details for that stack.
 
