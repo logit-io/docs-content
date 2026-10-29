@@ -4,11 +4,11 @@ This repo is part of the **logit-content** multi-repo workspace.
 
 ## How to open
 
-1. Clone sibling repo: `marketing` (Gatsby site at logit.io)
+1. Clone the sibling repos: `marketing` (logit.io) and `docs` (the docs site).
 2. In Cursor: **File → Open Workspace from File**
 3. Open `marketing/logit-content.code-workspace`
 
-That loads **marketing** and **docs-content** together.
+That loads **marketing**, **docs-content**, and **docs** together.
 
 ## Skills and analytics
 
