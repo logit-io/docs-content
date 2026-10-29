@@ -1,0 +1,11 @@
+---
+description: Pointer to Logit team and role rules in logit-dashboard
+alwaysApply: true
+---
+
+# Logit team rules (pointer)
+
+Team-wide and role rules live in the logit-dashboard checkout, not this repo:
+`/Users/lee/dev/logit-dashboard/.cursor/rules/` (`00-team-rules.mdc` through `70-project-board.mdc`).
+
+Before acting, read the matching role file when that path is on disk. Branch names use `feat/`, `fix/`, `docs/`, `seo/` — never `feature/` or `cursor/`. On a non-master branch, commit and push finished work without asking. Never commit to master, never merge, never push to master; Lee merges.
