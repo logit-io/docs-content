@@ -1,0 +1,76 @@
+---
+title: Collect host metrics
+metaTitle: Collect host metrics | Hosted OpenTelemetry | Logit.io
+description: Collect CPU, memory, disk, filesystem, network and load metrics from servers with Hosted OpenTelemetry.
+stackTypes: logs
+---
+
+# Collect host metrics
+
+Use the OpenTelemetry Collector to send server metrics alongside your log management setup. In dashboard onboarding, choose **OpenTelemetry → Host metrics**.
+
+## Before you start
+
+Copy the Hosted OpenTelemetry endpoint, username and password from your Logs stack's **Endpoints** page. Enable the Metrics add-on to store and view metrics. Requests sent without that add-on are accepted, but the metrics are not stored.
+
+Install the Contrib Collector using the [Linux or Windows installation steps](/opentelemetry/server-log-files#install-the-collector). For metrics alone, the service does not need the log-file read permissions in those steps.
+
+## Configure the Collector
+
+Save this configuration as `/etc/otelcol-contrib/config.yaml` on Linux or `C:\Program Files\OpenTelemetry Collector\config.yaml` on Windows. It matches the dashboard's host metrics configuration for both systems.
+
+Replace the endpoint, username and password with your dashboard values. Change `my-server` to your server or service name.
+
+```yaml copy showLineNumbers
+extensions:
+  basicauth/logit:
+    client_auth:
+      username: "<your-username>"
+      password: "<your-password>"
+
+receivers:
+  hostmetrics:
+    collection_interval: 30s
+    scrapers:
+      cpu: {}
+      memory: {}
+      disk: {}
+      filesystem: {}
+      network: {}
+      load: {}
+
+processors:
+  resourcedetection:
+    detectors: [system]
+  resource/logit:
+    attributes:
+      - { key: service.name, value: "my-server", action: insert }
+  batch: {}
+
+exporters:
+  otlphttp/logit:
+    endpoint: "https://{stackId}-otel.logit.io"
+    auth: { authenticator: basicauth/logit }
+
+service:
+  extensions: [basicauth/logit]
+  pipelines:
+    metrics:
+      receivers: [hostmetrics]
+      processors: [resourcedetection, resource/logit, batch]
+      exporters: [otlphttp/logit]
+```
+
+The Collector samples every 30 seconds and adds host information with system resource detection. It exports using Basic auth and OTLP over HTTP on HTTPS port 443. Keep the base URL as shown, without a signal path or custom port. Hosted OpenTelemetry does not expose gRPC.
+
+This is a metrics-only configuration. If the Collector already sends logs, merge the receiver, processors and metrics pipeline into its existing configuration. Keep the logs pipeline and share one `basicauth/logit` extension and `otlphttp/logit` exporter.
+
+## Restart and check metrics
+
+[Restart the Collector](/opentelemetry/server-log-files#restart-the-collector), then allow at least one collection interval. Check its logs for export errors.
+
+Return to onboarding to check that metrics have arrived. Select **Launch Metrics**, open Grafana's **Explore** view and look for recent host metrics. If the dashboard offers **Add Metrics**, enable the add-on before checking Grafana.
+
+For a `401 Unauthorized` response, check the Hosted OpenTelemetry credentials. For connection errors, check outbound HTTPS access on port 443.
+
+To collect log files as well, see [Send server log files](/opentelemetry/server-log-files).

@@ -1,5 +1,9 @@
 {
   "hosted-opentelemetry": "Hosted OpenTelemetry",
+  "server-log-files": "Send server log files",
+  "host-metrics": "Collect host metrics",
+  "kubernetes": "Kubernetes",
+  "applications": "Applications",
   "using-opentelemetry-for-logs": "Using OpenTelemetry for Logs",
   "using-opentelemetry-for-traces": "Using OpenTelemetry for Traces",
   "using-opentelemetry-for-metrics": "Using OpenTelemetry for Metrics"

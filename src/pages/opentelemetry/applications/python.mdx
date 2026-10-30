@@ -1,0 +1,39 @@
+---
+title: Set up Python applications
+metaTitle: Set up Python applications | Hosted OpenTelemetry | Logit.io
+description: Install Python auto-instrumentation and export application logs, traces and metrics to Hosted OpenTelemetry.
+stackTypes: logs
+---
+
+# Set up Python applications
+
+Send Python application logs, traces and metrics with the OpenTelemetry zero-code agent. Start with the [application connection details](/opentelemetry/applications#connection-details).
+
+## Install the agent
+
+Run these commands in your application's Python environment:
+
+```bash copy
+pip install opentelemetry-distro opentelemetry-exporter-otlp
+opentelemetry-bootstrap -a install
+```
+
+## Configure the process
+
+Create the shared [environment file](/opentelemetry/applications#environment-file) and add:
+
+```bash copy
+OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED="true"
+```
+
+[Load the file](/opentelemetry/applications#load-the-environment-file), then [build authentication and set the standard SDK header](/opentelemetry/applications#build-authentication). The endpoint is the base HTTPS URL and the protocol is `http/protobuf`.
+
+## Start the application
+
+```bash copy
+opentelemetry-instrument python app.py
+```
+
+Replace `app.py` with your entry point. `opentelemetry-distro` supplies the `opentelemetry-instrument` command. The agent reads the settings from the process environment on Linux or Windows.
+
+Generate a Python log entry and application traffic, then [check the result](/opentelemetry/applications#check-the-result).

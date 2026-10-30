@@ -1,0 +1,126 @@
+---
+title: Set up C++ applications
+metaTitle: Set up C++ applications | Hosted OpenTelemetry | Logit.io
+description: Configure OpenTelemetry C++ HTTP exporters for Logit.io application logs, traces and metrics.
+stackTypes: logs
+---
+
+# Set up C++ applications
+
+Configure C++ SDK providers to export application logs, traces and metrics. See the [connection details](/opentelemetry/applications#connection-details) before starting.
+
+## Install the HTTP exporter
+
+The onboarding example uses the `opentelemetry-cpp` 1.29.0 vcpkg port with the HTTP feature:
+
+```bash copy
+vcpkg install "opentelemetry-cpp[otlp-http]"
+```
+
+For a source build, enable `-DWITH_OTLP_HTTP=ON`.
+
+## Prepare authentication
+
+[Build authentication](/opentelemetry/applications#build-authentication) to set `LOGIT_OTLP_BASIC` in the app's process environment. This is only the Base64 token, without `Basic `.
+
+The C++ exporter does not decode `Basic%20` in environment headers. The example below sets the HTTP header directly with a real space after `Basic`.
+
+## Register the providers
+
+Save this as `otlp_setup.cpp` or integrate it into your application's startup code. Replace the stack ID and service name. Link your application against the installed OpenTelemetry SDK and HTTP exporters.
+
+```cpp copy showLineNumbers
+#include <cstdlib>
+#include <memory>
+#include <string>
+#include "opentelemetry/exporters/otlp/otlp_http_exporter_factory.h"
+#include "opentelemetry/exporters/otlp/otlp_http_metric_exporter_factory.h"
+#include "opentelemetry/exporters/otlp/otlp_http_log_record_exporter_factory.h"
+#include "opentelemetry/sdk/resource/resource.h"
+#include "opentelemetry/sdk/trace/batch_span_processor_factory.h"
+#include "opentelemetry/sdk/trace/batch_span_processor_options.h"
+#include "opentelemetry/sdk/trace/tracer_provider.h"
+#include "opentelemetry/sdk/trace/tracer_provider_factory.h"
+#include "opentelemetry/trace/provider.h"
+#include "opentelemetry/sdk/metrics/export/periodic_exporting_metric_reader_factory.h"
+#include "opentelemetry/sdk/metrics/meter_context_factory.h"
+#include "opentelemetry/sdk/metrics/meter_provider.h"
+#include "opentelemetry/sdk/metrics/meter_provider_factory.h"
+#include "opentelemetry/sdk/metrics/view/view_registry_factory.h"
+#include "opentelemetry/metrics/provider.h"
+#include "opentelemetry/sdk/logs/batch_log_record_processor_factory.h"
+#include "opentelemetry/sdk/logs/batch_log_record_processor_options.h"
+#include "opentelemetry/sdk/logs/logger_provider.h"
+#include "opentelemetry/sdk/logs/logger_provider_factory.h"
+#include "opentelemetry/logs/provider.h"
+
+namespace otlp = opentelemetry::exporter::otlp;
+namespace trace_sdk = opentelemetry::sdk::trace;
+namespace metrics_sdk = opentelemetry::sdk::metrics;
+namespace logs_sdk = opentelemetry::sdk::logs;
+
+int main() {
+  const char* b64 = std::getenv("LOGIT_OTLP_BASIC");
+  if (b64 == nullptr || *b64 == '\0') {
+    return 1;
+  }
+  const std::string endpoint = "https://{stackId}-otel.logit.io";
+  const std::string authorization = std::string("Basic ") + b64;
+  auto resource = opentelemetry::sdk::resource::Resource::Create(
+      {{"service.name", "my-app"}});
+
+  otlp::OtlpHttpExporterOptions trace_opts;
+  trace_opts.url = endpoint + "/v1/traces";
+  trace_opts.http_headers.insert({"Authorization", authorization});
+  auto trace_exporter = otlp::OtlpHttpExporterFactory::Create(trace_opts);
+  auto trace_processor = trace_sdk::BatchSpanProcessorFactory::Create(
+      std::move(trace_exporter), trace_sdk::BatchSpanProcessorOptions{});
+  std::shared_ptr<trace_sdk::TracerProvider> tracer_provider(
+      trace_sdk::TracerProviderFactory::Create(std::move(trace_processor), resource));
+  opentelemetry::trace::Provider::SetTracerProvider(tracer_provider);
+
+  otlp::OtlpHttpMetricExporterOptions metric_opts;
+  metric_opts.url = endpoint + "/v1/metrics";
+  metric_opts.http_headers.insert({"Authorization", authorization});
+  auto metric_exporter = otlp::OtlpHttpMetricExporterFactory::Create(metric_opts);
+  metrics_sdk::PeriodicExportingMetricReaderOptions reader_opts;
+  auto metric_reader = metrics_sdk::PeriodicExportingMetricReaderFactory::Create(
+      std::move(metric_exporter), reader_opts);
+  auto views = metrics_sdk::ViewRegistryFactory::Create();
+  auto meter_context = metrics_sdk::MeterContextFactory::Create(std::move(views), resource);
+  meter_context->AddMetricReader(std::move(metric_reader));
+  std::shared_ptr<metrics_sdk::MeterProvider> meter_provider(
+      metrics_sdk::MeterProviderFactory::Create(std::move(meter_context)));
+  opentelemetry::metrics::Provider::SetMeterProvider(meter_provider);
+
+  otlp::OtlpHttpLogRecordExporterOptions log_opts;
+  log_opts.url = endpoint + "/v1/logs";
+  log_opts.http_headers.insert({"Authorization", authorization});
+  auto log_exporter = otlp::OtlpHttpLogRecordExporterFactory::Create(log_opts);
+  auto log_processor = logs_sdk::BatchLogRecordProcessorFactory::Create(
+      std::move(log_exporter), logs_sdk::BatchLogRecordProcessorOptions{});
+  std::shared_ptr<logs_sdk::LoggerProvider> logger_provider(
+      logs_sdk::LoggerProviderFactory::Create(std::move(log_processor), resource));
+  opentelemetry::logs::Provider::SetLoggerProvider(logger_provider);
+
+  // Run your instrumented application work here, before shutdown.
+
+  tracer_provider->ForceFlush();
+  tracer_provider->Shutdown();
+  meter_provider->ForceFlush();
+  meter_provider->Shutdown();
+  logger_provider->ForceFlush();
+  logger_provider->Shutdown();
+  opentelemetry::trace::Provider::SetTracerProvider(
+      std::shared_ptr<opentelemetry::trace::TracerProvider>{});
+  opentelemetry::metrics::Provider::SetMeterProvider(
+      std::shared_ptr<opentelemetry::metrics::MeterProvider>{});
+  opentelemetry::logs::Provider::SetLoggerProvider(
+      std::shared_ptr<opentelemetry::logs::LoggerProvider>{});
+  return 0;
+}
+```
+
+The HTTP exporters use full signal URLs on HTTPS port 443. The providers must stay alive while your application emits telemetry. This setup registers export; it does not generate application logs or spans on its own.
+
+Start the app with `LOGIT_OTLP_BASIC` set, generate telemetry through the providers, then [check the result](/opentelemetry/applications#check-the-result).

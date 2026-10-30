@@ -1,0 +1,38 @@
+---
+title: Set up Rust applications
+metaTitle: Set up Rust applications | Hosted OpenTelemetry | Logit.io
+description: Configure Rust HTTP exporters for application logs, traces and metrics with Hosted OpenTelemetry.
+stackTypes: logs
+---
+
+# Set up Rust applications
+
+Export Rust application logs, traces and metrics with the OpenTelemetry SDK. See the [connection details](/opentelemetry/applications#connection-details) before starting.
+
+## Install packages
+
+The onboarding setup uses the OpenTelemetry 0.33 SDK family:
+
+```bash copy
+cargo add opentelemetry opentelemetry_sdk opentelemetry-appender-tracing tracing tracing-subscriber
+cargo add opentelemetry-otlp --features reqwest-rustls
+```
+
+The `reqwest-rustls` feature enables HTTPS for these HTTP exporters.
+
+## Configure the process
+
+Create and [load the shared environment file](/opentelemetry/applications#environment-file), then [build authentication and set the standard SDK header](/opentelemetry/applications#build-authentication). Use `http/protobuf` and the base HTTPS URL.
+
+## Register the SDK
+
+Add these steps to your application's telemetry initialization:
+
+1. Build a span exporter with `opentelemetry_otlp::SpanExporter::builder().with_http().build()?`. Pass it to `SdkTracerProvider::builder().with_batch_exporter(...)`.
+2. Build a metric exporter with `opentelemetry_otlp::MetricExporter::builder().with_http().build()?`. Pass it to `SdkMeterProvider::builder().with_periodic_exporter(...)`.
+3. Build a log exporter with `opentelemetry_otlp::LogExporter::builder().with_http().build()?`. Connect it to `SdkLoggerProvider` and use `OpenTelemetryTracingBridge` to connect application logging through `tracing`.
+4. Register the providers and logging subscriber in your app, and shut down the providers when the app stops so buffered data can be exported.
+
+Keep the endpoint in the environment rather than calling `with_endpoint`. The HTTP exporters append `/v1/logs`, `/v1/traces` and `/v1/metrics` and decode `%20` in the authentication setting.
+
+Start the app from the configured environment, generate logs and instrumented work, then [check the result](/opentelemetry/applications#check-the-result).

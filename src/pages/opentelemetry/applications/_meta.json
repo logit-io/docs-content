@@ -1,0 +1,15 @@
+{
+  "dotnet": ".NET",
+  "python": "Python",
+  "nodejs": "Node.js",
+  "java": "Java",
+  "go": "Go",
+  "ruby": "Ruby",
+  "php": "PHP",
+  "elixir": "Elixir",
+  "erlang": "Erlang",
+  "cpp": "C++",
+  "rust": "Rust",
+  "swift": "Swift",
+  "other": "Other"
+}

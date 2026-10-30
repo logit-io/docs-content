@@ -1,0 +1,28 @@
+---
+title: Set up another application language
+metaTitle: Set up another application language | Hosted OpenTelemetry | Logit.io
+description: Configure a supported language SDK or zero-code agent for the Hosted OpenTelemetry HTTP endpoint.
+stackTypes: logs
+---
+
+# Set up another application language
+
+Choose **Other** in the dashboard's Applications language selector when your language is not listed. Use that language's OpenTelemetry SDK or official zero-code agent to send application telemetry.
+
+## Configure the connection
+
+Create and [load the shared environment file](/opentelemetry/applications#environment-file). Use your Hosted OpenTelemetry base URL, `https://{stackId}-otel.logit.io`, and the `http/protobuf` protocol.
+
+[Build authentication](/opentelemetry/applications#build-authentication) from the username and password in the dashboard. If your SDK supports the standard encoded header format, set `OTEL_EXPORTER_OTLP_HEADERS` to `Authorization=Basic%20` followed by the Base64 token.
+
+If the SDK needs a header map instead, set `Authorization` to `Basic ` followed by the token, using a real space. Check the language SDK's header parsing before choosing a format.
+
+## Initialize your language SDK or agent
+
+Install the SDK and OTLP HTTP exporter packages documented for your language, or install its official zero-code agent. Register the signals that setup supports and connect your application logging and instrumentation.
+
+The Hosted endpoint supports OTLP over HTTP on HTTPS port 443. Use the base URL for an exporter that appends signal paths. If an exporter requires a full signal URL, use `/v1/logs`, `/v1/traces` or `/v1/metrics` for the matching signal.
+
+Keep the configuration in the application's process environment where supported. Selecting exporter variables alone does not install an SDK or agent.
+
+Start the app, generate supported telemetry, then [check the result](/opentelemetry/applications#check-the-result). For application log files, use [Send server log files](/opentelemetry/server-log-files).

@@ -1,0 +1,136 @@
+---
+title: Set up applications
+metaTitle: Set up applications | Hosted OpenTelemetry | Logit.io
+description: Choose a language SDK or agent to send application telemetry to Logit.io Hosted OpenTelemetry.
+stackTypes: logs
+---
+
+# Set up applications
+
+Send application logs to your Logit.io Logs stack with OpenTelemetry. You can also export traces and metrics where the language setup supports them. In onboarding, choose **OpenTelemetry → Applications**, then select your language.
+
+For logs already written to disk, use [Send server log files](/opentelemetry/server-log-files).
+
+## Choose your language
+
+- [.NET](/opentelemetry/applications/dotnet)
+- [Python](/opentelemetry/applications/python)
+- [Node.js](/opentelemetry/applications/nodejs)
+- [Java](/opentelemetry/applications/java)
+- [Go](/opentelemetry/applications/go)
+- [Ruby](/opentelemetry/applications/ruby)
+- [PHP](/opentelemetry/applications/php)
+- [Elixir](/opentelemetry/applications/elixir)
+- [Erlang](/opentelemetry/applications/erlang)
+- [C++](/opentelemetry/applications/cpp)
+- [Rust](/opentelemetry/applications/rust)
+- [Swift](/opentelemetry/applications/swift)
+- [Other](/opentelemetry/applications/other)
+
+These are the choices in dashboard onboarding. Ruby, Elixir and Erlang have trace-focused setups. The Node.js example does not include a logs SDK setup. Selecting an exporter does not create logs or instrument application code by itself.
+
+## Connection details
+
+Copy the Hosted OpenTelemetry endpoint, username and password from your Logs stack's **Endpoints** page. The password is labelled **API key** in the dashboard. All signals use the same Basic auth credentials.
+
+Use `https://{stackId}-otel.logit.io` over HTTPS on port 443, with OTLP over HTTP. For SDKs that read the standard protocol setting, use `http/protobuf`. Hosted OpenTelemetry does not expose gRPC or custom OTLP ports.
+
+Logs go to your Logs stack. Traces require the APM add-on and metrics require the Metrics add-on for storage and viewing. Without the matching add-on, those signals are accepted but not stored.
+
+## Environment file
+
+For Python, Node.js, Go, PHP, Rust and Other, save this as `.env` in your application directory. Replace the stack ID and choose a service name. Each language guide lists any additional settings.
+
+```bash copy
+OTEL_SERVICE_NAME="my-app"
+OTEL_EXPORTER_OTLP_ENDPOINT="https://{stackId}-otel.logit.io"
+OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf"
+OTEL_TRACES_EXPORTER="otlp"
+OTEL_METRICS_EXPORTER="otlp"
+OTEL_LOGS_EXPORTER="otlp"
+```
+
+Use the base endpoint without `/v1/logs`, `/v1/traces` or `/v1/metrics` here. These exporters append the signal paths. .NET, Java, Elixir, Erlang, C++ and Swift use the configuration shown in their own guides.
+
+### Load the environment file
+
+On Linux, run this from your application directory before starting the app:
+
+```bash copy
+set -a
+. ./.env
+set +a
+```
+
+On Windows, run this in PowerShell from your application directory:
+
+```powershell copy
+Get-Content .env | Where-Object { $_ -match '^\s*[^#\s][^=]*=' } | ForEach-Object {
+  $n, $v = $_ -split '=', 2
+  Set-Item -Path "Env:$($n.Trim())" -Value $v.Trim().Trim('"').Trim("'")
+}
+```
+
+A `.env` file is not loaded automatically by every runtime. For a deployed app, supply the same values through its process environment. Keep environment files containing credentials out of source control.
+
+## Build authentication
+
+Replace the placeholders below with the username and password from the Hosted OpenTelemetry card. These commands build Base64 from `username:password` without printing it.
+
+On Linux:
+
+```bash copy
+export LOGIT_API_KEY='<your-password>'
+export LOGIT_OTLP_USERNAME='<your-username>'
+export LOGIT_OTLP_BASIC=$(printf '%s' "$LOGIT_OTLP_USERNAME:$LOGIT_API_KEY" | base64 | tr -d '\n')
+```
+
+On Windows:
+
+```powershell copy
+$env:LOGIT_API_KEY = '<your-password>'
+$env:LOGIT_OTLP_USERNAME = '<your-username>'
+$env:LOGIT_OTLP_BASIC = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes("$($env:LOGIT_OTLP_USERNAME):$($env:LOGIT_API_KEY)"))
+```
+
+Then select the header format for your language below. Start the app from the same shell, or set these values in the environment of the deployed process.
+
+### Standard SDK header
+
+For .NET, Python, Node.js, Java, Go, Ruby, PHP and Rust:
+
+```bash copy
+export OTEL_EXPORTER_OTLP_HEADERS="Authorization=Basic%20$LOGIT_OTLP_BASIC"
+```
+
+Or in PowerShell:
+
+```powershell copy
+$env:OTEL_EXPORTER_OTLP_HEADERS = "Authorization=Basic%20$($env:LOGIT_OTLP_BASIC)"
+```
+
+Keep `%20` in this setting: these exporters decode it to the space after `Basic`. You can also copy the whole **Header** value from dashboard onboarding where it is shown. A raw API key alone is not a valid header.
+
+### Elixir and Erlang header
+
+These configuration maps need a real space after `Basic`:
+
+```bash copy
+export OTEL_EXPORTER_OTLP_AUTHORIZATION="Basic $LOGIT_OTLP_BASIC"
+```
+
+Or in PowerShell:
+
+```powershell copy
+$env:OTEL_EXPORTER_OTLP_AUTHORIZATION = "Basic $($env:LOGIT_OTLP_BASIC)"
+```
+
+### Headers in code
+
+C++ and Swift read `LOGIT_OTLP_BASIC` directly and build the HTTP header in code. Use the Base64 command above, then follow the language guide. Their examples do not use `OTEL_EXPORTER_OTLP_HEADERS`.
+
+## Check the result
+
+Restart the app, generate a log entry or request, and check onboarding for received signals. Select **Launch Logs** to search logs in OpenSearch Dashboards, **Launch APM** to find traces in Jaeger, or **Launch Metrics** to explore metrics in Grafana.
+
+For a `401 Unauthorized` response, check both credentials and the header format for your language. For connection errors, check the full HTTPS endpoint, HTTP protocol and outbound access on port 443. Confirm the matching add-on is enabled before looking for traces or metrics.
