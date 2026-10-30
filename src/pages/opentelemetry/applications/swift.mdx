@@ -34,7 +34,8 @@ Save this setup in `main.swift` or integrate it into your existing startup code.
 import Foundation
 import OpenTelemetryApi
 import OpenTelemetrySdk
-import OpenTelemetryProtocolExporterHTTP
+import OpenTelemetryProtocolExporterCommon
+import OpenTelemetryProtocolExporterHttp
 
 let b64 = ProcessInfo.processInfo.environment["LOGIT_OTLP_BASIC"]!
 let auth = [("Authorization", "Basic \(b64)")]

@@ -13,7 +13,7 @@ Use the OpenTelemetry PHP extension and SDK to export application telemetry. See
 
 ```bash copy
 pecl install opentelemetry
-composer require open-telemetry/sdk
+composer require open-telemetry/sdk open-telemetry/exporter-otlp php-http/guzzle7-adapter
 ```
 
 Enable the extension in `php.ini`:
