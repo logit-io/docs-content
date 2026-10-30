@@ -1,0 +1,63 @@
+---
+title: Dashboard Library
+metaTitle: Install Log Management Dashboards from the Dashboard Library
+description: Learn how to find, search, and install ready-made OpenSearch Dashboards for your Logit.io Logs stack.
+stackTypes: logs
+---
+
+# Dashboard Library
+
+Use the Dashboard Library to add ready-made dashboards to your Logs stack
+and explore your log data in OpenSearch Dashboards. A pack groups dashboards
+for a data source or tool. You can install a whole pack or choose individual
+dashboards.
+
+## Open the library
+
+In your Logit.io account, find your Logs stack on the dashboard and select
+**Dashboard Library** in the links at the bottom of its card. The library
+shows the stack name at the top. Check this before installing.
+
+You need permission to edit dashboards on the stack to install them. If you
+can only browse, the library displays a permission notice.
+
+## Browse and search packs
+
+Use **Search dashboards** to search by pack name, dashboard title, data source,
+or keyword. Use **All** to browse everything, or choose an available filter
+such as **Logs**, **Metrics**, **Security**, or **Cloud**.
+
+Packs matching your stack's data appear first and have a **Data detected**
+badge. Choose **Detected on your stack** to filter to these packs. Use
+**Rescan stack** after sending data from a new source to check for matches
+again. If the stack check fails, you can still browse and install dashboards.
+
+Read each dashboard's summary. Where available, expand **Details** to see who
+it is for, the questions it answers, and setup notes.
+
+## Install a pack
+
+1. Find the pack you want to install.
+2. Use **Select all** beside the pack to select its available dashboards, or
+   tick individual dashboards. For a pack with a single dashboard, tick its card.
+3. Review your selection. Some dashboards matching your data may already be
+   selected. Use **Clear** to start again if needed. Searching or changing
+   filters does not clear selected dashboards.
+4. Select **Install dashboards** at the bottom of the page. The button shows
+   how many dashboards you have selected.
+5. Allow a minute or two for installation, then select
+   **Open in OpenSearch Dashboards** in the confirmation message. Open
+   **Dashboards** in OpenSearch Dashboards to find your installed views.
+
+## What gets installed
+
+Installation adds the selected dashboards, their required visualizations and
+saved searches, and index patterns used to find data in the stack. The
+dashboards are added alongside dashboards you have built yourself.
+
+Dashboards need matching data and fields to show results. Follow the
+[log setup guide](/log-management/getting-started/) to start sending logs.
+Check the pack's notes if panels remain empty; the library may flag fields
+that need keyword mappings.
+
+Dashboards already added through the library show an **Installed** badge.
