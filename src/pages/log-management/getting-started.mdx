@@ -1,102 +1,98 @@
 ---
 title: Getting Started Sending Logs
 metaTitle: Learn How to Get Started with Log Management
-description: Learn how to get started with sending logs with our in-depth help guides.
+description: Set up a log source, confirm logs are arriving, and launch your log viewer with Logit.io onboarding.
 pagination: false
 timestamp: false
 stackTypes: logs
 ---
-# Getting Started Guide
+# Getting Started Sending Logs
 
-## Sending Logs to Your Logit.io Stack
+Logit.io log management collects logs from your servers, applications, and other
+sources so you can search them in one place. In the dashboard, open **Getting
+Started** for your Logs stack to set up your first source.
+
+## Set Up Your Log Source
+
+Onboarding takes you through **Category**, **Option**, **Install**, **Waiting**,
+and **Launch**.
 
 <Steps>
-  ### Send Sample Log
+  ### Choose a Category
 
-  First, verify that you can send a sample log message to your stack using Logit.io's API.
+  Under **How do you want to send logs?**, choose the category that matches your
+  source, such as **Linux servers & log files** or **Applications & code**.
 
-  <Tabs items={["Windows (via Command Prompt)", "Windows (via PowerShell)", "macOS", "Linux"]}>
-    <Tab>    
-      ```bash copy /@apikey/ 
-      curl -i ^
-      -H "ApiKey: @apikey" ^
-      -H "Content-Type: application/json" ^
-      -H "LogType: json" ^
-      https://@logitApiEndpoint/v2 ^
-      -d "{\"message\":\"Sample message from my computer\"}"
-      ```
-    </Tab>
-    <Tab>
-      ```ps1 copy /@apikey/ 
-      $headers = @{
-        ApiKey = "@apikey"
-        "Content-Type" = "application/json"
-        LogType = "json"
-      }
+  To try sending a log without installing an agent, choose **Quick start (no
+  install)**, then **Send a test log**.
 
-      $body = @{
-        "message" = "Sample message from my computer"
-      } | ConvertTo-Json
+  ### Choose an Option
 
-      curl -Uri "https://@logitApiEndpoint/v2" `
-        -Method Post `
-        -Headers $headers `
-        -Body $body
-      ```
-    </Tab>
+  Select the source or tool you want to use, such as Filebeat. You can search
+  all integrations by name or select **Browse all integrations** to find another
+  source.
 
-    <Tab>
-      ```bash copy /@apikey/ 
-      curl -i \
-      -H "ApiKey: @apikey" \
-      -H "Content-Type: application/json" \
-      -H "LogType: json" \
-      https://@logitApiEndpoint/v2 \
-      -d '{"message":"Sample message from my computer"}'
-      ```
-    </Tab>
+  ### Install and Configure
 
-    <Tab>
-      ```bash copy /@apikey/ 
-      curl -i \
-      -H "ApiKey: @apikey" \
-      -H "Content-Type: application/json" \
-      -H "LogType: json" \
-      https://@logitApiEndpoint/v2 \
-      -d '{"message":"Sample message from my computer"}'
-      ```
-    </Tab>
-  </Tabs>
+  Follow the instructions shown for your source. Select your platform tab if
+  one is available, then copy the commands and configuration for your stack.
+  Install or configure the source as instructed, including any required
+  credentials, and start sending logs.
 
-  You should expect to receive a `202 ACCEPTED` response:
+  Use **Open full docs** if you need the complete integration guide. After sending
+  logs, select **I've sent data, continue**. For sources where Logit.io collects
+  data through an input, the button says **I've added the input, continue**.
 
-  ```cmd
-  HTTP/1.1 202 ACCEPTED
-  {"message":"Message Received, Thanks"}
-  ```
+  ### Wait for Logs
 
-  ### Launch Logs to View Sample Data
-  
-  Click the button below to open the log management visualizer:
+  On **Waiting**, Logit.io checks automatically for new logs that are searchable.
+  Keep this tab open while your source sends data. Once your logs are detected,
+  onboarding moves to **Launch**.
 
-  <LaunchVisualizer type="logs" />
+  If only a test log is detected, Launch is unlocked and onboarding returns to
+  **Install**. Connect your real log source to continue collecting logs.
 
-  You should now see the sample log stored in your stack.
-  
-  ### Start Integrating Your Logs
+  You can also use an available log viewer button on **Waiting** to open it in
+  a new tab. The view can be empty until logs arrive; opening it does not confirm
+  that logs have arrived.
 
-  Logit.io provides more than 350 data source integration guides to help you get started. 
-  
-  Click the link below to get started.
+  ### Launch Your Log Viewer
 
-  <Cards>
-    <Card title="Log Management Integrations" href="/integrations" />
-  </Cards>
-
+  On **Launch**, select the log viewer button for your stack to explore your
+  logs in a new tab. Select **Go to dashboard** to return to your stacks.
 </Steps>
 
+## Skip Onboarding or Return Later
+
+Select **Skip for now, go to dashboard** at any step before Launch to leave setup.
+On smaller screens, this is labelled **Skip for now**.
+
+For a stack still waiting for data, use **Finish Logs setup** on the dashboard
+banner or under **Continue setup** on the stack card. The banner may show the
+shorter label **Finish setup**. To start the guide again, open **Getting Started**
+in your Logs stack's settings.
+
+## If No Logs Arrive
+
+The **Waiting** step shows **Still quiet?** with checks to help you troubleshoot:
+
+- Check that the machine sending logs can reach Logit.io on the port shown in
+  your configuration.
+- Check that you copied the whole configuration, including any credentials.
+- Add a new line to the log file, or use **Send a test log** to test delivery.
+  Logs already in the stack do not confirm that your source is sending new data.
+
+Use **Back to install** to return to **Install** and review the source-specific
+**If it doesn't work** hints and **Open full docs** link. You can also browse
+the [integration guides](/integrations).
+
+If the page says the pipeline is receiving data but nothing is searchable yet,
+logs have reached the pipeline but are not yet available to search. Onboarding
+waits for searchable logs before confirming delivery.
+
+If checking has paused, return to the onboarding tab to resume it.
+
 <Callout type="info">
-  If you get stuck and need help, or can't find an integration guide that 
-  meets your requirements, then please feel free to get in touch with our support 
-  team <IntercomButton text="via live chat" />, and we'll be happy to assist you.
+  If you need help, select **Chat with support** in onboarding or contact our
+  support team <IntercomButton text="via live chat" />.
 </Callout>
