@@ -1,0 +1,58 @@
+---
+title: Audit Log
+metaTitle: Find, Filter and Export Logs and Account Audit Events
+description: Learn how to find, filter and export audit events for your Logs stack and Logit.io account.
+stackTypes: logs
+---
+
+# Logs and Account Audit Log
+
+The Logs audit log records activity on your Logs stack, such as opening a
+visualizer or changing stack settings. The account audit log covers activity
+across your account, including user invitations.
+
+To view the log messages sent by your applications, start with
+[Getting Started Sending Logs](/log-management/getting-started).
+
+## Open an Audit Log
+
+- **Logs stack:** Open your stack's [Overview](/log-management/overview) page,
+  then select **Audit Log** under **Logs** in the stack menu. There is also an
+  **Audit Log** link at the top of the stack's Overview page.
+- **Account:** Select the account in the Logit.io dashboard. Open
+  **Account Settings**, then select **Audit Log** in the **Manage Account** menu.
+
+Access depends on your permissions. If you cannot see the relevant **Audit Log**
+option, ask your account administrator to check your access.
+
+## Find and Filter Events
+
+Both audit log pages use the same controls:
+
+1. In **Search by event or username**, enter an event name or username. Press
+   **Enter** or select the search button. In the account audit log, you can also
+   search for a Stack ID.
+2. Open the **Time** menu and choose **Last hour**, **Last 12 hours**,
+   **Last 24 hours**, **Last 7 days** or **Last 30 days**.
+3. To sort by username, open the **User** menu and choose **A to Z** or **Z to A**.
+
+Each row shows the event time, user, IP address and event description. Expand a
+row to see more details, including the Stack ID, User ID and timestamp.
+
+Use the controls at the bottom of the list to change the page size or move
+between pages. If no events match, try a broader search or a longer time period.
+To clear the text search, empty the search box and search again.
+
+## Export Events
+
+When results are displayed, scroll to the bottom of the page and select
+**Export CSV** or **Export JSON** to download audit events for the selected stack
+or account.
+
+The export is independent of the page's search text, **Time** selection and
+**User** sorting. These controls do not filter or sort the downloaded events.
+
+## Search Stack Audit Events with the API
+
+For API access, see the existing
+[stack audit log API guide](/developer-api/managing-stacks#audit-log).
