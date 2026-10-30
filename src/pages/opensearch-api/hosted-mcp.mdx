@@ -7,7 +7,7 @@ stackTypes: logs, opensearch
 
 # Hosted OpenSearch MCP quickstart
 
-Logit.io hosts a **read-only** [OpenSearch MCP server](https://github.com/opensearch-project/opensearch-mcp-server-py) for your Logs and OpenSearch stacks. Connect **Cursor** or **Claude Desktop** over HTTPS without running MCP locally.
+Logit.io hosts a **read-only** [OpenSearch MCP server](https://github.com/opensearch-project/opensearch-mcp-server-py) for OpenSearch stacks and Logs stacks running an OpenSearch version. Connect **Cursor** or **Claude Desktop** over HTTPS without running MCP locally.
 
 Public URL:
 
@@ -18,7 +18,7 @@ Public URL:
 Related product pages: [Hosted OpenSearch MCP](https://logit.io/platform/features/hosted-opensearch-mcp/), [Hosted OpenSearch](https://logit.io/platform/features/hosted-opensearch/). New accounts can start with a [14-day trial](https://dashboard.logit.io/sign-up).
 
 <Callout type="info">
-Available on **Log Management** and **Custom** plans. MCP uses a **dedicated API key**, separate from your OpenSearch HTTP API key on `{stack-id}-es.logit.io`.
+Available only on **Business** and **Custom** plans. Logs stacks running Elasticsearch (ELK 6.8 or 7.x) cannot use Hosted MCP. MCP uses a **dedicated API key**, separate from your OpenSearch HTTP API key on `{stack-id}-es.logit.io`.
 </Callout>
 
 <Callout type="info">
@@ -29,8 +29,8 @@ MCP is not a substitute for the full OpenSearch REST API. For programmatic write
 
 ### Prerequisites
 
-1. A [Logit.io account](https://dashboard.logit.io/sign-up) on a **Log Management** or **Custom** plan.
-2. A Logs or OpenSearch stack with data you can search.
+1. A [Logit.io account](https://dashboard.logit.io/sign-up) on a **Business** or **Custom** plan.
+2. An OpenSearch stack or a Logs stack running an OpenSearch version, with data you can search.
 3. Permission to enable MCP on the stack (stack administrator or account owner/admin).
 4. An AI client that supports remote MCP over HTTPS with custom headers (Cursor or Claude Desktop).
 
@@ -104,7 +104,8 @@ Hosted MCP is **read-only**. Write tools are not available. For writes and admin
 | --- | --- |
 | **Write operations** | Not available — MCP is always read-only |
 | **Credentials** | Dedicated `{stack-id}-mcp` username + MCP API key; do not reuse the `-es` stack API key |
-| **Plan** | Log Management and Custom |
+| **Plan** | Business and Custom only |
+| **Stack types** | OpenSearch stacks and Logs stacks running an OpenSearch version only |
 | **Scope** | One MCP endpoint per stack; enable separately on each stack you need |
 
 ### Troubleshooting
