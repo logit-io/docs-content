@@ -1,0 +1,44 @@
+---
+title: Set up Ruby applications
+metaTitle: Set up Ruby applications | Hosted OpenTelemetry | Logit.io
+description: Configure Ruby OpenTelemetry trace instrumentation for Hosted OpenTelemetry.
+stackTypes: logs
+---
+
+# Set up Ruby applications
+
+The Ruby onboarding setup sends traces. For log files from a Ruby application, use [Send server log files](/opentelemetry/server-log-files). Traces require the APM add-on for storage and viewing.
+
+## Install packages
+
+```bash copy
+bundle add opentelemetry-sdk opentelemetry-exporter-otlp opentelemetry-instrumentation-all
+```
+
+## Configure the process
+
+Save this as `.env`, replacing the stack ID and service name:
+
+```bash copy
+OTEL_SERVICE_NAME="my-app"
+OTEL_EXPORTER_OTLP_ENDPOINT="https://{stackId}-otel.logit.io"
+OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf"
+OTEL_TRACES_EXPORTER="otlp"
+```
+
+[Load the environment file](/opentelemetry/applications#load-the-environment-file), then [build authentication and set the standard SDK header](/opentelemetry/applications#build-authentication). Use the base HTTPS endpoint; the exporter appends `/v1/traces`.
+
+## Initialize instrumentation
+
+For Rails, put this in `config/initializers/opentelemetry.rb`. In other Ruby apps, load it as early as possible:
+
+```ruby copy
+require 'opentelemetry/sdk'
+require 'opentelemetry/instrumentation/all'
+
+OpenTelemetry::SDK.configure do |c|
+  c.use_all()
+end
+```
+
+The service name comes from `OTEL_SERVICE_NAME`. Start your app from the configured environment, generate requests, then [check the result](/opentelemetry/applications#check-the-result).

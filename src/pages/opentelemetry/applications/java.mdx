@@ -1,0 +1,39 @@
+---
+title: Set up Java applications
+metaTitle: Set up Java applications | Hosted OpenTelemetry | Logit.io
+description: Configure the OpenTelemetry Java agent to export application telemetry to Logit.io over HTTPS.
+stackTypes: logs
+---
+
+# Set up Java applications
+
+Use the OpenTelemetry Java agent to export application telemetry without adding SDK registration code. See the [connection details](/opentelemetry/applications#connection-details) before starting.
+
+## Install the agent
+
+Download `opentelemetry-javaagent.jar` from the [OpenTelemetry Java instrumentation releases](https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases). Keep its path for the startup command below.
+
+## Configure the agent
+
+Save this as `otel.properties`. Replace the stack ID and service name:
+
+```properties copy
+otel.service.name=my-app
+otel.exporter.otlp.endpoint=https://{stackId}-otel.logit.io
+otel.exporter.otlp.protocol=http/protobuf
+otel.traces.exporter=otlp
+otel.metrics.exporter=otlp
+otel.logs.exporter=otlp
+```
+
+[Build authentication and set the standard SDK header](/opentelemetry/applications#build-authentication) in the JVM's process environment. The dashboard also offers `otel.exporter.otlp.headers` in its properties configuration; keep credentials in the environment for committed configuration files.
+
+The base endpoint has no port or signal path. The agent appends `/v1/logs`, `/v1/traces` and `/v1/metrics`. Use `http/protobuf` for the Hosted endpoint.
+
+## Start the application
+
+```bash copy
+java -javaagent:path/to/opentelemetry-javaagent.jar -Dotel.javaagent.configuration-file=otel.properties -jar myapp.jar
+```
+
+Replace the agent and application paths. Run from the directory containing `otel.properties`, or give its full path. Generate application logs and requests, then [check the result](/opentelemetry/applications#check-the-result).

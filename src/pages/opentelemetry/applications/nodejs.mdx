@@ -1,0 +1,32 @@
+---
+title: Set up Node.js applications
+metaTitle: Set up Node.js applications | Hosted OpenTelemetry | Logit.io
+description: Install the Node.js OpenTelemetry register hook and configure Hosted OpenTelemetry over HTTP.
+stackTypes: logs
+---
+
+# Set up Node.js applications
+
+Configure the Node.js OpenTelemetry register hook to send application telemetry to Logit.io. This setup covers instrumentation for traces and metrics. It does not include a logs SDK setup. For application log files, use [Send server log files](/opentelemetry/server-log-files).
+
+## Install instrumentation
+
+```bash copy
+npm install @opentelemetry/api @opentelemetry/auto-instrumentations-node
+```
+
+## Configure the process
+
+Create and [load the shared environment file](/opentelemetry/applications#environment-file), then [build authentication and set the standard SDK header](/opentelemetry/applications#build-authentication).
+
+The onboarding environment includes `OTEL_TRACES_EXPORTER=otlp`, `OTEL_METRICS_EXPORTER=otlp` and `OTEL_LOGS_EXPORTER=otlp`. These settings select exporters; they do not add a logging integration by themselves.
+
+Node.js does not automatically load `.env`. Load it before starting the process on Linux or Windows. Use the base HTTPS endpoint with `http/protobuf`.
+
+## Start the application
+
+```bash copy
+node --require @opentelemetry/auto-instrumentations-node/register app.js
+```
+
+Replace `app.js` with your entry point. Generate application requests, then [check the result](/opentelemetry/applications#check-the-result). Traces need the APM add-on and metrics need the Metrics add-on for storage and viewing.

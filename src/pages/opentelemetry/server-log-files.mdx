@@ -1,0 +1,141 @@
+---
+title: Send server log files
+metaTitle: Send server log files | Hosted OpenTelemetry | Logit.io
+description: Send Linux log files or Windows event logs to your Logit.io Logs stack with the OpenTelemetry Collector.
+stackTypes: logs
+---
+
+# Send server log files
+
+Collect server logs with the OpenTelemetry Collector and search them in your Logit.io Logs stack. In dashboard onboarding, choose **OpenTelemetry → Servers & log files**.
+
+## Before you start
+
+Open your Logs stack's **Endpoints** page and copy the URL, username and password from **Hosted OpenTelemetry**. The dashboard labels the password as the Hosted OpenTelemetry API key. [Enable Hosted OpenTelemetry](/opentelemetry/hosted-opentelemetry) first if needed.
+
+The destination is `https://{stackId}-otel.logit.io`, using Basic auth and OTLP over HTTP on HTTPS port 443. Do not add a custom port or use gRPC to this destination.
+
+## Install the Collector
+
+Install the Contrib distribution on the server that holds the logs. These commands match the dashboard's Linux AMD64 and Windows x64 packages.
+
+### Debian or Ubuntu
+
+```bash copy
+curl -fsSLO https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.161.0/otelcol-contrib_0.161.0_linux_amd64.deb
+sudo dpkg -i otelcol-contrib_0.161.0_linux_amd64.deb
+sudo usermod -aG adm otelcol-contrib
+```
+
+### RHEL or Amazon Linux
+
+```bash copy
+curl -fsSLO https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.161.0/otelcol-contrib_0.161.0_linux_amd64.rpm
+sudo rpm -ivh otelcol-contrib_0.161.0_linux_amd64.rpm
+sudo setfacl -m u:otelcol-contrib:r /var/log/messages
+```
+
+The service needs read access to each log file. Reapply the `/var/log/messages` permission after log rotation if the new file does not preserve it.
+
+### Windows
+
+Run PowerShell as Administrator:
+
+```powershell copy
+Invoke-WebRequest -Uri https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.161.0/otelcol-contrib_0.161.0_windows_x64.msi -OutFile otelcol-contrib_0.161.0_windows_x64.msi
+Start-Process msiexec.exe -ArgumentList "/i otelcol-contrib_0.161.0_windows_x64.msi /qn" -Wait
+```
+
+## Configure Linux log files
+
+Save the following as `/etc/otelcol-contrib/config.yaml`. Replace the endpoint, username and password with the values from your dashboard. Change `my-server` to a name for this server or service.
+
+```yaml copy showLineNumbers
+extensions:
+  basicauth/logit:
+    client_auth:
+      username: "<your-username>"
+      password: "<your-password>"
+
+receivers:
+  filelog:
+    include: ["/var/log/syslog", "/var/log/messages"]
+    start_at: end
+  otlp:
+    protocols:
+      http: { endpoint: "127.0.0.1:4318" }
+      grpc: { endpoint: "127.0.0.1:4317" }
+
+processors:
+  resourcedetection:
+    detectors: [system]
+  resource/logit:
+    attributes:
+      - { key: service.name, value: "my-server", action: insert }
+  batch: {}
+
+exporters:
+  otlphttp/logit:
+    endpoint: "https://{stackId}-otel.logit.io"
+    auth: { authenticator: basicauth/logit }
+
+service:
+  extensions: [basicauth/logit]
+  pipelines:
+    logs:
+      receivers: [filelog, otlp]
+      processors: [resourcedetection, resource/logit, batch]
+      exporters: [otlphttp/logit]
+```
+
+Edit `include` to match the files your server writes. `start_at: end` starts at the end of a file, so generate a new log entry after the Collector starts. The loopback OTLP receivers accept logs from local applications only. Their ports are local to your server; exports to Logit.io use HTTPS on port 443.
+
+## Configure Windows event logs
+
+Save the configuration above as `C:\Program Files\OpenTelemetry Collector\config.yaml`, with these changes. Replace the `filelog` receiver with:
+
+```yaml copy
+  windowseventlog/application:
+    channel: application
+    start_at: end
+  windowseventlog/system:
+    channel: system
+    start_at: end
+  windowseventlog/security:
+    channel: security
+    start_at: end
+```
+
+Keep the `otlp` receiver and change the logs pipeline's receiver list to:
+
+```yaml copy
+      receivers: [windowseventlog/application, windowseventlog/system, windowseventlog/security, otlp]
+```
+
+The Windows package runs the service as LocalSystem, which can read these event logs. This setup collects new events after the Collector starts.
+
+## Restart the Collector
+
+On Linux:
+
+```bash copy
+sudo systemctl restart otelcol-contrib
+sudo journalctl -u otelcol-contrib -n 20 --no-pager
+```
+
+On Windows, run PowerShell as Administrator:
+
+```powershell copy
+Restart-Service otelcol-contrib
+Get-WinEvent -FilterHashtable @{ LogName = 'Application'; ProviderName = 'otelcol-contrib' } -MaxEvents 20 | Format-List TimeCreated, Message
+```
+
+Check that the service starts and reports no export errors. Keep configuration files containing credentials out of source control.
+
+## Find your logs
+
+Generate a new entry in a configured log file or Windows event log. Return to onboarding to check that logs have arrived, then select **Launch Logs** and search recent events in OpenSearch Dashboards.
+
+If no logs arrive, check the file paths and read permissions first. For a `401 Unauthorized` response, copy the Hosted OpenTelemetry username and password again. For connection errors, check outbound HTTPS access on port 443.
+
+This configuration sends logs only. For other signals, use [Host metrics](/opentelemetry/host-metrics) or [Applications](/opentelemetry/applications). For pod logs, use the [Kubernetes guide](/opentelemetry/kubernetes).

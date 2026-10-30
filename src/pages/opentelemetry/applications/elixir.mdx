@@ -1,0 +1,51 @@
+---
+title: Set up Elixir applications
+metaTitle: Set up Elixir applications | Hosted OpenTelemetry | Logit.io
+description: Configure OpenTelemetry trace export from Elixir and Phoenix to Logit.io over HTTPS.
+stackTypes: logs
+---
+
+# Set up Elixir applications
+
+The Elixir onboarding setup sends traces. For application log files, use [Send server log files](/opentelemetry/server-log-files). Traces require the APM add-on for storage and viewing.
+
+## Add dependencies
+
+For a Phoenix app, add these dependencies to `mix.exs`:
+
+```elixir copy
+{:opentelemetry_exporter, "~> 1.8"},
+{:opentelemetry, "~> 1.5"},
+{:opentelemetry_api, "~> 1.4"},
+{:opentelemetry_phoenix, "~> 2"},
+{:opentelemetry_cowboy, "~> 1"}
+```
+
+Fetch them with `mix deps.get`. Initialize the Phoenix and Cowboy instrumentation during application startup:
+
+```elixir copy
+:opentelemetry_cowboy.setup()
+OpentelemetryPhoenix.setup(adapter: :cowboy2)
+```
+
+## Configure the exporter
+
+[Build authentication](/opentelemetry/applications#build-authentication) and use the [Elixir and Erlang header](/opentelemetry/applications#elixir-and-erlang-header). It sets `OTEL_EXPORTER_OTLP_AUTHORIZATION` to `Basic ` followed by the Base64 token, with a real space.
+
+Merge this into `config/runtime.exs`, replacing the stack ID and service name:
+
+```elixir copy
+import Config
+
+config :opentelemetry,
+  resource: %{service: %{name: "my-app"}}
+
+config :opentelemetry_exporter,
+  otlp_protocol: :http_protobuf,
+  otlp_endpoint: "https://{stackId}-otel.logit.io",
+  otlp_headers: [{"authorization", System.fetch_env!("OTEL_EXPORTER_OTLP_AUTHORIZATION")}]
+```
+
+`:http_protobuf` selects OTLP over HTTP. The exporter appends `/v1/traces` to the base HTTPS URL. Hosted OpenTelemetry uses port 443 and Basic auth.
+
+Start the app with the authentication variable in its process environment. Generate requests, then [check the result](/opentelemetry/applications#check-the-result).

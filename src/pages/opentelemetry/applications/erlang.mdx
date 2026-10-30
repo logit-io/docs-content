@@ -1,0 +1,41 @@
+---
+title: Set up Erlang applications
+metaTitle: Set up Erlang applications | Hosted OpenTelemetry | Logit.io
+description: Configure Erlang OpenTelemetry trace export to Logit.io Hosted OpenTelemetry with Basic auth.
+stackTypes: logs
+---
+
+# Set up Erlang applications
+
+The Erlang onboarding setup configures trace export over HTTP. For application log files, use [Send server log files](/opentelemetry/server-log-files). Traces require the APM add-on for storage and viewing.
+
+## Prepare the application
+
+Use the OpenTelemetry SDK, API and exporter packages (`opentelemetry`, `opentelemetry_api` and `opentelemetry_exporter`) in your application's build. Keep your existing application instrumentation.
+
+## Configure the exporter
+
+[Build authentication](/opentelemetry/applications#build-authentication) and use the [Elixir and Erlang header](/opentelemetry/applications#elixir-and-erlang-header). It sets `OTEL_EXPORTER_OTLP_AUTHORIZATION` to `Basic ` followed by the Base64 token, with a real space.
+
+Save or merge the following into `config/sys.config.src`. Replace the stack ID and service name:
+
+```erlang copy
+[
+ {opentelemetry,
+  [{resource, #{<<"service.name">> => <<"my-app">>}}]},
+ {opentelemetry_exporter,
+  [{otlp_protocol, http_protobuf},
+   {otlp_endpoint, "https://{stackId}-otel.logit.io"},
+   {otlp_headers, [{"authorization", "${OTEL_EXPORTER_OTLP_AUTHORIZATION}"}]}]}
+].
+```
+
+For a rebar3 release, relx substitutes the environment variable when the release starts. For a local shell, export the authentication variable first, then run:
+
+```bash copy
+rebar3 shell --config config/sys.config.src
+```
+
+`http_protobuf` selects OTLP over HTTP. The exporter appends `/v1/traces` to the base HTTPS URL. Hosted OpenTelemetry uses port 443 and Basic auth.
+
+Start the application and generate instrumented work, then [check the result](/opentelemetry/applications#check-the-result).

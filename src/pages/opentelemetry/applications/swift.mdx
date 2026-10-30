@@ -1,0 +1,67 @@
+---
+title: Set up Swift applications
+metaTitle: Set up Swift applications | Hosted OpenTelemetry | Logit.io
+description: Configure Swift HTTP exporters and Basic authentication for Hosted OpenTelemetry logs, traces and metrics.
+stackTypes: logs
+---
+
+# Set up Swift applications
+
+Configure Swift SDK providers to export application logs, traces and metrics. Use the [connection details](/opentelemetry/applications#connection-details) to get your Hosted endpoint and credentials.
+
+## Add packages
+
+The onboarding example uses these Swift packages:
+
+```swift copy
+.package(url: "https://github.com/open-telemetry/opentelemetry-swift", from: "2.5.1"),
+.package(url: "https://github.com/open-telemetry/opentelemetry-swift-core", from: "2.5.1"),
+```
+
+Add the `OpenTelemetryApi`, `OpenTelemetrySdk` and `OpenTelemetryProtocolExporterHTTP` products to your application target.
+
+## Prepare authentication
+
+[Build authentication](/opentelemetry/applications#build-authentication) to set `LOGIT_OTLP_BASIC` in the process environment. This value is only the Base64 token, without `Basic `.
+
+The Swift example passes the endpoint and header in code. Its header parser does not decode `Basic%20`, so do not use `OTEL_EXPORTER_OTLP_HEADERS` for this setup.
+
+## Register the providers
+
+Save this setup in `main.swift` or integrate it into your existing startup code. Replace the stack ID and service name:
+
+```swift copy showLineNumbers
+import Foundation
+import OpenTelemetryApi
+import OpenTelemetrySdk
+import OpenTelemetryProtocolExporterCommon
+import OpenTelemetryProtocolExporterHttp
+
+let b64 = ProcessInfo.processInfo.environment["LOGIT_OTLP_BASIC"]!
+let auth = [("Authorization", "Basic \(b64)")]
+let endpoint = "https://{stackId}-otel.logit.io"
+let resource = Resource(attributes: ["service.name": AttributeValue.string("my-app")])
+let otlp = OtlpConfiguration(headers: auth)
+
+OpenTelemetry.registerTracerProvider(tracerProvider: TracerProviderBuilder()
+    .with(resource: resource)
+    .add(spanProcessor: BatchSpanProcessor(spanExporter: OtlpHttpTraceExporter(
+        endpoint: URL(string: "\(endpoint)/v1/traces")!, config: otlp)))
+    .build())
+
+OpenTelemetry.registerMeterProvider(meterProvider: MeterProviderSdk.builder()
+    .setResource(resource: resource)
+    .registerMetricReader(reader: PeriodicMetricReaderBuilder(exporter: OtlpHttpMetricExporter(
+        endpoint: URL(string: "\(endpoint)/v1/metrics")!, config: otlp)).build())
+    .build())
+
+OpenTelemetry.registerLoggerProvider(loggerProvider: LoggerProviderBuilder()
+    .with(resource: resource)
+    .with(processors: [BatchLogRecordProcessor(logRecordExporter: OtlpHttpLogExporter(
+        endpoint: URL(string: "\(endpoint)/v1/logs")!, config: otlp))])
+    .build())
+```
+
+Each exporter receives its full signal URL and an `Authorization` header with a real space after `Basic`. All three export over HTTPS on port 443.
+
+This registers exporters; connect your application instrumentation and logging to these providers. Start the app with `LOGIT_OTLP_BASIC` set, generate telemetry, then [check the result](/opentelemetry/applications#check-the-result).

@@ -1,0 +1,81 @@
+---
+title: Install the Collector on Kubernetes
+metaTitle: Install the Collector on Kubernetes | Hosted OpenTelemetry | Logit.io
+description: Collect Kubernetes pod logs and host metrics with Helm and export to Logit.io Hosted OpenTelemetry over HTTPS.
+stackTypes: logs
+---
+
+# Install the Collector on Kubernetes
+
+Collect pod logs into your Logit.io Logs stack with the OpenTelemetry Collector. The dashboard's **OpenTelemetry → Kubernetes** option installs a Collector on every node with Helm, including on EKS. It enables pod log collection and host metrics, and exports logs, traces and metrics to one Hosted OpenTelemetry endpoint.
+
+## Before you start
+
+You need Helm and access to your Kubernetes cluster. Copy the Hosted OpenTelemetry endpoint, username and password from your Logs stack's **Endpoints** page.
+
+Logs go to your Logs stack. Enable the Metrics add-on to store metrics and the APM add-on to store traces. Signals sent without their matching add-on are accepted but not stored.
+
+## Create the Helm values
+
+Save this as `otel-values.yaml`. Replace the endpoint, username and password with the dashboard values. These values express the same settings as the dashboard's Helm install command.
+
+```yaml copy showLineNumbers
+mode: daemonset
+image:
+  repository: otel/opentelemetry-collector-contrib
+  tag: "0.161.0"
+
+presets:
+  logsCollection:
+    enabled: true
+  hostMetrics:
+    enabled: true
+
+config:
+  extensions:
+    basicauth/logit:
+      client_auth:
+        username: "<your-username>"
+        password: "<your-password>"
+  exporters:
+    otlphttp/logit:
+      endpoint: "https://{stackId}-otel.logit.io"
+      auth:
+        authenticator: basicauth/logit
+  service:
+    extensions: [health_check, basicauth/logit]
+    pipelines:
+      logs:
+        exporters: [otlphttp/logit]
+      traces:
+        exporters: [otlphttp/logit]
+      metrics:
+        exporters: [otlphttp/logit]
+```
+
+The chart supplies the receivers and processors; the presets enable pod logs and host metrics. Keep `health_check` in the extensions list for the chart's health probes. Keep values files containing credentials out of source control.
+
+## Install with Helm
+
+```bash copy
+helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+helm repo update
+helm upgrade --install otel-logit open-telemetry/opentelemetry-collector -f otel-values.yaml
+```
+
+Exports use Basic auth and OTLP over HTTP on HTTPS port 443. Use the base URL without a signal path or custom port. Hosted OpenTelemetry does not expose gRPC.
+
+Installing the chart does not instrument your applications. To generate application logs, traces or metrics with an SDK or agent, use the [language setup guides](/opentelemetry/applications).
+
+## Check collection
+
+```bash copy
+kubectl get daemonsets,pods -l app.kubernetes.io/instance=otel-logit
+kubectl logs -l app.kubernetes.io/instance=otel-logit --tail=20
+```
+
+Check that Collector pods are running and report no export errors. Generate a new pod log entry, then select **Launch Logs** in Logit.io and search recent events. With the Metrics add-on enabled, select **Launch Metrics** to explore host metrics in Grafana.
+
+If the pods fail to start, inspect their logs. If exports return `401 Unauthorized`, check the Hosted OpenTelemetry username and password. For connection errors, check that the nodes can reach the endpoint over HTTPS on port 443.
+
+For servers outside Kubernetes, see [Send server log files](/opentelemetry/server-log-files) and [Collect host metrics](/opentelemetry/host-metrics).

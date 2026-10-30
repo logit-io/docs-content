@@ -1,0 +1,39 @@
+---
+title: Set up Go applications
+metaTitle: Set up Go applications | Hosted OpenTelemetry | Logit.io
+description: Configure Go OTLP HTTP exporters and application instrumentation for Hosted OpenTelemetry.
+stackTypes: logs
+---
+
+# Set up Go applications
+
+Configure Go SDK exporters for application logs, traces and metrics. This setup requires SDK registration in your app. See the [connection details](/opentelemetry/applications#connection-details) first.
+
+## Install packages
+
+```bash copy
+go get go.opentelemetry.io/otel
+go get go.opentelemetry.io/contrib/exporters/autoexport
+go get go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp
+go get go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp
+go get go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp
+go get go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp
+```
+
+## Configure the process
+
+Create and [load the shared environment file](/opentelemetry/applications#environment-file), then [build authentication and set the standard SDK header](/opentelemetry/applications#build-authentication). `autoexport` reads the endpoint, protocol and exporter choices from the process environment. Use `http/protobuf` with the base HTTPS URL.
+
+## Register exporters and instrumentation
+
+In your application's telemetry initialization:
+
+1. Create a span exporter with `autoexport.NewSpanExporter(ctx)`. Check the returned error and pass the exporter to `sdktrace.NewTracerProvider` with `sdktrace.WithBatcher`.
+2. Create a metric reader with `autoexport.NewMetricReader(ctx)`. Check the error and pass it to `sdkmetric.NewMeterProvider` with `sdkmetric.WithReader`.
+3. Create a log exporter with `autoexport.NewLogExporter(ctx)`. Check the error and connect it to your SDK logging provider and application logging integration. The onboarding setup marks Go logs as experimental.
+4. Register the providers for your app and arrange for them to flush and shut down when the app stops.
+5. For `net/http`, wrap your handler with `otelhttp.NewHandler(mux, "/")` to instrument requests.
+
+Use the HTTP exporters installed above. Keep the endpoint in the environment so the exporters append the signal paths. If the app already initializes OpenTelemetry, update that setup instead of creating duplicate providers.
+
+Start the app from the configured environment, generate logs and requests, then [check the result](/opentelemetry/applications#check-the-result).

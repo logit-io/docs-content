@@ -7,7 +7,7 @@ stackTypes: logs
 
 # Hosted OpenTelemetry
 
-Hosted OpenTelemetry means Logit.io runs the OpenTelemetry Collector for you. Each Logs stack gets its own HTTPS endpoint, so your apps can send logs, traces and metrics straight from an OpenTelemetry SDK or zero-code agent, without running a Collector yourself. If you already run a Collector, for host metrics or file logs, just point its OTLP/HTTP exporter at the same endpoint.
+Send logs to your Logit.io Logs stack through a managed OpenTelemetry endpoint. Applications can also send traces and metrics from a supported SDK or agent. To read server log files or collect host metrics, run a Collector on your server and export to the same endpoint.
 
 Public endpoint:
 
@@ -22,6 +22,15 @@ Related guides: [Getting started with OpenTelemetry](/getting-started/openteleme
 <Callout type="info">
 Hosted OpenTelemetry accepts **OTLP over HTTPS on port 443** only (paths `/v1/logs`, `/v1/traces`, `/v1/metrics`). gRPC and plain HTTP on ports 4317/4318 are not supported on this endpoint.
 </Callout>
+
+### Choose your source
+
+Start with the source you want to collect:
+
+- [Servers & log files](/opentelemetry/server-log-files): collect Linux log files or Windows event logs into Logs.
+- [Host metrics](/opentelemetry/host-metrics): collect CPU, memory, disk and network metrics.
+- [Kubernetes](/opentelemetry/kubernetes): install the Collector with Helm for pod logs and host metrics.
+- [Applications](/opentelemetry/applications): choose your language and configure its SDK or agent.
 
 ### What you can send
 

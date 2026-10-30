@@ -1,0 +1,86 @@
+---
+title: Set up .NET applications
+metaTitle: Set up .NET applications | Hosted OpenTelemetry | Logit.io
+description: Configure ASP.NET Core logs, traces and metrics for Logit.io Hosted OpenTelemetry.
+stackTypes: logs
+---
+
+# Set up .NET applications
+
+Export ASP.NET Core application logs, traces and metrics to Hosted OpenTelemetry. For the endpoint, credentials and viewing requirements, see [Application connection details](/opentelemetry/applications#connection-details).
+
+## Install packages
+
+For an app that does not yet export OTLP:
+
+```bash copy
+dotnet add package OpenTelemetry.Extensions.Hosting
+dotnet add package OpenTelemetry.Exporter.OpenTelemetryProtocol
+dotnet add package OpenTelemetry.Instrumentation.AspNetCore
+dotnet add package OpenTelemetry.Instrumentation.Http
+```
+
+## Configure the application
+
+Merge these keys into `appsettings.json`, replacing the stack ID and service name:
+
+```json copy
+{
+  "OTEL_SERVICE_NAME": "my-app",
+  "OTEL_EXPORTER_OTLP_ENDPOINT": "https://{stackId}-otel.logit.io",
+  "OTEL_EXPORTER_OTLP_PROTOCOL": "http/protobuf"
+}
+```
+
+[Build authentication and set the standard SDK header](/opentelemetry/applications#build-authentication) in the app's process environment. Alternatively, put the dashboard's whole **Header** value into `OTEL_EXPORTER_OTLP_HEADERS` using local user secrets. Keep credentials out of committed settings files.
+
+ASP.NET Core reads `appsettings.json` and then `appsettings.{Environment}.json`. Environment variables override those settings. A console app without configuration binding must use process environment variables for the service name, endpoint, protocol and header.
+
+## Register OpenTelemetry
+
+Add the namespaces and registration before `builder.Build()` in your ASP.NET Core startup code:
+
+```csharp copy
+using OpenTelemetry;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
+
+// After creating the application's builder:
+builder.Services.AddOpenTelemetry()
+    .WithTracing(tracing => tracing
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation())
+    .WithMetrics(metrics => metrics
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation())
+    .UseOtlpExporter();
+
+builder.Logging.AddOpenTelemetry(logging =>
+{
+    logging.IncludeFormattedMessage = true;
+    logging.IncludeScopes = true;
+});
+```
+
+`UseOtlpExporter()` enables export for logs, metrics and traces and reads the shared configuration keys above. With the base endpoint in `OTEL_EXPORTER_OTLP_ENDPOINT`, it appends each signal's `/v1/` path. Metrics export roughly every 60 seconds.
+
+## If OpenTelemetry is already registered
+
+Keep the existing registration and service name. Calling `UseOtlpExporter()` twice, or combining it with `AddOtlpExporter()`, throws an error.
+
+- With an existing `UseOtlpExporter()`, update its configuration. If it uses the protocol and base URL overload, use `HttpProtobuf` and the Hosted base URL.
+- With existing `AddOtlpExporter()` callbacks, remove a shared assignment to `Endpoint` and use the shared configuration keys above. If a callback must set an endpoint explicitly, use the full URL ending in `/v1/logs`, `/v1/traces` or `/v1/metrics` for that signal and set `Protocol` to `HttpProtobuf`.
+- If `AddOtlpExporter()` is already used for traces and metrics, add a logging exporter only if one is missing. Do not add it when `UseOtlpExporter()` is registered.
+- For Serilog or NLog, keep your logger and configure its OTLP sink for the full `/v1/logs` URL. A sink's header map uses `Authorization` with the value `Basic ` followed by the Base64 token, with a real space.
+- If the app already sends to a Collector, update that Collector's HTTP exporter using the [Hosted OpenTelemetry Collector example](/opentelemetry/hosted-opentelemetry#3-opentelemetry-collector-example).
+
+Setting separate username or API key settings does not configure the exporter automatically. The exporter needs the complete Basic auth header.
+
+## Zero-code alternative
+
+The .NET auto-instrumentation profiler is an alternative to the SDK registration above. On Linux or macOS, install it with `otel-dotnet-auto-install.sh` and source `instrument.sh`. On Windows, use PowerShell 5.1 with `OpenTelemetry.DotNet.Auto.psm1`, run `Install-OpenTelemetryCore`, then register it for the current session, Windows service or IIS as appropriate.
+
+The profiler reads process environment variables, including the endpoint, `http/protobuf` protocol and header; it does not read `appsettings.json`. Use the installation instructions offered by dashboard onboarding for this alternative.
+
+Restart the app, generate an application log and a request, then [check the result](/opentelemetry/applications#check-the-result).

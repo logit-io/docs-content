@@ -1,0 +1,41 @@
+---
+title: Set up PHP applications
+metaTitle: Set up PHP applications | Hosted OpenTelemetry | Logit.io
+description: Configure PHP auto-instrumentation and application logging for Hosted OpenTelemetry.
+stackTypes: logs
+---
+
+# Set up PHP applications
+
+Use the OpenTelemetry PHP extension and SDK to export application telemetry. See the [connection details](/opentelemetry/applications#connection-details) first.
+
+## Install the extension and SDK
+
+```bash copy
+pecl install opentelemetry
+composer require open-telemetry/sdk open-telemetry/exporter-otlp php-http/guzzle7-adapter
+```
+
+Enable the extension in `php.ini`:
+
+```ini copy
+extension=opentelemetry.so
+```
+
+Install the auto-instrumentation package for your actual framework. For example, the Slim setup uses `open-telemetry/opentelemetry-auto-slim`.
+
+For the Monolog logging integration, install `monolog/monolog` and `open-telemetry/opentelemetry-logger-monolog` and connect `OpenTelemetry\Contrib\Logs\Monolog\Handler` to your logger. Exporter environment settings alone do not connect an existing logger.
+
+## Configure the process
+
+Create the shared [environment file](/opentelemetry/applications#environment-file) and add:
+
+```bash copy
+OTEL_PHP_AUTOLOAD_ENABLED="true"
+```
+
+[Load the file](/opentelemetry/applications#load-the-environment-file), then [build authentication and set the standard SDK header](/opentelemetry/applications#build-authentication). The endpoint is the base HTTPS URL and the protocol is `http/protobuf`.
+
+For PHP-FPM, supply these values through the pool's environment so the worker processes can read them. For command-line PHP, start the app from the configured shell. The SDK reads the process environment on Linux or Windows.
+
+Restart the PHP processes, generate a log entry and application requests, then [check the result](/opentelemetry/applications#check-the-result).
