@@ -47,6 +47,7 @@ Follow the steps below to send your observability data to Logit.io
   # ============================== Filebeat inputs ===============================
   filebeat.inputs:
   - type: filestream
+    id: gitlab-logs
     enabled: true
     paths:
     - "/var/opt/gitlab/*.log"

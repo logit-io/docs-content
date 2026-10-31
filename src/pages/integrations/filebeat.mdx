@@ -49,10 +49,11 @@ Follow the steps below to send your observability data to Logit.io
       # ============================== Filebeat inputs ==============================
       filebeat.inputs:
       - type: filestream
+        id: my-filestream-id
         enabled: true
         paths:
           # REQUIRED: Change the path to your logs:
-          - C:\Windows\System32\winevt\Logs\*
+          - C:\ProgramData\MyApp\Logs\*.log
         fields:
           type: logfile
 
@@ -77,6 +78,8 @@ Follow the steps below to send your observability data to Logit.io
         loadbalance: true
         ssl.enabled: true
       ```
+
+      To collect Windows Event Logs, use the [Winlogbeat integration](/integrations/winlogbeat) instead of Filebeat.
     </Tab>
     <Tab>
       The configuration file below is pre-configured to send data to your Logit.io Stack via Logstash.
@@ -92,8 +95,8 @@ Follow the steps below to send your observability data to Logit.io
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
   - type: filestream
+    id: my-filestream-id
     enabled: true
-    id: my_unique_id
     paths:
       # REQUIRED CHANGE TO YOUR LOGS PATH
       - /var/log/*.log
@@ -136,8 +139,8 @@ Follow the steps below to send your observability data to Logit.io
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
   - type: filestream
+    id: my-filestream-id
     enabled: true
-    id: my_unique_id
     paths:
       # REQUIRED CHANGE TO YOUR LOGS PATH
       - /var/log/*.log
@@ -180,8 +183,8 @@ Follow the steps below to send your observability data to Logit.io
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
   - type: filestream
+    id: my-filestream-id
     enabled: true
-    id: my_unique_id
     paths:
       # REQUIRED CHANGE TO YOUR LOGS PATH
       - /var/log/*.log
@@ -224,8 +227,8 @@ Follow the steps below to send your observability data to Logit.io
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
   - type: filestream
+    id: my-filestream-id
     enabled: true
-    id: my_unique_id
     paths:
       # REQUIRED CHANGE TO YOUR LOGS PATH
       - /var/log/*.log

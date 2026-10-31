@@ -62,6 +62,7 @@ configuration file typically located at `/etc/filebeat/filebeat.yml`
 # ============================== Filebeat inputs ===============================
 filebeat.inputs:
 - type: filestream
+  id: falco-events
   enabled: true
   paths:
   - "enter-the-filepath-to-your-Falco-events-log.txt"

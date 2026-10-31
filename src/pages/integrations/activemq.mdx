@@ -36,13 +36,18 @@ Follow the steps below to ship ActiveMQ logs and metrics to your Logit.io stacks
   # ============================== Filebeat inputs ==============================
   filebeat.inputs:
   - type: filestream
+    id: activemq-logs
     enabled: true
     paths:
       - /path/to/log/activemq/data/activemq.log*
     fields:
       type: activemq
-      multiline.pattern: ^\=
-      multiline.match: before
+    parsers:
+      - multiline:
+          type: pattern
+          pattern: '^\='
+          negate: false
+          match: before
 
   # ============================== Filebeat modules ==============================
   filebeat.config.modules:

@@ -83,7 +83,7 @@ Follow the steps below to send your observability data to Logit.io
         dnsPolicy: ClusterFirstWithHostNet
         containers:
         - name: filebeat
-          image: docker.elastic.co/beats/filebeat:8.15.2
+          image: docker.elastic.co/beats/filebeat:8.19.23
           args: [
             "-c", "/etc/filebeat.yml",
             "-e",
