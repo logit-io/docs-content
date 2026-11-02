@@ -8,8 +8,20 @@ description: Read Logit.io’s help article to learn about used volume statistic
 
 ## Why is the index size sometimes less than that reported in Stack usage Statistics?
 
-Logs Sent is calculated from the maximum amount of disk utilised 
-by OpenSearch for a particular day, for the primary data store.
+Daily log usage (Logs Sent) is based on the size of the primary data stored 
+in that day's indexes. We measure it about every 10 minutes through the day and 
+your daily usage is the highest measurement for that day (UTC).
+
+<Callout type="info">
+**Rolling out:** OpenSearch regularly merges smaller index segments into larger ones in 
+the background. While a merge is running, the new segment is written before the old ones 
+are removed, so the store size can briefly look much bigger than your data. We're rolling 
+out an update that leaves out data that's being merged when we measure your usage, so these short 
+merge peaks no longer inflate your daily usage. Deleting data after it has been measured 
+doesn't lower that day's usage.
+</Callout>
+
+Replicas aren't counted, only the primary data.
 
 It's important to be aware that when viewing the Elasticsearch index 
 status (using `/_cat/indices`) this page reports by default in [GiB](https://en.wikipedia.org/wiki/Gibibyte)
