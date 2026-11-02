@@ -15,6 +15,8 @@ Public URL:
 @mcp.endpointAddress
 ```
 
+The MCP URL is `https://{stack-id}-mcp.logit.io/mcp`. Include the `/mcp` path in your client config.
+
 Related product pages: [Hosted OpenSearch MCP](https://logit.io/platform/features/hosted-opensearch-mcp/), [Hosted OpenSearch](https://logit.io/platform/features/hosted-opensearch/).
 
 <Callout type="info">
@@ -46,7 +48,7 @@ Your stack must be in **Basic** authentication mode before you enable Hosted MCP
 3. In **Access**, find **OpenSearch MCP**.
 4. Select **Enable**.
 
-Logit.io provisions `{stack-id}-mcp.logit.io` and generates a dedicated MCP API key.
+Logit.io provisions `https://{stack-id}-mcp.logit.io/mcp` and generates a dedicated MCP API key.
 
 Disable from the same **Access** card to remove the public MCP route for that stack. Enable separately on each stack you want clients to reach.
 
