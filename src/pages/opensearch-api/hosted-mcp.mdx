@@ -1,7 +1,7 @@
 ---
 title: Hosted OpenSearch MCP quickstart
 metaTitle: Hosted OpenSearch MCP Quickstart for AI Clients | Logit.io
-description: Enable Hosted OpenSearch MCP on a Logit.io stack, connect any MCP-compatible AI client with a dedicated API key, and run your first read-only OpenSearch query.
+description: Connect AI clients to read-only OpenSearch MCP on any plan. Use Personal MCP with your Profile credentials and Teams roles, or the stack MCP endpoint.
 stackTypes: logs, opensearch
 ---
 
@@ -9,7 +9,13 @@ stackTypes: logs, opensearch
 
 Logit.io hosts a **read-only** [OpenSearch MCP server](https://github.com/opensearch-project/opensearch-mcp-server-py) for OpenSearch stacks and Logs stacks running an OpenSearch version. It is a standard MCP server, so you can connect any MCP-compatible AI client or model over HTTPS without running MCP locally. This guide uses **Cursor** and **Claude Desktop** as examples.
 
-Public URL:
+Personal MCP URL (Small Team, Business and Custom):
+
+```text
+https://{stack-id}-mcp-user.logit.io/mcp
+```
+
+Stack MCP URL (all plans):
 
 ```text copy /@mcp.endpointAddress/
 @mcp.endpointAddress
@@ -18,18 +24,18 @@ Public URL:
 Related product pages: [Hosted OpenSearch MCP](https://logit.io/platform/features/hosted-opensearch-mcp/), [Hosted OpenSearch](https://logit.io/platform/features/hosted-opensearch/).
 
 <Callout type="info">
-Included in the [14-day free trial](https://dashboard.logit.io/sign-up) (no credit card required) and on the **Business** and **Custom** plans. Logs stacks running Elasticsearch (ELK 6.8 or 7.x) cannot use Hosted MCP. MCP uses a **dedicated API key**, separate from your OpenSearch HTTP API key on `{stack-id}-es.logit.io`.
+Included on **all plans** and in the [14-day free trial](https://dashboard.logit.io/sign-up) (no credit card required). Individual and legacy Development plans use the stack endpoint only. Logs stacks running Elasticsearch (ELK 6.8 or 7.x) cannot use Hosted MCP. Both MCP endpoints use **Basic authentication**.
 </Callout>
 
 <Callout type="info">
-When signed in with MCP enabled on your selected stack, examples auto-fill `@mcp.endpointAddress`, `@mcp.username`, `@mcp.apiKey`, and `@mcp.base64encodedAuthString`. If placeholders remain, enable MCP under stack **Settings → Access**, then refresh docs.
+Stack administrators can see the shared stack MCP key in **Settings → Endpoints**. When signed in as an administrator with MCP enabled, the stack examples auto-fill `@mcp.endpointAddress`, `@mcp.username`, `@mcp.apiKey`, and `@mcp.base64encodedAuthString`. Other users connect through Personal MCP with credentials from **Profile settings**.
 </Callout>
 
 MCP is not a substitute for the full OpenSearch REST API. For programmatic write access or stack-key automation, use [Connect to Your Cluster](/opensearch-api/connect). For role-scoped human/CI API access, use [OpenSearch API (user credentials)](/opensearch-api/user-credentials).
 
 ### Prerequisites
 
-1. A Logit.io account on the 14-day free trial, Business or Custom plan.
+1. A Logit.io account on any plan or the 14-day free trial.
 2. An OpenSearch stack or a Logs stack running an OpenSearch version, with data you can search.
 3. Permission to enable MCP on the stack (stack administrator or account owner/admin).
 4. The stack in **Basic** authentication mode ([how to switch](/opensearch-api/connect#switching-authentication-mode)).
@@ -48,24 +54,54 @@ Your stack must be in **Basic** authentication mode before you enable Hosted MCP
 
 Logit.io provisions `{stack-id}-mcp.logit.io` and generates a dedicated MCP API key.
 
-Disable from the same **Access** card to remove the public MCP route for that stack. Enable separately on each stack you want clients to reach.
+For **Personal MCP access** on Small Team, Business or Custom:
 
-### 2. Copy connection details
+1. As a stack administrator, enable **OpenSearch API (user credentials)** under **Settings → Access**.
+2. With **OpenSearch MCP** enabled, enable **Personal MCP access** on the same stack.
 
-Open **Settings → Endpoints**. The **OpenSearch MCP (read-only)** section shows:
+Logit.io provisions `https://{stack-id}-mcp-user.logit.io/mcp`. Personal MCP uses your OpenSearch API username (your Logit user ID) and password from **Profile settings**. It follows your Teams and custom OpenSearch roles, so queries can only read data those roles allow. See [OpenSearch API (user credentials)](/opensearch-api/user-credentials) to create or rotate your login.
+
+For CI and agents, use a service account (`svc-{id}`) from **Account Settings → OpenSearch API (user credentials)**. Its assigned role and stack scope apply to Personal MCP too.
+
+New stacks have MCP enabled on all plans. Small Team, Business and Custom stacks, including active trials on those plans, also start with user credentials and Personal MCP enabled, and an OpenSearch API login is created for the stack creator. Personal MCP is off on existing stacks until an administrator enables it.
+
+Disable from the same **Access** card. Turning off MCP or OpenSearch API user credentials also turns off Personal MCP. Enable access separately on each stack you want clients to reach.
+
+### 2. Connect with Personal MCP
+
+Use the same username and password as the OpenSearch API user endpoint. Set the `Authorization` header to `Basic ` followed by the Base64 encoding of `username:password`:
+
+```json
+{
+  "mcpServers": {
+    "logit-opensearch-personal": {
+      "url": "https://{stack-id}-mcp-user.logit.io/mcp",
+      "headers": {
+        "Authorization": "Basic <base64-of-username:password>"
+      }
+    }
+  }
+}
+```
+
+Replace the stack ID and encoded credentials before saving. Rotating or disabling your OpenSearch API login affects both REST API access and Personal MCP. Rotate or revoke service-account credentials when an agent or pipeline no longer needs access.
+
+### 3. Copy stack connection details (administrators)
+
+Stack administrators can open **Settings → Endpoints**. The **OpenSearch MCP (read-only)** section shows:
 
 | Field | Value |
 | --- | --- |
 | **MCP URL** | `@mcp.endpointAddress` |
 | **Username** | `@mcp.username` |
-| **API Key** | Dedicated MCP key (not the OpenSearch `-es` key) — `@mcp.apiKey` when signed in |
+| **Password for Basic auth** | Dedicated MCP key, separate from the OpenSearch `-es` key; `@mcp.apiKey` when signed in |
 | **Example config** | JSON ready to paste into your MCP client (for example Cursor or Claude Desktop) |
 
 Rotate the MCP API key from the Endpoints page when you need to invalidate a previous key. Do **not** reuse your OpenSearch `-es` stack API key for MCP.
 
-### 3. Example: connect Cursor
+### 4. Example: connect Cursor
 
-1. Copy the example MCP config from **Settings → Endpoints**, or use the auto-filled example below when signed in.
+1. Use the Personal MCP config above, or, as a stack administrator, copy the stack config from **Settings → Endpoints** or the auto-filled example below.
 2. In Cursor, open **Settings → MCP** (or edit your MCP config file, for example `.cursor/mcp.json`).
 3. Add a server entry, or merge the `logit-opensearch` block into an existing `mcpServers` object.
 4. Save, then confirm the server connects and tools are listed.
@@ -85,15 +121,15 @@ Rotate the MCP API key from the Endpoints page when you need to invalidate a pre
 
 The Endpoints page also provides a ready-to-copy block with the correctly encoded `Authorization` header. Prefer that over encoding credentials by hand.
 
-### 4. Example: connect Claude Desktop
+### 5. Example: connect Claude Desktop
 
-Claude Desktop uses the same JSON shape. Paste the config from **Settings → Endpoints** (or the example above when signed in) into Claude's MCP server settings, then restart Claude Desktop if your client version requires it. Confirm the Logit.io server appears and tools are listed.
+Claude Desktop uses the same JSON shape. Paste your Personal MCP config or the administrator's stack config into Claude's MCP server settings, then restart Claude Desktop if your client version requires it. Confirm the Logit.io server appears and tools are listed.
 
 If your Claude build does not support remote HTTPS MCP with custom headers yet, check Claude's MCP docs for the transport your version supports, or use another MCP-compatible client.
 
-**Other clients:** any MCP client that supports remote MCP over HTTPS with custom headers can use the same URL, username and API key.
+**Other clients:** any MCP client that supports remote MCP over HTTPS with custom headers can use the same URL and Basic credentials.
 
-### 5. First successful query
+### 6. First successful query
 
 Once tools are listed:
 
@@ -105,26 +141,38 @@ You should see tool calls against the stack and either matching hits or an empty
 
 Hosted MCP is **read-only**. Write tools are not available. For writes and admin automation, use the [OpenSearch REST API](/opensearch-api/connect) or the [Developer API](/developer-api/getting-started).
 
+### Rate limits
+
+| Plan | Personal MCP (per user) | Stack MCP (per stack key) |
+| --- | --- | --- |
+| Individual / Development | Not offered | 60/min, 600/hour |
+| Small Team | 30/min, 500/hour | 120/min, 2000/hour |
+| Business, Custom, any active trial | 120/min, 3000/hour | 1200/min, no hourly cap |
+
+Any active trial uses the trial limits above; Personal MCP is still not offered on Individual or Development. Limits apply separately to each endpoint. When a limit is reached, MCP returns **429 Too Many Requests** with a **Retry-After** header. Wait for the indicated time before retrying. Logit administrators can override limits per stack; customers can view their limits but cannot change them.
+
 ### Limitations
 
 | Topic | Behaviour |
 | --- | --- |
 | **Write operations** | Not available — MCP is always read-only |
-| **Credentials** | Dedicated `{stack-id}-mcp` username + MCP API key; do not reuse the `-es` stack API key |
-| **Plan** | 14-day free trial, Business and Custom |
+| **Credentials** | Basic auth: Profile or service-account login for Personal MCP; dedicated `{stack-id}-mcp` username and MCP key for stack MCP |
+| **Plan** | All plans; Individual / Development use stack MCP only |
 | **Stack types** | OpenSearch stacks and Logs stacks running an OpenSearch version only |
-| **Scope** | One MCP endpoint per stack; enable separately on each stack you need |
+| **Scope** | Enable each endpoint per stack; Personal MCP follows Teams, custom roles and service-account scope |
 
 ### Troubleshooting
 
 | Symptom | What to check |
 | --- | --- |
-| **401 Unauthorized** | Using the MCP username (`@mcp.username`) and **MCP** API key from Endpoints? Key recently rotated? Accidentally using the `-es` stack key? |
-| **404 / connection failed** | MCP enabled on the stack? URL exact (`@mcp.endpointAddress`)? DNS may take a short time after enable. |
+| **401 Unauthorized** | Check the Basic header. Personal MCP needs the current Profile or service-account login; stack MCP needs the dedicated MCP credentials from Endpoints. Has the password or key been rotated or disabled? |
+| **403 Forbidden** | For Personal MCP, check your Teams and custom OpenSearch roles, or the service account's assigned role and stack scope. |
+| **429 Too Many Requests** | Wait for the time in `Retry-After`, then retry. Check the limits for your plan and endpoint above. |
+| **404 / connection failed** | Is the chosen MCP endpoint enabled on this stack? Personal MCP needs both MCP and user credentials enabled. Check the full URL, including `/mcp`. DNS may take a short time after enable. |
 | **Client cannot list tools** | Confirm the client supports remote MCP over HTTPS with custom headers; re-paste the dashboard config; restart the client after saving. |
 | **Tools listed but queries fail** | Confirm the stack has indexes and data; list indexes first, then search a known index name. |
 | **Expected write tool missing** | By design — hosted MCP does not expose write tools. |
-| **Docs still show placeholders** | Select a stack with MCP enabled under **Settings → Access**, then refresh. |
+| **Docs still show placeholders** | Stack examples require administrator access and a stack with MCP enabled. Other users should use Personal MCP with their Profile credentials. |
 
 ### Next steps
 
