@@ -1,13 +1,13 @@
 ---
 title: Hosted OpenSearch MCP quickstart
-metaTitle: Hosted OpenSearch MCP Quickstart for Cursor and Claude | Logit.io
-description: Enable Hosted OpenSearch MCP on a Logit.io stack, connect Cursor or Claude Desktop with a dedicated API key, and run your first read-only OpenSearch query.
+metaTitle: Hosted OpenSearch MCP Quickstart for AI Clients | Logit.io
+description: Enable Hosted OpenSearch MCP on a Logit.io stack, connect any MCP-compatible AI client with a dedicated API key, and run your first read-only OpenSearch query.
 stackTypes: logs, opensearch
 ---
 
 # Hosted OpenSearch MCP quickstart
 
-Logit.io hosts a **read-only** [OpenSearch MCP server](https://github.com/opensearch-project/opensearch-mcp-server-py) for OpenSearch stacks and Logs stacks running an OpenSearch version. Connect **Cursor** or **Claude Desktop** over HTTPS without running MCP locally.
+Logit.io hosts a **read-only** [OpenSearch MCP server](https://github.com/opensearch-project/opensearch-mcp-server-py) for OpenSearch stacks and Logs stacks running an OpenSearch version. It is a standard MCP server, so you can connect any MCP-compatible AI client or model over HTTPS without running MCP locally. This guide uses **Cursor** and **Claude Desktop** as examples.
 
 Public URL:
 
@@ -32,9 +32,13 @@ MCP is not a substitute for the full OpenSearch REST API. For programmatic write
 1. A Logit.io account on the 14-day free trial or on a **Business** or **Custom** plan.
 2. An OpenSearch stack or a Logs stack running an OpenSearch version, with data you can search.
 3. Permission to enable MCP on the stack (stack administrator or account owner/admin).
-4. An AI client that supports remote MCP over HTTPS with custom headers (Cursor or Claude Desktop).
+4. An AI client that supports remote MCP over HTTPS with custom headers (for example Cursor or Claude Desktop).
 
 ### 1. Enable on a stack
+
+<Callout type="warning">
+Your stack must be in **Basic** authentication mode before you enable Hosted MCP. See [Switching authentication mode](/opensearch-api/connect#switching-authentication-mode).
+</Callout>
 
 1. Sign in to the [Logit.io Dashboard](https://dashboard.logit.io).
 2. Open the stack **Settings** page (Overview).
@@ -54,11 +58,11 @@ Open **Settings → Endpoints**. The **OpenSearch MCP (read-only)** section show
 | **MCP URL** | `@mcp.endpointAddress` |
 | **Username** | `@mcp.username` |
 | **API Key** | Dedicated MCP key (not the OpenSearch `-es` key) — `@mcp.apiKey` when signed in |
-| **Example config** | JSON ready to paste into Cursor or Claude Desktop |
+| **Example config** | JSON ready to paste into your MCP client (for example Cursor or Claude Desktop) |
 
 Rotate the MCP API key from the Endpoints page when you need to invalidate a previous key. Do **not** reuse your OpenSearch `-es` stack API key for MCP.
 
-### 3. Connect Cursor
+### 3. Example: connect Cursor
 
 1. Copy the example MCP config from **Settings → Endpoints**, or use the auto-filled example below when signed in.
 2. In Cursor, open **Settings → MCP** (or edit your MCP config file, for example `.cursor/mcp.json`).
@@ -80,11 +84,13 @@ Rotate the MCP API key from the Endpoints page when you need to invalidate a pre
 
 The Endpoints page also provides a ready-to-copy block with the correctly encoded `Authorization` header. Prefer that over encoding credentials by hand.
 
-### 4. Connect Claude Desktop
+### 4. Example: connect Claude Desktop
 
 Claude Desktop uses the same JSON shape. Paste the config from **Settings → Endpoints** (or the example above when signed in) into Claude's MCP server settings, then restart Claude Desktop if your client version requires it. Confirm the Logit.io server appears and tools are listed.
 
-If your Claude build does not support remote HTTPS MCP with custom headers yet, use Cursor for now, or check Claude's MCP docs for the transport your version supports.
+If your Claude build does not support remote HTTPS MCP with custom headers yet, check Claude's MCP docs for the transport your version supports, or use another MCP-compatible client.
+
+**Other clients:** any MCP client that supports remote MCP over HTTPS with custom headers can use the same URL, username and API key.
 
 ### 5. First successful query
 
