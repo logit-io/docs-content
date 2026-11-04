@@ -29,7 +29,7 @@ curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/@log
 </Tab>
 </Tabs>
 
-The response includes `receivingData`, `lastPerMinute`, `averagePerMinute`, and `maxPerMinute`.
+The response includes `receiving-indicator`, `last-min-rate`, `avg-rate`, and `max-rate`.
 
 ## Log Stack: Ingestion History
 
@@ -92,7 +92,7 @@ curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/@met
 </Tab>
 </Tabs>
 
-The response includes `receivingData`, `lastPerMinute`, `lastPerSecond`, `maxPerMinute`, `averagePerSecond`, and `points` for graphing.
+The response includes `receiving-indicator`, `last-per-min`, `last-per-sec`, `max-per-min`, `avg-per-sec`, and `points` for graphing.
 
 ## APM Stack: Ingestion Spans
 
@@ -113,7 +113,7 @@ curl -H "x-api-key: @dashboardApiKey" https://dashboard.logit.io/api/stacks/@apm
 </Tab>
 </Tabs>
 
-The response includes `receivingData`, `todaysSpanCount`, `todaysDataSent`, `avgSpanCount`, `maxSpanCount`, and `points`.
+The response includes `receiving-indicator`, `todays-span-count`, `todays-data-sent`, `avg-span-count`, `max-span-count`, and `points`.
 
 ## Full API Reference
 
