@@ -1,7 +1,7 @@
 ---
 title: Connect to Your Cluster
 metaTitle: Connect Directly to Your Logit.io OpenSearch Cluster
-description: Connect to your Logit.io OpenSearch cluster using the REST API. Find endpoint, credentials, and ports on Settings → Endpoints (Logs and OpenSearch stacks).
+description: Connect to OpenSearch on any plan with stack or user credentials. Find REST API endpoints and ports, or use the same user login for Personal MCP on team plans.
 stackTypes: logs, opensearch
 ---
 
@@ -21,9 +21,12 @@ When signed in, examples auto-fill `@opensearch.endpointAddress`, `@opensearch.a
 | --- | --- | --- | --- |
 | **Stack API key** | `{stack-id}-es.logit.io` | Stack API key / Basic (stack ID + stack key) | This page |
 | **User credentials** | `{stack-id}-es-user.logit.io` | **Different** Profile or service-account username/password (not the stack key) | [OpenSearch API (user credentials)](/opensearch-api/user-credentials) |
-| **Hosted MCP** | `{stack-id}-mcp.logit.io` | **Different** dedicated MCP username + MCP API key | [Hosted MCP quickstart](/opensearch-api/hosted-mcp) |
+| **Personal MCP** | `https://{stack-id}-mcp-user.logit.io/mcp` | Basic: same Profile or service-account login as OpenSearch API user credentials | [Hosted MCP quickstart](/opensearch-api/hosted-mcp) |
+| **Stack MCP** | `https://{stack-id}-mcp.logit.io/mcp` | Basic: dedicated MCP username + MCP key, visible to stack administrators only | [Hosted MCP quickstart](/opensearch-api/hosted-mcp) |
 
-User credentials and Hosted MCP are available on the 14-day free trial, Business and Custom plans. Hosted MCP works on OpenSearch stacks and Logs stacks running an OpenSearch version. Logs stacks running Elasticsearch (ELK 6.8 or 7.x) cannot use Hosted MCP. Enable each applicable method independently under **Settings → Access**.
+User credentials and Hosted MCP are available on **all plans** and the 14-day free trial. Personal MCP is offered on Small Team, Business and Custom; Individual and legacy Development plans use stack MCP only. Hosted MCP works on OpenSearch stacks and Logs stacks running an OpenSearch version. Logs stacks running Elasticsearch (ELK 6.8 or 7.x) cannot use Hosted MCP.
+
+Stack administrators enable access under **Settings → Access**. Personal MCP requires both **OpenSearch MCP** and **OpenSearch API (user credentials)** enabled, then **Personal MCP access** enabled on that stack. Rotating or disabling a user or service-account login affects both the REST API user endpoint and Personal MCP. Turning off MCP or user credentials on a stack also turns off Personal MCP.
 
 <Callout type="warning">
 Your stack must be in **Basic** authentication mode before you enable Hosted MCP. See [Switching authentication mode](#switching-authentication-mode).
