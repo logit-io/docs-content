@@ -27,6 +27,8 @@ In the example below, we have an Audit Log record. This is how the information i
 
 By applying the following Grok pattern to the Logstash filter we can break the information out into several values that are more intuitive and therefore improve our ability to query it.
 
+You can [test this Grok pattern](https://logit.io/tools/grok-debugger/) in Logit’s free Logstash Grok debugger before pasting it into the Filter Editor.
+
 ```ruby copy
 grok {
   match => [ "message",  "%{TIMESTAMP_ISO8601:timestamp} %      {LOGLEVEL:log-level} \[%{DATA:application}\]:%{UUID:accountId} %{GREEDYDATA:message}"]
