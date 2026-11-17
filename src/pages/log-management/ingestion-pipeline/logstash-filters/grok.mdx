@@ -106,12 +106,14 @@ filter {
 - Verify expected new/updated fields exist in sample documents.
 - Verify unexpected fields are not removed unless explicitly configured.
 - Confirm tags added on success/failure align with your alerting and routing rules.
+- Before you save a new pattern, [test this Grok pattern](https://logit.io/tools/grok-debugger/) against a real sample line in the Logstash Grok debugger.
 
 ## Troubleshooting
 
 - If events are unchanged, verify your filter condition (`if ...`) matches incoming events.
 - If the pipeline fails to start, validate braces/quotes and retry with a minimal filter block.
 - Check for `tag_on_failure` tags (default: `["_grokparsefailure"]`) to quickly isolate parse/mutation failures.
+- If a line fails to parse, paste it into the [online Logstash Grok debugger](https://logit.io/tools/grok-debugger/) and read the longest matched prefix before rewriting the pattern.
 - If throughput drops, reduce expensive operations and test with representative sample volume.
 
 ## References
