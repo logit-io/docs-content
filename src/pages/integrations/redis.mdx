@@ -60,11 +60,13 @@ Follow the steps below to send your observability data to Logit.io
         slowlog:
           enabled: true
 
-        # The Redis hosts to connect to.
-        #var.hosts: ["localhost:6379"]
+          # The Redis hosts to connect to.
+          var.hosts: ["localhost:6379"]
 
-        # Optional, the password to use when connecting to Redis.
-        #var.password:
+          # The password Filebeat sends with AUTH when Redis requires
+          # authentication (requirepass). Replace the placeholder, or
+          # remove this line if your Redis server has no password.
+          var.password: "your-redis-password"
       ```
     </Tab>
     <Tab>
@@ -99,11 +101,13 @@ Follow the steps below to send your observability data to Logit.io
         slowlog:
           enabled: true
 
-        # The Redis hosts to connect to.
-        #var.hosts: ["localhost:6379"]
+          # The Redis hosts to connect to.
+          var.hosts: ["localhost:6379"]
 
-        # Optional, the password to use when connecting to Redis.
-        #var.password:
+          # The password Filebeat sends with AUTH when Redis requires
+          # authentication (requirepass). Replace the placeholder, or
+          # remove this line if your Redis server has no password.
+          var.password: "your-redis-password"
       ```
     </Tab>
     <Tab>
@@ -139,10 +143,12 @@ Follow the steps below to send your observability data to Logit.io
           enabled: true
 
           # The Redis hosts to connect to.
-          #var.hosts: ["localhost:6379"]
+          var.hosts: ["localhost:6379"]
 
-          # Optional, the password to use when connecting to Redis.
-          #var.password:
+          # The password Filebeat sends with AUTH when Redis requires
+          # authentication (requirepass). Replace the placeholder, or
+          # remove this line if your Redis server has no password.
+          var.password: "your-redis-password"
       ```
     </Tab>
     <Tab>
@@ -177,11 +183,13 @@ Follow the steps below to send your observability data to Logit.io
         slowlog:
           enabled: true
 
-        # The Redis hosts to connect to.
-        #var.hosts: ["localhost:6379"]
+          # The Redis hosts to connect to.
+          var.hosts: ["localhost:6379"]
 
-        # Optional, the password to use when connecting to Redis.
-        #var.password:
+          # The password Filebeat sends with AUTH when Redis requires
+          # authentication (requirepass). Replace the placeholder, or
+          # remove this line if your Redis server has no password.
+          var.password: "your-redis-password"
       ```
     </Tab>
     <Tab>
@@ -215,14 +223,42 @@ Follow the steps below to send your observability data to Logit.io
         slowlog:
           enabled: true
 
-        # The Redis hosts to connect to.
-        #var.hosts: ["localhost:6379"]
+          # The Redis hosts to connect to.
+          var.hosts: ["localhost:6379"]
 
-        # Optional, the password to use when connecting to Redis.
-        #var.password:
+          # The password Filebeat sends with AUTH when Redis requires
+          # authentication (requirepass). Replace the placeholder, or
+          # remove this line if your Redis server has no password.
+          var.password: "your-redis-password"
       ```
     </Tab>
   </Tabs>
+
+  If you run Valkey instead of Redis, the `log` fileset works the same way,
+  but the log file is in a different place. On RHEL 10 and Fedora, the `valkey`
+  package writes to `/var/log/valkey/valkey.log`, so set
+  `var.paths: ["/var/log/valkey/valkey.log*"]` under `log`.
+
+  <Callout type="info">
+    The `slowlog` fileset authenticates by sending `AUTH` with the password only.
+    Redis treats that as a login for the `default` user, so it works with
+    `requirepass` or a password on the `default` user, but not with a named ACL
+    user. The module has no username setting. If you use ACLs, make sure the
+    `default` user has a password and is allowed to run `SLOWLOG` (Filebeat 9.x
+    also runs `ROLE`).
+  </Callout>
+
+  <Callout type="warning">
+    On each poll, the `slowlog` fileset runs `SLOWLOG GET` with no count, which
+    returns only the 10 most recent entries, and then runs `SLOWLOG RESET`, which
+    clears the whole slow log. Any entries beyond those 10 are deleted without
+    being shipped, so raising `slowlog-max-len` does not help. If your server logs
+    more than 10 slow commands between polls, poll more often by setting
+    `input.scan_frequency` under `slowlog` (the default is `10s`; don't go below
+    `1s`), or raise `slowlog-log-slower-than` so fewer commands are recorded.
+    The reset also empties the slow log for anyone else reading it with
+    `SLOWLOG GET`.
+  </Callout>
 
   ### Update Your Configuration File
 
