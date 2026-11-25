@@ -9,7 +9,7 @@ description: Send logs to your Logit.io Stack using the Splunk HTTP Event Collec
 tags: Logs, Splunk, HEC, HTTP, JSON, NDJSON, API, Batching
 ---
 
-Use the Splunk HTTP Event Collector (HEC) endpoint to send batches of logs or reuse an SDK or log forwarder that already supports HEC. For one plain JSON object at a time, you can also use the [JSON via HTTP/S integration](/integrations/http).
+Use the Splunk HTTP Event Collector (HEC) endpoint to send logs from a Splunk-compatible SDK or log forwarder. To send individual JSON objects or batches without a HEC envelope, use the [JSON via HTTP/S integration](/integrations/http).
 
 <Steps>
   ## Logs
@@ -22,9 +22,9 @@ Use the Splunk HTTP Event Collector (HEC) endpoint to send batches of logs or re
 
   Send logs using `POST https://@logitApiEndpoint/services/collector/event`. The paths `/services/collector/event/1.0` and `/services/collector` are aliases.
 
-  Set `Authorization: Splunk @apikey`. Use your stack's API key, a UUID, as the token. The key and endpoint populate in the examples when you sign in and select a stack.
+  Set `Authorization: Splunk @apikey`. Use your stack's API key, a UUIDv4, as the token. The key and endpoint populate in the examples when you sign in and select a stack.
 
-  The API also accepts `ApiKey: @apikey`, `Api-Key: @apikey`, HTTP Basic with any username and the API key as the password, or the `?token=@apikey` query parameter. If you supply more than one, the API checks `ApiKey`, then `Api-Key`, then `Authorization`, then the query parameter. Prefer a header to keep the key out of URLs.
+  The API also accepts `ApiKey: @apikey`, `Api-Key: @apikey`, HTTP Basic with any username and the API key as the password, or the `?token=@apikey` query parameter. Header precedence is `ApiKey`, then `Api-Key`, then `Authorization`. If the selected header supplies no key, the API falls back to `?token=`. Prefer a header to keep the key out of URLs.
 
   ### Event formats and limits
 
@@ -37,7 +37,7 @@ Use the Splunk HTTP Event Collector (HEC) endpoint to send batches of logs or re
 
   The API validates all envelopes before queueing and queues each envelope as one record. You can send `Content-Type: application/json`. HEC accepts the body without checking that header. A channel is optional on the event route.
 
-  The request body limit is 9,800,000 bytes (about 9.8 MB). Keep each batch to about 1 MB or 1,000 events, whichever comes first.
+  The 9,800,000-byte limit (about 9.8 MB) applies to the request body and to each event serialised for processing. As a guideline, aim for batches of about 1 MB or 1,000 events, whichever comes first. HEC enforces the byte limit only.
 
   ### Send logs with curl
 
@@ -159,31 +159,30 @@ Use the Splunk HTTP Event Collector (HEC) endpoint to send batches of logs or re
 
   ### Responses and retries
 
-  HEC responses use Splunk-style JSON. HTTP 200 with `{"text":"Success","code":0}` means the API has queued the events for processing.
+  The event and raw routes return Splunk-style JSON responses. HTTP 200 with `{"text":"Success","code":0}` means the API has queued the events for processing.
 
   | HTTP status | HEC code | Text | Meaning |
   | --- | --- | --- | --- |
   | 200 | 0 | Success | All events queued. |
-  | 400 | 5 | No data | The body is empty or malformed, or an envelope is missing `event`. |
-  | 400 | 9 | Data channel is full | The body exceeds the size limit. Split the batch before sending it again. |
+  | 400 | 5 | No data | The body is empty or malformed. The event route also rejects empty batches, items that are not objects, envelopes missing `event`, and non-standard numbers (`NaN`, `Infinity` or `-Infinity`). |
   | 400 | 10 | Data channel is missing | The raw route requires a channel. |
   | 401 | 4 | Invalid or missing token | Check the key's format and how you send it. |
   | 403 | 1 | Token disabled - Logit.io stack disabled or cancelled, remove this log drain or shipper | The stack is disabled or cancelled, or the well-formed key does not belong to an active stack. |
-  | 500 | 8 | Server error | A server fault occurred. Retry with backoff. |
-  | 503 | 8 | Server is busy | Temporary failure. Retry after the delay in `Retry-After`, given in seconds (currently 5). |
+  | 413 | 9 | Data channel is full | The request body or a serialised event exceeds the byte limit. Split the batch or reduce the size of an individual event before resending. |
+  | 503 | 8 | Server is busy | Temporary failure or unexpected server fault. Retry after 5 seconds, as indicated by `Retry-After: 5`. |
 
   If you used a newly created stack's key before the stack was ready, it may take up to 5 minutes for the API to accept the key.
 
   Set connection and request timeouts. Retry connection errors, timeouts, HTTP 429 and 5xx (including 503) with capped exponential backoff and jitter. Honour `Retry-After` when present.
 
-  Do not retry HTTP 403. Remove the log drain or shipper (for example, use `heroku drains:remove` for a Heroku drain) or update it with an active stack's API key. Correct other 4xx errors before resending.
+  Fix HTTP 400, 401 and 413 errors before resending. For HTTP 403, remove the log drain or shipper (for example, use `heroku drains:remove` for a Heroku drain) or update it with an active stack's API key.
 
-  A server fault partway through a batch can leave earlier events queued. Retrying the whole batch after HTTP 503 or 500 can produce duplicates. Include a stable, unique ID in each event and use it to de-duplicate downstream.
+  An HTTP 503 partway through a batch can leave earlier events queued. Retrying the whole batch can produce duplicates. Include a stable, unique ID in each event and use it to de-duplicate downstream.
 
   ### Health and raw endpoints
 
-  - `GET https://@logitApiEndpoint/services/collector/health` returns HTTP 200 and `{"text":"HEC is healthy and accepting input requests","code":17}` without authentication. This checks liveness only.
-  - `POST https://@logitApiEndpoint/services/collector/raw` (also `/services/collector/raw/1.0`) takes an opaque body. Set `X-Splunk-Request-Channel` or the `?channel=` query parameter. The whole body is stored as one record in `event`, even if it contains multiple lines. The record also has `type: splunk_raw` and the supplied `channel`.
+  - `GET https://@logitApiEndpoint/services/collector/health` (also `/services/collector/health/1.0`) returns HTTP 200 and `{"text":"HEC is healthy and accepting input requests","code":17}` without authentication. This checks liveness only.
+  - `POST https://@logitApiEndpoint/services/collector/raw` (also `/services/collector/raw/1.0`) decodes the body as UTF-8 and replaces invalid bytes with U+FFFD replacement characters. Set `X-Splunk-Request-Channel` or the `?channel=` query parameter. The API queues one log with the whole decoded body in `event`, even if it contains multiple lines. The log also has `type: splunk_raw` and the supplied `channel`.
 
   Logit.io HEC does not support gzip, indexer acknowledgement, `/services/collector/ack` or `/services/collector/mint`.
 

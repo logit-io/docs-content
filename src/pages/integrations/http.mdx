@@ -10,7 +10,7 @@ stackTypes: logs
 tags: Logs, HTTP, HTTPS, JSON, API, cURL, Web Services
 ---
 
-Use the HTTP/S API to send JSON logs from your applications to a Logit.io Stack. For batches, use the [Splunk HEC endpoint](/integrations/splunk-hec).
+Use the HTTP/S API to send individual JSON logs or batches from your applications to a Logit.io Stack.
 
 <Callout type="info">
 For managing stacks and alerts programmatically, see the [Developer API](/developer-api/overview).
@@ -25,19 +25,20 @@ For managing stacks and alerts programmatically, see the [Developer API](/develo
 
   ### Requirements
 
-  - Send one JSON object per request using `POST` or `PUT` to `https://@logitApiEndpoint/v2`.
-  - Set `Content-Type: application/json`. The API also accepts `application/*+json`, such as `application/example+json`. Malformed JSON, empty bodies, NDJSON with multiple records and gzip-compressed bodies return HTTP 415.
-  - Authenticate with your stack's API key, a UUID. The examples populate the key and endpoint when you sign in and select a stack.
+  - Use `POST` or `PUT` to `https://@logitApiEndpoint/v2` to send one JSON object, a JSON array of objects, or newline-delimited JSON (NDJSON). Send 1 to 1,000 events per request. Each event becomes a separate log with the same `LogType`.
+  - For a JSON object or array, use `Content-Type: application/json`. The API also accepts `application/*+json`, such as `application/example+json`. For NDJSON, use `application/x-ndjson`, `application/ndjson` or `application/jsonl`. Send one UTF-8 JSON object per line. The API ignores blank lines.
+  - Send an uncompressed body. Invalid bodies, including gzip-compressed bodies sent with a supported content type, return HTTP 400 with `{"message":"Invalid request body"}`. A missing or unsupported content type returns HTTP 415 with `{"message":"You didn't send application/json"}`.
+  - Authenticate with your stack's API key, a UUIDv4. The examples populate the key and endpoint when you sign in and select a stack.
   - Optionally set `LogType`. It sets the Logstash `type` field and can select a downstream filter branch. The default is `general`, which parses the JSON object's fields into the document root.
 
-  The API checks credentials in this order:
+  Use one of these credential methods, listed in order of precedence.
 
   1. `ApiKey: @apikey` (recommended)
   2. `Api-Key: @apikey`
   3. `Authorization: Splunk @apikey` or HTTP Basic with any username and the API key as the password. For Basic, Base64-encode the entire `anything:@apikey` credential.
   4. `?token=@apikey` as a query parameter. Prefer a header to keep credentials out of URLs.
 
-  Bearer authentication is unsupported.
+  If the selected header supplies no key, the API falls back to `?token=`. Bearer authentication is unsupported.
 
   ### Send a single JSON log
 
@@ -74,125 +75,52 @@ For managing stacks and alerts programmatically, see the [Developer API](/develo
 
   ### Send JSON log files
 
-  Save one object per file. For example, save this as `sample.json`.
-
-  ```json copy
-  {
-    "message": "Application started",
-    "level": "info"
-  }
-  ```
-
-  Use `--data-binary` to preserve the file exactly. With `-d @file`, curl strips line endings.
-
-  ```bash copy
-  curl -i "https://@logitApiEndpoint/v2" \
-    -H "ApiKey: @apikey" \
-    -H "Content-Type: application/json" \
-    --data-binary @sample.json
-  ```
-
-  For a file containing many objects, use `jq` to print one compact object per line and send each in a separate request.
+  Send the whole file in one request. Use `--data-binary` to preserve line endings, which separate events in NDJSON.
 
   <Tabs items={["JSON array", "NDJSON"]}>
     <Tab>
+    Save this as `events.json`.
+
+    ```json copy
+    [
+      {"id":"example-1","message":"Application started"},
+      {"id":"example-2","message":"Application stopped"}
+    ]
+    ```
+
     ```bash copy
-    set -o pipefail
-    jq -c '.[]' events.json | while IFS= read -r line; do
-      curl --fail-with-body "https://@logitApiEndpoint/v2" \
-        -H "ApiKey: @apikey" \
-        -H "Content-Type: application/json" \
-        --data-binary "$line" || exit 1
-    done
+    curl -i "https://@logitApiEndpoint/v2" \
+      -H "ApiKey: @apikey" \
+      -H "Content-Type: application/json" \
+      --data-binary @events.json
     ```
     </Tab>
     <Tab>
+    Save this as `events.ndjson`.
+
+    ```json copy
+    {"id":"example-1","message":"Application started"}
+    {"id":"example-2","message":"Application stopped"}
+    ```
+
     ```bash copy
-    set -o pipefail
-    jq -c '.' events.ndjson | while IFS= read -r line; do
-      curl --fail-with-body "https://@logitApiEndpoint/v2" \
-        -H "ApiKey: @apikey" \
-        -H "Content-Type: application/json" \
-        --data-binary "$line" || exit 1
-    done
+    curl -i "https://@logitApiEndpoint/v2" \
+      -H "ApiKey: @apikey" \
+      -H "Content-Type: application/x-ndjson" \
+      --data-binary @events.ndjson
     ```
     </Tab>
   </Tabs>
 
   ### Sending many logs (batching)
 
-  Use [Splunk HEC](/integrations/splunk-hec) to send a JSON array or NDJSON in a single request. Wrap each log in an `event` envelope. Save these two lines as `events.ndjson`.
+  Send JSON arrays or NDJSON to `/v2`. Split larger files into separate requests, each with at most 1,000 events and within the byte limit below. If you use a Splunk-compatible sender, you can use the [Splunk HEC endpoint](/integrations/splunk-hec).
 
-  ```json copy
-  {"event":{"id":"example-1","message":"Application started"}}
-  {"event":{"id":"example-2","message":"Application stopped"}}
-  ```
-
-  ```bash copy
-  curl -i "https://@logitApiEndpoint/services/collector/event" \
-    -H "Authorization: Splunk @apikey" \
-    -H "Content-Type: application/json" \
-    --data-binary @events.ndjson
-  ```
-
-  Retrying a whole HEC batch after HTTP 503 can duplicate events already queued. Include a stable, unique ID in each event and use it to de-duplicate downstream.
-
-  #### Workaround for JSON arrays on /v2
-
-  Sending a top-level array to `/v2` with the default `LogType` returns HTTP 202 but produces a single document with the raw array in `message` and the `_jsonparsefailure` tag.
-
-  If you must send an array to `/v2`, set `LogType: json_array` and add this custom filter in **Stack > Settings > Logstash Pipelines**. The default JSON parser for `general`, `logspout` and `json` skips this type, and the fallback parser checks for an opening `{`, while the array starts with `[`. If your array contains the text `loggregator`, use HEC to avoid triggering the default pipeline's legacy Loggregator branch.
-
-  ```ruby copy
-  if [type] == "json_array" {
-    json {
-      source => "message"
-      target => "events"
-      remove_field => ["message"]
-    }
-    split {
-      field => "events"
-    }
-    ruby {
-      code => '
-        item = event.get("events")
-        if item.is_a?(Hash)
-          event.remove("events")
-          item.each { |key, value| event.set(key, value) unless event.include?(key) }
-        end
-      '
-    }
-  }
-  ```
-
-  With the filter in place, send the array as follows.
-
-  ```bash copy
-  curl -i "https://@logitApiEndpoint/v2" \
-    -H "ApiKey: @apikey" \
-    -H "Content-Type: application/json" \
-    -H "LogType: json_array" \
-    --data-binary '[{"message":"Application started"},{"message":"Application stopped"}]'
-  ```
-
-  Each array element becomes one document with `type` set to `json_array`. The `split` filter creates one event per array element. The Ruby block then copies each object's fields to the root without overwriting fields that already exist, such as `type`. Omit the Ruby block to keep object fields under `events.*`. Non-object elements stay in `events`.
-
-  By default, `@timestamp` is the ingestion time. To use an ISO 8601 `timestamp` field from each object, add this filter after the one above.
-
-  ```ruby copy
-  if [type] == "json_array" and [timestamp] {
-    date {
-      match => ["timestamp", "ISO8601"]
-      target => "@timestamp"
-    }
-  }
-  ```
-
-  Native JSON array and NDJSON batching on `/v2` is planned for a future API update. This page will be updated when it is available.
+  If you added a `json_array` split filter to your Logstash pipeline for JSON arrays, you can remove it and the `LogType: json_array` header. The API now splits arrays into individual logs.
 
   ### Responses, limits and retries
 
-  A successful request returns HTTP 202. The API has queued the log for processing. It may take time to appear in OpenSearch.
+  A successful request returns HTTP 202. The API has queued all events for processing. They may take time to appear in OpenSearch.
 
   ```http copy
   HTTP/1.1 202 Accepted
@@ -203,31 +131,33 @@ For managing stacks and alerts programmatically, see the [Developer API](/develo
 
   | HTTP status | Response or action |
   | --- | --- |
-  | 202 Accepted | Log queued. |
-  | 400 Bad Request | For compatibility with older API responses, treat `{"message":"Failed to queue logs"}` as retryable. |
+  | 202 Accepted | All events queued. |
+  | 400 Bad Request | `{"message":"Invalid request body"}`. The body is malformed JSON or contains an invalid NDJSON line, a non-object event, a JSON scalar where an object or array is required, or a non-standard number (`NaN`, `Infinity` or `-Infinity`). Empty bodies and batches also return 400. |
   | 401 Unauthorized | `Missing authentication credentials` or `apikey not a valid GUID`. Check the stack's API key and how you send it. |
   | 403 Forbidden | `{"message":"Logit.io stack disabled or cancelled - remove this log drain or shipper","code":"stack_disabled"}` |
-  | 415 Unsupported Media Type | `You didn't send application/json`. Check the content type and body. |
-  | 503 Service Unavailable | Temporary failure. Retry after the delay in `Retry-After`, given in seconds (currently 5). |
+  | 413 Payload Too Large | `{"message":"The data value transmitted exceeds the capacity limit."}` if the request body or an event serialised for processing exceeds 9,800,000 bytes. `{"message":"Too many events"}` if the batch exceeds 1,000 events. |
+  | 415 Unsupported Media Type | `{"message":"You didn't send application/json"}`. Set a supported `Content-Type`. |
+  | 503 Service Unavailable | `{"message":"Service temporarily unavailable, retry later"}` with `Retry-After: 5` (seconds). |
   | 429 or other 5xx | Retry with backoff. Honour `Retry-After` when present. |
 
   The HTTP 403 response above applies to `/v2` and other non-HEC HTTPS ingestion routes. A well-formed API key that does not belong to an active stack gets the same response. If you used a newly created stack's key before the stack was ready, it may take up to 5 minutes for the API to accept the key.
 
-  Keep request bodies well below the limit of about 9.8 MB (9,800,000 bytes).
+  The API validates the whole batch before queueing any events. A single invalid event rejects the batch.
 
-  Set connection and request timeouts where your client supports them. Start with a 3-second connection timeout and a 10-second request or read timeout. Retry connection errors and timeouts, HTTP 429 and 5xx (including 503), and the legacy HTTP 400 queue failure above. Honour `Retry-After` when present, limit retry attempts and use capped exponential backoff with jitter.
+  Set connection and request timeouts where your client supports them. Start with a 3-second connection timeout and a 10-second request or read timeout. Retry connection errors, timeouts, HTTP 429 and 5xx (including 503). Honour `Retry-After` when present, limit retry attempts and use capped exponential backoff with jitter.
 
-  Do not retry HTTP 403. Remove the log drain or shipper (for example, use `heroku drains:remove` for a Heroku drain) or update it with an active stack's API key. Fix other 4xx errors before sending again.
+  Fix HTTP 400, 401, 403, 413 and 415 errors before sending again. For HTTP 403, remove the log drain or shipper (for example, use `heroku drains:remove` for a Heroku drain) or update it with an active stack's API key.
 
   ```text copy
   For up to 5 attempts:
     Send with a timeout. On HTTP 202, finish.
-    If the error is ineligible for retry or this is the last attempt, report it.
+    If this is the last attempt, report the failure and stop.
+    If the failure is anything other than a connection error, timeout, HTTP 429 or HTTP 5xx, report it and stop.
     Wait a random time between 0 and min(30 seconds, 2^retry seconds).
     If Retry-After calls for a longer wait, use that delay.
   ```
 
-  If the connection fails after the log is queued, a retry can produce a duplicate.
+  A connection failure can occur after queueing, and HTTP 503 can occur after part of a batch has been queued. Retrying the request can duplicate events from either a `/v2` or a HEC batch. Include a stable, unique ID in each event and use it to de-duplicate downstream.
 
   ### Client examples
 
