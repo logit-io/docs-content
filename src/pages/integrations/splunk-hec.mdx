@@ -168,11 +168,17 @@ Use the Splunk HTTP Event Collector (HEC) endpoint to send batches of logs or re
   | 400 | 9 | Data channel is full | The body exceeds the size limit. Split the batch before sending it again. |
   | 400 | 10 | Data channel is missing | The raw route requires a channel. |
   | 401 | 4 | Invalid or missing token | Check the key's format and how you send it. |
-  | 500 | 8 | Server error | A server fault occurred. An unknown key with a valid UUID format can also return this response. Check the key if the error persists. |
+  | 403 | 1 | Token disabled - Logit.io stack disabled or cancelled, remove this log drain or shipper | The stack is disabled or cancelled, or the well-formed key does not belong to an active stack. |
+  | 500 | 8 | Server error | A server fault occurred. Retry with backoff. |
+  | 503 | 8 | Server is busy | Temporary failure. Retry after the delay in `Retry-After`, given in seconds (currently 5). |
 
-  Set connection and request timeouts. Retry connection errors, timeouts, HTTP 429 and 5xx with capped exponential backoff and jitter. Honour `Retry-After` when present. Correct other 4xx errors before resending.
+  If you used a newly created stack's key before the stack was ready, it may take up to 5 minutes for the API to accept the key.
 
-  A server fault partway through a batch can leave earlier events queued. Replaying the batch can produce duplicates. Include a stable, unique ID in each event and use it to de-duplicate downstream.
+  Set connection and request timeouts. Retry connection errors, timeouts, HTTP 429 and 5xx (including 503) with capped exponential backoff and jitter. Honour `Retry-After` when present.
+
+  Do not retry HTTP 403. Remove the log drain or shipper (for example, use `heroku drains:remove` for a Heroku drain) or update it with an active stack's API key. Correct other 4xx errors before resending.
+
+  A server fault partway through a batch can leave earlier events queued. Retrying the whole batch after HTTP 503 or 500 can produce duplicates. Include a stable, unique ID in each event and use it to de-duplicate downstream.
 
   ### Health and raw endpoints
 

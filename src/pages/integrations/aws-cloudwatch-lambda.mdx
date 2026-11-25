@@ -73,10 +73,18 @@ export async function handler(input) {
         redirect: "error",
       });
       await response.text();
+      if (response.status === 403) return response.status;
       if (response.status !== 202) {
         throw new Error(`Logit.io returned HTTP ${response.status}`);
       }
     }));
+
+    if (results.some((result) => result.status === "fulfilled" && result.value === 403)) {
+      console.error(
+        "Logit.io returned HTTP 403. Remove the forwarder or update LOGIT_API_KEY with an active stack's API key.",
+      );
+      return;
+    }
 
     const failure = results.find((result) => result.status === "rejected");
     if (failure) throw failure.reason;
@@ -84,7 +92,7 @@ export async function handler(input) {
 }
 ```
 
-The handler sends one JSON object per CloudWatch log event and makes up to 10 requests at a time. The default Logstash pipeline parses each object into a separate document. A request error or any status other than HTTP 202 fails the invocation so Lambda can retry it. A retry can resend events that already reached the queue. Set the function timeout to allow enough time to forward a full CloudWatch payload. [AWS Lambda retry behaviour](https://docs.aws.amazon.com/lambda/latest/dg/invocation-async-error-handling.html)
+The handler sends one JSON object per CloudWatch log event and makes up to 10 requests at a time. The default Logstash pipeline parses each object into a separate document. On HTTP 403, the handler logs the error and stops forwarding the payload without triggering a Lambda retry. Remove the forwarder or update it with an active stack's API key. Other request failures, including HTTP 503, fail the invocation so Lambda can retry it. A retry can resend events that already reached the queue. Set the function timeout to allow enough time to forward a full CloudWatch payload. [AWS Lambda retry behaviour](https://docs.aws.amazon.com/lambda/latest/dg/invocation-async-error-handling.html)
 
 For high volumes, use [Splunk HEC](/integrations/splunk-hec) to batch the log events in fewer HTTP requests.
 

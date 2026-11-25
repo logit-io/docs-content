@@ -135,6 +135,8 @@ For managing stacks and alerts programmatically, see the [Developer API](/develo
     --data-binary @events.ndjson
   ```
 
+  Retrying a whole HEC batch after HTTP 503 can duplicate events already queued. Include a stable, unique ID in each event and use it to de-duplicate downstream.
+
   #### Workaround for JSON arrays on /v2
 
   Sending a top-level array to `/v2` with the default `LogType` returns HTTP 202 but produces a single document with the raw array in `message` and the `_jsonparsefailure` tag.
@@ -202,14 +204,20 @@ For managing stacks and alerts programmatically, see the [Developer API](/develo
   | HTTP status | Response or action |
   | --- | --- |
   | 202 Accepted | Log queued. |
-  | 401 Unauthorized | `Missing authentication credentials`, `apikey not a valid GUID` or `Invalid API Key`. Check the stack's API key and how you send it. |
+  | 400 Bad Request | For compatibility with older API responses, treat `{"message":"Failed to queue logs"}` as retryable. |
+  | 401 Unauthorized | `Missing authentication credentials` or `apikey not a valid GUID`. Check the stack's API key and how you send it. |
+  | 403 Forbidden | `{"message":"Logit.io stack disabled or cancelled - remove this log drain or shipper","code":"stack_disabled"}` |
   | 415 Unsupported Media Type | `You didn't send application/json`. Check the content type and body. |
-  | 400 Bad Request | A response with `{"message":"Failed to queue logs"}` indicates a queue failure and is safe to retry. |
-  | 429 or 5xx | Retry with backoff. Honour `Retry-After` when present. |
+  | 503 Service Unavailable | Temporary failure. Retry after the delay in `Retry-After`, given in seconds (currently 5). |
+  | 429 or other 5xx | Retry with backoff. Honour `Retry-After` when present. |
+
+  The HTTP 403 response above applies to `/v2` and other non-HEC HTTPS ingestion routes. A well-formed API key that does not belong to an active stack gets the same response. If you used a newly created stack's key before the stack was ready, it may take up to 5 minutes for the API to accept the key.
 
   Keep request bodies well below the limit of about 9.8 MB (9,800,000 bytes).
 
-  Set connection and request timeouts where your client supports them. Start with a 3-second connection timeout and a 10-second request or read timeout. Retry connection errors and timeouts, HTTP 429 and 5xx, and the current HTTP 400 queue failure above. Fix other 4xx errors before sending again. Cap retries and use exponential backoff with jitter.
+  Set connection and request timeouts where your client supports them. Start with a 3-second connection timeout and a 10-second request or read timeout. Retry connection errors and timeouts, HTTP 429 and 5xx (including 503), and the legacy HTTP 400 queue failure above. Honour `Retry-After` when present, limit retry attempts and use capped exponential backoff with jitter.
+
+  Do not retry HTTP 403. Remove the log drain or shipper (for example, use `heroku drains:remove` for a Heroku drain) or update it with an active stack's API key. Fix other 4xx errors before sending again.
 
   ```text copy
   For up to 5 attempts:
