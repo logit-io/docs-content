@@ -5,13 +5,12 @@ subTitle: Ship JSON logs using HTTP/S to your Logit.io Stack
 logo: https
 color: "#30a743"
 popular: true
-description: Learn how to send JSON logs via HTTP/S to your Logit.io Stack using cURL.
+description: Send JSON logs to your Logit.io Stack using the HTTP/S API.
 stackTypes: logs
-tags: Logs, HTTP, JSON, API, cURL, Http, Curl, CURL, Web Services
+tags: Logs, HTTP, HTTPS, JSON, API, cURL, Web Services
 ---
 
-If you have logs that are in JSON format, you can send them to your Logit.io Stack using the HTTP/S API. 
-This is a great way to send logs from applications that do not have a native integration with Logit.io or for custom applications.
+Use the HTTP/S API to send JSON logs from your applications to a Logit.io Stack. For batches, use the [Splunk HEC endpoint](/integrations/splunk-hec).
 
 <Callout type="info">
 For managing stacks and alerts programmatically, see the [Developer API](/developer-api/overview).
@@ -20,144 +19,314 @@ For managing stacks and alerts programmatically, see the [Developer API](/develo
 <Steps>
   ## Logs
 
-  Send JSON logs to your Logit.io Stack via your Logit.io API endpoint.
-  
   ### Install Integration
 
   <InstallIntegration/>
 
   ### Requirements
 
-  - Valid JSON content
-  - API key, sent in the headers. If you are logged into your Logit.io account the API key and endpoint should be automatically 
-    populated in the examples below.
-  - Content-Type header set as application/json
-  - Either POST or PUT to https://@logitApiEndpoint/v2
+  - Send one JSON object per request using `POST` or `PUT` to `https://@logitApiEndpoint/v2`.
+  - Set `Content-Type: application/json`. The API also accepts `application/*+json`, such as `application/example+json`. Malformed JSON, empty bodies, NDJSON with multiple records and gzip-compressed bodies return HTTP 415.
+  - Authenticate with your stack's API key, a UUID. The examples populate the key and endpoint when you sign in and select a stack.
+  - Optionally set `LogType`. It sets the Logstash `type` field and can select a downstream filter branch. The default is `general`, which parses the JSON object's fields into the document root.
 
-  ### Send a single JSON log using curl
+  The API checks credentials in this order:
 
-  <Tabs items={["Linux, macOS, DEB, RPM","Windows"]}>
+  1. `ApiKey: @apikey` (recommended)
+  2. `Api-Key: @apikey`
+  3. `Authorization: Splunk @apikey` or HTTP Basic with any username and the API key as the password. For Basic, Base64-encode the entire `anything:@apikey` credential.
+  4. `?token=@apikey` as a query parameter. Prefer a header to keep credentials out of URLs.
+
+  Bearer authentication is unsupported.
+
+  ### Send a single JSON log
+
+  <Tabs items={["Linux and macOS", "Windows Command Prompt", "PowerShell"]}>
     <Tab>
     ```bash copy
-    curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: json" https://@logitApiEndpoint/v2 -d '{"test":"test","example": { "a": 1, "b": 2 } }'
+    curl -i "https://@logitApiEndpoint/v2" \
+      -H "ApiKey: @apikey" \
+      -H "Content-Type: application/json" \
+      --data-binary '{"message":"Application started","level":"info"}'
     ```
     </Tab>
-
     <Tab>
-    If using the command prompt you will need to escape double-quote characters with a backslash in the data field as shown in the example below.
-                
-    Command Prompt:
     ```cmd copy
-    curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: json" https://@logitApiEndpoint/v2 -d "{\"test\":\"test\",\"example\": { \"a\": 1, \"b\": 2 } }"
-    ```
-
-    Or you can send the cURL request via Powershell:
-    ```ps1 copy
-    curl -Method Post `
-    -Uri "https://@logitApiEndpoint/v2" `
-    -Headers @{
-        "ApiKey" = "@apikey";
-        "Content-Type" = "application/json";
-        "LogType" = "json"
-    } `
-    -Body (@{
-        test = "test";
-        example = @{
-            a = 1;
-            b = 2
-        }
-    } | ConvertTo-Json)
+    curl.exe -i "https://@logitApiEndpoint/v2" ^
+      -H "ApiKey: @apikey" ^
+      -H "Content-Type: application/json" ^
+      --data-binary "{\"message\":\"Application started\",\"level\":\"info\"}"
     ```
     </Tab>
+    <Tab>
+    In PowerShell 7, use `-StatusCodeVariable` to capture the HTTP status alongside the response body.
 
+    ```powershell copy
+    $body = @{ message = "Application started"; level = "info" } | ConvertTo-Json
+    $result = Invoke-RestMethod -Uri "https://@logitApiEndpoint/v2" `
+      -Method Post -Headers @{ ApiKey = "@apikey" } `
+      -ContentType "application/json" -Body $body -StatusCodeVariable status
+    $status
+    $result
+    ```
+    </Tab>
   </Tabs>
 
-  ### Response from Logit.io
+  ### Send JSON log files
 
-  You should expect to receive a 202 ACCEPTED response code for a successful message
-
-  <Tabs items={["Curl command", "Windows Powershell"]} unlink>
-    <Tab>
-      ```cmd copy
-      HTTP/1.1 202 ACCEPTED
-      Content-Type: application/json
-      Content-Length: 39
-      Connection: keep-alive
-      Server: Logit-API-Server
-      Date: Wed, 27 Mar 2025 14:34:39 GMT
-      Access-Control-Allow-Origin: *
-      Strict-Transport-Security: max-age=31536000; includeSubDomains
-      X-Xss-Protection: 1; mode=block
-      X-Content-Type-Options: nosniff
-      X-Frame-Options: SAMEORIGIN
-
-      {"message":"Message Received, Thanks"}
-      ```
-    </Tab>
-
-    <Tab>
-    Although essentially the same, the message format will be slightly different in Powershell:
-
-    ```ps1 copy
-    StatusCode        : 202
-    StatusDescription : ACCEPTED
-    Content           : {"message":"Message Received, Thanks"}
-
-    RawContent        : HTTP/1.1 202 ACCEPTED
-                        Connection: keep-alive
-                        Access-Control-Allow-Origin: *
-                        Strict-Transport-Security: max-age=31536000; includeSubDomains
-                        X-Xss-Protection: 1; mode=block
-                        X-Content-Type-Options: ...
-    Forms             : {}
-    Headers           : {[Connection, keep-alive], [Access-Control-Allow-Origin, *], [Strict-Transport-Security,
-                        max-age=31536000; includeSubDomains], [X-Xss-Protection, 1; mode=block]...}
-    Images            : {}
-    InputFields       : {}
-    Links             : {}
-    ParsedHtml        : mshtml.HTMLDocumentClass
-    RawContentLength  : 39
-    ```
-    </Tab>
-  
-  </Tabs>
-
-  ### Send JSON log files using curl
-
-  It is also possible to test sending logs in a JSON file to Logit.io.
-
-  Create a new file in the same directory as your command prompt and copy the snippet below and save it as `sample.json`.
+  Save one object per file. For example, save this as `sample.json`.
 
   ```json copy
   {
-    "name": "Jason",
-    "city": "Jakarta",
-    "display": "Hello there from JSON file",
-    "value": 5
+    "message": "Application started",
+    "level": "info"
   }
   ```
 
-  The following command should now be entered into the command prompt, this will send the file to Logit.io:
-  <Tabs items={["Linux, macOS, DEB, RPM","Windows Powershell"]}>
+  Use `--data-binary` to preserve the file exactly. With `-d @file`, curl strips line endings.
+
+  ```bash copy
+  curl -i "https://@logitApiEndpoint/v2" \
+    -H "ApiKey: @apikey" \
+    -H "Content-Type: application/json" \
+    --data-binary @sample.json
+  ```
+
+  For a file containing many objects, use `jq` to print one compact object per line and send each in a separate request.
+
+  <Tabs items={["JSON array", "NDJSON"]}>
     <Tab>
-    ```cmd copy
-    curl -i -H "ApiKey: @apikey" -i -H "Content-Type: application/json" -H "LogType: json" https://@logitApiEndpoint/v2 -d @sample.json
+    ```bash copy
+    set -o pipefail
+    jq -c '.[]' events.json | while IFS= read -r line; do
+      curl --fail-with-body "https://@logitApiEndpoint/v2" \
+        -H "ApiKey: @apikey" \
+        -H "Content-Type: application/json" \
+        --data-binary "$line" || exit 1
+    done
     ```
     </Tab>
     <Tab>
-    ```ps1 copy
-    Invoke-RestMethod -Uri "https://@logitApiEndpoint/v2" `
-      -Headers @{
-          "ApiKey" = "@apikey";
-          "Content-Type" = "application/json";
-          "LogType" = "json"
-      } `
-      -Method POST `
-      -Body (Get-Content -Path "sample.json" -Raw)
+    ```bash copy
+    set -o pipefail
+    jq -c '.' events.ndjson | while IFS= read -r line; do
+      curl --fail-with-body "https://@logitApiEndpoint/v2" \
+        -H "ApiKey: @apikey" \
+        -H "Content-Type: application/json" \
+        --data-binary "$line" || exit 1
+    done
     ```
     </Tab>
   </Tabs>
-  
+
+  ### Sending many logs (batching)
+
+  Use [Splunk HEC](/integrations/splunk-hec) to send a JSON array or NDJSON in a single request. Wrap each log in an `event` envelope. Save these two lines as `events.ndjson`.
+
+  ```json copy
+  {"event":{"id":"example-1","message":"Application started"}}
+  {"event":{"id":"example-2","message":"Application stopped"}}
+  ```
+
+  ```bash copy
+  curl -i "https://@logitApiEndpoint/services/collector/event" \
+    -H "Authorization: Splunk @apikey" \
+    -H "Content-Type: application/json" \
+    --data-binary @events.ndjson
+  ```
+
+  #### Workaround for JSON arrays on /v2
+
+  Sending a top-level array to `/v2` with the default `LogType` returns HTTP 202 but produces a single document with the raw array in `message` and the `_jsonparsefailure` tag.
+
+  If you must send an array to `/v2`, set `LogType: json_array` and add this custom filter in **Stack > Settings > Logstash Pipelines**. The default JSON parser for `general`, `logspout` and `json` skips this type, and the fallback parser checks for an opening `{`, while the array starts with `[`. If your array contains the text `loggregator`, use HEC to avoid triggering the default pipeline's legacy Loggregator branch.
+
+  ```ruby copy
+  if [type] == "json_array" {
+    json {
+      source => "message"
+      target => "events"
+      remove_field => ["message"]
+    }
+    split {
+      field => "events"
+    }
+    ruby {
+      code => '
+        item = event.get("events")
+        if item.is_a?(Hash)
+          event.remove("events")
+          item.each { |key, value| event.set(key, value) unless event.include?(key) }
+        end
+      '
+    }
+  }
+  ```
+
+  With the filter in place, send the array as follows.
+
+  ```bash copy
+  curl -i "https://@logitApiEndpoint/v2" \
+    -H "ApiKey: @apikey" \
+    -H "Content-Type: application/json" \
+    -H "LogType: json_array" \
+    --data-binary '[{"message":"Application started"},{"message":"Application stopped"}]'
+  ```
+
+  Each array element becomes one document with `type` set to `json_array`. The `split` filter creates one event per array element. The Ruby block then copies each object's fields to the root without overwriting fields that already exist, such as `type`. Omit the Ruby block to keep object fields under `events.*`. Non-object elements stay in `events`.
+
+  By default, `@timestamp` is the ingestion time. To use an ISO 8601 `timestamp` field from each object, add this filter after the one above.
+
+  ```ruby copy
+  if [type] == "json_array" and [timestamp] {
+    date {
+      match => ["timestamp", "ISO8601"]
+      target => "@timestamp"
+    }
+  }
+  ```
+
+  Native JSON array and NDJSON batching on `/v2` is planned for a future API update. This page will be updated when it is available.
+
+  ### Responses, limits and retries
+
+  A successful request returns HTTP 202. The API has queued the log for processing. It may take time to appear in OpenSearch.
+
+  ```http copy
+  HTTP/1.1 202 Accepted
+  Content-Type: application/json
+
+  {"message":"Message Received, Thanks"}
+  ```
+
+  | HTTP status | Response or action |
+  | --- | --- |
+  | 202 Accepted | Log queued. |
+  | 401 Unauthorized | `Missing authentication credentials`, `apikey not a valid GUID` or `Invalid API Key`. Check the stack's API key and how you send it. |
+  | 415 Unsupported Media Type | `You didn't send application/json`. Check the content type and body. |
+  | 400 Bad Request | A response with `{"message":"Failed to queue logs"}` indicates a queue failure and is safe to retry. |
+  | 429 or 5xx | Retry with backoff. Honour `Retry-After` when present. |
+
+  Keep request bodies well below the limit of about 9.8 MB (9,800,000 bytes).
+
+  Set connection and request timeouts where your client supports them. Start with a 3-second connection timeout and a 10-second request or read timeout. Retry connection errors and timeouts, HTTP 429 and 5xx, and the current HTTP 400 queue failure above. Fix other 4xx errors before sending again. Cap retries and use exponential backoff with jitter.
+
+  ```text copy
+  For up to 5 attempts:
+    Send with a timeout. On HTTP 202, finish.
+    If the error is ineligible for retry or this is the last attempt, report it.
+    Wait a random time between 0 and min(30 seconds, 2^retry seconds).
+    If Retry-After calls for a longer wait, use that delay.
+  ```
+
+  If the connection fails after the log is queued, a retry can produce a duplicate.
+
+  ### Client examples
+
+  Set `LOGIT_API_KEY` in your environment to your stack's API key before running an example.
+
+  <Tabs items={["Python", "Node.js 18+", "Go"]}>
+    <Tab>
+    ```python copy
+    import os
+
+    import requests
+
+    response = requests.post(
+        "https://@logitApiEndpoint/v2",
+        headers={"ApiKey": os.environ["LOGIT_API_KEY"]},
+        json={"message": "Application started", "level": "info"},
+        timeout=(3, 10),
+        allow_redirects=False,
+    )
+    if response.status_code != 202:
+        raise RuntimeError(f"Logit.io returned HTTP {response.status_code}")
+    ```
+    </Tab>
+    <Tab>
+    ```js copy
+    async function sendLog() {
+      const apiKey = process.env.LOGIT_API_KEY;
+      if (!apiKey) throw new Error("Set LOGIT_API_KEY");
+
+      const response = await fetch("https://@logitApiEndpoint/v2", {
+        method: "POST",
+        headers: { ApiKey: apiKey, "Content-Type": "application/json" },
+        body: JSON.stringify({ message: "Application started", level: "info" }),
+        signal: AbortSignal.timeout(10_000),
+        redirect: "error",
+      });
+      await response.text();
+      if (response.status !== 202) {
+        throw new Error(`Logit.io returned HTTP ${response.status}`);
+      }
+    }
+
+    sendLog().catch((error) => {
+      console.error(error.message);
+      process.exitCode = 1;
+    });
+    ```
+    </Tab>
+    <Tab>
+    ```go copy
+    package main
+
+    import (
+        "bytes"
+        "context"
+        "encoding/json"
+        "log"
+        "net/http"
+        "os"
+        "time"
+    )
+
+    func main() {
+        apiKey := os.Getenv("LOGIT_API_KEY")
+        if apiKey == "" {
+            log.Fatal("Set LOGIT_API_KEY")
+        }
+
+        body, err := json.Marshal(map[string]string{
+            "message": "Application started",
+            "level":   "info",
+        })
+        if err != nil {
+            log.Fatal(err)
+        }
+
+        ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+        defer cancel()
+
+        req, err := http.NewRequestWithContext(
+            ctx, http.MethodPost, "https://@logitApiEndpoint/v2", bytes.NewReader(body),
+        )
+        if err != nil {
+            log.Fatal(err)
+        }
+        req.Header.Set("ApiKey", apiKey)
+        req.Header.Set("Content-Type", "application/json")
+
+        client := &http.Client{
+            CheckRedirect: func(req *http.Request, via []*http.Request) error {
+                return http.ErrUseLastResponse
+            },
+        }
+        response, err := client.Do(req)
+        if err != nil {
+            log.Fatal(err)
+        }
+        defer response.Body.Close()
+
+        if response.StatusCode != http.StatusAccepted {
+            log.Fatalf("Logit.io returned HTTP %d", response.StatusCode)
+        }
+    }
+    ```
+    </Tab>
+  </Tabs>
+
   ### Launch OpenSearch Dashboards to View Your Data
 
   <LaunchVisualizer type="logs" />
@@ -165,5 +334,4 @@ For managing stacks and alerts programmatically, see the [Developer API](/develo
   ### How to diagnose no data in Stack
 
   <DiagnoseNoData />
-
 </Steps>

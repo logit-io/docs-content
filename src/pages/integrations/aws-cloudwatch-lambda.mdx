@@ -1,15 +1,15 @@
 ---
-title: AWS Lambda Cloudwatch
-metaTitle: Integrate and Configure AWS to Send AWS Lambda Cloudwatch Logs
-subTitle: Push logs from Amazon Cloudwatch to your Stack using the Logit.io API
+title: AWS Lambda CloudWatch
+metaTitle: Integrate and Configure AWS to Send AWS Lambda CloudWatch Logs
+subTitle: Push logs from Amazon CloudWatch to your Stack using the Logit.io API
 logo: aws-cloudwatch
 color: "#759c3e"
 stackTypes: logs
-description: Push logs from Amazon Cloudwatch to logit.io via the API using the instructions below and begin analysing your data with ELK
-tags: Lambda, Logs, AWS, Amazon, AWS Lambda, Serverless Computing, Aws, Cloudwatch
+description: Push logs from Amazon CloudWatch to your Logit.io Stack using the HTTP/S API
+tags: Lambda, Logs, AWS, Amazon, AWS Lambda, Serverless Computing, Aws, CloudWatch
 ---
 
-Follow the steps below to send your observability data to Logit.io
+Use a Lambda function to forward CloudWatch log events to your Logit.io Stack.
 
 <Steps>
   ## Logs
@@ -18,161 +18,81 @@ Follow the steps below to send your observability data to Logit.io
 
   <InstallIntegration/>
   
-### Ensure Cloudwatch configuration
+### Ensure CloudWatch configuration
 
-Amazon recommends shipping logs and metrics to Amazon Cloudwatch using the unified 
-CloudWatch agent, read more about how to configure the 
-[Amazon Cloudwatch Agent](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_GettingStarted.html) 
-to collect both logs and metrics.
+The unified CloudWatch agent collects logs and metrics. [Configure the CloudWatch agent](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_GettingStarted.html)
 
 ![Log events preview](@/images/integrations/aws-cloudwatch/aws-cloudwatch-logs.png)
 
 <Callout type="info">
   Read more about the [metrics collected](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/metrics-collected-by-CloudWatch-agent.html) 
-  by the Cloudwatch Agent.
+  by the CloudWatch Agent.
 </Callout>
 
-Once we ensure our logs or metrics are arriving in Cloudwatch we can continue to Step 2 
-where we configure Lambda to push our data to Logit.io.
+Once your logs arrive in CloudWatch, configure Lambda to forward them to Logit.io.
 
 ### Configure Lambda function
 
 From your Amazon Console browse to the <a target="_blank" href="https://console.aws.amazon.com/lambda/home">Lambda functions</a> and choose Create Function.
 
-Choose Author from scratch, enter a name and ensure the runtime version is Node.js 16.x, then Create function.
+Choose **Author from scratch**, enter a name, select a current Node.js runtime, then choose **Create function**.
 
 ![Create function by selecting Author from scratch](@/images/integrations/aws-cloudwatch/aws-lambda-function-small.png)
 
-Replace the index.js example code
+Replace the contents of `index.mjs` with the following handler. Keep the Lambda handler setting as `index.handler`.
 
 ```js copy showLineNumbers
-exports.handler = async (event) => {
-// TODO implement
-const response = {
-    statusCode: 200,
-    body: JSON.stringify('Hello from Lambda!'),
-};
-return response;
-};
-```
+import { gunzipSync } from "node:zlib";
 
-with the following lambda function, which will ship your Cloudwatch logs to your Stack API.
+export async function handler(input) {
+  const compressed = Buffer.from(input.awslogs.data, "base64");
+  const payload = JSON.parse(gunzipSync(compressed).toString("utf8"));
+  if (payload.messageType === "CONTROL_MESSAGE") return;
 
-```js copy showLineNumbers
-'use strict';
+  const apiKey = process.env.LOGIT_API_KEY;
+  if (!apiKey) throw new Error("Set LOGIT_API_KEY");
 
-const AWS = require('aws-sdk');
-const http = require("https");
-const zlib = require('zlib');
-
-const configurationData = {
-  logitApiKey: @apikey
-};
-
-function parseEvent(logGroupName, logStreamName, logEvent) {
-  return {
-    message: logEvent.message.trim(),
-    logGroupName: logGroupName,
-    logStreamName: logStreamName,
-    timestamp: new Date(logEvent.timestamp).toISOString()
-  };
-}
-
-function sendToLogit(logitPayload, context, callback) {
-  const stringPayload = JSON.stringify(logitPayload);
-
-  try {
-    const options = {
-      "method": "POST",
-      "hostname": "@logitApiEndpoint",
-      "port": null,
-      "path": "/v2",
-      "headers": {
-        "apikey": configurationData.logitApiKey,
-        "content-type": "application/json",
-        'content-length': stringPayload.length,
+  const concurrency = 10;
+  for (let offset = 0; offset < payload.logEvents.length; offset += concurrency) {
+    const batch = payload.logEvents.slice(offset, offset + concurrency);
+    const results = await Promise.allSettled(batch.map(async (logEvent) => {
+      const response = await fetch("https://@logitApiEndpoint/v2", {
+        method: "POST",
+        headers: {
+          ApiKey: apiKey,
+          "Content-Type": "application/json",
+          LogType: "cloudwatch_lambda",
+        },
+        body: JSON.stringify({
+          message: logEvent.message,
+          logGroupName: payload.logGroup,
+          logStreamName: payload.logStream,
+          timestamp: new Date(logEvent.timestamp).toISOString(),
+        }),
+        signal: AbortSignal.timeout(10_000),
+        redirect: "error",
+      });
+      await response.text();
+      if (response.status !== 202) {
+        throw new Error(`Logit.io returned HTTP ${response.status}`);
       }
-    };
+    }));
 
-    const request = http.request(options, (response) => {
-      var chunks = [];
-
-      response.on('data', function (chunk) {
-        chunks.push(chunk);
-      });
-
-      response.on('end', function () {
-        const body = Buffer.concat(chunks);
-        console.log("Response text: " + body.toString());
-
-        if (response.statusCode !== 202) {
-          console.log("Response code invalid:", response.statusCode);
-          callback("Invalid status code");
-        }
-        else {
-          console.log("Log data sent successfully.");
-          callback(null);
-        }
-      });
-    });
-
-    request.on('error', (error) => {
-      console.log('Problem executing the request:', error.toString());
-      callback(error);
-    });
-
-    request.write(stringPayload);
-    request.end();
-  }
-  catch (exception) {
-    console.log(exception.message);
+    const failure = results.find((result) => result.status === "rejected");
+    if (failure) throw failure.reason;
   }
 }
-
-function handleInput(input, context, callback) {    
-  const payload = new Buffer.from(input.awslogs.data, 'base64');
-
-  zlib.gunzip(payload, function(error, result) {
-    if (error) {
-      callback(error);
-    }
-    else {
-      const rawLogEvents = JSON.parse(result.toString('ascii'));
-      const logEvents = rawLogEvents.logEvents.map(function(rawLogEvent) {
-        return parseEvent(rawLogEvents.logGroup, rawLogEvents.logStream, rawLogEvent);
-      });
-
-      const logitPayload = {
-        cloudWatchLogEvents: logEvents
-      };
-
-      sendToLogit(logitPayload, context, callback);
-    }
-  });
-}
-
-exports.handler = function(input, context, callback) {
-
-if (process.env.logitApiKey && (/\S/.test(process.env.logitApiKey))) {
-  configurationData.logitApiKey = process.env.logitApiKey.trim();
-  handleInput(input, context, callback);
-  }
-  else {
-    callback("Environment value for logitApiKey must be specified.");
-  }
-};
 ```
+
+The handler sends one JSON object per CloudWatch log event and makes up to 10 requests at a time. The default Logstash pipeline parses each object into a separate document. A request error or any status other than HTTP 202 fails the invocation so Lambda can retry it. A retry can resend events that already reached the queue. Set the function timeout to allow enough time to forward a full CloudWatch payload. [AWS Lambda retry behaviour](https://docs.aws.amazon.com/lambda/latest/dg/invocation-async-error-handling.html)
+
+For high volumes, use [Splunk HEC](/integrations/splunk-hec) to batch the log events in fewer HTTP requests.
 
 ### Environment variables
 
-Add an environment variable to the Lambda function for your Logit.io API Key. 
-You can find this below or by choosing `Settings > Stack API Keys`.
+In the Lambda function's environment variables, set `LOGIT_API_KEY` to `@apikey`. You can also find the API key in **Stack > Settings > Stack API Keys**.
 
-Your Api Key: @apikey
-
-![Add your Logit API key to Environment variables page in AWS](@/images/integrations/aws-cloudwatch/aws-cloudwatch-api-key.png)
-
-Save and Deploy the function.
+Save and deploy the function.
 
 ### Configure CloudWatch trigger
 
@@ -180,10 +100,7 @@ From the Lambda designer choose to Add Trigger and select the required CloudWatc
 
 ![Add trigger in Designer](@/images/integrations/aws-cloudwatch/aws-lambda-trigger.png)
 
-The CloudWatch designer should now look similar to the image above. Any logs 
-that arrive in Cloudwatch will now be forwarded to your Stack via the API.
-
-We should now be receiving data in Kibana.
+New log events in the selected log group are forwarded to your stack.
 
 ### Launch OpenSearch Dashboards to View Your Data
 
@@ -193,49 +110,27 @@ We should now be receiving data in Kibana.
 
 <DiagnoseNoData />
 
-### Configure Logstash Pipelines (Optional)
+### Use the CloudWatch event timestamp (optional)
 
-All Logit.io stacks come pre-configured with popular Logstash Pipelines. 
-We would recommend that you add CloudWatch specific filters if you don't 
-already have them, to ensure enhanced formatting of your data.
+The default pipeline uses ingestion time for `@timestamp`. To use the original CloudWatch event time, add this filter in **Stack > Settings > Logstash Pipelines**.
 
 <EditPipeline utmSource="sourcewizard" utmMedium="aws" utmCampaign="cloudwatch" />
 
-Edit your Logstash Pipelines by choosing Stack > Settings > Logstash Pipelines
-
-```ruby copy showLineNumbers
-if ([message] =~ "cloudWatchLogEvents") {
-    json {
-      source => "message"
-      remove_field => [ "message" ]
-    }
-    split {
-      field => "cloudWatchLogEvents"
-    }
-    mutate {
-      rename => [
-        "[cloudWatchLogEvents][logGroupName]", "logGroupName",
-        "[cloudWatchLogEvents][logStreamName]", "logStreamName",
-        "[cloudWatchLogEvents][message]", "message",
-        "[cloudWatchLogEvents][timestamp]", "timestamp"
-      ]
-      remove_field => "cloudWatchLogEvents"
-    }
-    date {
-      match => ["timestamp", "ISO8601"]
-      target => "@timestamp"
-      remove_field => [ "timestamp" ]
-    }
+```ruby copy
+if [type] == "cloudwatch_lambda" and [timestamp] {
+  date {
+    match => ["timestamp", "ISO8601"]
+    target => "@timestamp"
+  }
 }
 ```
 
 </Steps>
 
-## Cloudwatch Lambda Overview
+## CloudWatch Lambda Overview
 
-Sending data from Amazon Lambda CloudWatch to Logit.io provides a fully scalable 
-way to centralize serverless application logs for robust monitoring and analysis. 
-To optimize your AWS environment further, consider exploring our 
+Sending CloudWatch data to Logit.io centralises serverless application logs for monitoring and analysis.
+To optimise your AWS environment further, consider exploring our
 [Amazon CloudFront integration](/integrations/cloudfront), 
 which accelerates content delivery, and [Amazon VPC integration](/integrations/vpc), 
 which enhances security and isolation. These integrations are a seamless addition 
