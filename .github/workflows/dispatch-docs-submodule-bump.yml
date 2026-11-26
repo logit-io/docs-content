@@ -1,0 +1,34 @@
+name: Request docs submodule bump
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      # For instant bumps, the token needs repository_dispatch access to logit-io/docs.
+      # Set owner/name to logit-io/docs or leave them unset. The hourly and manual
+      # runs in docs work independently if this credential expires.
+      - name: Dispatch bump-docs-content
+        env:
+          GH_TOKEN: ${{ secrets.PRIVATE_REPO_TOKEN }}
+          DEST_OWNER: ${{ secrets.PRIVATE_REPO_OWNER }}
+          DEST_REPO: ${{ secrets.PRIVATE_REPO_NAME }}
+        run: |
+          set -euo pipefail
+          if [[ -z "$GH_TOKEN" ]]; then
+            printf '%s\n' 'PRIVATE_REPO_TOKEN is missing. Configure it to dispatch to logit-io/docs.' >&2
+            exit 1
+          fi
+          if ! gh api --hostname github.com --silent --method POST \
+            "repos/${DEST_OWNER:-logit-io}/${DEST_REPO:-docs}/dispatches" \
+            -f event_type=bump-docs-content 2>/dev/null; then
+            printf '%s\n' 'Dispatch failed. Check PRIVATE_REPO_TOKEN access and the destination owner/name. The docs fallback runs independently.' >&2
+            exit 1
+          fi
