@@ -337,8 +337,12 @@ check/circle under the aggregatable column then this means the field is aggregat
   This can be found on the Stack > Settings page of 
   your [Logit.io](https://logit.io/) Dashboard.
   
-  ```cmd
-  curl -i -H "ApiKey: <your-stack-api-key" -i -H "Content-Type: application/json" -H "LogType: default" https://api.logit.io/v2 -d '{"message":"Logit.io Test Log", "@timestamp":"2019-11-08T11:00:0.000Z"}'
+  ```bash copy
+  curl -i "https://@logitApiEndpoint/v2" \
+    -H "ApiKey: @apikey" \
+    -H "Content-Type: application/json" \
+    -H "LogType: json" \
+    --data-binary '{"message":"Logit.io Test Log","@timestamp":"2030-01-01T11:00:00.000Z"}'
   ```
 
   ### Confirm the results

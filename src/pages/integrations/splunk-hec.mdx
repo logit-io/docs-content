@@ -1,0 +1,295 @@
+---
+title: Splunk HEC
+metaTitle: Send Logs via Splunk HTTP Event Collector to Logit.io
+subTitle: Send single logs or batches using a Splunk HEC-compatible endpoint
+logo: https
+color: "#30a743"
+stackTypes: logs
+description: Send logs to your Logit.io Stack using the Splunk HTTP Event Collector-compatible API.
+tags: Logs, Splunk, HEC, HTTP, JSON, NDJSON, API, Batching
+---
+
+Use the Splunk HTTP Event Collector (HEC) endpoint to send logs from a Splunk-compatible SDK or log forwarder. To send individual JSON objects or batches without a HEC envelope, use the [JSON via HTTP/S integration](/integrations/http).
+
+<Steps>
+  ## Logs
+
+  ### Install Integration
+
+  <InstallIntegration/>
+
+  ### Endpoint and authentication
+
+  Send logs using `POST https://@logitApiEndpoint/services/collector/event`. The paths `/services/collector/event/1.0` and `/services/collector` are aliases.
+
+  Set `Authorization: Splunk @apikey`. Use your stack's API key, a UUIDv4, as the token. The key and endpoint populate in the examples when you sign in and select a stack.
+
+  The API also accepts `ApiKey: @apikey`, `Api-Key: @apikey`, HTTP Basic with any username and the API key as the password, or the `?token=@apikey` query parameter. Header precedence is `ApiKey`, then `Api-Key`, then `Authorization`. If the selected header supplies no key, the API falls back to `?token=`. Prefer a header to keep the key out of URLs.
+
+  ### Event formats and limits
+
+  Each HEC envelope must contain an `event` key. Use an object for structured logs or a string for a text log. You can send:
+
+  - One JSON envelope object.
+  - A JSON array of envelope objects.
+  - NDJSON with one envelope per line.
+  - Consecutive JSON envelope objects with optional whitespace between them.
+
+  The API validates all envelopes before queueing and queues each envelope as one record. You can send `Content-Type: application/json`. HEC accepts the body without checking that header. A channel is optional on the event route.
+
+  The 9,800,000-byte limit (about 9.8 MB) applies to the request body and to each event serialised for processing. As a guideline, aim for batches of about 1 MB or 1,000 events, whichever comes first. HEC enforces the byte limit only.
+
+  ### Send logs with curl
+
+  <Tabs items={["Single event", "JSON array", "NDJSON"]}>
+    <Tab>
+    ```bash copy
+    curl -i "https://@logitApiEndpoint/services/collector/event" \
+      -H "Authorization: Splunk @apikey" \
+      -H "Content-Type: application/json" \
+      --data-binary '{"event":{"id":"example-1","message":"Application started"}}'
+    ```
+    </Tab>
+    <Tab>
+    Save this as `events.json`.
+
+    ```json copy
+    [
+      {"event":{"id":"example-1","message":"Application started"}},
+      {"event":{"id":"example-2","message":"Application stopped"}}
+    ]
+    ```
+
+    ```bash copy
+    curl -i "https://@logitApiEndpoint/services/collector/event" \
+      -H "Authorization: Splunk @apikey" \
+      -H "Content-Type: application/json" \
+      --data-binary @events.json
+    ```
+    </Tab>
+    <Tab>
+    Save this as `events.ndjson`. Use `--data-binary` to preserve the line endings.
+
+    ```json copy
+    {"event":{"id":"example-1","message":"Application started"}}
+    {"event":{"id":"example-2","message":"Application stopped"}}
+    ```
+
+    ```bash copy
+    curl -i "https://@logitApiEndpoint/services/collector/event" \
+      -H "Authorization: Splunk @apikey" \
+      -H "Content-Type: application/json" \
+      --data-binary @events.ndjson
+    ```
+    </Tab>
+  </Tabs>
+
+  ### Send a batch with Python
+
+  Set `LOGIT_API_KEY` in your environment to your stack's API key.
+
+  ```python copy
+  import os
+
+  import requests
+
+  events = [
+      {"event": {"id": "example-1", "message": "Application started"}},
+      {"event": {"id": "example-2", "message": "Application stopped"}},
+  ]
+
+  response = requests.post(
+      "https://@logitApiEndpoint/services/collector/event",
+      headers={"Authorization": f"Splunk {os.environ['LOGIT_API_KEY']}"},
+      json=events,
+      timeout=(3, 10),
+      allow_redirects=False,
+  )
+  response.raise_for_status()
+  if response.status_code != 200 or response.json().get("code") != 0:
+      raise RuntimeError(f"Unexpected HEC response (HTTP {response.status_code})")
+  ```
+
+  ### Use an existing HEC sender
+
+  Set your stack's API key as the HEC token. Configure the sender to use the event route, send uncompressed bodies and disable indexer acknowledgement. These illustrative snippets assume you already have a log input or receiver configured.
+
+  <Tabs items={["OpenTelemetry Collector", "Fluent Bit", "Vector"]}>
+    <Tab>
+    Add the `splunk_hec` exporter to your Collector's logs pipeline. [OpenTelemetry exporter reference](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/splunkhecexporter)
+
+    ```yaml copy
+    exporters:
+      splunk_hec:
+        endpoint: "https://@logitApiEndpoint/services/collector"
+        token: "@apikey"
+        disable_compression: true
+        max_content_length_logs: 1000000
+    ```
+    </Tab>
+    <Tab>
+    Configure the `splunk` output for your input tags. [Fluent Bit output reference](https://docs.fluentbit.io/manual/data-pipeline/outputs/splunk)
+
+    ```ini copy
+    [OUTPUT]
+        Name          splunk
+        Match         *
+        Host          @logitApiEndpoint
+        Port          443
+        TLS           On
+        Splunk_Token  @apikey
+    ```
+    </Tab>
+    <Tab>
+    Set `inputs` to your source or transform ID. [Vector sink reference](https://vector.dev/docs/reference/configuration/sinks/splunk_hec_logs/)
+
+    ```toml copy
+    [sinks.logit_hec]
+    type = "splunk_hec_logs"
+    inputs = ["example_logs"]
+    endpoint = "https://@logitApiEndpoint"
+    default_token = "@apikey"
+    endpoint_target = "event"
+    compression = "none"
+    encoding.codec = "json"
+    acknowledgements.indexer_acknowledgements_enabled = false
+    ```
+    </Tab>
+  </Tabs>
+
+  ### Responses and retries
+
+  The event and raw routes return Splunk-style JSON responses. HTTP 200 with `{"text":"Success","code":0}` means the API has queued the events for processing.
+
+  | HTTP status | HEC code | Text | Meaning |
+  | --- | --- | --- | --- |
+  | 200 | 0 | Success | All events queued. |
+  | 400 | 5 | No data | The body is empty or malformed. The event route also rejects empty batches, items that are not objects, envelopes missing `event`, and non-standard numbers (`NaN`, `Infinity` or `-Infinity`). |
+  | 400 | 10 | Data channel is missing | The raw route requires a channel. |
+  | 401 | 4 | Invalid or missing token | Check the key's format and how you send it. |
+  | 403 | 1 | Token disabled - Logit.io stack disabled or cancelled, remove this log drain or shipper | The stack is disabled or cancelled, or the well-formed key does not belong to an active stack. |
+  | 413 | 9 | Data channel is full | The request body or a serialised event exceeds the byte limit. Split the batch or reduce the size of an individual event before resending. |
+  | 503 | 8 | Server is busy | Temporary failure or unexpected server fault. Retry after 5 seconds, as indicated by `Retry-After: 5`. |
+
+  If you used a newly created stack's key before the stack was ready, it may take up to 5 minutes for the API to accept the key.
+
+  Set connection and request timeouts. Retry connection errors, timeouts, HTTP 429 and 5xx (including 503) with capped exponential backoff and jitter. Honour `Retry-After` when present.
+
+  Fix HTTP 400, 401 and 413 errors before resending. For HTTP 403, remove the log drain or shipper (for example, use `heroku drains:remove` for a Heroku drain) or update it with an active stack's API key.
+
+  An HTTP 503 partway through a batch can leave earlier events queued. Retrying the whole batch can produce duplicates. Include a stable, unique ID in each event and use it to de-duplicate downstream.
+
+  ### Health and raw endpoints
+
+  - `GET https://@logitApiEndpoint/services/collector/health` (also `/services/collector/health/1.0`) returns HTTP 200 and `{"text":"HEC is healthy and accepting input requests","code":17}` without authentication. This checks liveness only.
+  - `POST https://@logitApiEndpoint/services/collector/raw` (also `/services/collector/raw/1.0`) decodes the body as UTF-8 and replaces invalid bytes with U+FFFD replacement characters. Set `X-Splunk-Request-Channel` or the `?channel=` query parameter. The API queues one log with the whole decoded body in `event`, even if it contains multiple lines. The log also has `type: splunk_raw` and the supplied `channel`.
+
+  Logit.io HEC does not support gzip, indexer acknowledgement, `/services/collector/ack` or `/services/collector/mint`.
+
+  ### How events appear in OpenSearch
+
+  The event route queues the envelope as sent, without adding `message` or `type`. With the default Logstash pipeline, an object is indexed under `event`, so access a field as `event.<key>`. A text event stays as a string in `event`. Envelope metadata such as `host`, `source` and `index` stays at the document root. The envelope's `index` value is a field in the document. Logstash sets `@timestamp` to ingestion time and leaves the envelope's `time` field as supplied.
+
+  <Callout type="info">
+  The filter below is optional and recommended. String values in `event` or `host` can conflict with object mappings, depending on your stack's index template and existing mappings. Use the filter to move those values to `message` and `splunk.host`.
+  </Callout>
+
+  #### Normalise HEC events with Logstash
+
+  Set `"fields":{"logit_hec":"normalise"}` in each HEC envelope you want to normalise. The API preserves this field, so the filter can identify envelopes you opted in. In the default pipeline, Beats can use `event` for ECS fields such as `event.module`. An `event` field alone is insufficient to identify HEC. The marker keeps unmarked OpenTelemetry events out of this filter, and the other checks exclude Beats and events that already have a type, including raw HEC.
+
+  Add this custom filter in **Stack > Settings > Logstash Pipelines**. Send `time` as Unix seconds, optionally fractional. The filter also accepts whole Unix milliseconds for modern timestamps (12 or more digits).
+
+  ```ruby copy
+  if [event] and [fields][logit_hec] == "normalise" and ![type] and ![beat] and ![agent] and ![@metadata][beat] {
+    mutate {
+      add_field => { "type" => "splunk_hec" }
+      rename => {
+        "host" => "[splunk][host]"
+        "source" => "[splunk][source]"
+        "sourcetype" => "[splunk][sourcetype]"
+        "index" => "[splunk][index]"
+        "fields" => "[splunk][fields]"
+      }
+    }
+    if [time] {
+      mutate { convert => { "time" => "string" } }
+      if [time] =~ /^-?[0-9]{12,}$/ {
+        date {
+          match => ["time", "UNIX_MS"]
+          target => "@timestamp"
+          remove_field => ["time"]
+        }
+      } else {
+        date {
+          match => ["time", "UNIX"]
+          target => "@timestamp"
+          remove_field => ["time"]
+        }
+      }
+    }
+    if [message] =~ /^\s*\{/ {
+      mutate {
+        remove_field => ["message"]
+        remove_tag => ["_jsonparsefailure"]
+      }
+    }
+    ruby {
+      code => '
+        payload = event.remove("event")
+        payload.delete("original") if payload.is_a?(Hash)
+        if payload.is_a?(Hash)
+          payload.each { |key, value| event.set(key, value) unless event.include?(key) }
+        else
+          event.set("message", payload.is_a?(String) ? payload : LogStash::Json.dump(payload))
+        end
+      '
+    }
+  }
+  ```
+
+  If your stack's Logstash runs with ECS compatibility enabled, Logstash adds `event.original` when it decodes each record. For a text `event`, it cannot add that field, so the record keeps the raw envelope in `message` and gains the `_jsonparsefailure` tag. The filter removes the raw envelope, the tag and `event.original` for marked envelopes. Unmarked text events stay as they arrive.
+
+For marked envelopes, the filter uses `time` as `@timestamp` when parsing succeeds, moves envelope metadata under `splunk` and adds `type: splunk_hec`. It copies fields from object events into the root while preserving existing fields. A text event moves to `message`.
+
+  <Tabs items={["Before (HEC envelope)", "After (OpenSearch document)"]}>
+    <Tab>
+    ```json copy
+    {
+      "event": {"id":"example-1","message":"Application started"},
+      "time": 1732560000,
+      "host": "web-1",
+      "source": "app",
+      "sourcetype": "json",
+      "index": "main",
+      "fields": {"logit_hec":"normalise","region":"test-region"}
+    }
+    ```
+    </Tab>
+    <Tab>
+    ```json copy
+    {
+      "@timestamp": "2024-11-25T18:40:00.000Z",
+      "type": "splunk_hec",
+      "id": "example-1",
+      "message": "Application started",
+      "splunk": {
+        "host": "web-1",
+        "source": "app",
+        "sourcetype": "json",
+        "index": "main",
+        "fields": {"logit_hec":"normalise","region":"test-region"}
+      }
+    }
+    ```
+    </Tab>
+  </Tabs>
+
+  ### Launch OpenSearch Dashboards to View Your Data
+
+  <LaunchVisualizer type="logs" />
+
+  ### How to diagnose no data in Stack
+
+  <DiagnoseNoData />
+</Steps>
